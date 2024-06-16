@@ -61,6 +61,7 @@ import com.example.demo.dao.record_activity_dao;
 import com.example.demo.entities.Admin;
 import com.example.demo.entities.CompanyInfo;
 import com.example.demo.entities.Error_Log;
+import com.example.demo.entities.Job;
 import com.example.demo.entities.Payment_Order_Info;
 import com.example.demo.entities.Performance;
 import com.example.demo.entities.RecordActivity;
@@ -2708,5 +2709,78 @@ public class servicelayer {
 	public void save_null_value_laptop_assign_by_IT(UserDetail detail)
 	{
 		userDetailDao.save(detail);
+	}
+	
+	public void insert_Job_First_Time()
+	{
+		List<Job> job=jobDao.findAll();
+		List<String> job_list=new ArrayList<>();
+	   if(job==null)
+		   {
+		 job_list.add("Account_Locked_job");
+		 job_list.add("Login_Delete_Job");
+		 job_list.add("Is_Enabled_Job");
+		 job_list.add("Is_Disabled_Inactive_User_Job");
+		 job_list.add("Password_FailedAttempt_Reset");
+		 job_list.add("Update_User_Inactive_Status");
+		 job_list.add("get_user_status");
+		 job_list.add("delete_old_error_log");
+		 job_list.add("login_employeedetail_user_status_correct");
+		 job_list.add("remove_garbage_data_session_id");
+		 job_list.add("Captcha Validate");
+		 job_list.add("OTP Validate");
+		 job_list.add("failed_attempt_alert");
+		 job_list.add("success_attempt_alert");
+		 job_list.add("admin_otp_sent_verification");
+		 job_list.add("seperation_email_sent");
+		 job_list.add("team_email_sent");
+		 job_list.add("disbaled_expired_plan_users");
+		 job_list.add("expired_license_status");
+		 job_list.add("team_email_sent");
+		 job_list.add("forgot_otp_sent_verification");
+		 job_list.add("team_email_sent");
+		 job_list.add("payment_success_email_alert");
+		 for(String c : job_list)
+		 {
+			 Job job1=new Job();
+			int count=jobDao.getJobCount();
+			if(count==0)
+			{
+				job1.setId(1);
+				job1.setJob_description(c);
+				job1.setJob_active_or_not("Y");
+				jobDao.save(job1);
+			}
+			else
+			{
+				int lastid=jobDao.getJobLastId();
+				job1.setId(++lastid);
+				job1.setJob_description(c);
+				job1.setJob_active_or_not("Y");
+				jobDao.save(job1);
+			}
+		 }
+		   }
+//		Login_Delete_Job
+//		Is_Enabled_Job
+//		Is_Disabled_Inactive_User_Job
+//		Password_FailedAttempt_Reset
+//		Update_User_Inactive_Status
+//		get_user_status
+//		delete_old_error_log
+//		login_employeedetail_user_status_correct
+//		remove_garbage_data_session_id
+//		Captcha Validate
+//		OTP Validate
+//		failed_attempt_alert
+//		success_attempt_alert
+//		downtime_maintaince
+//		admin_otp_sent_verification
+//		seperation_email_sent
+//		team_email_sent
+//		disbaled_expired_plan_users
+//		expired_license_status
+//		forgot_otp_sent_verification
+//		payment_success_email_alert
 	}
 }
