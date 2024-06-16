@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="base4::layout(~{::section})">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Sign Up Form </title>
+
+</head>
+
+<body>
+	<section>
+		<style type="text/css">
+			/* Importing fonts from Google */
+			@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+
+			/* Reseting */
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+				font-family: 'Poppins', sans-serif;
+			}
+
+			body {
+				background: #ecf0f3;
+			}
+
+			.wrapper {
+				max-width: 1450px;
+				min-height: 500px;
+				margin: 40px auto;
+				padding: 20px 30px 30px 30px;
+				background-color: white;
+				border-radius: 15px;
+
+			}
+
+			.logo {
+				width: 80px;
+				margin: auto;
+			}
+
+			.logo img {
+				width: 100%;
+				height: 80px;
+				object-fit: cover;
+				border-radius: 50%;
+
+			}
+
+			.wrapper .name {
+				font-weight: 600;
+				font-size: 1.4rem;
+				letter-spacing: 1.3px;
+				padding-left: 10px;
+				color: #555;
+			}
+
+			.wrapper .form-field input {
+				width: 100%;
+				display: block;
+				border: none;
+				outline: none;
+				background: none;
+				font-size: 1.2rem;
+				color: #666;
+				padding: 10px 15px 10px 10px;
+				/* border: 1px solid red; */
+			}
+
+			.wrapper .form-field {
+				padding-left: 10px;
+				margin-bottom: 20px;
+				border-radius: 20px;
+
+			}
+
+			.wrapper .form-field .fas {
+				color: #555;
+			}
+
+			.wrapper .btn {
+				box-shadow: none;
+				width: 100%;
+				height: 40px;
+				background-color: black;
+				color: #fff;
+				border-radius: 25px;
+
+				letter-spacing: 1.3px;
+			}
+
+			.wrapper .btn:hover {
+				background-color: #039BE5;
+			}
+
+			.wrapper a {
+				text-decoration: none;
+				font-size: 0.8rem;
+				color: #03A9F4;
+			}
+
+			.wrapper a:hover {
+				color: #039BE5;
+			}
+
+			@media(max-width: 380px) {
+				.wrapper {
+					margin: 30px 20px;
+					padding: 40px 15px 15px 15px;
+				}
+			}
+		</style>
+		<div class="wrapper">
+			<div class="text-right">
+			<b> <a href="" th:href="@{'/admin/emp_profile_edit_1/'+${user.id}}"  class="item"><p>BACK <i class="fas fa-arrow-left"></i></p></a>
+			</b>
+		</div>
+			<div class="logo">
+				<!--   <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAclBMVEXz8/PzUyWBvAYFpvD/ugjz9PX19PXz+fr39fr69vPy9fp5uAAAofD/tgDz3Nji6tfzRADzTBfzmYew0oB/xfH70IDX5/P16tfz5eLo7eHzPADzlICs0Hfh6/N3wvH7znj07eEAnvDzvbPL3q6u1/L43q6vy/leAAABd0lEQVR4nO3cR1IDQRREwcb0SEgj770B7n9FNmhEBL1g8zUs8l2gIi9QKUmSpHs5vPtWFV4uANMwunUD3IyiS7+Jebgdx7bddb63uvt+dKOqIBw/xTaZNsLZc3CEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEjxVuJ7GNfwj7LQjTejcN7noTVu+z4PabgjB1wmumqm50JaAkSX/oLbxmKveiK/zqp8NxHtvx40bMn6dFbKdzgbi81MEdb8LeaRDdqiSsX2Kr541wMXiNjZCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkPCxwuj/0kvb/6V5Gd2hmTqvokulm90HluNrFyhJ0j/rC6N0RI28dGy3AAAAAElFTkSuQmCC">
+        -->
+				<!--	<img
+					src="https://www.freepnglogos.com/uploads/google-logo-png/google-logo-png-webinar-optimizing-for-success-google-business-webinar-13.png">
+			-->
+				<img th:src="@{'/img/'+${user.Image_Url}}">
+			</div>
+
+			<div class="text-center mt-4 name">
+				<h5 th:text="${user.username}" />
+			</div>
+
+
+
+			<form id="login-form" class="form p-3 mt-3" th:action="@{'/admin/processing_profile/'+${user.id}}"
+				th:object="${user}" action="#" method="post" enctype="multipart/form-data">
+				<div th:if="${session.message}" th:classappend="${session.message.type}" class="alert"
+					role="alert text-center">
+					<p th:text="${session.message.content}"></p>
+					<th:block th:text="${#session.removeAttribute('message')}"></th:block>
+				</div>
+				<div class="container rounded bg-white mt-5 mb-5">
+					<div class="row">
+
+						<div class="col-md-5 border-right">
+							<div class="p-3 py-5">
+								<div class="d-flex justify-content-between align-items-center mb-3">
+									<h4 class="text-right">Profile Settings</h4>
+								</div>
+								<div class="row mt-2">
+
+								</div>
+								<div class="row mt-3">
+									<div class="col-md-12 mt-1"><label class="labels">Employee Name</label><input type
+											readonly class="form-control" th:value="${user.username}"></div>
+									<div class="col-md-12 mt-1"><label class="labels">Employee Id</label><input type
+											readonly class="form-control" th:value="'GOOGLEIN00'+${user.id}"></div>
+									<div class="col-md-12 mt-1"><label class="labels">Mobile Number</label><input type
+											readonly class="form-control" th:value="${user.phone}"></div>
+									<div class="col-md-12 mt-1"><label class="labels">Address Line 1</label><input
+											readonly class="form-control" th:value="${user.address}"></div>
+									<div class="col-md-12 mt-1"><label class="labels">State</label><input readonly
+											class="form-control" th:value="${user.address}"></div>
+									<div class="col-md-12 mt-1"><label class="labels">Area</label><input readonly
+											class="form-control" th:value="${user.address}"></div>
+									<div class="col-md-12 mt-1"><label class="labels">Email ID</label><input readonly
+											class="form-control" th:value="${user.email}"></div>
+									<div class="col-md-12 mt-1"><label class="labels">Country</label><input readonly
+											class="form-control" th:value="${user.country}"></div>
+									<div class="col-md-12 mt-1"><label class="labels">Bank Name</label><input
+											type="text" name="bank_name" class="form-control"
+											th:value="${user.bank_name}"></div>
+									<div class="col-md-12 mt-1"><label class="labels">Account Holder Name</label><input
+											type="text" name="bank_account_number" class="form-control"
+											th:value="${user.bank_account_number}"></div>
+									<div class="col-md-12 mt-1"><label class="labels">IFSC Code</label><input
+											type="text" name="ifsc_code" class="form-control"
+											th:value="${user.ifsc_code}"></div>
+									<div class="col-md-12 mt-5"><button class="btn btn-primary profile-button"
+											type="submit">Save Profile</button></div>
+								</div>
+
+							</div>
+						</div>
+
+
+
+						<div class="col-md-6 mt-5">
+							<!--	<h4 class="text-left">Experience/Skills</h4>  -->
+							<div class="col-md-12 mt-5"><label class="labels">Employee Status</label><input type
+									readonly class="form-control" th:value="${user.status}"></div>
+							<div class="col-md-12 mt-1"><label class="labels">Employee DOB</label><input type readonly
+									class="form-control" th:value="${user.dob}"></div>
+							<div class="col-md-12 mt-1"><label class="labels">Laptop Brand</label><input type readonly
+									class="form-control" th:value="${user.laptop_brand}"></div>
+							<div class="col-md-12 mt-1"><label class="labels">Laptop Product Id</label><input type
+									readonly class="form-control" th:value="${user.laptop_id}"></div>
+							<div class="col-md-12 mt-1"><label class="labels">Laptop Serial Number</label><input type
+									readonly class="form-control" th:value="${user.laptop_serial_number}"></div>
+							<div class="col-md-12 mt-1"><label class="labels">Laptop Assign Date</label><input type
+									readonly class="form-control" th:value="${user.laptop_assign_date}"></div>
+							<div class="col-md-12 mt-1"><label class="labels">Profile Image (.jpg,.png)</label>
+								<input type="file" class="form-control" name="profileImage">
+							</div>
+							<div class="col-md-12 mt-1"><label class="labels">Resume (.pdf,.docx)</label>
+								<input type="file" class="form-control" name="cv">
+							</div>
+
+						</div>
+					</div>
+				</div>
+
+			</form>
+
+		</div>
+	</section>
+</body>
+
+</html>

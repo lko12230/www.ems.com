@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="base2::layout(~{::section})">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Billing History</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+</head>
+<body>
+<section>
+    <!-- Billing history card-->
+    <div class="card mb-4">
+        <div class="card-header">Billing History</div>
+        <div class="card-body p-0">
+            <!-- Billing history table-->
+                <table class="table mb-0">
+                    <thead>
+                        <tr>
+                            <th class="border-gray-200" scope="col">Transaction ID</th>
+                            <th class="border-gray-200" scope="col">Date</th>
+                            <th class="border-gray-200" scope="col">Amount (INR)</th>
+                            <th class="border-gray-200" scope="col">Status</th>
+                            <th class="border-gray-200" scope="col">Receipt/Invoice</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="c : ${payment_Order_Info}" th:if="${payment_Order_Info != null and #lists.size(payment_Order_Info) > 0}">
+                            <td><span th:text="${c.orderId}"></span></td>
+                            <td><span th:text="${c.system_date_and_time}"></span></td>
+                            <td><i class="fa-solid fa-indian-rupee-sign"></i> <span th:text="${c.amount}"></span></td>
+                            <td>
+                                <div th:if="${c.status.equals('created')}">
+                                    <span class="badge bg-danger" style="text-transform: uppercase; color: white;">failed</span>
+                                </div>
+                                <div th:if="${c.status.equals('paid')}">
+                                    <span class="badge bg-success" style="text-transform: uppercase; color: white;">paid</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div th:if="${c.status.equals('created')}">
+                                    <span class="badge" style="text-transform: uppercase; color: red;">Not Available</span>
+                                </div>
+                                <div th:if="${c.status.equals('paid')}">
+                                    <a href="" th:href="@{'/admin/receipt/'+${c.orderId}}" name="orderId">
+                                        <span class="badge" style="text-transform: uppercase; color: royalblue;">View Receipt</span>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                   </div>
+            <div th:if="${payment_Order_Info == null or #lists.size(payment_Order_Info) == 0}" class="d-flex justify-content-center align-items-center" style="height: 100px;">
+               <span class="badge" style="text-transform: uppercase; color: red;">No Transactions Available</span>
+            </div>
+    
+    </div>
+</section>
+</body>
+</html>
