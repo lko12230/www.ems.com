@@ -81,27 +81,53 @@
 							</td>
 							<div class="row info-list">
 								<div class="col-sm-4">
-									<i class="fa fa-briefcase"></i> Designation : <a href="#"><span
-										th:text="${c.Designation}"></span></a>
+								<div th:if="${c.Designation!=null}">
+									<i class="fa fa-briefcase"></i> Designation : <span
+										th:text="${c.Designation}" style="color: blue"></span>
+										</div>
+										<div th:if="${c.Designation==null}">
+									<i class="fa fa-briefcase"></i> Designation : 	<b class="text-muted mb-0">
+											<span style="color: blue;">No Record Found</span>
+										</b>
+										</div>
 								</div>
 								<div class="col-sm-4">
-									<i class="fa-solid fa-phone"></i> Phone : <a href="#"><span
-										th:text="${c.phone}"></span></a>
+									<i class="fa-solid fa-phone"></i> Phone : <span
+										th:text="${c.phone}" style="color: blue"></span>
 								</div>
 								<div class="col-sm-4">
-
-									<i class="fa-solid fa-user-group"></i> <b> Team : <a
-										href="#"><span th:text="${c.team}"></span></a></b>
-
+                                 <div th:if="${!c.team.equals('0')}">
+									<i class="fa-solid fa-user-group"></i> <b> Team : <span th:text="${c.team}" style="color: blue"></span></b>
+                                  </div>
+                                   <div th:if="${c.team.equals('0')}">
+									<i class="fa-solid fa-user-group"></i> <b> Team :
+											<span style="color: red;">No Team Assigned</span>
+										</b>
+                                  </div>
 								</div>
 								<div class="clear"></div>
 								<div class="col-sm-4">
-									<i class="fa fa-location"></i> Base Location : <a href="#"><span
-										th:text="${c.base_location}"></span></a>
+								<div th:if="${c.base_location!=null}">
+									<i class="fa fa-location"></i> Base Location : <span
+										th:text="${c.base_location}" style="color: blue"></span>
+										</div>
+										<div th:if="${c.base_location==null}">
+									<i class="fa fa-location"></i> Base Location : 
+									<b class="text-muted mb-0">
+											<span style="color: blue;">No Record Found</span>
+										</b>
+										</div>
 								</div>
 								<div class="col-sm-4">
-									<i class="fa fa-envelope"></i> Email : <a href="#"><span
-										th:text="${c.email}"></span></a>
+								<div th:if="${c.email!=null}">
+									<i class="fa fa-envelope"></i> Email : <span
+										th:text="${c.email}" style="color: blue"></span>
+										</div>
+										<div th:if="${c.email==null}">
+									<i class="fa fa-envelope"></i> Email : <b class="text-muted mb-0">
+											<span style="color: blue;">No Record Found</span>
+										</b>
+										</div>
 								</div>
 								<div class="col-sm-4">
 									<!--   <i class="fa fa-linkedin"></i> -->
