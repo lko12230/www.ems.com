@@ -1091,6 +1091,9 @@ public class servicelayer {
 	public void insert_error_log(String error_description, String java_file_name, String error_message,
 			String method_name, int linenumber) {
 		try {
+			int count=error_log_dao.getCount();
+			if(count>0)
+			{
 			int getLoginLastId = error_log_dao.getLastId();
 			Error_Log error_Log = new Error_Log();
 			error_Log.setSno(++getLoginLastId);
@@ -1101,6 +1104,19 @@ public class servicelayer {
 			error_Log.setMethod_name(method_name);
 			error_Log.setError_line_number(linenumber);
 			error_log_dao.save(error_Log);
+			}
+			else
+			{
+				Error_Log error_Log = new Error_Log();
+				error_Log.setSno(1);
+				error_Log.setError_description(error_description);
+				error_Log.setErrorDate(new Date());
+				error_Log.setJava_class_Name(java_file_name);
+				error_Log.setError_message(error_message);
+				error_Log.setMethod_name(method_name);
+				error_Log.setError_line_number(linenumber);
+				error_log_dao.save(error_Log);
+			}
 		} catch (Exception e) {
 			String exceptionAsString = e.toString();
 			// Get the current class

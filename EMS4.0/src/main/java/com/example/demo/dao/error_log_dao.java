@@ -13,4 +13,7 @@ public interface error_log_dao extends JpaRepository<Error_Log, Integer> {
 
 	@Query(value = "select u.sno from error_log u order by u.sno desc limit 1", nativeQuery = true)
 	public int getLastId();
+	
+	@Query(value = "select count(1) from error_log", nativeQuery = true)
+	public int getCount();
 }
