@@ -166,11 +166,31 @@
 									<input readonly class="text-muted mb-0" name="payment_field" id="payment_field"
        th:value="${all_plans.amount + (all_plans.amount * 0.18)}" />
        </div>
-       	<div th:if="${all_plans.discount!=0}">
+       	<div th:if="${all_plans.discount!=0 and all_plans.amount != all_plans.discount}">
 									<input readonly class="text-muted mb-0" name="payment_field" id="payment_field"
-       th:value="${all_plans.amount + (all_plans.amount * 0.18) - all_plans.discount}" />
-     <p th:text="'₹' + ${all_plans.discount} + ' Discount from ₹' + ${all_plans.amount}"
+       th:value="${((all_plans.amount  - all_plans.discount) * 0.18)+(all_plans.amount  - all_plans.discount)}" />
+    <p style="color: limegreen; font-weight: bold;">
+  <span style="color: red;">Note :- </span>
+  <span th:text="' ₹ '+${all_plans.discount}"></span>
+  <span> Discount from </span>
+  <span th:text="' ₹ '+${all_plans.amount}"></span>
+  <span>, After Discount Amount Will Be </span>
+  <span th:text="' ₹ '+${(all_plans.amount - all_plans.discount)}"></span>
+  <span> Excluding GST Amount </span>
+  <span th:text="' ₹ '+${(all_plans.amount - all_plans.discount) * 0.18}"></span>
+  <span>, After Including GST Amount Will Be </span>
+  <span th:text="' ₹ '+${((all_plans.amount  - all_plans.discount) * 0.18)+(all_plans.amount  - all_plans.discount)}"></span>
+</p>
+ <p th:text="'SAVE ' + ${#numbers.formatDecimal((all_plans.discount / all_plans.amount) * 100, 1, 'COMMA', 2, 'POINT')} + '% On Price Excluding GST' "
+   style="color: red; font-weight: bold;"></p>
+       </div>
+       
+        	<div th:if="${all_plans.discount!=0 and all_plans.amount == all_plans.discount}">
+									<input readonly class="text-muted mb-0" name="payment_field" id="payment_field"
+       th:value="${(all_plans.amount  - all_plans.discount)}" />
+     <p th:text="'₹' + ${all_plans.discount} + ' Discount from ₹' + ${all_plans.amount}+' No GST Included'"
    style="color: limegreen; font-weight: bold;"></p>
+       <p style="color: red; font-weight: bold;">FREE OF COST / save 100%</p>
        
        </div>
 								</div>
@@ -345,6 +365,13 @@
 				</div>
 			</div>
 		</div>
+			<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        let paymentField = document.getElementById("payment_field");
+        let value = parseFloat(paymentField.value).toFixed(2);
+        paymentField.value = value;
+    });
+</script>
 	</section>
 </body>
 
