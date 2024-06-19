@@ -1128,7 +1128,7 @@ public class servicelayer {
 			String methodName = stackTrace[0].getMethodName();
 			int lineNumber = stackTrace[0].getLineNumber();
 			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
-			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+//			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
 		}
 	}
 
