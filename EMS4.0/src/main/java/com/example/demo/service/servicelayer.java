@@ -149,6 +149,7 @@ public class servicelayer {
 			int generateRandomPassword = (int) (Math.random() * 900000) + 100000;
 //			InetAddress localHost = InetAddress.getLocalHost();
 //			String str1 = localHost.toString();
+			user.setAccountNonLocked(true);
 			user.setPhone(user.getPhone().trim().replaceAll("\\s", ""));
 			user.setPassword(passwordEncoder.encode(Integer.toString(generateRandomPassword)));
 			user.setRepassword(passwordEncoder.encode(Integer.toString(generateRandomPassword)));
