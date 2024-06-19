@@ -40,14 +40,10 @@ public class CustomLoginFailureHandler extends SimpleUrlAuthenticationFailureHan
 			AuthenticationException exception) throws IOException, ServletException {
 		InetAddress localHost = InetAddress.getLocalHost();
 		String str1 = localHost.toString();
-//		String email = request.getParameter("username");
-//		String osName = System.getProperty("os.name");
-//		String osVersion = System.getProperty("os.version");
-//		String osArchitecture = System.getProperty("os.arch");
-		String email = null;
-		String osName = null;
-		String osVersion =null;
-		String osArchitecture = null;
+		String email = request.getParameter("username");
+		String osName = System.getProperty("os.name");
+		String osVersion = System.getProperty("os.version");
+		String osArchitecture = System.getProperty("os.arch");
 		User user = userdao.getUserByUserName(email);
 		boolean get_status = downtime_Maintaince_Dao.server_status_check_active_or_not("downtime_maintaince");
 //		boolean getresponse=servicelayer.active_user_email(user);
