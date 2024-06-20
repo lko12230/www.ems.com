@@ -1,28 +1,34 @@
 package com.example.demo;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
+import com.example.demo.dao.JobDao;
+import com.example.demo.entities.Job;
 import com.example.demo.entities.User;
 import com.example.demo.service.EmailService;
 import com.example.demo.service.servicelayer;
 
 @SpringBootApplication
 @EnableScheduling
-public class EMSMAIN {
+public class EMSMAIN implements CommandLineRunner {
 	@Autowired
 	private servicelayer servicelayer;
 	@Autowired
 	private EmailService emailService;
-
+    @Autowired
+    private JobDao jobDao;
 	public static void main(String[] args) {
 		SpringApplication.run(EMSMAIN.class, args);
 	}
@@ -963,6 +969,57 @@ public class EMSMAIN {
 
 		}
 
+	}
+	
+	@Override
+	public void run(String... args) throws Exception {
+		
+		// Added By AYush Gupta 21 June 2024 
+//		 Purpose :  if job not inserted then first insert job in job table
+		Job job=new Job();
+		List<String> job_list=new ArrayList<>();
+			job_list.add("Account_Locked_job");
+			job_list.add("Login_Delete_Job");
+			job_list.add("Is_Enabled_Job");
+			job_list.add("Is_Disabled_Inactive_User_Job");
+			job_list.add("Password_FailedAttempt_Reset");
+			job_list.add("Update_User_Inactive_Status");
+			job_list.add("get_user_status");
+			job_list.add("delete_old_error_log");
+			job_list.add("login_employeedetail_user_status_correct");
+			job_list.add("remove_garbage_data_session_id");
+			job_list.add("Captcha Validate");
+			job_list.add("OTP Validate");
+			job_list.add("failed_attempt_alert");
+			job_list.add("success_attempt_alert");
+			job_list.add("downtime_maintaince");
+			job_list.add("admin_otp_sent_verification");
+			job_list.add("seperation_email_sent");
+			job_list.add("team_email_sent");
+			job_list.add("disbaled_expired_plan_users");
+			job_list.add("expired_license_status");
+			job_list.add("forgot_otp_sent_verification");
+			job_list.add("payment_success_email_alert");
+			for(String c : job_list)
+			{
+				int get_count=jobDao.getJobCount();
+				if(get_count>0)
+				{
+					int id=jobDao.getJobLastId();
+				job.setId(++id);
+				job.setJob_active_or_not("Y");
+				job.setJob_description(c);
+				jobDao.save(job);
+				
+				}
+				else
+				{
+					job.setId(1);
+					job.setJob_active_or_not("Y");
+					job.setJob_description(c);	
+					jobDao.save(job);
+				}
+			}
 	}
 
 }
