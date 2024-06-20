@@ -93,55 +93,39 @@ import cn.apiclub.captcha.text.producer.DefaultTextProducer;
 
 @Service
 public class servicelayer {
-	
 	@Autowired
 	private UserLoginDao userLoginDao;
-	
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
-	
 	@Autowired
 	private EmailService emailService;
-	
 	@Autowired
 	private EmailService1 emailService1;
 	// for register
 	@Autowired
 	private adminDao adminDao;
-	
 	@Autowired
 	private UserDetailDao userDetailDao;
-	
 	@Autowired
 	private Teamdao teamdao;
-	
 	@Autowired
 	private Userdao userdao;
-	
 	@Autowired
 	private JobDao jobDao;
-	
 	@Autowired
 	private error_log_dao error_log_dao;
-	
 	@Autowired
 	private performancedao performancedao;
-	
 	@Autowired
 	private record_activity_dao record_activity_dao;
-	
 	@Autowired
 	private Downtime_Maintaince_Dao downtime_Maintaince_Dao;
-	
 	@Autowired
 	private orderDao orderDao;
-	
 	@Autowired
 	private company_dao company_dao;
-	
 	@Autowired
 	private SubscriptionPlanDao subscriptionPlansDao;
-	
 	@Autowired
 	private PaymentSucessEmailService paymentSucessEmailService;
 
@@ -165,7 +149,6 @@ public class servicelayer {
 			int generateRandomPassword = (int) (Math.random() * 900000) + 100000;
 //			InetAddress localHost = InetAddress.getLocalHost();
 //			String str1 = localHost.toString();
-			user.setAccountNonLocked(true);
 			user.setPhone(user.getPhone().trim().replaceAll("\\s", ""));
 			user.setPassword(passwordEncoder.encode(Integer.toString(generateRandomPassword)));
 			user.setRepassword(passwordEncoder.encode(Integer.toString(generateRandomPassword)));
@@ -1107,29 +1090,16 @@ public class servicelayer {
 	public void insert_error_log(String error_description, String java_file_name, String error_message,
 			String method_name, int linenumber) {
 		try {
-			int count = error_log_dao.getCount();
-			if (count > 0) {
-				int getLoginLastId = error_log_dao.getLastId();
-				Error_Log error_Log = new Error_Log();
-				error_Log.setSno(++getLoginLastId);
-				error_Log.setError_description(error_description);
-				error_Log.setErrorDate(new Date());
-				error_Log.setJava_class_Name(java_file_name);
-				error_Log.setError_message(error_message);
-				error_Log.setMethod_name(method_name);
-				error_Log.setError_line_number(linenumber);
-				error_log_dao.save(error_Log);
-			} else {
-				Error_Log error_Log = new Error_Log();
-				error_Log.setSno(1);
-				error_Log.setError_description(error_description);
-				error_Log.setErrorDate(new Date());
-				error_Log.setJava_class_Name(java_file_name);
-				error_Log.setError_message(error_message);
-				error_Log.setMethod_name(method_name);
-				error_Log.setError_line_number(linenumber);
-				error_log_dao.save(error_Log);
-			}
+			int getLoginLastId = error_log_dao.getLastId();
+			Error_Log error_Log = new Error_Log();
+			error_Log.setSno(++getLoginLastId);
+			error_Log.setError_description(error_description);
+			error_Log.setErrorDate(new Date());
+			error_Log.setJava_class_Name(java_file_name);
+			error_Log.setError_message(error_message);
+			error_Log.setMethod_name(method_name);
+			error_Log.setError_line_number(linenumber);
+			error_log_dao.save(error_Log);
 		} catch (Exception e) {
 			String exceptionAsString = e.toString();
 			// Get the current class
@@ -1147,7 +1117,7 @@ public class servicelayer {
 
 	List<UserLoginDateTime> data_insert_excel_list = new ArrayList<>();
 
-	public boolean data_insert_excel() throws IOException { 
+	public boolean data_insert_excel() throws IOException {
 		try {
 			String path = "C:\\Users\\ayush.gupta\\Desktop\\USER_LOGIN_DATA.xlsx";
 			data_insert_excel_list = userLoginDao.findAll();

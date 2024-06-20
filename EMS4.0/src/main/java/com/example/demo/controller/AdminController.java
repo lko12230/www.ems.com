@@ -135,8 +135,8 @@ public class AdminController {
 				user.setFailedAttempt(0);
 			}
 			if (count == 0) {
-//				InetAddress localHost = InetAddress.getLocalHost();
-				String str1 = null;
+				InetAddress localHost = InetAddress.getLocalHost();
+				String str1 = localHost.toString();
 				String username = principal.getName();
 				System.out.println(user.getFailedAttempt() + " USER EMAIL " + user.getEmail());
 				Optional<User> currentUser = this.userdao.findByUserName(username);

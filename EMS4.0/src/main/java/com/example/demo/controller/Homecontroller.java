@@ -141,7 +141,7 @@ public class Homecontroller {
 //						}
 					} else {
 						session.setAttribute("message", new Message("Wrong Captcha", "alert-danger"));
-						return "redirect:/verify_admin_get";
+						return "redirect:/verify_admin_get/" + admin.getAid();
 					}
 				} else {
 					System.out.println("invalid credentials");
@@ -194,7 +194,7 @@ public class Homecontroller {
 		EMSMAIN.captcha_validate_map.put(admin.getHidden(), new Date());
 		session.setAttribute("hiddenCaptcha", admin.getHidden());
 		System.out.println(admin.getHidden());
-		return "redirect:/verify_admin_get";
+		return "authenticate_admin";
 	}
 
 	private void getCaptcha(User user) {
