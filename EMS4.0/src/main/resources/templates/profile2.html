@@ -342,9 +342,16 @@
 										<p class="mb-0">Resume</p>
 									</div>
 									<div class="col-sm-9">
+									<div th:if="${!user.resume_file_url.equals('NA')}">
 										<p class="text-muted mb-0">
 											<span th:text="${user.resume_file_url}"></span>
 										</p>
+										</div>
+										<div th:if="${user.resume_file_url.equals('NA')}">
+										<b class="text-muted mb-0">
+											<span style="color: blue;">No File Found</span>
+										</b>
+										</div>
 									</div>
 								</div>
 								<hr>

@@ -30,5 +30,6 @@ public class UserLoginDateTime {
 	private Date LogoutDateAndTime;
 	private boolean User_status;
 	private String Session_Id;
+	private String location;
 
 }

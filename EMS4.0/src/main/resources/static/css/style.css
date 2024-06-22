@@ -22,7 +22,7 @@ background-color:  #ecf0f3;
 	background-color: white;
 	height: 100%;
 	position: fixed;
-	padding-top:45px;
+	padding-top:55px;
 	
 }
 .sidebar a
@@ -48,7 +48,7 @@ background-color:  #ecf0f3;
 .sidebar .crossBtn
 {
 	position: absolute;
-	top: 10px;
+	top: 20px;
 	right: 35px;
 	font-size: 36px;
 	cursor: pointer;
@@ -499,3 +499,21 @@ ul.online-users {
 .text-white {
     color: #fff;
 }
+
+.wrapper .form-field input,
+.wrapper .form-field select {
+    width: 100%;
+    display: block;
+    border: none;
+    outline: none;
+    background: none;
+    font-size: 1.2rem;
+    color: #666;
+    padding: 10px 15px 10px 10px;
+}
+
+        select {
+            width: 200px; /* Adjust width as needed */
+            height: auto; /* Let the browser decide the height */
+            overflow: auto; /* Allow scrolling */
+        }

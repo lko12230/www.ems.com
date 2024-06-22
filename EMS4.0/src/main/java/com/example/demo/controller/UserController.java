@@ -1,8 +1,10 @@
 package com.example.demo.controller;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -15,6 +17,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
@@ -108,6 +111,93 @@ public class UserController {
 		}
 
 	}
+	
+	int count = 0;
+
+	@GetMapping("/new")
+	@Transactional
+	public String homeee(User user, UserDetail userDetail, Error_Log error_Log, Principal principal,
+	        Model model, HttpSession session, HttpServletResponse response, HttpServletRequest request) {
+	    Calendar calendar = Calendar.getInstance();
+	    int currentYear = calendar.get(Calendar.YEAR);
+	    System.out.println("++++++++++++++ " + currentYear);
+	    try {
+	        if (principal == null) {
+	            throw new Exception("session_invalid_exception");
+	        }
+	        if (user.getFailedAttempt() > 0) {
+	            user.setFailedAttempt(0);
+	        }
+	        if (count == 0) {
+	            // Capture client IP address
+	            String clientIp = getClientIpAddress(request);
+
+	            // Fetch location based on IP address
+	            String location = getLocationFromIp(clientIp);
+
+	            String username = principal.getName();
+	            System.out.println(user.getFailedAttempt() + " USER EMAIL " + user.getEmail());
+	            Optional<User> currentUser = this.userdao.findByUserName(username);
+	            User user1 = currentUser.get();
+	            servicelayer.login_record_save(user1, session, clientIp, location);
+	            count++;
+	        }
+	        return "home";
+	    } catch (Exception e) {
+	        System.out.println("ERRRRRRRRRRRRR " + e + " " + count);
+
+	        String exceptionAsString = e.toString();
+	        Class<?> currentClass = AdminController.class;
+	        String className = currentClass.getName();
+	        String errorMessage = e.getMessage();
+	        StackTraceElement[] stackTrace = e.getStackTrace();
+	        String methodName = stackTrace[0].getMethodName();
+	        int lineNumber = stackTrace[0].getLineNumber();
+	        System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+	        servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+
+	        return "redirect:/logout";
+	    }
+	}
+	
+	/**
+	 * Get the client IP address from the request.
+	 */
+	private String getClientIpAddress(HttpServletRequest request) {
+	    String xfHeader = request.getHeader("X-Forwarded-For");
+	    if (xfHeader == null || xfHeader.isEmpty()) {
+	        return request.getRemoteAddr();
+	    }
+	    return xfHeader.split(",")[0];
+	}
+
+	/**
+	 * Get location information from IP address using a simple API.
+	 * Replace this method with your API call.
+	 */
+	private String getLocationFromIp(String ip) {
+	    try {
+	        // Use a simple public API to get location data
+	        String url = "https://ipapi.co/" + ip + "/city/";
+	        HttpURLConnection urlConnection = (HttpURLConnection) new URL(url).openConnection();
+	        urlConnection.setRequestMethod("GET");
+
+	        BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+	        String inputLine;
+	        StringBuilder response = new StringBuilder();
+	        while ((inputLine = in.readLine()) != null) {
+	            response.append(inputLine);
+	        }
+	        in.close();
+
+	        // Return city name
+	        return response.toString().isEmpty() ? "Unknown Location" : response.toString();
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return "Unknown Location";
+	    }
+	}
+
 
 	@GetMapping("/user_profile_edit_1/{id}")
 	public String yourProfileeeee(@PathVariable("id") Integer id, Model model, Principal principal) {
@@ -284,44 +374,66 @@ public class UserController {
 
 	}
 
-	int count = 0;
+	
+	List<UserDetail> all_users = new ArrayList<>();
 
-	@GetMapping("/new")
-	@Transactional
-	public String homeee(User user, UserDetail userDetail, Error_Log error_Log, Principal principal, Model model,
-			HttpSession session, HttpServletResponse response) throws UnknownHostException {
-		Calendar calendar = Calendar.getInstance();
-		int currentYear = calendar.get(Calendar.YEAR);
-		System.out.println("++++++++++++++ " + currentYear);
+	@GetMapping("/viewMembers")
+	public String viewTeamMembers(Model model, User user, Principal principal) {
 		try {
-//			System.out.println(user.getId() + " >>>>>>>>>>>>> " + session + " >>>>>>>>>>>>>> " + principal
-//					+ " >>>>>>>>>>>>>>>>> " + user.getFailedAttempt());
-			if (principal.equals(null)) {
-				throw new Exception("session_invalid_exception");
+			all_users = userDetailDao.findAll();
+			if (all_users != null && user.getUsername() != null) {
+				System.out.println("find all " + all_users);
+				model.addAttribute("all_users", all_users);
+				System.out.println("IN");
+				return "ViewMembers";
+			} else {
+				throw new Exception();
 			}
-//		model.addAttribute("title", "Admin Login");
-//		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-			if (user.getFailedAttempt() > 0) {
-//		userdao.getAllFailedAttemptUserRecords(user.getId());
-				user.setFailedAttempt(0);
-			}
-//		Date date = new Date();
-//		Date formatted = formatter.format(date);
-			if (count == 0) {
-				InetAddress localHost = InetAddress.getLocalHost();
-				String str1 = localHost.toString();
-				String username = principal.getName();
-				System.out.println(user.getFailedAttempt() + " USER EMAIL " + user.getEmail());
-
-//		EMSMAIN.map_data.put(user.getId(), username);
-//		System.out.println("MMMMMMMMMMMMMMMMMMMMMM "+EMSMAIN.map_data);
-				Optional<User> currentUser = this.userdao.findByUserName(username);
-				User user1 = currentUser.get();
-				servicelayer.login_record_save(user1, session, str1);
-				count++;
-			}
-			return "home";
 		} catch (Exception e) {
+//			return "SomethingWentWrong";
+//			String error=" java.lang.NullPointerException: Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null";
+			System.out.println("ERRRRRRRRRRRRR " + e + " " + count);
+//			String exString=e.toString();
+//			if(exString.equals("Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null") && count==1 || count==0)
+//			{
+			String exceptionAsString = e.toString();
+			// Get the current class
+			Class<?> currentClass = AdminController.class;
+
+			// Get the name of the class
+			String className = currentClass.getName();
+			String errorMessage = e.getMessage();
+			StackTraceElement[] stackTrace = e.getStackTrace();
+			String methodName = stackTrace[0].getMethodName();
+			int lineNumber = stackTrace[0].getLineNumber();
+			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+			servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+//			return "SomethingWentWrong";)
+//				return "redirect:/swr";
+//			}
+//			else
+//			{
+			return "redirect:/logout";
+//			}
+
+		}
+	}
+	
+	@GetMapping("/emp_profile_edit_1/{id}")
+	public String profile(@PathVariable("id") Integer id, Model model, Principal principal) {
+		try {
+			if (principal != null) {
+				System.out.println("IN");
+				Optional<UserDetail> userOptional = this.userDetailDao.findById(id);
+				UserDetail userDetail = userOptional.get();
+				model.addAttribute("userdetail", userDetail);
+				model.addAttribute("title", "update form - " + userDetail.getUsername());
+				return "emp_profile1.0";
+			} else {
+				throw new Exception();
+			}
+		} catch (Exception e) {
+//			return "SomethingWentWrong";
 //			String error=" java.lang.NullPointerException: Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null";
 			System.out.println("ERRRRRRRRRRRRR " + e + " " + count);
 //			String exString=e.toString();
@@ -350,17 +462,16 @@ public class UserController {
 		}
 	}
 
-	List<UserDetail> all_users = new ArrayList<>();
-
-	@GetMapping("/viewMembers")
-	public String viewTeamMembers(Model model, User user, Principal principal) {
+	@GetMapping("/emp_profile_edit_2/{id}")
+	public String profilee(@PathVariable("id") Integer id, Model model, Principal principal) {
 		try {
-			all_users = userDetailDao.findAll();
-			if (all_users != null && user.getUsername() != null) {
-				System.out.println("find all " + all_users);
-				model.addAttribute("all_users", all_users);
+			if (principal != null) {
 				System.out.println("IN");
-				return "ViewMembers";
+				Optional<UserDetail> userOptional = this.userDetailDao.findById(id);
+				UserDetail userDetail = userOptional.get();
+				model.addAttribute("userdetail", userDetail);
+				model.addAttribute("title", "update form - " + userDetail.getUsername());
+				return "emp_profile1";
 			} else {
 				throw new Exception();
 			}

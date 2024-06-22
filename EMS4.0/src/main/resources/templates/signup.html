@@ -208,7 +208,28 @@
 
 					<div th:each="e : ${#fields.errors('email')}" th:text="${e}" class="invalid-feedback"></div>
 				</div>
-
+				
+				
+               		<label>Designation</label>
+<div class="form-field d-flex align-items-center">
+    <i class="fa-solid fa-briefcase"></i>
+    <select name="designation" id="designation" class="form-control" th:classappend="${#fields.hasErrors('designation') ? 'is-invalid' : ''}">
+        <option value="">Select Designation</option>
+        <option value="Junior Software Engineer">Junior Software Engineer</option>
+        <option value="Software Engineer">Software Engineer</option>
+        <option value="Senior Software Engineer">Senior Software Engineer</option>
+        <option value="Java Developer">Java Developer</option>
+        <option value="Data Analyst">Data Analyst</option>
+        <option value="IT">IT</option>
+        <option value="QA">QA</option>
+        <option value="Senior QA">Senior QA</option>
+        <option value="HR">HR</option>
+        <option value="Senior HR">Senior HR</option>
+        <option value="HR HEAD">HR HEAD</option>
+        <option value="Administrator">Administrator</option>
+    </select>
+    <div th:each="e : ${#fields.errors('designation')}" th:text="${e}" class="invalid-feedback"></div>
+</div>
 
 
 				<label class="form-check-label" for="femaleGender">Gender</label>

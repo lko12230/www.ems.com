@@ -171,10 +171,40 @@ public class servicelayer {
 			user.setRepassword(passwordEncoder.encode(Integer.toString(generateRandomPassword)));
 			user.setRole(user.getRole());
 			user.setGender(user.getGender());
+			user.setAccountNonLocked(true);
 			user.setUsername(user.getUsername().toUpperCase());
 			user.setEnabled(true);
+			user.setBank_account_holder_name("NA");
+			user.setBank_account_number(0); 
+			user.setBank_name("NA");
+			user.setBase_location("NA");
 			user.setStatus("ACTIVE");
 			user.setSystemDateAndTime(new Date());
+			// This Logic Added By AYush Gupta 21 June 2024 For Split -> in Designation
+String designarionArrowSplit = user.getDesignation();
+	        
+	        // Split the input string by " -> " to get parts
+	        String[] parts = designarionArrowSplit.split(" -> ");
+	        
+	        // Check if split produced exactly two parts
+	        if (parts.length == 2) {
+	            // Single name scenario
+	            System.out.println("Extracted Name: " + parts[1]);
+	        } else if (parts.length > 2) {
+	            // Full name scenario
+	            StringBuilder fullName = new StringBuilder();
+	            for (int i = 1; i < parts.length; i++) {
+	                fullName.append(parts[i]);
+	                if (i < parts.length - 1) {
+	                    fullName.append(" ");
+	                }
+	            }
+	            user.setDesignation(designarionArrowSplit);
+	            System.out.println("Extracted Full Name: " + fullName.toString());
+	        } else {
+	            // Invalid input format scenario
+	            System.out.println("Invalid input format");
+	        }
 			String subject = "Google : Your Crendential Created";
 			String message = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<p>" + "Dear "
 					+ user.getUsername() + "<br>" + "<br>" + "Your Default Password: " + "<b>" + generateRandomPassword
@@ -216,15 +246,23 @@ public class servicelayer {
 					userdetail.setId(result.getId());
 					userdetail.setAaid(result.getAaid());
 					userdetail.setAccountNonLocked(true);
+					userdetail.setBank_account_holder_name("NA");
+					userdetail.setBank_account_number(0); 
+					userdetail.setBank_name("NA");
+					userdetail.setBase_location("NA");
+					userdetail.setStatus("ACTIVE");
+					userdetail.setDesignation(designarionArrowSplit);
 					userdetail.setAddress(result.getAddress());
 					userdetail.setAlert_message_sent(result.getAlert_message_sent());
 					userdetail.setCountry(result.getCountry());
+					userdetail.setImage_Url(result.getImage_Url());
 					userdetail.setDob(result.getDob());
 					userdetail.setUsername(result.getUsername().toUpperCase());
 					userdetail.setEmail(result.getEmail());
 					userdetail.setTeam("0");
 					userdetail.setEmployeeOnBench(true);
-					user.setImage_Url(result.getImage_Url());
+					userdetail.setImage_Url(result.getImage_Url());
+					userdetail.setDesignation(user.getDesignation());
 					userdetail.setEnabled(result.isEnabled());
 					userdetail.setGender(result.getGender());
 					userdetail.setIpAddress(result.getIpAddress());
@@ -297,15 +335,23 @@ public class servicelayer {
 					userdetail.setAlert_message_sent(result.getAlert_message_sent());
 					userdetail.setCountry(result.getCountry());
 					userdetail.setDob(result.getDob());
+					userdetail.setDesignation(designarionArrowSplit);
 					userdetail.setEmail(result.getEmail());
+					userdetail.setImage_Url(result.getImage_Url());
 					userdetail.setUsername(result.getUsername());
 					userdetail.setTeam("0");
-					user.setImage_Url(result.getImage_Url());
+					userdetail.setImage_Url(result.getImage_Url());
+					userdetail.setBank_account_holder_name("NA");
+					userdetail.setBank_account_number(0); 
+					userdetail.setBank_name("NA");
+					userdetail.setBase_location("NA");
 					userdetail.setEmployeeOnBench(true);
+					userdetail.setDesignation(user.getDesignation());
 					userdetail.setEnabled(result.isEnabled());
 					userdetail.setGender(result.getGender());
 					userdetail.setIpAddress(result.getIpAddress());
 					userdetail.setPhone(result.getPhone());
+					userdetail.setStatus("ACTIVE");
 					userdetail.setRole(result.getRole());
 					userdetail.setAdmin(admin.getAid());
 					userdetail.setPassword(result.getPassword());
@@ -730,6 +776,18 @@ public class servicelayer {
 				EMSMAIN.device_version.remove(to);
 				EMSMAIN.device_Architecture.remove(to);
 				EMSMAIN.login_date_time.remove(to);
+				Optional<User> get_user= userdao.findByUserName(to);
+				User user1=get_user.get();
+				if(user1.getAlert_message_sent()==0)
+				{
+				user1.setAlert_message_sent(1);
+				userdao.save(user1);
+				}
+				else
+				{
+					user1.setAlert_message_sent(user1.getAlert_message_sent()+1);
+					userdao.save(user1);
+				}
 			} else {
 				System.out.println(false);
 			}
@@ -774,6 +832,18 @@ public class servicelayer {
 				EMSMAIN.device_version.remove(to);
 				EMSMAIN.device_Architecture.remove(to);
 				EMSMAIN.login_date_time.remove(to);
+				Optional<User> user=userdao.findByUserName(to);
+				User user1=user.get();
+				if(user1.getAlert_message_sent()==0)
+				{
+					user1.setAlert_message_sent(1);
+					userdao.save(user1);
+				}
+				else
+				{
+					user1.setAlert_message_sent(user1.getAlert_message_sent()+1);
+					userdao.save(user1);
+				}
 			} else {
 				System.out.println(false);
 			}
@@ -1647,14 +1717,18 @@ public class servicelayer {
 		}
 	}
 
-	public void login_record_save(User user, HttpSession session, String Ip_address) throws InterruptedException {
+	public void login_record_save(User user, HttpSession session, String Ip_address, String location) throws InterruptedException {
 		try {
 			UserLoginDateTime userLoginDateTime = new UserLoginDateTime();
+			int employee_login_record_count=userLoginDao.getLoginCount();
+			if(employee_login_record_count>0)
+			{
 			int last_sno = userLoginDao.getLastId();
 			userLoginDateTime.setSno(++last_sno);
 			userLoginDateTime.setId(user.getId());
 			userLoginDateTime.setEmail(user.getEmail());
 			userLoginDateTime.setIpAddress(Ip_address);
+			userLoginDateTime.setLocation(location);
 			userLoginDateTime.setUser_status(true);
 			user.setUser_status(true);
 			Optional<UserDetail> userDetail1 = userDetailDao.findById(user.getId());
@@ -1673,6 +1747,34 @@ public class servicelayer {
 			userdao.save(user);
 //		Thread.sleep(1000);
 			userDetailDao.save(userDetail2);
+			}
+			else
+			{
+				userLoginDateTime.setSno(1);
+				userLoginDateTime.setId(user.getId());
+				userLoginDateTime.setEmail(user.getEmail());
+				userLoginDateTime.setIpAddress(Ip_address);
+				userLoginDateTime.setLocation(location);
+				userLoginDateTime.setUser_status(true);
+				user.setUser_status(true);
+				Optional<UserDetail> userDetail1 = userDetailDao.findById(user.getId());
+				UserDetail userDetail2 = userDetail1.get();
+				String getSession = session.getId();
+				if (getSession == null) {
+					userLoginDateTime.setSession_Id("NOT AVAILABLE");
+				} else {
+					userLoginDateTime.setSession_Id(getSession);
+				}
+				user.setSession_Id(getSession);
+				userDetail2.setUser_status(true);
+				userLoginDateTime.setLoginDateAndTime(new Date());
+				userLoginDateTime.setUsername(user.getUsername());
+				userLoginDao.save(userLoginDateTime);
+				userdao.save(user);
+//			Thread.sleep(1000);
+				userDetailDao.save(userDetail2);
+				
+			}
 		} catch (Exception e) {
 			String exceptionAsString = e.toString();
 			// Get the current class
@@ -2381,115 +2483,43 @@ public class servicelayer {
 		}
 	}
 
-//	@Transactional
-//	public void expired_license_status() {
-//		try {
-////			orderDao.expired_license_status();
-//			jobrunning("expired_license_status");
-//		} catch (Exception e) {
-//		jobDao.getJobRunningTimeInterrupted("expired_license_status");
-//			String exceptionAsString = e.toString();
-//			// Get the current class
-//			Class<?> currentClass = servicelayer.class;
-//
-//			// Get the name of the class
-//			String className = currentClass.getName();
-//			String errorMessage = e.getMessage();
-//			StackTraceElement[] stackTrace = e.getStackTrace();
-//			String methodName = stackTrace[0].getMethodName();
-//			int lineNumber = stackTrace[0].getLineNumber();
-//			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
-//			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
-//
-//		}
-//	}
+	@Transactional
+	public void expired_license_status() {
+		try {
+			int order_count=orderDao.countt();
+			if(order_count > 0)
+			{
+				List<Payment_Order_Info> info= orderDao.findAll();
+				for(Payment_Order_Info order_Info : info)
+				{
+					String company_id=order_Info.getCompany_id();
+					int expire_order_count=orderDao.check_users_subscription_plan(company_id);
+					if(expire_order_count>0)
+					{
+						orderDao.expired_license_status(company_id);
+						userdao.disbaled_expired_plan_users(company_id);
+					}
+				}
+			jobrunning("expired_license_status");
+			}
+		} catch (Exception e) {
+		jobDao.getJobRunningTimeInterrupted("expired_license_status");
+			String exceptionAsString = e.toString();
+			// Get the current class
+			Class<?> currentClass = servicelayer.class;
 
-	public void generatePdf(User user) {
-//			//created PDF document instance   
-//			Document doc = new Document();  
-//			try  
-//			{  
-//			//generate a PDF at the specified location  
-//			PdfWriter writer = PdfWriter.getInstance(doc, new FileOutputStream("C:\\Users\\ayush.gupta\\Downloads\\EMS Invoice - 01_06_2024, 21_16_38.pdf"));  
-//			System.out.println("PDF created.");  
-//			//opens the PDF  
-//			doc.open();  
-//			//adds paragraph to the PDF file  
-//			doc.add(new Paragraph("If you're offered a seat on a rocket ship, don't ask what seat! Just get on."));   
-//			//close the PDF file  
-//			doc.close();  
-//			//closes the writer  
-//			writer.close();  
-//			}   
-//			catch (DocumentException e)  
-//			{  
-//			e.printStackTrace();  
-//			}   
-//			catch (FileNotFoundException e)  
-//			{  
-//			e.printStackTrace();  
-//			}
+			// Get the name of the class
+			String className = currentClass.getName();
+			String errorMessage = e.getMessage();
+			StackTraceElement[] stackTrace = e.getStackTrace();
+			String methodName = stackTrace[0].getMethodName();
+			int lineNumber = stackTrace[0].getLineNumber();
+			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
 
-//		//generate normal pdf using user password and owner password
-//		String USER_PASSWORD = "1234567";
-//        String OWNER_PASSWORD = "javatpoint";
-//
-//        try {
-//            // Location where PDF will be generated
-//            String filePath = "C:\\Users\\ayush.gupta\\Downloads\\EMS Invoice - 01_06_2024, 21_16_38.pdf";
-//            FileOutputStream fos = new FileOutputStream(filePath);
-//            System.out.println("Password Protected File Generated.");
-//
-//            // Creates an instance of PDF document
-//            Document doc = new Document();
-//
-//            // Doc writer for the PDF
-//            PdfWriter writer = PdfWriter.getInstance(doc, fos);
-//            writer.setEncryption(USER_PASSWORD.getBytes(), OWNER_PASSWORD.getBytes(), PdfWriter.ALLOW_PRINTING, PdfWriter.ENCRYPTION_AES_128);
-//
-//            // Opens the PDF
-//            doc.open();
-//
-//            String htmlContent = "<div style=\"text-align: center;\">"
-//                    + "<h3>INVOICE</h3>"
-//                    + "<p>Account Holder Name: " + user.getUsername() + "</p>"
-//                    + "<p>Invoice Number: 87654321></p>"
-//                    + "<p>Date: 12/08/2000></p>"
-//                    + "<table style=\"width: 100%; border-collapse: collapse;\">"
-//                    + "<tr>"
-//                    + "<th style=\"border: 1px solid black; padding: 8px;\">Item</th>"
-//                    + "<th style=\"border: 1px solid black; padding: 8px;\">Quantity</th>"
-//                    + "<th style=\"border: 1px solid black; padding: 8px;\">Price</th>"
-//                    + "<th style=\"border: 1px solid black; padding: 8px;\">Total</th>"
-//                    + "</tr>"
-//                    + "<tr>"
-//                    + "<td style=\"border: 1px solid black; padding: 8px;\">Item 1</td>"
-//                    + "<td style=\"border: 1px solid black; padding: 8px;\">2</td>"
-//                    + "<td style=\"border: 1px solid black; padding: 8px;\">$10</td>"
-//                    + "<td style=\"border: 1px solid black; padding: 8px;\">$20</td>"
-//                    + "</tr>"
-//                    // Add more rows for additional items
-//                    + "</table>"
-//                    + "<p>Total: $2354></p>"
-//                    + "</div>"
-//                    + "<style>"
-//                    + "table, th, td { border: 1px solid black; border-collapse: collapse; }"
-//                    + "th, td { padding: 8px; text-align: left; }"
-//                    + "</style>";
-//
-//
-//            XMLWorkerHelper.getInstance().parseXHtml(writer, doc, new ByteArrayInputStream(htmlContent.getBytes()));
-//
-//            // Closes the document
-//            doc.close();
-//
-//            // Closes the output stream
-//            fos.close();
-//        } catch (Exception e) {
-//            // Prints the occurred exception
-//            e.printStackTrace();
-//        }
+		}
 	}
+
 
 	public void generateAndSendInvoice(Payment_Order_Info payment, SubscriptionPlans subscriptionPlans,
 			CompanyInfo companyInfo, User user,String formattedLicenseNumber) throws IOException, MessagingException {

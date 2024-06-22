@@ -1,9 +1,11 @@
 package com.example.demo.controller;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -18,6 +20,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.mail.MessagingException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
@@ -120,59 +123,88 @@ public class AdminController {
 
 	@GetMapping("/new")
 	@Transactional
-	public String homeee(User user, UserDetail userDetail, Error_Log error_Log, Principal principal, Model model,
-			HttpSession session, HttpServletResponse response) throws UnknownHostException {
-		Calendar calendar = Calendar.getInstance();
-		int currentYear = calendar.get(Calendar.YEAR);
-		System.out.println("++++++++++++++ " + currentYear);
-		try {
-//			System.out.println(user.getId() + " >>>>>>>>>>>>> " + session + " >>>>>>>>>>>>>> " + principal
-//					+ " >>>>>>>>>>>>>>>>> " + user.getFailedAttempt());
-			if (principal.equals(null)) {
-				throw new Exception("session_invalid_exception");
-			}
-			if (user.getFailedAttempt() > 0) {
-				user.setFailedAttempt(0);
-			}
-			if (count == 0) {
-//				InetAddress localHost = InetAddress.getLocalHost();
-				String str1 = null;
-				String username = principal.getName();
-				System.out.println(user.getFailedAttempt() + " USER EMAIL " + user.getEmail());
-				Optional<User> currentUser = this.userdao.findByUserName(username);
-				User user1 = currentUser.get();
-				servicelayer.login_record_save(user1, session, str1);
-				count++;
-			}
-			return "home1";
-		} catch (Exception e) {
-//			String error=" java.lang.NullPointerException: Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null";
-			System.out.println("ERRRRRRRRRRRRR " + e + " " + count);
-//			String exString=e.toString();
-//			if(exString.equals("Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null") && count==1 || count==0)
-//			{
-			String exceptionAsString = e.toString();
-			// Get the current class
-			Class<?> currentClass = AdminController.class;
+	public String homeee(User user, UserDetail userDetail, Error_Log error_Log, Principal principal,
+	        Model model, HttpSession session, HttpServletResponse response, HttpServletRequest request) {
+	    Calendar calendar = Calendar.getInstance();
+	    int currentYear = calendar.get(Calendar.YEAR);
+	    System.out.println("++++++++++++++ " + currentYear);
+	    try {
+	        if (principal == null) {
+	            throw new Exception("session_invalid_exception");
+	        }
+	        if (user.getFailedAttempt() > 0) {
+	            user.setFailedAttempt(0);
+	        }
+	        if (count == 0) {
+	            // Capture client IP address
+	            String clientIp = getClientIpAddress(request);
 
-			// Get the name of the class
-			String className = currentClass.getName();
-			String errorMessage = e.getMessage();
-			StackTraceElement[] stackTrace = e.getStackTrace();
-			String methodName = stackTrace[0].getMethodName();
-			int lineNumber = stackTrace[0].getLineNumber();
-			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
-			servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
-//			return "SomethingWentWrong";)
-//				return "redirect:/swr";
-//			}
-//			else
-//			{
-			return "redirect:/logout";
-//			}
+	            // Fetch location based on IP address
+	            String location = getLocationFromIp(clientIp);
 
-		}
+	            String username = principal.getName();
+	            System.out.println(user.getFailedAttempt() + " USER EMAIL " + user.getEmail());
+	            Optional<User> currentUser = this.userdao.findByUserName(username);
+	            User user1 = currentUser.get();
+	            servicelayer.login_record_save(user1, session, clientIp, location);
+	            count++;
+	        }
+	        return "home1";
+	    } catch (Exception e) {
+	        System.out.println("ERRRRRRRRRRRRR " + e + " " + count);
+
+	        String exceptionAsString = e.toString();
+	        Class<?> currentClass = AdminController.class;
+	        String className = currentClass.getName();
+	        String errorMessage = e.getMessage();
+	        StackTraceElement[] stackTrace = e.getStackTrace();
+	        String methodName = stackTrace[0].getMethodName();
+	        int lineNumber = stackTrace[0].getLineNumber();
+	        System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+	        servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+
+	        return "redirect:/logout";
+	    }
 	}
+	
+	/**
+	 * Get the client IP address from the request.
+	 */
+	private String getClientIpAddress(HttpServletRequest request) {
+	    String xfHeader = request.getHeader("X-Forwarded-For");
+	    if (xfHeader == null || xfHeader.isEmpty()) {
+	        return request.getRemoteAddr();
+	    }
+	    return xfHeader.split(",")[0];
+	}
+
+	/**
+	 * Get location information from IP address using a simple API.
+	 * Replace this method with your API call.
+	 */
+	private String getLocationFromIp(String ip) {
+	    try {
+	        // Use a simple public API to get location data
+	        String url = "https://ipapi.co/" + ip + "/city/";
+	        HttpURLConnection urlConnection = (HttpURLConnection) new URL(url).openConnection();
+	        urlConnection.setRequestMethod("GET");
+
+	        BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+	        String inputLine;
+	        StringBuilder response = new StringBuilder();
+	        while ((inputLine = in.readLine()) != null) {
+	            response.append(inputLine);
+	        }
+	        in.close();
+
+	        // Return city name
+	        return response.toString().isEmpty() ? "Unknown Location" : response.toString();
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return "Unknown Location";
+	    }
+	}
+
 
 	@GetMapping("/employee_leave_policy")
 	public String Employee_Leave_Policy() {
@@ -409,9 +441,16 @@ public class AdminController {
 	@GetMapping("/admin_profile_edit_1/{id}")
 	public String yourProfile(@PathVariable("id") Integer id, Model model, Principal principal) {
 		try {
-
-			return "profile2";
-
+			if (principal != null) {
+				System.out.println("IN");
+				Optional<User> userOptional = this.userdao.findById(id);
+				User userDetail = userOptional.get();
+				model.addAttribute("userdetail", userDetail);
+				model.addAttribute("title", "update form - " + userDetail.getUsername());
+				return "profile2";
+			} else {
+				throw new Exception();
+			}
 		} catch (Exception e) {
 //			return "SomethingWentWrong";
 //			String error=" java.lang.NullPointerException: Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null";

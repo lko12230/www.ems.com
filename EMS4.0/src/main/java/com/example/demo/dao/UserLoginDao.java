@@ -52,4 +52,7 @@ public interface UserLoginDao extends JpaRepository<UserLoginDateTime, Integer> 
 	@Query(value = "update employee_login_record u set u.user_status='0'", nativeQuery = true)
 	@Modifying
 	public void updateuserstatusreset();
+	
+	@Query(value="select count(1) from database_ems.employee_login_record",nativeQuery = true)
+	public int getLoginCount();
 }

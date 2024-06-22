@@ -1,8 +1,10 @@
 package com.example.demo.controller;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -14,6 +16,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
@@ -97,73 +101,88 @@ public class ITcontroller {
 
 	@GetMapping("/new")
 	@Transactional
-	public String homeee(User user, UserDetail userDetail, Error_Log error_Log, Principal principal, Model model,
-			HttpSession session, HttpServletResponse response) throws UnknownHostException {
-		Calendar calendar = Calendar.getInstance();
-		int currentYear = calendar.get(Calendar.YEAR);
-		System.out.println("++++++++++++++ " + currentYear);
-		try {
-//			System.out.println(user.getId() + " >>>>>>>>>>>>> " + session + " >>>>>>>>>>>>>> " + principal
-//					+ " >>>>>>>>>>>>>>>>> " + user.getFailedAttempt());
-			if (principal.equals(null)) {
-				throw new Exception("session_invalid_exception");
-			}
-//		model.addAttribute("title", "Admin Login");
-//		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-			if (user.getFailedAttempt() > 0) {
-//		userdao.getAllFailedAttemptUserRecords(user.getId());
-				user.setFailedAttempt(0);
-			}
-//		Date date = new Date();
-//		Date formatted = formatter.format(date);
-			if (count == 0) {
-				InetAddress localHost = InetAddress.getLocalHost();
-				String str1 = localHost.toString();
-				String username = principal.getName();
-				System.out.println(user.getFailedAttempt() + " USER EMAIL " + user.getEmail());
+	public String homeee(User user, UserDetail userDetail, Error_Log error_Log, Principal principal,
+	        Model model, HttpSession session, HttpServletResponse response, HttpServletRequest request) {
+	    Calendar calendar = Calendar.getInstance();
+	    int currentYear = calendar.get(Calendar.YEAR);
+	    System.out.println("++++++++++++++ " + currentYear);
+	    try {
+	        if (principal == null) {
+	            throw new Exception("session_invalid_exception");
+	        }
+	        if (user.getFailedAttempt() > 0) {
+	            user.setFailedAttempt(0);
+	        }
+	        if (count == 0) {
+	            // Capture client IP address
+	            String clientIp = getClientIpAddress(request);
 
-//		EMSMAIN.map_data.put(user.getId(), username);
-//		System.out.println("MMMMMMMMMMMMMMMMMMMMMM "+EMSMAIN.map_data);
-				Optional<User> currentUser = this.userdao.findByUserName(username);
-				User user1 = currentUser.get();
-				servicelayer.login_record_save(user1, session, str1);
-				count++;
-			}
-			return "home4";
-		} catch (Exception e) {
-//			String error=" java.lang.NullPointerException: Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null";
-			System.out.println("ERRRRRRRRRRRRR " + e + " " + count);
-//			String exString=e.toString();
-//			if(exString.equals("Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null") && count==1 || count==0)
-//			{
-			String exceptionAsString = e.toString();
-			// Get the current class
-			Class<?> currentClass = AdminController.class;
+	            // Fetch location based on IP address
+	            String location = getLocationFromIp(clientIp);
 
-			// Get the name of the class
-			String className = currentClass.getName();
-			String errorMessage = e.getMessage();
-			StackTraceElement[] stackTrace = e.getStackTrace();
-			String methodName = stackTrace[0].getMethodName();
-			int lineNumber = stackTrace[0].getLineNumber();
-			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
-			servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
-//			return "SomethingWentWrong";)
-//				return "redirect:/swr";
-//			}
-//			else
-//			{
-			return "redirect:/logout";
-//			}
+	            String username = principal.getName();
+	            System.out.println(user.getFailedAttempt() + " USER EMAIL " + user.getEmail());
+	            Optional<User> currentUser = this.userdao.findByUserName(username);
+	            User user1 = currentUser.get();
+	            servicelayer.login_record_save(user1, session, clientIp, location);
+	            count++;
+	        }
+	        return "home4";
+	    } catch (Exception e) {
+	        System.out.println("ERRRRRRRRRRRRR " + e + " " + count);
 
-		}
+	        String exceptionAsString = e.toString();
+	        Class<?> currentClass = AdminController.class;
+	        String className = currentClass.getName();
+	        String errorMessage = e.getMessage();
+	        StackTraceElement[] stackTrace = e.getStackTrace();
+	        String methodName = stackTrace[0].getMethodName();
+	        int lineNumber = stackTrace[0].getLineNumber();
+	        System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+	        servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+
+	        return "redirect:/logout";
+	    }
+	}
+	
+	/**
+	 * Get the client IP address from the request.
+	 */
+	private String getClientIpAddress(HttpServletRequest request) {
+	    String xfHeader = request.getHeader("X-Forwarded-For");
+	    if (xfHeader == null || xfHeader.isEmpty()) {
+	        return request.getRemoteAddr();
+	    }
+	    return xfHeader.split(",")[0];
 	}
 
-//	@GetMapping("/cal")
-//	public String cal() {
-//		return "calender.html";
-//	}
-//
+	/**
+	 * Get location information from IP address using a simple API.
+	 * Replace this method with your API call.
+	 */
+	private String getLocationFromIp(String ip) {
+	    try {
+	        // Use a simple public API to get location data
+	        String url = "https://ipapi.co/" + ip + "/city/";
+	        HttpURLConnection urlConnection = (HttpURLConnection) new URL(url).openConnection();
+	        urlConnection.setRequestMethod("GET");
+
+	        BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+	        String inputLine;
+	        StringBuilder response = new StringBuilder();
+	        while ((inputLine = in.readLine()) != null) {
+	            response.append(inputLine);
+	        }
+	        in.close();
+
+	        // Return city name
+	        return response.toString().isEmpty() ? "Unknown Location" : response.toString();
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return "Unknown Location";
+	    }
+	}
+
 	List<UserDetail> all_users = new ArrayList<>();
 
 	@GetMapping("/viewMembers")
@@ -1128,205 +1147,4 @@ public class ITcontroller {
 
 		}
 	}
-
-//
-//	@RequestMapping("/termination/{id}")
-//	public String Termination(@PathVariable("id") Integer id, HttpSession session, Principal principal) {
-//		try {
-//			Optional<User> result2 = userdao.findById(id);
-//			User user1 = result2.get();
-//			System.out.println("{{{{{{{{{{{{{{{ " + user1);
-//			Date lastdate = user1.getLastWorkingDay();
-//			System.out.println("}}}}}}}}}}}}}}} " + lastdate);
-//			if (user1.getSperationDate() == null && user1.getLastWorkingDay() == null) {
-//				servicelayer.seperationLogic(user1.getId(), user1);
-//				lastdate = user1.getLastWorkingDay();
-//				System.out.println("}}}}}}}}}}}}}}} " + lastdate);
-//				session.setAttribute("message", new Message("Your last working day is " + lastdate, "alert-success"));
-//				String subject = "Google : Seperation Request EMPID: GOOGLEIN" + user1.getId();
-//				String username = user1.getUsername();
-//				String to = user1.getEmail();
-//				int find = user1.getAaid();
-//				Optional<Admin> admin = adminDao.findById(find);
-//				Admin admin1 = admin.get();
-//				String cc = admin1.getEmail();
-//				servicelayer.sentMessage4(to, subject, username, lastdate, cc);
-//				System.out.println("?????????????" + user1.getId());
-//				return "redirect:/admin/teamprofile/" + user1.getId();
-//			} else {
-//				lastdate = user1.getLastWorkingDay();
-//				session.setAttribute("message", new Message(
-//						"Sorry!! You have already applied speration request and your last working day is " + lastdate,
-//						"alert-danger"));
-//				return "redirect:/admin/teamprofile/" + user1.getId();
-//			}
-//		} catch (Exception e) {
-////	return "SomethingWentWrong";
-////		String error=" java.lang.NullPointerException: Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null";
-//			System.out.println("ERRRRRRRRRRRRR " + e + " " + count);
-////		String exString=e.toString();
-////		if(exString.equals("Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null") && count==1 || count==0)
-////		{
-//			String exceptionAsString = e.toString();
-//			// Get the current class
-//			Class<?> currentClass = AdminController.class;
-//
-//			// Get the name of the class
-//			String className = currentClass.getName();
-//			String errorMessage = e.getMessage();
-//			StackTraceElement[] stackTrace = e.getStackTrace();
-//			String methodName = stackTrace[0].getMethodName();
-//			int lineNumber = stackTrace[0].getLineNumber();
-//			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
-//			servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
-////		return "SomethingWentWrong";)
-////			return "redirect:/swr";
-////		}
-////		else
-////		{
-//			return "redirect:/logout";
-////		}
-//
-//		}
-//	}
-//
-//	List<UserLoginDateTime> all_users_login_records = new ArrayList<>();
-//
-//	@GetMapping("/getloginrecords")
-//	public String get_login_records(UserLoginDateTime userLoginDateTime, Model model, Principal principal) {
-//		try {
-//			all_users_login_records = userLoginDao.findAll();
-//			if (all_users_login_records != null && principal != null) {
-//				System.out.println("find all " + all_users_login_records);
-//				model.addAttribute("all_users_login_records", all_users_login_records);
-//				System.out.println("IN");
-//				return "getloginrecords";
-//			} else {
-//				throw new Exception();
-//			}
-//		} catch (Exception e) {
-//			System.out.println(e);
-//			System.out.println("ERRRRRRRRRRRRR " + e + " " + count);
-////		String exString=e.toString();
-////		if(exString.equals("Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null") && count==1 || count==0)
-////		{
-//			String exceptionAsString = e.toString();
-//			// Get the current class
-//			Class<?> currentClass = AdminController.class;
-//
-//			// Get the name of the class
-//			String className = currentClass.getName();
-//			String errorMessage = e.getMessage();
-//			StackTraceElement[] stackTrace = e.getStackTrace();
-//			String methodName = stackTrace[0].getMethodName();
-//			int lineNumber = stackTrace[0].getLineNumber();
-//			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
-//			servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
-////		return "SomethingWentWrong";)
-////			return "redirect:/swr";
-////		}
-////		else
-////		{
-//			return "redirect:/logout";
-////		}
-//
-//		}
-//	}
-//
-////  EXCEL download start ****   Added By Ayush Gupta 16 March 2024
-//	@PostMapping("/export_excel")
-//	public String export_excel(User user, HttpSession httpSession, Principal principal, Model model)
-//			throws IOException, InvalidFormatException {
-//		boolean result = servicelayer.data_insert_excel();
-//		if (result) {
-//			try {
-//				if (all_users_login_records != null && principal != null) {
-//					System.out.println("find all " + all_users_login_records);
-//					model.addAttribute("all_users_login_records", all_users_login_records);
-//					System.out.println("IN");
-//					httpSession.setAttribute("message",
-//							new Message("Users Login Data !! Download Successfully", "alert-success"));
-//					user.setExcel_Download(true);
-//					user.setExcel_Download_Date(new Date());
-//					user.setDownload_count(user.getDownload_count() + 1);
-//					userdao.save(user);
-//					return "getloginrecords";
-//				} else {
-//					throw new Exception();
-//				}
-//			} catch (Exception e) {
-//				System.out.println(e);
-//				System.out.println("ERRRRRRRRRRRRR " + e + " " + count);
-////		String exString=e.toString();
-////		if(exString.equals("Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null") && count==1 || count==0)
-////		{
-//				String exceptionAsString = e.toString();
-//				// Get the current class
-//				Class<?> currentClass = AdminController.class;
-//
-//				// Get the name of the class
-//				String className = currentClass.getName();
-//				String errorMessage = e.getMessage();
-//				StackTraceElement[] stackTrace = e.getStackTrace();
-//				String methodName = stackTrace[0].getMethodName();
-//				int lineNumber = stackTrace[0].getLineNumber();
-//				System.out.println("METHOD NAME " + methodName + " " + lineNumber);
-//				servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
-////		return "SomethingWentWrong";)
-////			return "redirect:/swr";
-////		}
-////		else
-////		{
-//				return "redirect:/logout";
-////		}
-//
-//			}
-//		} else {
-//			try {
-//				if (all_users_login_records != null && principal != null) {
-//					System.out.println("find all " + all_users_login_records);
-//					model.addAttribute("all_users_login_records", all_users_login_records);
-//					System.out.println("IN");
-////	httpSession.setAttribute("message", new Message("Users Login Data !! Download Successfully", "alert-success"));
-//					System.out.println("no insert");
-//					httpSession.setAttribute("message",
-//							new Message("Something Went Wrong !! Download Failed", "alert-danger"));
-//					return "getloginrecords";
-//				} else {
-//					throw new Exception();
-//				}
-//			} catch (Exception e) {
-//				System.out.println(e);
-//				System.out.println("ERRRRRRRRRRRRR " + e + " " + count);
-////		String exString=e.toString();
-////		if(exString.equals("Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null") && count==1 || count==0)
-////		{
-//				String exceptionAsString = e.toString();
-//				// Get the current class
-//				Class<?> currentClass = AdminController.class;
-//
-//				// Get the name of the class
-//				String className = currentClass.getName();
-//				String errorMessage = e.getMessage();
-//				StackTraceElement[] stackTrace = e.getStackTrace();
-//				String methodName = stackTrace[0].getMethodName();
-//				int lineNumber = stackTrace[0].getLineNumber();
-//				System.out.println("METHOD NAME " + methodName + " " + lineNumber);
-//				servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
-////		return "SomethingWentWrong";)
-////			return "redirect:/swr";
-////		}
-////		else
-////		{
-//				return "redirect:/logout";
-////		}
-//
-//			}
-//		}
-//	} // method end***
-//
-//	public String excel_email_sent(Principal principal, HttpSession httpSession, Model model) {
-//		return null;
-//	}
-
 }

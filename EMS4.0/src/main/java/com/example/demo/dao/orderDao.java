@@ -37,4 +37,5 @@ public List<Payment_Order_Info> transactionHistoryFindByCompanyId(String company
 @Query(value = "update orders u set u.license_status='INACTIVE' where u.company_id=?1 and status='paid' and u.subscription_start_date <= (NOW() - INTERVAL 1 DAY) ORDER BY u.system_date_and_time DESC", nativeQuery = true)
 @Modifying
 public void expired_license_status(String company_id);
+
 }

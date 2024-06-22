@@ -1,20 +1,30 @@
 package com.example.demo.controller;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,6 +34,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.EMSMAIN;
 import com.example.demo.dao.UserDetailDao;
@@ -31,6 +42,7 @@ import com.example.demo.dao.Userdao;
 import com.example.demo.dao.adminDao;
 import com.example.demo.entities.Admin;
 import com.example.demo.entities.Error_Log;
+import com.example.demo.entities.Performance;
 import com.example.demo.entities.User;
 import com.example.demo.entities.UserDetail;
 import com.example.demo.helper.Message;
@@ -81,48 +93,136 @@ public class HrController {
 
 	@GetMapping("/new")
 	@Transactional
-	public String homeee(User user, UserDetail userDetail, Error_Log error_Log, Principal principal, Model model,
-			HttpSession session, HttpServletResponse response) throws UnknownHostException {
-		Calendar calendar = Calendar.getInstance();
-		int currentYear = calendar.get(Calendar.YEAR);
-		System.out.println("++++++++++++++ " + currentYear);
-		try {
-//			System.out.println(user.getId() + " >>>>>>>>>>>>> " + session + " >>>>>>>>>>>>>> " + principal
-//					+ " >>>>>>>>>>>>>>>>> " + user.getFailedAttempt());
-			if (principal.equals(null)) {
-				throw new Exception("session_invalid_exception");
-			}
-//		model.addAttribute("title", "Admin Login");
-//		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-			if (user.getFailedAttempt() > 0) {
-//		userdao.getAllFailedAttemptUserRecords(user.getId());
-				user.setFailedAttempt(0);
-			}
-//		Date date = new Date();
-//		Date formatted = formatter.format(date);
-			if (count == 0) {
-				InetAddress localHost = InetAddress.getLocalHost();
-				String str1 = localHost.toString();
-				String username = principal.getName();
-				System.out.println(user.getFailedAttempt() + " USER EMAIL " + user.getEmail());
+	public String homeee(User user, UserDetail userDetail, Error_Log error_Log, Principal principal,
+	        Model model, HttpSession session, HttpServletResponse response, HttpServletRequest request) {
+	    Calendar calendar = Calendar.getInstance();
+	    int currentYear = calendar.get(Calendar.YEAR);
+	    System.out.println("++++++++++++++ " + currentYear);
+	    try {
+	        if (principal == null) {
+	            throw new Exception("session_invalid_exception");
+	        }
+	        if (user.getFailedAttempt() > 0) {
+	            user.setFailedAttempt(0);
+	        }
+	        if (count == 0) {
+	            // Capture client IP address
+	            String clientIp = getClientIpAddress(request);
 
-//		EMSMAIN.map_data.put(user.getId(), username);
-//		System.out.println("MMMMMMMMMMMMMMMMMMMMMM "+EMSMAIN.map_data);
-				Optional<User> currentUser = this.userdao.findByUserName(username);
-				User user1 = currentUser.get();
-				servicelayer.login_record_save(user1, session, str1);
-				count++;
+	            // Fetch location based on IP address
+	            String location = getLocationFromIp(clientIp);
+
+	            String username = principal.getName();
+	            System.out.println(user.getFailedAttempt() + " USER EMAIL " + user.getEmail());
+	            Optional<User> currentUser = this.userdao.findByUserName(username);
+	            User user1 = currentUser.get();
+	            servicelayer.login_record_save(user1, session, clientIp, location);
+	            count++;
+	        }
+	        return "home3";
+	    } catch (Exception e) {
+	        System.out.println("ERRRRRRRRRRRRR " + e + " " + count);
+
+	        String exceptionAsString = e.toString();
+	        Class<?> currentClass = AdminController.class;
+	        String className = currentClass.getName();
+	        String errorMessage = e.getMessage();
+	        StackTraceElement[] stackTrace = e.getStackTrace();
+	        String methodName = stackTrace[0].getMethodName();
+	        int lineNumber = stackTrace[0].getLineNumber();
+	        System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+	        servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+
+	        return "redirect:/logout";
+	    }
+	}
+	
+	@PostMapping("/processing_profile/{id}")
+	public String yourProfileUpdate(@ModelAttribute("user") User user, @RequestParam("profileImage") MultipartFile file,
+			@RequestParam("resume") MultipartFile file1, HttpSession session) {
+		try {
+			System.out.println("BANK    "+user.getBank_account_holder_name()+" --------------- " + user.getDob() + " ---------- " + user.getBank_name());
+			servicelayer.update_profile(user);
+			if(user.getBank_account_holder_name().trim().isEmpty())
+			{
+	user.setBank_account_holder_name("NA");
+	user.setBank_name("NA");
+	user.setIfsc_code("NA");
+	user.setBank_account_number(0);
+	}
+			if (file.isEmpty()) {
+				user.setImage_Url("default.jpg");
+			} else {
+				String contentType1 = file.getContentType();
+				System.out.println(file.getOriginalFilename());
+				if (contentType1.equals("image/jpeg") || contentType1.equals("image/jpg")
+						|| contentType1.equals("image/png")) {
+
+					user.setImage_Url(file.getOriginalFilename());
+					File savefile = new ClassPathResource("static/img").getFile();
+					System.out.println(savefile);
+					Path path = Paths.get(savefile.getAbsolutePath() + File.separator + file.getOriginalFilename());
+					System.out.println("PATH " + path);
+					Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+					System.out.println(file.getOriginalFilename());
+					System.out.println("FILE UPLOAD SUCESS ");
+
+				} else {
+					session.setAttribute("message",
+							new Message(
+									"Alert !! Profile Not Updated Because Image Extension Should Be in JPG/JPEG/PNG",
+									"alert-danger"));
+					return "redirect:/admin/admin_profile_edit_1/" + user.getId();
+				}
 			}
-			return "home3";
+			if (file1.isEmpty()) {
+				user.setResume_file_url("NA");
+				user.setEditdate(new Date());
+				servicelayer.update_profile(user);
+				session.setAttribute("message", new Message("Success !! Profile Updated !!", "alert-success"));
+//            return "File uploaded successfully";
+				return "redirect:/hr/hr_profile_edit_1/" + user.getId();
+			} else {
+				System.out.println("FILE SIZE   " + file.getSize());
+				if (file1.getSize() < 3000000) {
+					// Check if file is PDF or Word document
+					String contentType = file1.getContentType();
+					if (contentType.equals("application/pdf") || contentType.equals("application/msword")) {
+						// File is either a PDF or Word document, process accordingly
+						// Your code here
+						System.out.println("File Is Uploaded And Custom Image Is Uploaded");
+						user.setResume_file_url(file1.getOriginalFilename());
+						File savefile = new ClassPathResource("static/resume").getFile();
+						Path path = Paths
+								.get(savefile.getAbsolutePath() + File.separator + file1.getOriginalFilename());
+						System.out.println("PATH " + path);
+						Files.copy(file1.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+						System.out.println(file1.getOriginalFilename());
+						System.out.println("FILE UPLOAD SUCESS ");
+						user.setEditdate(new Date());
+						servicelayer.update_profile(user);
+						session.setAttribute("message", new Message("Success !! Profile Updated !!", "alert-success"));
+//	                return "File uploaded successfully";
+						return "redirect:/hr/hr_profile_edit_1/" + user.getId();
+					} else {
+						session.setAttribute("message",
+								new Message(
+										"Alert !! Profile Not Updated Because Resume Extension Should Be in PDF/WORD",
+										"alert-danger"));
+						return "redirect:/hr/hr_profile_edit_1/" + user.getId();
+					}
+				} else {
+					session.setAttribute("message",
+							new Message("Alert !! Profile Not Updated Because Resume size Should Be Less Than 3MB",
+									"alert-danger"));
+					return "redirect:/hr/hr_profile_edit_1/" + user.getId();
+				}
+			}
 		} catch (Exception e) {
-//			String error=" java.lang.NullPointerException: Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null";
-			System.out.println("ERRRRRRRRRRRRR " + e + " " + count);
-//			String exString=e.toString();
-//			if(exString.equals("Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null") && count==1 || count==0)
-//			{
+			e.printStackTrace();
 			String exceptionAsString = e.toString();
 			// Get the current class
-			Class<?> currentClass = AdminController.class;
+			Class<?> currentClass = Homecontroller.class;
 
 			// Get the name of the class
 			String className = currentClass.getName();
@@ -132,18 +232,57 @@ public class HrController {
 			int lineNumber = stackTrace[0].getLineNumber();
 			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
 			servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
-//			return "SomethingWentWrong";)
-//				return "redirect:/swr";
-//			}
-//			else
-//			{
-			return "redirect:/logout";
-//			}
 
+//			getCaptcha(user);
+//			System.out.println(hiddenCaptcha);
+//			String Captcha_Created=user.getHidden();
+//			EMSMAIN.captcha_validate_map.put(Captcha_Created, new Date());
+			servicelayer.AllIntanceVariableClear(user);
+			session.setAttribute("message", new Message("Something went wrong !! " + e.getMessage(), "alert-danger"));
+			return "redirect:/hr/hr_profile_edit_1/" + user.getId();
 		}
 	}
+	
+	/**
+	 * Get the client IP address from the request.
+	 */
+	private String getClientIpAddress(HttpServletRequest request) {
+	    String xfHeader = request.getHeader("X-Forwarded-For");
+	    if (xfHeader == null || xfHeader.isEmpty()) {
+	        return request.getRemoteAddr();
+	    }
+	    return xfHeader.split(",")[0];
+	}
 
-	@GetMapping("/admin_profile_edit_1/{id}")
+	/**
+	 * Get location information from IP address using a simple API.
+	 * Replace this method with your API call.
+	 */
+	private String getLocationFromIp(String ip) {
+	    try {
+	        // Use a simple public API to get location data
+	        String url = "https://ipapi.co/" + ip + "/city/";
+	        HttpURLConnection urlConnection = (HttpURLConnection) new URL(url).openConnection();
+	        urlConnection.setRequestMethod("GET");
+
+	        BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+	        String inputLine;
+	        StringBuilder response = new StringBuilder();
+	        while ((inputLine = in.readLine()) != null) {
+	            response.append(inputLine);
+	        }
+	        in.close();
+
+	        // Return city name
+	        return response.toString().isEmpty() ? "Unknown Location" : response.toString();
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return "Unknown Location";
+	    }
+	}
+
+	
+	@GetMapping("/hr_profile_edit_1/{id}")
 	public String yourProfileee(@PathVariable("id") Integer id, Model model, Principal principal) {
 		try {
 			if (principal != null) {
@@ -152,7 +291,7 @@ public class HrController {
 				User userDetail = userOptional.get();
 				model.addAttribute("userdetail", userDetail);
 				model.addAttribute("title", "update form - " + userDetail.getUsername());
-				return "profile2";
+				return "profile4";
 			} else {
 				throw new Exception();
 			}
@@ -186,8 +325,8 @@ public class HrController {
 		}
 	}
 
-	@GetMapping("/admin_profile_edit_2/{id}")
-	public String yourProfilee(@PathVariable("id") Integer id, Model model, Principal principal) {
+	@GetMapping("/hr_profile_edit_2/{id}")
+	public String yourProfileeee(@PathVariable("id") Integer id, Model model, Principal principal) {
 		try {
 			if (principal != null) {
 				System.out.println("IN");
@@ -195,7 +334,7 @@ public class HrController {
 				User userDetail = userOptional.get();
 				model.addAttribute("userdetail", userDetail);
 				model.addAttribute("title", "update form - " + userDetail.getUsername());
-				return "profile2.0";
+				return "profile4.0";
 			} else {
 				throw new Exception();
 			}
@@ -249,6 +388,182 @@ public class HrController {
 		}
 	}
 
+	
+	@GetMapping("/emp_profile_edit_1/{id}")
+	public String profile1(@PathVariable("id") Integer id, Model model, Principal principal) {
+		try {
+			if (principal != null) {
+				System.out.println("IN");
+				Optional<UserDetail> userOptional = this.userDetailDao.findById(id);
+				UserDetail userDetail = userOptional.get();
+				model.addAttribute("userdetail", userDetail);
+				model.addAttribute("title", "update form - " + userDetail.getUsername());
+				return "emp_profile4.0";
+			} else {
+				throw new Exception();
+			}
+		} catch (Exception e) {
+//			return "SomethingWentWrong";
+//			String error=" java.lang.NullPointerException: Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null";
+			System.out.println("ERRRRRRRRRRRRR " + e + " " + count);
+//			String exString=e.toString();
+//			if(exString.equals("Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null") && count==1 || count==0)
+//			{
+			String exceptionAsString = e.toString();
+			// Get the current class
+			Class<?> currentClass = AdminController.class;
+
+			// Get the name of the class
+			String className = currentClass.getName();
+			String errorMessage = e.getMessage();
+			StackTraceElement[] stackTrace = e.getStackTrace();
+			String methodName = stackTrace[0].getMethodName();
+			int lineNumber = stackTrace[0].getLineNumber();
+			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+			servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+//			return "SomethingWentWrong";)
+//				return "redirect:/swr";
+//			}
+//			else
+//			{
+			return "redirect:/logout";
+//			}
+
+		}
+	}
+
+	@GetMapping("/emp_profile_edit_2/{id}")
+	public String profile2(@PathVariable("id") Integer id, Model model, Principal principal) {
+		try {
+			if (principal != null) {
+				System.out.println("IN");
+				Optional<UserDetail> userOptional = this.userDetailDao.findById(id);
+				UserDetail userDetail = userOptional.get();
+				model.addAttribute("userdetail", userDetail);
+				model.addAttribute("title", "update form - " + userDetail.getUsername());
+				return "emp_profile4";
+			} else {
+				throw new Exception();
+			}
+		} catch (Exception e) {
+//			return "SomethingWentWrong";
+//			String error=" java.lang.NullPointerException: Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null";
+			System.out.println("ERRRRRRRRRRRRR " + e + " " + count);
+//			String exString=e.toString();
+//			if(exString.equals("Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null") && count==1 || count==0)
+//			{
+			String exceptionAsString = e.toString();
+			// Get the current class
+			Class<?> currentClass = AdminController.class;
+
+			// Get the name of the class
+			String className = currentClass.getName();
+			String errorMessage = e.getMessage();
+			StackTraceElement[] stackTrace = e.getStackTrace();
+			String methodName = stackTrace[0].getMethodName();
+			int lineNumber = stackTrace[0].getLineNumber();
+			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+			servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+//			return "SomethingWentWrong";)
+//				return "redirect:/swr";
+//			}
+//			else
+//			{
+			return "redirect:/logout";
+//			}
+
+		}
+	}
+	
+	@GetMapping("/performance")
+	public String performance(Model model, User user, Performance performance, HttpSession httpSession,
+			Principal principal) {
+		try {
+			if (principal.equals(null)) {
+				throw new Exception("session_invalid_exception");
+			}
+			List<Double> chartData = servicelayer.performance(user, httpSession);
+			List<String> chartLabels = Arrays.asList("January", "February", "March", "April", "May", "June", "July",
+					"August", "September", "October", "November", "December"); // Example labels
+			int year = (int) httpSession.getAttribute("year");
+			model.addAttribute("chartData", chartData);
+			model.addAttribute("chartLabels", chartLabels);
+			model.addAttribute("year", year);
+			return "hperformance";
+		} catch (Exception e) {
+//			String error=" java.lang.NullPointerException: Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null";
+			System.out.println("ERRRRRRRRRRRRR " + e + " " + count);
+//			String exString=e.toString();
+//			if(exString.equals("Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null") && count==1 || count==0)
+//			{
+			String exceptionAsString = e.toString();
+			// Get the current class
+			Class<?> currentClass = AdminController.class;
+
+			// Get the name of the class
+			String className = currentClass.getName();
+			String errorMessage = e.getMessage();
+			StackTraceElement[] stackTrace = e.getStackTrace();
+			String methodName = stackTrace[0].getMethodName();
+			int lineNumber = stackTrace[0].getLineNumber();
+			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+			servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+//			return "SomethingWentWrong";)
+//				return "redirect:/swr";
+//			}
+//			else
+//			{
+			return "redirect:/logout";
+//			}
+
+		}
+	}
+	
+	@GetMapping("/emp_profile_edit_21/{id}")
+	public String profileee(@PathVariable("id") Integer id, Model model, Principal principal) {
+		try {
+			if (principal != null) {
+				System.out.println("IN");
+				Optional<UserDetail> userOptional = this.userDetailDao.findById(id);
+				UserDetail userDetail = userOptional.get();
+				model.addAttribute("userdetail", userDetail);
+				model.addAttribute("title", "update form - " + userDetail.getUsername());
+				return "emp_profile4.1";
+			} else {
+				throw new Exception();
+			}
+		} catch (Exception e) {
+//			return "SomethingWentWrong";
+//			String error=" java.lang.NullPointerException: Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null";
+			System.out.println("ERRRRRRRRRRRRR " + e + " " + count);
+//			String exString=e.toString();
+//			if(exString.equals("Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null") && count==1 || count==0)
+//			{
+			String exceptionAsString = e.toString();
+			// Get the current class
+			Class<?> currentClass = AdminController.class;
+
+			// Get the name of the class
+			String className = currentClass.getName();
+			String errorMessage = e.getMessage();
+			StackTraceElement[] stackTrace = e.getStackTrace();
+			String methodName = stackTrace[0].getMethodName();
+			int lineNumber = stackTrace[0].getLineNumber();
+			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+			servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+//			return "SomethingWentWrong";)
+//				return "redirect:/swr";
+//			}
+//			else
+//			{
+			return "redirect:/logout";
+//			}
+
+		}
+	}
+
+
+	
 	@GetMapping("/profile/{id}")
 	public String profile(@PathVariable("id") Integer id, Model model, Principal principal) {
 		try {
@@ -428,7 +743,7 @@ public class HrController {
 			session.setAttribute("message", new Message(
 					"Sorry!! You have already applied speration request and your last working day is " + lastdate,
 					"alert-danger"));
-			return "Seperation";
+			return "Seperation4";
 		}
 	}
 
@@ -544,5 +859,11 @@ public class HrController {
 					"alert-danger"));
 			return "redirect:/hr/teamprofile/" + user1.getId();
 		}
+	}
+	
+	@GetMapping("/careers")
+	public String careers()
+	{
+		return "hcareers";
 	}
 }

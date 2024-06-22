@@ -25,4 +25,7 @@ public interface Downtime_Maintaince_Dao extends JpaRepository<Downtime_Maintain
 	
 	@Query("select u from Downtime_Maintaince u where u.downtime_description = ?1")
 	public Optional<Downtime_Maintaince> findByUserName(String description);
+	
+	@Query(value = "select count(1) from Downtime_Maintaince",nativeQuery = true)
+	public int getDowntimeMaintainceCount();
 }

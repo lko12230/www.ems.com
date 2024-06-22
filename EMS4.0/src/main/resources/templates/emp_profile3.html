@@ -176,7 +176,10 @@
                 <p class="mb-0">Team ID</p>
               </div>
               <div class="col-sm-9">
-               <input type="text" class="text-muted mb-0" name="team" th:value="${userdetail.team}"/> <i class="fas fa-edit"></i>
+             <!--    <input type="text" class="text-muted mb-0" name="team" th:value="${userdetail.team}"/> <i class="fas fa-edit"></i> -->
+               <select name="team">
+                <option th:each="size : ${teams}"  th:text="${size.team_id}" ></option>
+                </select>
               </div>
             </div>
             <hr>

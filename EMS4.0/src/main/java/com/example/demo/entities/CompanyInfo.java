@@ -1,5 +1,7 @@
 package com.example.demo.entities;
 
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
@@ -19,4 +21,8 @@ private String company_email;
 private String company_address;
 private String company_phone;
 private String gst_no;
+private Date adddate;
+private Date editdate;
+private String addwho;
+private String editwho;
 }

@@ -24,6 +24,7 @@
 		src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
 	<script src="https://www.google.com/recaptcha/api.js"></script>
 	<link rel="stylesheet" th:href="@{/css/style.css}" />
+	<link rel="stylesheet" th:href="@{/css/style2.css}" />
 	<link rel="icon" type="image/x-icon"
 		href="https://www.freepnglogos.com/uploads/google-logo-png/google-logo-png-webinar-optimizing-for-success-google-business-webinar-13.png">
 	<style>
@@ -74,7 +75,11 @@
 							class="nav-link" th:src="@{'/img/'+${user.Image_Url}}"></li>
 
 					<li class="nav-item active">
-						<a class="nav-link" th:href="@{/signin/}" href="#">Careers</a>
+						<a class="nav-link" th:href="@{/hr/careers}" href="#">Careers</a>
+					</li>
+
+						<li class="nav-item active">
+						<input type="text" class="form-control" id="liveDateTime" readonly>
 					</li>
 
 					<li class="nav-item active"><a class="nav-link" onclick="submitLogoutForm()" href="#"><i
@@ -94,20 +99,20 @@
 		<a href="" th:href="@{/hr/viewTeamMembersOnly}" class="item"><i class="fa-solid fa-pen"></i>View Team
 			Members</a>
 		<!--<a href=""	th:href="@{/admin/adminRegisterEmployee}" class="item"><i class="fa-solid fa-pen"></i>Add Employees Details</a>  -->
-		<a href="" th:href="@{/hr/adminRegisterEmployee}" class="item"><i class="fa-solid fa-clock"></i>All Employees
-			Attendence</a>
+	<!--  	<a href="" th:href="@{/hr/adminRegisterEmployee}" class="item"><i class="fa-solid fa-clock"></i>All Employees
+			Attendence</a> -->
 		<a href="" th:href="@{/hr/employee_leave_policy}" class="item"><i class="fa-solid fa-user"></i>Company Leave
 			Policy</a>
 		<a href="" th:href="@{/hr/cal}" class="item"><i class="fa-solid fa-user"></i>Company Leave Calender</a>
 		<a href="" th:href="@{/hr/performance}" class="item"><i class="fa-solid fa-chart-simple"></i>Employee
 			Performance</a>
-		<a href="" th:href="@{'/hr/admin_profile_edit_1/'+${user.id}}" class="item"><i class="fa-solid fa-user"></i>Your
+		<a href="" th:href="@{'/hr/hr_profile_edit_1/'+${user.id}}" class="item"><i class="fa-solid fa-user"></i>Your
 			Profile</a>
 		<a href="" th:href="@{/hr/seperation}" class="item"><i class="fa-solid fa-user"></i>Seperation</a>
 		<a href="" th:href="@{/hr/ChangeCurrentPassword}" class="item"> <i class="fa-solid fa-key"></i>Change
 			Password</a>
 		<a href="" th:href="@{/hr/assetpolicy}" class="item"><i class="fa-solid fa-user"></i>Asset Policy</a>
-		<a href="" th:href="@{/hr/getloginrecords}" class="item"><i class="fa-solid fa-pen"></i>Login Records</a>
+		<!--  <a href="" th:href="@{/hr/getloginrecords}" class="item"><i class="fa-solid fa-pen"></i>Login Records</a> -->
 		<a href="/logout" class="item"><i class="fa-solid fa-right-from-bracket"></i>Logout</a>
 		<div class="divider"></div>
 	</div>
@@ -183,6 +188,22 @@
 		function submitLogoutForm() {
 			document.getElementById("logoutForm").submit();
 		}
+	</script>
+		<script>
+		$(document).ready(function () {
+			// Function to update live date and time every second
+			function updateLiveDateTime() {
+				var now = new Date();
+				var formattedDateTime = now.toLocaleString(); // Adjust as per your required format
+				$("#liveDateTime").val(formattedDateTime);
+			}
+
+			// Initial call to update live date and time
+			updateLiveDateTime();
+
+			// Update live date and time every second
+			setInterval(updateLiveDateTime, 1000);
+		});
 	</script>
 	<script>
 		// JavaScript code to disable right-click and show an alert
