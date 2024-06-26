@@ -169,18 +169,19 @@
        	<div th:if="${all_plans.discount!=0 and all_plans.amount != all_plans.discount}">
 									<input readonly class="text-muted mb-0" name="payment_field" id="payment_field"
        th:value="${((all_plans.amount  - all_plans.discount) * 0.18)+(all_plans.amount  - all_plans.discount)}" />
-    <p style="color: limegreen; font-weight: bold;">
+<p style="color: limegreen; font-weight: bold;">
   <span style="color: red;">Note :- </span>
-  <span th:text="' ₹ '+${all_plans.discount}"></span>
+  <span th:text="' ₹ ' + ${#numbers.formatDecimal(all_plans.discount, 1, 'COMMA', 2, 'POINT')}"></span>
   <span> Discount from </span>
-  <span th:text="' ₹ '+${all_plans.amount}"></span>
+  <span th:text="' ₹ ' + ${#numbers.formatDecimal(all_plans.amount, 1, 'COMMA', 2, 'POINT')}"></span>
   <span>, After Discount Amount Will Be </span>
-  <span th:text="' ₹ '+${(all_plans.amount - all_plans.discount)}"></span>
+  <span th:text="' ₹ ' + ${#numbers.formatDecimal(all_plans.amount - all_plans.discount, 1, 'COMMA', 2, 'POINT')}"></span>
   <span> Excluding GST Amount </span>
-  <span th:text="' ₹ '+${(all_plans.amount - all_plans.discount) * 0.18}"></span>
+  <span th:text="' ₹ ' + ${#numbers.formatDecimal((all_plans.amount - all_plans.discount) * 0.18, 1, 'COMMA', 2, 'POINT')}"></span>
   <span>, After Including GST Amount Will Be </span>
-  <span th:text="' ₹ '+${((all_plans.amount  - all_plans.discount) * 0.18)+(all_plans.amount  - all_plans.discount)}"></span>
+  <span th:text="' ₹ ' + ${#numbers.formatDecimal(((all_plans.amount - all_plans.discount) * 0.18) + (all_plans.amount - all_plans.discount), 1, 'COMMA', 2, 'POINT')}"></span>
 </p>
+
  <p th:text="'SAVE ' + ${#numbers.formatDecimal((all_plans.discount / all_plans.amount) * 100, 1, 'COMMA', 2, 'POINT')} + '% On Price Excluding GST' "
    style="color: red; font-weight: bold;"></p>
        </div>
