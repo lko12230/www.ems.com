@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="base2::layout(~{::section})">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Seperation Request </title>
+
+</head>
+
+<body>
+	<section>
+		<style type="text/css">
+			/* Importing fonts from Google */
+			@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+
+			/* Reseting */
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+				font-family: 'Poppins', sans-serif;
+			}
+
+			body {
+				background: #ecf0f3;
+			}
+
+			.wrapper {
+				max-width: 1450px;
+				min-height: 500px;
+				margin: 40px auto;
+				padding: 20px 30px 30px 30px;
+				background-color: white;
+				border-radius: 15px;
+
+			}
+
+			.logo {
+				width: 80px;
+				margin: auto;
+			}
+
+			.logo img {
+				width: 100%;
+				height: 80px;
+				object-fit: cover;
+				border-radius: 50%;
+
+			}
+
+			.wrapper .name {
+				font-weight: 600;
+				font-size: 1.4rem;
+				letter-spacing: 1.3px;
+				padding-left: 10px;
+				color: #555;
+			}
+
+			.wrapper .form-field input {
+				width: 100%;
+				display: block;
+				border: none;
+				outline: none;
+				background: none;
+				font-size: 1.2rem;
+				color: #666;
+				padding: 10px 15px 10px 10px;
+				/* border: 1px solid red; */
+			}
+
+			.wrapper .form-field {
+				padding-left: 10px;
+				margin-bottom: 20px;
+				border-radius: 20px;
+
+			}
+
+			.wrapper .form-field .fas {
+				color: #555;
+			}
+
+			.wrapper .btn {
+				box-shadow: none;
+				width: 100%;
+				height: 40px;
+				background-color: black;
+				color: #fff;
+				border-radius: 25px;
+
+				letter-spacing: 1.3px;
+			}
+
+			.wrapper .btn:hover {
+				background-color: #039BE5;
+			}
+
+			.wrapper a {
+				text-decoration: none;
+				font-size: 0.8rem;
+				color: #03A9F4;
+			}
+
+			.wrapper a:hover {
+				color: #039BE5;
+			}
+
+			@media(max-width: 380px) {
+				.wrapper {
+					margin: 30px 20px;
+					padding: 40px 15px 15px 15px;
+				}
+			}
+		</style>
+		<div class="wrapper">
+			<div class="logo">
+				<!--   <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAclBMVEXz8/PzUyWBvAYFpvD/ugjz9PX19PXz+fr39fr69vPy9fp5uAAAofD/tgDz3Nji6tfzRADzTBfzmYew0oB/xfH70IDX5/P16tfz5eLo7eHzPADzlICs0Hfh6/N3wvH7znj07eEAnvDzvbPL3q6u1/L43q6vy/leAAABd0lEQVR4nO3cR1IDQRREwcb0SEgj770B7n9FNmhEBL1g8zUs8l2gIi9QKUmSpHs5vPtWFV4uANMwunUD3IyiS7+Jebgdx7bddb63uvt+dKOqIBw/xTaZNsLZc3CEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEjxVuJ7GNfwj7LQjTejcN7noTVu+z4PabgjB1wmumqm50JaAkSX/oLbxmKveiK/zqp8NxHtvx40bMn6dFbKdzgbi81MEdb8LeaRDdqiSsX2Kr541wMXiNjZCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkPCxwuj/0kvb/6V5Gd2hmTqvokulm90HluNrFyhJ0j/rC6N0RI28dGy3AAAAAElFTkSuQmCC">
+        -->
+				<img
+					src="https://www.freepnglogos.com/uploads/google-logo-png/google-logo-png-webinar-optimizing-for-success-google-business-webinar-13.png">
+			</div>
+
+			<div class="text-center mt-4 name">
+				Company Leave Policy
+			</div>
+			<div th:if="${session.message}" th:classappend="${session.message.type}" class="alert" role="alert text-center">
+	<p th:text="${session.message.content}"></p>
+	<th:block th:text="${#session.removeAttribute('message')}"></th:block>
+</div>
+
+
+
+
+<form id="login-form" class="form p-3 mt-3" th:action="@{'/manager/seperation/'+${user.id}}" action="#" method="post">
+				<div class="container rounded bg-white mt-5 mb-5">
+					<div class="row">
+						
+					
+				<p>
+					<li>
+						
+<b>Hardware, Software, Applications, and Data</b><br><br>
+All hardware, software and applications must be approved and purchased by (Company) IT.
+Installation of new hardware or software, or modifications made to existing hardware or software must follow approved (Company) procedures and change control processes.
+All purchases must follow the defined (Company) (Technology) Purchasing Standard.
+Software used by (Company) employees, contractors and/or other approved third parties working on behalf of (Company), must be properly licensed.
+Software installed on (Company) computing equipment, outside of that noted in the (Company) Standard Software List, must be approved by IT Management and installed by (Company) IT personnel.
+Only authorized cloud computing applications may be used for sharing, storing, and transferring confidential or internal information.
+The use of cloud computing applications must be done in compliance with all laws and regulations concerning the information involved, e.g. personally identifiable information (PII), protected health information (PHI), corporate financial data, etc.
+Two-factor authentication is required for external cloud computing applications with access to any confidential information for which (Company) has a custodial responsibility.
+Contracts with cloud computing applications providers must address data retention, destruction, data ownership and data custodian rights.
+Hardware, software, and application inventories must be maintained continually and reconciled no less than annually.
+A general inventory of information (data) must be mapped and maintained on an ongoing basis.
+All (Company) assets must be formally classified with ownership assigned.
+</li>
+<br><br>
+<li>
+Maintenance and repair of organizational assets must be performed and logged in a timely manner and managed by (Company) IT Management.
+(Company) assets exceeding a set value, as determined by management, are not permitted to be removed from (Company)’s physical premises without management approval.
+All (Company) physical assets exceeding a set value, as determined by management, must contain asset tags or a similar means of identifying the equipment as being owned by (Company).
+If a (Company) asset is being taken to a High-Risk location, as defined by the FBI and Office of Foreign Asset Control, it must be inspected and approved by IT before being taken offsite and before reconnecting to the (Company) network.
+Confidential information must be transported either by an (Company) employee or a courier approved by IT Management.
+Upon termination of employment, contract, or agreement, all (Company) assets must be returned to (Company) IT Management.
+</li>
+<br><br>
+<li>
+<b>Mobile Devices</b><br><br>
+(Company) does not allow personally owned mobile devices to connect to the (Company) corporate internal network.
+OR
+
+The use of a personally owned mobile devices to connect to the (Company) network is a privilege granted to employees only upon formal approval of IT Management.
+Mobile devices used to connect to the (Company) network are required to use the approved Mobile Device Management (MDM) solution.
+Mobile devices that access (Company) email must have a PIN or other authentication mechanism enabled.
+Confidential data should only be stored on devices that are encrypted in compliance with the (Company) Encryption Standard.
+All mobile devices should maintain up-to-date versions of all software and applications.
+Media Destruction & Re-Use
+Media that may contain confidential or internal information must be adequately obscured, erased, destroyed, or otherwise rendered unusable prior to disposal or reuse.
+Media reuse and destruction practices must be conducted in compliance with (Company)’s Media Reuse and Destruction Standards.
+All decommissioned media must be stored in a secure area prior to destruction.
+Media reuse and destruction practices must be tracked and documented.
+All information must be destroyed when no longer needed, included encrypted media.
+</li>
+<br><br>
+<li>
+<b>Backup</b><br><br>
+The frequency and extent of backups must be in accordance with the importance of the information and the acceptable risk as determined by the information owner.
+The (Company) backup and recovery process for each system must be documented and periodically reviewed according to the defined review schedule.
+The vendor(s) providing offsite backup storage for (Company) must be formally approved to handle the highest classification level of information stored.
+Physical access controls implemented at offsite backup storage locations must meet or exceed the physical access controls of the source systems. Additionally, backup media must be protected in accordance with the highest (Company) sensitivity level of information stored.
+A process must be implemented to verify the success of the (Company) electronic information backup.
+Backups must be periodically tested to ensure that they are recoverable in accordance with the backup standard.
+Multiple copies of valuable data should be stored on separate media to further reduce the risk of data damage or loss.
+Procedures between (Company) and the offsite backup storage vendor(s) must be reviewed at least annually.
+Backups containing confidential information must be encrypted in accordance with the Encryption Standard
+Signature cards held by the offsite backup storage vendor(s) for access to (Company) backup media must be reviewed annually or when an authorized individual leaves (Company).
+Backup tapes must have at a minimum the following identifying criteria that can be readily identified by labels and/or a bar-coding system:
+System name
+Creation Date
+Sensitivity Classification
+(Company) Contact Information
+</li>
+<br><br>
+<li>
+<b>Removable Media</b><br><br>
+The use of removable media for storage of (Company) Information must be supported by a reasonable business case.
+All removable media use must be approved by (Company) IT prior to use.
+Personally owned removable media use is not permitted for storage of (Company) information.
+Users are not permitted to connect removable media from an unknown origin, without prior approval from (Company) IT.
+Confidential and internal (Company) information should not be stored on removable media without the use of encryption.
+The loss or theft of a removable media device that may have contained any (Company) information must be reported to the (Company) IT.
+(Company) will maintain inventory logs of all media and conduct media inventories at least annually.
+The transfer of information to removable media will be monitored.		
+				</p>
+					
+					</div>
+				</div>
+
+		</form>
+
+
+
+
+		</div>
+	</section>
+</body>
+
+</html>

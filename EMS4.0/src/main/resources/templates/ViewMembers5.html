@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="base5::layout(~{::section})" >
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Sign Up Form </title>
+   
+</head>
+<body>
+ <section>
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+<div class="container">
+<div class="row bootstrap snippets bootdeys"> 
+    <div class="col-md-9 col-sm-7"> 
+        <h2>Employees</h2> 
+    </div> 
+    <div class="col-md-3 col-sm-5"> 
+        <form method="get" role="form" class="search-form-full"> 
+            <div class="form-group"> 
+                <input type="text" class="form-control" name="s" id="search-input" placeholder="Search..."> 
+                <i class="entypo-search"></i> 
+            </div> 
+        </form> 
+    </div> 
+</div>
+<tbody>
+		 <tr th:each="c : ${all_users}">
+			 
+<div class="member-entry"> 
+	<div th:if="${c.gender.equals('Male') and c.Image_Url.equals('default.jpg')}">
+    <a th:href="@{'/IT/emp_profile_edit_1/'+${c.id}}" class="member-img"> 
+      <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar"
+              class="rounded-circle img-fluid">  
+        <i class="fa fa-forward"></i> 
+    </a> 
+	</div>
+	
+	<div th:if="${c.gender.equals('Female') and c.Image_Url.equals('default.jpg')}">
+    <a th:href="@{'/IT/emp_profile_edit_1/'+${c.id}}" class="member-img"> 
+       <img src="https://img.freepik.com/premium-vector/portrait-beautiful-lady-with-sunglasses_684058-1186.jpg?size=626&ext=jpg&ga=GA1.1.1331334970.1715351181&semt=ais_user" alt="avatar"
+              class="rounded-circle img-fluid"> 
+        <i class="fa fa-forward"></i> 
+    </a> 
+	</div>
+	
+	
+		<div th:if="${!c.Image_Url.equals('default.jpg')}">
+    <a th:href="@{'/IT/emp_profile_edit_1/'+${c.id}}" class="member-img"> 
+        <img  <img  th:src="@{'/img/'+${user.Image_Url}}" class="rounded-circle img-fluid"> 
+        <i class="fa fa-forward"></i> 
+        
+    </a> 
+	</div>
+    <div class="member-details"> 
+       <td> <h4> <a th:href="@{'/IT/emp_profile_edit_1/'+${c.id}}"><span th:text="${c.username}"></span></a> (<span th:text="${'GOOGLEIN00'+c.id}"></span>)  
+       
+       
+       </h4> 
+       
+       
+       </td>
+        <div class="row info-list"> 
+            <div class="col-sm-4"> 
+                <i class="fa fa-briefcase"></i>
+                Designation : <a href="#"><span th:text="${c.Designation}"></span></a> 
+            </div> 
+            <div class="col-sm-4"> 
+               <i class="fa-solid fa-phone"></i>
+               Phone :  <a href="#"><span th:text="${c.phone}"></span></a> 
+            </div> 
+            <div class="col-sm-4"> 
+              
+					<div th:if="${c.laptop_assign_or_not==true}">
+					<b><p>  <i class="fa-solid fa-laptop"></i> Status : <span style="color: limegreen;">ASSIGNED</span></p></b>
+					</div>
+					
+						<div th:if="${c.laptop_assign_or_not==false}">
+					<b><p>   <i class="fa-solid fa-laptop"></i> Status : <span style="color: red;">NOT ASSIGNED</span></p></b>
+					</div>
+					 
+            </div> 
+            <div class="clear"></div> 
+            <div class="col-sm-4"> 
+                <i class="fa fa-location"></i> 
+               Base Location : <a href="#"><span th:text="${c.base_location}"></span></a> 
+            </div> 
+            <div class="col-sm-4"> 
+                <i class="fa fa-envelope"></i> 
+                Email : <a href="#"><span th:text="${c.email}"></span></a> 
+            </div> 
+            <div class="col-sm-4"> 
+             <!--   <i class="fa fa-linkedin"></i> -->
+					<div th:if="${c.user_status==true}">
+              <b><p><i class="fa-solid fa-user"></i> Status : <span style="color: limegreen;">ACTIVE</span></p></b>
+				</div>
+				<div th:if="${c.user_status==false}">
+              <b><p><i class="fa-solid fa-user"></i> Status : <span style="color: red;">INACTIVE</span></p></b>
+				</div>
+				</span>
+            </div> 
+        </div> 
+    </div> 
+		 
+</div>
+</tr>
+	</tbody>
+</div>
+</div>
+    </section>
+</body>
+</html>

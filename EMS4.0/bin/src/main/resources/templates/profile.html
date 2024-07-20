@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="base1::layout(~{::section})">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Sign Up Form </title>
+
+</head>
+
+<body>
+	<section>
+		<style type="text/css">
+			/* Importing fonts from Google */
+			@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+
+			/* Reseting */
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+				font-family: 'Poppins', sans-serif;
+			}
+
+			body {
+				background: #ecf0f3;
+			}
+
+			.wrapper {
+				max-width: 1450px;
+				min-height: 500px;
+				margin: 40px auto;
+				padding: 20px 30px 30px 30px;
+				background-color: white;
+				border-radius: 15px;
+
+			}
+
+			.logo {
+				width: 80px;
+				margin: auto;
+			}
+
+			.logo img {
+				width: 100%;
+				height: 80px;
+				object-fit: cover;
+				border-radius: 50%;
+
+			}
+
+			.wrapper .name {
+				font-weight: 600;
+				font-size: 1.4rem;
+				letter-spacing: 1.3px;
+				padding-left: 10px;
+				color: #555;
+			}
+
+			.wrapper .form-field input {
+				width: 100%;
+				display: block;
+				border: none;
+				outline: none;
+				background: none;
+				font-size: 1.2rem;
+				color: #666;
+				padding: 10px 15px 10px 10px;
+				/* border: 1px solid red; */
+			}
+
+			.wrapper .form-field {
+				padding-left: 10px;
+				margin-bottom: 20px;
+				border-radius: 20px;
+
+			}
+
+			.wrapper .form-field .fas {
+				color: #555;
+			}
+
+			.wrapper .btn {
+				box-shadow: none;
+				width: 100%;
+				height: 40px;
+				background-color: black;
+				color: #fff;
+				border-radius: 25px;
+
+				letter-spacing: 1.3px;
+			}
+
+			.wrapper .btn:hover {
+				background-color: #039BE5;
+			}
+
+			.wrapper a {
+				text-decoration: none;
+				font-size: 0.8rem;
+				color: #03A9F4;
+			}
+
+			.wrapper a:hover {
+				color: #039BE5;
+			}
+
+			@media(max-width: 380px) {
+				.wrapper {
+					margin: 30px 20px;
+					padding: 40px 15px 15px 15px;
+				}
+			}
+		</style>
+		<div class="wrapper">
+			<div class="logo">
+				<!--   <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAclBMVEXz8/PzUyWBvAYFpvD/ugjz9PX19PXz+fr39fr69vPy9fp5uAAAofD/tgDz3Nji6tfzRADzTBfzmYew0oB/xfH70IDX5/P16tfz5eLo7eHzPADzlICs0Hfh6/N3wvH7znj07eEAnvDzvbPL3q6u1/L43q6vy/leAAABd0lEQVR4nO3cR1IDQRREwcb0SEgj770B7n9FNmhEBL1g8zUs8l2gIi9QKUmSpHs5vPtWFV4uANMwunUD3IyiS7+Jebgdx7bddb63uvt+dKOqIBw/xTaZNsLZc3CEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEjxVuJ7GNfwj7LQjTejcN7noTVu+z4PabgjB1wmumqm50JaAkSX/oLbxmKveiK/zqp8NxHtvx40bMn6dFbKdzgbi81MEdb8LeaRDdqiSsX2Kr541wMXiNjZCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkPCxwuj/0kvb/6V5Gd2hmTqvokulm90HluNrFyhJ0j/rC6N0RI28dGy3AAAAAElFTkSuQmCC">
+        -->
+				<img
+					src="https://www.freepnglogos.com/uploads/google-logo-png/google-logo-png-webinar-optimizing-for-success-google-business-webinar-13.png">
+			</div>
+
+			<div class="text-center mt-4 name">
+				EMPLOYEE PROFILE
+			</div>
+
+			<form id="login-form" class="form p-3 mt-3" th:action="@{/new}" action="#" method="post">
+				<div class="container rounded bg-white mt-5 mb-5">
+					<div class="row">
+						<div class="col-md-3 border-right">
+							<div class="d-flex flex-column align-items-center text-center p-3 py-5"><img
+									class="rounded-circle mt-5 mb-3" width="150px" height="150px" 
+									th:src="@{'/img/'+${user.Image_Url}}"><span
+									class="font-weight-bold"><input readonly th:value="${user.username}"
+										class="text-center"></span><span class="text-black-50"><input readonly
+										th:value="'GOOGLE'+${user.id}" class="text-center"></span><span> </span>
+							</div>
+						</div>
+						<div class="col-md-5 border-right">
+							<div class="p-3 py-5">
+								<div class="d-flex justify-content-between align-items-center mb-3">
+									<h4 class="text-right">Profile Settings</h4>
+								</div>
+								<div class="row mt-2">
+									<div class="col-md-6"><label class="labels">Employee Name</label>
+										<input type readonly class="form-control" th:value="${user.username}">
+									</div>
+								</div>
+								<div class="row mt-3">
+									<div class="col-md-12"><label class="labels">Employee Id</label><input type readonly
+											class="form-control" th:value="'GOOGLEIN00'+${user.id}"></div>
+									<div class="col-md-12"><label class="labels">Mobile Number</label><input type
+											readonly class="form-control" th:value="${user.phone}"></div>
+									<div class="col-md-12"><label class="labels">Address Line 1</label><input readonly
+											class="form-control" th:value="${user.address}"></div>
+									<div class="col-md-12"><label class="labels">State</label><input readonly
+											class="form-control" th:value="${user.address}"></div>
+									<div class="col-md-12"><label class="labels">Area</label><input readonly
+											class="form-control" th:value="${user.address}"></div>
+									<div class="col-md-12"><label class="labels">Email ID</label><input readonly
+											class="form-control" th:value="${user.email}"></div>
+								</div>
+								<div class="row mt-3">
+									<div class="col-md-6"><label class="labels">Country</label><input readonly
+											class="form-control" th:value="${user.country}"></div>
+								</div>
+								<div class="mt-5 text-center"><button class="btn btn-primary profile-button"
+										type="button">Save Profile</button></div>
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="p-3 py-5">
+								<div class="d-flex justify-content-between align-items-center experience"><span>Edit
+										Experience</span><span class="border px-3 p-1 add-experience"><i
+											class="fa fa-plus"></i>&nbsp;Experience</span></div><br>
+								<div class="col-md-12"><label class="labels">Experience in Designing</label><input
+										type="text" class="form-control" placeholder="experience" value=""></div> <br>
+								<div class="col-md-12"><label class="labels">Additional Details</label><input
+										type="text" class="form-control" placeholder="additional details" value="">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+		</div>
+		</div>
+
+
+
+
+
+		<button type="submit" class="btn mt-3">Check in/Check out</button>
+		</form>
+
+		</div>
+	</section>
+</body>
+
+</html>

@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="base2::layout(~{::section})">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Sign Up Form </title>
+
+</head>
+
+<body>
+	<section style="background-color: #eee;">
+		<div class="container py-5">
+			<div class="row">
+				<div class="col">
+					<nav aria-label="breadcrumb" class="bg-body-tertiary rounded-3 p-3 mb-4">
+						<ol class="breadcrumb mb-0">
+							<li class="breadcrumb-item"><a href="#">Home</a></li>
+							<li class="breadcrumb-item"><a href="#">Payment</a></li>
+							<li class="breadcrumb-item active" aria-current="page">User Profile</li>
+							<!--  <li class="ml-auto">
+                        <b>
+                            <a href="" th:href="@{/admin/receipt}" class="item">
+                                <p>Receipt <i class="fa-solid fa-receipt"></i></p>
+                            </a>
+                        </b>
+                    </li> -->
+
+							<li class="ml-auto">
+								<b>
+									<a href="" th:href="@{/admin/transaction_history}" class="item">
+										<p>Transactions <i class="fas fa-history"></i></p>
+									</a>
+								</b>
+							</li>
+						</ol>
+					</nav>
+				</div>
+			</div>
+			<div th:if="${session.message}" th:classappend="${session.message.type}" class="alert"
+				role="alert text-center">
+				<p th:text="${session.message.content}"></p>
+				<th:block th:text="${#session.removeAttribute('message')}"></th:block>
+			</div>
+			<div class="row">
+				<div class="col-lg-4">
+					<div class="card mb-4">
+						<div class="card-body text-center">
+							<div th:if="${user.Image_Url.equals('default.jpg') and user.gender.equals('Male')}">
+								<img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar"
+									class="rounded-circle img-fluid" style="width: 150px;">
+							</div>
+							<div th:if="${user.Image_Url.equals('default.jpg') and user.gender.equals('Female')}">
+								<img src="https://img.freepik.com/premium-vector/portrait-beautiful-lady-with-sunglasses_684058-1186.jpg?size=626&ext=jpg&ga=GA1.1.1331334970.1715351181&semt=ais_user"
+									alt="avatar" class="rounded-circle img-fluid" style="width: 150px;">
+							</div>
+							<div th:if="${!user.Image_Url.equals('default.jpg')}">
+								<img th:src="@{'/img/'+${user.Image_Url}}" alt="avatar" class="rounded-circle img-fluid"
+									style="width: 150px;">
+							</div>
+							<h5 class="my-3"><span th:text="${user.username}"></span></h5>
+							<p class="text-muted mb-1"><span th:text="${user.designation}"></span></p>
+							<p class="text-muted mb-4"><span th:text="${user.base_location}"></span></p>
+							<div class="d-flex justify-content-center mb-2">
+								<div th:if="${user.status.equals('ACTIVE')}">
+									<button disabled type="button" data-mdb-button-init data-mdb-ripple-init
+										class="btn btn-success"><span th:text="${user.status}"></span></button>
+								</div>
+								<div th:if="${user.status.equals('INACTIVE')}">
+									<button disabled type="button" data-mdb-button-init data-mdb-ripple-init
+										class="btn btn-danger"><span th:text="${user.status}"></span></button>
+								</div>
+								<!--   <button  type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-outline-primary ms-1">Message</button>-->
+							</div>
+						</div>
+					</div>
+					<div class="card mb-4 mb-lg-0">
+						<div class="card-body p-0">
+							<ul class="list-group list-group-flush rounded-3">
+								<li class="list-group-item d-flex justify-content-between align-items-center p-3">
+									<i class="fas fa-globe fa-lg text-warning"></i>
+									<p class="mb-0">https://mdbootstrap.com</p>
+								</li>
+								<li class="list-group-item d-flex justify-content-between align-items-center p-3">
+									<i class="fab fa-github fa-lg text-body"></i>
+									<p class="mb-0">mdbootstrap</p>
+								</li>
+								<li class="list-group-item d-flex justify-content-between align-items-center p-3">
+									<i class="fab fa-twitter fa-lg" style="color: #55acee;"></i>
+									<p class="mb-0">@mdbootstrap</p>
+								</li>
+								<li class="list-group-item d-flex justify-content-between align-items-center p-3">
+									<i class="fab fa-instagram fa-lg" style="color: #ac2bac;"></i>
+									<p class="mb-0">mdbootstrap</p>
+								</li>
+								<li class="list-group-item d-flex justify-content-between align-items-center p-3">
+									<i class="fab fa-facebook-f fa-lg" style="color: #3b5998;"></i>
+									<p class="mb-0">mdbootstrap</p>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-8">
+					<div class="card mb-4">
+						<div class="card-body">
+							<!--  <div class="text-right">
+				<b> <a href="" th:href="@{'/manager/manager_profile_edit_2/'+${user.id}}" class="item">
+						<p>EDIT <i class="fas fa-edit"></i></p>
+					</a>
+				</b>
+			</div>  -->
+							<div class="row">
+								<div class="col-sm-3">
+									<p class="mb-0">Company Name</p>
+								</div>
+								<div class="col-sm-9">
+									<p class="text-muted mb-0"><span th:text="${user.company_id}"></span></p>
+								</div>
+							</div>
+							<hr>
+							<div class="row">
+								<div class="col-sm-3">
+									<p class="mb-0">Company ID</p>
+								</div>
+								<div class="col-sm-9">
+									<p class="text-muted mb-0"><span th:text="${'GOOGLEIND00'+user.id}"></span></p>
+								</div>
+							</div>
+							<hr>
+							<div class="row">
+								<div class="col-sm-3">
+									<p class="mb-0">Email ID</p>
+								</div>
+								<div class="col-sm-9">
+									<p class="text-muted mb-0"><span th:text="${user.email}"></span></p>
+								</div>
+							</div>
+							<hr>
+							<div class="row">
+								<div class="col-sm-3">
+									<p class="mb-0">Mobile</p>
+								</div>
+								<div class="col-sm-9">
+									<p class="text-muted mb-0"><span th:text="${user.phone}"></span></p>
+								</div>
+							</div>
+							<hr>
+
+							<div class="row">
+								<div class="col-sm-3">
+									<p class="mb-0">Country</p>
+								</div>
+								<div class="col-sm-9">
+									<p class="text-muted mb-0"><span th:text="${user.country}"></span></p>
+								</div>
+							</div>
+							<hr>
+							<div class="row">
+								<div class="col-sm-3">
+									<p class="mb-0">Amount</p>
+								</div>
+								<div class="col-sm-9">
+								<div th:if="${all_plans.discount==0}">
+									<input readonly class="text-muted mb-0" name="payment_field" id="payment_field"
+       th:value="${all_plans.amount + (all_plans.amount * 0.18)}" />
+       </div>
+       	<div th:if="${all_plans.discount!=0 and all_plans.amount != all_plans.discount}">
+									<input readonly class="text-muted mb-0" name="payment_field" id="payment_field"
+       th:value="${((all_plans.amount  - all_plans.discount) * 0.18)+(all_plans.amount  - all_plans.discount)}" />
+<p style="color: limegreen; font-weight: bold;">
+  <span style="color: red;">Note :- </span>
+  <span th:text="' ₹ ' + ${#numbers.formatDecimal(all_plans.discount, 1, 'COMMA', 2, 'POINT')}"></span>
+  <span> Discount from </span>
+  <span th:text="' ₹ ' + ${#numbers.formatDecimal(all_plans.amount, 1, 'COMMA', 2, 'POINT')}"></span>
+  <span>, After Discount Amount Will Be </span>
+  <span th:text="' ₹ ' + ${#numbers.formatDecimal(all_plans.amount - all_plans.discount, 1, 'COMMA', 2, 'POINT')}"></span>
+  <span> Excluding GST Amount </span>
+  <span th:text="' ₹ ' + ${#numbers.formatDecimal((all_plans.amount - all_plans.discount) * 0.18, 1, 'COMMA', 2, 'POINT')}"></span>
+  <span>, After Including GST Amount Will Be </span>
+  <span th:text="' ₹ ' + ${#numbers.formatDecimal(((all_plans.amount - all_plans.discount) * 0.18) + (all_plans.amount - all_plans.discount), 1, 'COMMA', 2, 'POINT')}"></span>
+</p>
+
+ <p th:text="'SAVE ' + ${#numbers.formatDecimal((all_plans.discount / all_plans.amount) * 100, 1, 'COMMA', 2, 'POINT')} + '% On Price Excluding GST' "
+   style="color: red; font-weight: bold;"></p>
+       </div>
+       
+        	<div th:if="${all_plans.discount!=0 and all_plans.amount == all_plans.discount}">
+									<input readonly class="text-muted mb-0" name="payment_field" id="payment_field"
+       th:value="${(all_plans.amount  - all_plans.discount)}" />
+     <p th:text="'₹' + ${all_plans.discount} + ' Discount from ₹' + ${all_plans.amount}+' No GST Included'"
+   style="color: limegreen; font-weight: bold;"></p>
+       <p style="color: red; font-weight: bold;">FREE OF COST / save 100%</p>
+       
+       </div>
+								</div>
+							</div>
+							<hr>
+							<div class="row">
+								<div class="col-sm-3">
+									<p class="mb-0">License Number</p>
+								</div>
+								<div class="col-sm-9">
+									<div th:if="${orders.license_number.equals('NA')}">
+										<b>
+											<p><span style="color: blue;">No Data Found</span></p>
+										</b>
+									</div>
+									<div th:if="${!orders.license_number.equals('NA')}">
+										<p class="text-muted mb-0"><span th:text="${orders.license_number}"></span></p>
+									</div>
+								</div>
+							</div>
+							<hr>
+							<div class="row">
+								<div class="col-sm-3">
+									<p class="mb-0">License Start Date</p>
+								</div>
+								<div class="col-sm-9">
+									<div th:if="${orders.subscription_start_date==null}">
+										<b>
+											<p><span style="color: blue;">No Data Found</span></p>
+										</b>
+									</div>
+									<div th:if="${orders.subscription_start_date!=null}">
+										<p class="text-muted mb-0"><span
+												th:text="${orders.subscription_start_date}"></span></p>
+									</div>
+								</div>
+							</div>
+							<hr>
+							<div class="row">
+								<div class="col-sm-3">
+									<p class="mb-0">License Expire Date</p>
+								</div>
+								<div class="col-sm-9">
+									<div th:if="${orders.subscription_expiry_date==null}">
+										<b>
+											<p><span style="color: blue;">No Data Found</span></p>
+										</b>
+									</div>
+									<div th:if="${orders.subscription_expiry_date!=null}">
+										<p class="text-muted mb-0"><span
+												th:text="${orders.subscription_expiry_date}"></span></p>
+									</div>
+								</div>
+							</div>
+							<hr>
+							<div class="row">
+								<div class="col-sm-3">
+									<p class="mb-0">License Status</p>
+								</div>
+								<div class="col-sm-9">
+									<div th:if="${orders.license_status.equals('NA')}">
+										<b>
+											<p><span style="color: blue;">No Data Found</span></p>
+										</b>
+									</div>
+									<div th:if="${orders.license_status.equals('ACTIVE')}">
+										<b>
+											<p><span style="color: limegreen;">ACTIVE</span></p>
+										</b>
+									</div>
+									<div th:if="${orders.license_status.equals('INACTIVE')}">
+										<b>
+											<p><span style="color: red;">INACTIVE (LICENSE EXPIRED)</span></p>
+										</b>
+									</div>
+								</div>
+							</div>
+							<hr>
+							<div class="row">
+								<div class="col-sm-3">
+									<p class="mb-0">Receipt Number</p>
+								</div>
+								<div class="col-sm-9">
+									<div th:if="${orders.receipt.equals('NA')}">
+										<b>
+											<p><span style="color: blue;">No Data Found</span></p>
+										</b>
+									</div>
+									<div th:if="${!orders.receipt.equals('NA')}">
+										<p class="text-muted mb-0"><span th:text="${orders.receipt}"></span></p>
+									</div>
+								</div>
+							</div>
+							<hr>
+							<div class="row">
+								<div class="col-sm-3">
+									<p class="mb-0">Payment ID</p>
+								</div>
+								<div class="col-sm-9">
+									<div th:if="${orders.paymentId.equals('NA')}">
+										<b>
+											<p><span style="color: blue;">No Data Found</span></p>
+										</b>
+									</div>
+									<div th:if="${!orders.paymentId.equals('NA')}">
+										<p class="text-muted mb-0"><span th:text="${orders.paymentId}"></span></p>
+									</div>
+								</div>
+							</div>
+							<hr>
+							<div class="row">
+								<div class="col-sm-3">
+									<p class="mb-0">Order Id</p>
+								</div>
+								<div class="col-sm-9">
+									<div th:if="${orders.status.equals('NA')}">
+										<b>
+											<p><span style="color: blue;">No Data Found</span></p>
+										</b>
+									</div>
+									<div th:if="${!orders.status.equals('NA')}">
+										<p class="text-muted mb-0"><span th:text="${orders.orderId}"></span></p>
+									</div>
+								</div>
+							</div>
+							<hr>
+							<div class="row">
+								<div class="col-sm-3">
+									<p class="mb-0">Transaction Date/Time</p>
+								</div>
+								<div class="col-sm-9">
+									<div th:if="${orders.system_date_and_time==null}">
+										<b>
+											<p><span style="color: blue;">No Data Found</span></p>
+										</b>
+									</div>
+									<div th:if="${orders.system_date_and_time!=null}">
+										<p class="text-muted mb-0"><span
+												th:text="${orders.system_date_and_time}"></span></p>
+									</div>
+								</div>
+							</div>
+							<hr>
+							<div class="row">
+								<div class="col-sm-3">
+									<p class="mb-0">Payment Status</p>
+								</div>
+								<div class="col-sm-9">
+									<div th:if="${orders.status.equals('NA')}">
+										<b>
+											<p><span style="color: blue;">No Satus Found</span></p>
+										</b>
+									</div>
+									<div th:if="${orders.status.equals('created')}">
+										<b>
+											<p><span style="color: red;">Failed</span></p>
+										</b>
+									</div>
+									<div th:if="${orders.status.equals('paid')}">
+										<b>
+											<p><span style="color: limegreen;">Success</span></p>
+										</b>
+									</div>
+								</div>
+							</div>
+							<hr>
+							<div class="col-md-12 mt-5"><button class="btn btn-primary profile-button"
+									onclick="paymentStart()">Pay</button></div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+			<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        let paymentField = document.getElementById("payment_field");
+        let value = parseFloat(paymentField.value).toFixed(2);
+        paymentField.value = value;
+    });
+</script>
+	</section>
+</body>
+
+</html>

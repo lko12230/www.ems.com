@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="base5::layout(~{::section})">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Sign Up Form </title>
+
+</head>
+
+<body>
+		<section style="background-color: #eee;">
+			<form id="login-form" class="form p-3 mt-3" th:action="@{'/IT/seperation/'+${user.id}}"  action="#" method="post" enctype="multipart/form-data">
+  <div class="container py-5">
+    <div class="row">
+      <div class="col">
+        <nav aria-label="breadcrumb" class="bg-body-tertiary rounded-3 p-3 mb-4">
+          <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item"><a href="#">User</a></li>
+            <li class="breadcrumb-item active" aria-current="page">User Profile</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+    <div th:if="${session.message}" th:classappend="${session.message.type}" class="alert"
+					role="alert text-center">
+					<p th:text="${session.message.content}"></p>
+					<th:block th:text="${#session.removeAttribute('message')}"></th:block>
+				</div>
+    <div class="row">
+      <div class="col-lg-4">
+        <div class="card mb-4">
+          <div class="card-body text-center">
+			  <div th:if="${user.Image_Url.equals('default.jpg') and user.gender.equals('Male')}">
+            <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar"
+              class="rounded-circle img-fluid" style="width: 150px;">  
+			  </div>
+			  <div th:if="${user.Image_Url.equals('default.jpg') and user.gender.equals('Female')}">
+            <img src="https://img.freepik.com/premium-vector/portrait-beautiful-lady-with-sunglasses_684058-1186.jpg?size=626&ext=jpg&ga=GA1.1.1331334970.1715351181&semt=ais_user" alt="avatar"
+              class="rounded-circle img-fluid" style="width: 150px;">  
+			  </div>
+			  <div th:if="${!user.Image_Url.equals('default.jpg')}">
+                <img  th:src="@{'/img/'+${user.Image_Url}}" alt="avatar"
+              class="rounded-circle img-fluid" style="width: 150px;">
+			  </div>
+            <h5 class="my-3"><span th:text="${user.username}"></span></h5>
+            <p class="text-muted mb-1"><span th:text="${user.designation}"></span></p>
+            <p class="text-muted mb-4"><span th:text="${user.base_location}"></span></p>
+            <div class="d-flex justify-content-center mb-2">
+				<div th:if="${user.status.equals('ACTIVE')}">
+              <button  disabled type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-success"><span th:text="${user.status}"></span></button>
+				</div>
+				<div th:if="${user.status.equals('INACTIVE')}">
+              <button  disabled type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-danger"><span th:text="${user.status}"></span></button>
+				</div>
+           <!--   <button  type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-outline-primary ms-1">Message</button>-->
+            </div>
+          </div>
+        </div>
+        <div class="card mb-4 mb-lg-0">
+          <div class="card-body p-0">
+            <ul class="list-group list-group-flush rounded-3">
+              <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                <i class="fas fa-globe fa-lg text-warning"></i>
+                <p class="mb-0">https://mdbootstrap.com</p>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                <i class="fab fa-github fa-lg text-body"></i>
+                <p class="mb-0">mdbootstrap</p>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                <i class="fab fa-twitter fa-lg" style="color: #55acee;"></i>
+                <p class="mb-0">@mdbootstrap</p>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                <i class="fab fa-instagram fa-lg" style="color: #ac2bac;"></i>
+                <p class="mb-0">mdbootstrap</p>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                <i class="fab fa-facebook-f fa-lg" style="color: #3b5998;"></i>
+                <p class="mb-0">mdbootstrap</p>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-8">
+        <div class="card mb-4">
+          <div class="card-body">
+			  <h3>Personal Info</h3>
+		<!--	  <div class="text-right">
+				<b> <a href="" th:href="@{'/IT/emp_profile_edit_2/'+${userdetail.id}}" class="item">
+						<p>EDIT <i class="fas fa-edit"></i></p>
+					</a>
+				</b>
+			</div>  -->
+			<br>
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Full Name</p>
+              </div>
+              <div class="col-sm-9">
+                <p class="text-muted mb-0"><span th:text="${user.username}"></span></p>
+              </div>
+            </div>
+            <hr>
+                  <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Employee ID</p>
+              </div>
+              <div class="col-sm-9">
+                <p class="text-muted mb-0"><span th:text="${'GOOGLEIND00'+user.id}"></span></p>
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Email</p>
+              </div>
+              <div class="col-sm-9">
+                <p class="text-muted mb-0"><span th:text="${user.email}"></span></p>
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Phone</p>
+              </div>
+              <div class="col-sm-9">
+                <p class="text-muted mb-0"><span th:text="${user.phone}"></span></p>
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Address</p>
+              </div>
+              <div class="col-sm-9">
+                <p class="text-muted mb-0"><span th:text="${user.address}"></span></p>
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Country</p>
+              </div>
+              <div class="col-sm-9">
+                <p class="text-muted mb-0"><span th:text="${user.country}"></span></p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        
+        
+                 <div class="card mb-4">
+          <div class="card-body">
+			   <div class="row">
+            <div class="col-sm-6">
+                <h3>Professional Info</h3>
+                <!-- Asset Info Content Goes Here -->
+            </div>
+         <!--   <div class="col-sm-6">
+                <div class="text-right">
+                    <b>
+                        <a href="" th:href="@{'/IT/emp_profile_edit_2/'+${userdetail.id}}" class="item">
+                            <p>EDIT <i class="fas fa-edit"></i></p>
+                        </a>
+                    </b>
+                </div>
+            </div> -->
+        </div>
+			<br>
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Occupation</p>
+              </div>
+              <div class="col-sm-9">
+                <p class="text-muted mb-0"><span th:text="${user.Designation}"></span></p>
+              </div>
+            </div>
+            <hr>
+                  <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Base Location</p>
+              </div>
+              <div class="col-sm-9">
+                   <p class="text-muted mb-0"><span th:text="${user.base_location}"></span></p>
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Team</p>
+              </div>
+              <div class="col-sm-9">
+                <p class="text-muted mb-0"><span th:text="${user.team}"></span></p>
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Last Working Day</p>
+              </div>
+              <div class="col-sm-9">
+                <p class="text-muted mb-0"><span th:text="${user.lastWorkingDay}"></span></p>
+              </div>
+            </div>
+            <hr>
+            <div class="mt-5 text-center"><button class="btn btn-primary profile-button"
+										type="submit">Submit</button></div>
+          </div>
+        </div>
+                
+    </div>
+  </div>
+			</form>
+</section>
+</body>
+
+</html>
