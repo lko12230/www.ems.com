@@ -297,7 +297,7 @@
 											</p>
 										</div>
 										<div
-											th:if="${user.laptop_brand==null or user.laptop_brand.equals('NA')}">
+											th:if="${user.laptop_brand==null and user.laptop_brand.equals('NA')}">
 											<b class="text-muted mb-0"> <span style="color: blue;">No
 													Record Found</span>
 											</b>
@@ -317,7 +317,7 @@
 											</p>
 										</div>
 										<div
-											th:if="${user.laptop_serial_number==null or user.laptop_serial_number.equals('NA')}">
+											th:if="${user.laptop_serial_number==null and user.laptop_serial_number.equals('NA')}">
 											<b class="text-muted mb-0"> <span style="color: blue;">No
 													Record Found</span>
 											</b>
@@ -337,7 +337,7 @@
 											</p>
 										</div>
 										<div
-											th:if="${user.laptop_id==null or user.laptop_id.equals('NA')}">
+											th:if="${user.laptop_id==null and user.laptop_id.equals('NA')}">
 											<b class="text-muted mb-0"> <span style="color: blue;">No
 													Record Found</span>
 											</b>
