@@ -291,13 +291,13 @@
 									</div>
 									<div class="col-sm-9">
 										<div
-											th:if="${user.laptop_brand!=null and user.laptop_brand!=('NA')}">
+											th:if="${user.laptop_brand!=null or user.laptop_brand!=('NA')}">
 											<p class="text-muted mb-0">
 												<span th:text="${user.laptop_brand}"></span>
 											</p>
 										</div>
 										<div
-											th:if="${user.laptop_brand==null and user.laptop_brand.equals('NA')}">
+											th:if="${user.laptop_brand==null or user.laptop_brand.equals('NA')}">
 											<b class="text-muted mb-0"> <span style="color: blue;">No
 													Record Found</span>
 											</b>
@@ -311,13 +311,13 @@
 									</div>
 									<div class="col-sm-9">
 										<div
-											th:if="${user.laptop_serial_number!=null and user.laptop_serial_number!=('NA')}">
+											th:if="${user.laptop_serial_number!=null or user.laptop_serial_number!=('NA')}">
 											<p class="text-muted mb-0">
 												<span th:text="${user.laptop_serial_number}"></span>
 											</p>
 										</div>
 										<div
-											th:if="${user.laptop_serial_number==null and user.laptop_serial_number.equals('NA')}">
+											th:if="${user.laptop_serial_number==null or user.laptop_serial_number.equals('NA')}">
 											<b class="text-muted mb-0"> <span style="color: blue;">No
 													Record Found</span>
 											</b>
@@ -331,13 +331,13 @@
 									</div>
 									<div class="col-sm-9">
 										<div
-											th:if="${user.laptop_id!=null and user.laptop_id!=('NA')}">
+											th:if="${user.laptop_id!=null or user.laptop_id!=('NA')}">
 											<p class="text-muted mb-0">
 												<span th:text="${user.laptop_id}"></span>
 											</p>
 										</div>
 										<div
-											th:if="${user.laptop_id==null and user.laptop_id.equals('NA')}">
+											th:if="${user.laptop_id==null or user.laptop_id.equals('NA')}">
 											<b class="text-muted mb-0"> <span style="color: blue;">No
 													Record Found</span>
 											</b>
