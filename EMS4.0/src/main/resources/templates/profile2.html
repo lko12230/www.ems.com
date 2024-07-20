@@ -53,8 +53,10 @@
 										style="width: 150px;">
 								</div>
 								<div th:if="${!user.Image_Url.equals('default.jpg')}">
-									<img th:src="@{'/img/'+${user.Image_Url}}" alt="avatar"
-										class="rounded-circle img-fluid" style="width: 150px;">
+									<img th:src="@{'/uploads/img/' + ${user.image_Url}}"
+										alt="avatar" class="rounded-circle img-fluid"
+										style="width: 150px;">
+
 								</div>
 								<h5 class="my-3">
 									<span th:text="${user.username}"></span>
@@ -199,8 +201,7 @@
 									</div>
 									<div class="col-sm-9">
 										<div th:if="${user.bank_account_holder_name.equals('NA')}">
-											<b>
-													<span style="color: blue;">No Record Found</span>
+											<b> <span style="color: blue;">No Record Found</span>
 											</b>
 										</div>
 										<div th:if="${!user.bank_account_holder_name.equals('NA')}">
@@ -216,15 +217,15 @@
 										<p class="mb-0">Bank Name</p>
 									</div>
 									<div class="col-sm-9">
-									<div th:if="${user.bank_name.equals('NA')}">
-										<b class="text-muted mb-0">
-											<span style="color: blue;">No Record Found</span>
-										</b>
+										<div th:if="${user.bank_name.equals('NA')}">
+											<b class="text-muted mb-0"> <span style="color: blue;">No
+													Record Found</span>
+											</b>
 										</div>
-									<div th:if="${!user.bank_name.equals('NA')}">
-										<p class="text-muted mb-0">
-											<span th:text="${user.bank_name}"></span>
-										</p>
+										<div th:if="${!user.bank_name.equals('NA')}">
+											<p class="text-muted mb-0">
+												<span th:text="${user.bank_name}"></span>
+											</p>
 										</div>
 									</div>
 								</div>
@@ -234,16 +235,16 @@
 										<p class="mb-0">Account Number</p>
 									</div>
 									<div class="col-sm-9">
-									<div th:if="${user.bank_account_number!=0}">
-										<p class="text-muted mb-0">
-											<span th:text="${user.bank_account_number}"></span>
-										</p>
+										<div th:if="${user.bank_account_number!=0}">
+											<p class="text-muted mb-0">
+												<span th:text="${user.bank_account_number}"></span>
+											</p>
 										</div>
 										<div th:if="${user.bank_account_number==0}">
-										<b class="text-muted mb-0">
-											<span style="color: blue;">No Record Found</span>
-										</b>
-									</div>
+											<b class="text-muted mb-0"> <span style="color: blue;">No
+													Record Found</span>
+											</b>
+										</div>
 									</div>
 								</div>
 								<hr>
@@ -252,15 +253,15 @@
 										<p class="mb-0">IFSC Code</p>
 									</div>
 									<div class="col-sm-9">
-									<div th:if="${!user.ifsc_code.equals('NA')}">
-										<p class="text-muted mb-0">
-											<span th:text="${user.ifsc_code}"></span>
-										</p>
+										<div th:if="${!user.ifsc_code.equals('NA')}">
+											<p class="text-muted mb-0">
+												<span th:text="${user.ifsc_code}"></span>
+											</p>
 										</div>
 										<div th:if="${user.ifsc_code.equals('NA')}">
-										<b class="text-muted mb-0">
-											<span style="color: blue;">No Record Found</span>
-										</b>
+											<b class="text-muted mb-0"> <span style="color: blue;">No
+													Record Found</span>
+											</b>
 										</div>
 									</div>
 								</div>
@@ -270,15 +271,16 @@
 										<p class="mb-0">Status</p>
 									</div>
 									<div class="col-sm-9">
-									<div th:if="${user.status!=null}">
-										<p class="text-muted mb-0">
-											<b><span th:text="${user.status}" style="color: limegreen;"></span></b>
-										</p>
+										<div th:if="${user.status!=null}">
+											<p class="text-muted mb-0">
+												<b><span th:text="${user.status}"
+													style="color: limegreen;"></span></b>
+											</p>
 										</div>
 										<div th:if="${user.status==null}">
-										<b class="text-muted mb-0">
-											<span style="color: blue;">No Record Found</span>
-										</b>
+											<b class="text-muted mb-0"> <span style="color: blue;">No
+													Record Found</span>
+											</b>
 										</div>
 									</div>
 								</div>
@@ -288,15 +290,17 @@
 										<p class="mb-0">Laptop Brand</p>
 									</div>
 									<div class="col-sm-9">
-										<div th:if="${user.laptop_brand!=null and user.laptop_brand!=('NA')}">
-										<p class="text-muted mb-0">
-											<span th:text="${user.laptop_brand}"></span>
-										</p>
+										<div
+											th:if="${user.laptop_brand!=null and user.laptop_brand!=('NA')}">
+											<p class="text-muted mb-0">
+												<span th:text="${user.laptop_brand}"></span>
+											</p>
 										</div>
-											<div th:if="${user.laptop_brand==null or user.laptop_brand.equals('NA')}">
-										<b class="text-muted mb-0">
-											<span style="color: blue;">No Record Found</span>
-										</b>
+										<div
+											th:if="${user.laptop_brand==null or user.laptop_brand.equals('NA')}">
+											<b class="text-muted mb-0"> <span style="color: blue;">No
+													Record Found</span>
+											</b>
 										</div>
 									</div>
 								</div>
@@ -306,16 +310,18 @@
 										<p class="mb-0">Serial Number</p>
 									</div>
 									<div class="col-sm-9">
-										<div th:if="${user.laptop_serial_number!=null and user.laptop_serial_number!=('NA')}">
-										<p class="text-muted mb-0">
-											<span th:text="${user.laptop_serial_number}"></span>
-										</p>
+										<div
+											th:if="${user.laptop_serial_number!=null and user.laptop_serial_number!=('NA')}">
+											<p class="text-muted mb-0">
+												<span th:text="${user.laptop_serial_number}"></span>
+											</p>
 										</div>
-											<div th:if="${user.laptop_serial_number==null or user.laptop_serial_number.equals('NA')}">
-												<b class="text-muted mb-0">
-											<span style="color: blue;">No Record Found</span>
-										</b>
-											</div>
+										<div
+											th:if="${user.laptop_serial_number==null or user.laptop_serial_number.equals('NA')}">
+											<b class="text-muted mb-0"> <span style="color: blue;">No
+													Record Found</span>
+											</b>
+										</div>
 									</div>
 								</div>
 								<hr>
@@ -324,15 +330,17 @@
 										<p class="mb-0">Laptop id</p>
 									</div>
 									<div class="col-sm-9">
-									<div th:if="${user.laptop_id!=null and user.laptop_id!=('NA')}">
-										<p class="text-muted mb-0">
-											<span th:text="${user.laptop_id}"></span>
-										</p>
+										<div
+											th:if="${user.laptop_id!=null and user.laptop_id!=('NA')}">
+											<p class="text-muted mb-0">
+												<span th:text="${user.laptop_id}"></span>
+											</p>
 										</div>
-											<div th:if="${user.laptop_id==null or user.laptop_id.equals('NA')}">
-										<b class="text-muted mb-0">
-											<span style="color: blue;">No Record Found</span>
-										</b>
+										<div
+											th:if="${user.laptop_id==null or user.laptop_id.equals('NA')}">
+											<b class="text-muted mb-0"> <span style="color: blue;">No
+													Record Found</span>
+											</b>
 										</div>
 									</div>
 								</div>
@@ -342,15 +350,15 @@
 										<p class="mb-0">Resume</p>
 									</div>
 									<div class="col-sm-9">
-									<div th:if="${!user.resume_file_url.equals('NA')}">
-										<p class="text-muted mb-0">
-											<span th:text="${user.resume_file_url}"></span>
-										</p>
+										<div th:if="${!user.resume_file_url.equals('NA')}">
+											<p class="text-muted mb-0">
+												<span th:text="${user.resume_file_url}"></span>
+											</p>
 										</div>
 										<div th:if="${user.resume_file_url.equals('NA')}">
-										<b class="text-muted mb-0">
-											<span style="color: blue;">No File Found</span>
-										</b>
+											<b class="text-muted mb-0"> <span style="color: blue;">No
+													File Found</span>
+											</b>
 										</div>
 									</div>
 								</div>

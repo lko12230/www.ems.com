@@ -556,112 +556,215 @@ public class AdminController {
 		}
 	}
 
+//	@PostMapping("/processing_profile/{id}")
+//	public String yourProfileUpdate(@ModelAttribute("user") User user, @RequestParam("profileImage") MultipartFile file,
+//			@RequestParam("resume") MultipartFile file1, HttpSession session) {
+//		try {
+//			System.out.println("BANK    "+user.getBank_account_holder_name()+" --------------- " + user.getDob() + " ---------- " + user.getBank_name());
+//			servicelayer.update_profile(user);
+//			if(user.getBank_account_holder_name().trim().isEmpty())
+//			{
+//	user.setBank_account_holder_name("NA");
+//	user.setBank_name("NA");
+//	user.setIfsc_code("NA");
+//	user.setBank_account_number(0);
+//	}
+//			if (file.isEmpty()) {
+//				user.setImage_Url("default.jpg");
+//			} else {
+//				String contentType1 = file.getContentType();
+//				System.out.println(file.getOriginalFilename());
+//				if (contentType1.equals("image/jpeg") || contentType1.equals("image/jpg")
+//						|| contentType1.equals("image/png")) {
+//
+//					user.setImage_Url(file.getOriginalFilename());
+//					File savefile = new ClassPathResource("static/img").getFile();
+//					System.out.println(savefile);
+//					Path path = Paths.get(savefile.getAbsolutePath() + File.separator + file.getOriginalFilename());
+//					System.out.println("PATH " + path);
+//					Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+//					System.out.println(file.getOriginalFilename());
+//					System.out.println("FILE UPLOAD SUCESS ");
+//
+//				} else {
+//					session.setAttribute("message",
+//							new Message(
+//									"Alert !! Profile Not Updated Because Image Extension Should Be in JPG/JPEG/PNG",
+//									"alert-danger"));
+//					return "redirect:/admin/admin_profile_edit_1/" + user.getId();
+//				}
+//			}
+//			if (file1.isEmpty()) {
+//				user.setResume_file_url("NA");
+//				user.setEditdate(new Date());
+//				servicelayer.update_profile(user);
+//				session.setAttribute("message", new Message("Success !! Profile Updated !!", "alert-success"));
+////            return "File uploaded successfully";
+//				return "redirect:/admin/admin_profile_edit_1/" + user.getId();
+//			} else {
+//				System.out.println("FILE SIZE   " + file.getSize());
+//				if (file1.getSize() < 3000000) {
+//					// Check if file is PDF or Word document
+//					String contentType = file1.getContentType();
+//					if (contentType.equals("application/pdf") || contentType.equals("application/msword")) {
+//						// File is either a PDF or Word document, process accordingly
+//						// Your code here
+//						System.out.println("File Is Uploaded And Custom Image Is Uploaded");
+//						user.setResume_file_url(file1.getOriginalFilename());
+//						File savefile = new ClassPathResource("static/resume").getFile();
+//						Path path = Paths
+//								.get(savefile.getAbsolutePath() + File.separator + file1.getOriginalFilename());
+//						System.out.println("PATH " + path);
+//						Files.copy(file1.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+//						System.out.println(file1.getOriginalFilename());
+//						System.out.println("FILE UPLOAD SUCESS ");
+//						user.setEditdate(new Date());
+//						servicelayer.update_profile(user);
+//						session.setAttribute("message", new Message("Success !! Profile Updated !!", "alert-success"));
+////	                return "File uploaded successfully";
+//						return "redirect:/admin/admin_profile_edit_1/" + user.getId();
+//					} else {
+//						session.setAttribute("message",
+//								new Message(
+//										"Alert !! Profile Not Updated Because Resume Extension Should Be in PDF/WORD",
+//										"alert-danger"));
+//						return "redirect:/admin/admin_profile_edit_1/" + user.getId();
+//					}
+//				} else {
+//					session.setAttribute("message",
+//							new Message("Alert !! Profile Not Updated Because Resume size Should Be Less Than 3MB",
+//									"alert-danger"));
+//					return "redirect:/admin/admin_profile_edit_1/" + user.getId();
+//				}
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			String exceptionAsString = e.toString();
+//			// Get the current class
+//			Class<?> currentClass = Homecontroller.class;
+//
+//			// Get the name of the class
+//			String className = currentClass.getName();
+//			String errorMessage = e.getMessage();
+//			StackTraceElement[] stackTrace = e.getStackTrace();
+//			String methodName = stackTrace[0].getMethodName();
+//			int lineNumber = stackTrace[0].getLineNumber();
+//			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+//			servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+//
+////			getCaptcha(user);
+////			System.out.println(hiddenCaptcha);
+////			String Captcha_Created=user.getHidden();
+////			EMSMAIN.captcha_validate_map.put(Captcha_Created, new Date());
+//			servicelayer.AllIntanceVariableClear(user);
+//			session.setAttribute("message", new Message("Something went wrong !! " + e.getMessage(), "alert-danger"));
+//			return "redirect:/admin/admin_profile_edit_1/" + user.getId();
+//		}
+//	}
+
+	
 	@PostMapping("/processing_profile/{id}")
-	public String yourProfileUpdate(@ModelAttribute("user") User user, @RequestParam("profileImage") MultipartFile file,
-			@RequestParam("resume") MultipartFile file1, HttpSession session) {
-		try {
-			System.out.println("BANK    "+user.getBank_account_holder_name()+" --------------- " + user.getDob() + " ---------- " + user.getBank_name());
-			servicelayer.update_profile(user);
-			if(user.getBank_account_holder_name().trim().isEmpty())
-			{
-	user.setBank_account_holder_name("NA");
-	user.setBank_name("NA");
-	user.setIfsc_code("NA");
-	user.setBank_account_number(0);
-	}
-			if (file.isEmpty()) {
-				user.setImage_Url("default.jpg");
-			} else {
-				String contentType1 = file.getContentType();
-				System.out.println(file.getOriginalFilename());
-				if (contentType1.equals("image/jpeg") || contentType1.equals("image/jpg")
-						|| contentType1.equals("image/png")) {
+	public String yourProfileUpdate(
+	        @ModelAttribute("user") User user, 
+	        @RequestParam("profileImage") MultipartFile file,
+	        @RequestParam("resume") MultipartFile file1, 
+	        HttpSession session) {
+	    try {
+	        System.out.println("BANK " + user.getBank_account_holder_name() + " --------------- " + user.getDob() + " ---------- " + user.getBank_name());
+	        servicelayer.update_profile(user);
+	        if (user.getBank_account_holder_name().trim().isEmpty()) {
+	            user.setBank_account_holder_name("NA");
+	            user.setBank_name("NA");
+	            user.setIfsc_code("NA");
+	            user.setBank_account_number(0);
+	        }
+	        
+	        // Handle profile image upload
+	        if (file.isEmpty()) {
+	            user.setImage_Url("default.jpg");
+	        } else {
+	            String contentType1 = file.getContentType();
+	            System.out.println(file.getOriginalFilename());
+	            if (contentType1.equals("image/jpeg") || contentType1.equals("image/jpg") || contentType1.equals("image/png")) {
+	                user.setImage_Url(file.getOriginalFilename());
+	                // Save the file to the upload directory
+	                Path uploadPath = Paths.get(System.getProperty("user.dir") + "/uploads/img");
+	                if (!Files.exists(uploadPath)) {
+	                    Files.createDirectories(uploadPath);
+	                }
+	                Path path = uploadPath.resolve(file.getOriginalFilename());
+	                Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+	                System.out.println(file.getOriginalFilename());
+	                System.out.println("FILE UPLOAD SUCCESS");
+	            } else {
+	                session.setAttribute("message",
+	                        new Message(
+	                                "Alert !! Profile Not Updated Because Image Extension Should Be in JPG/JPEG/PNG",
+	                                "alert-danger"));
+	                return "redirect:/admin/admin_profile_edit_1/" + user.getId();
+	            }
+	        }
 
-					user.setImage_Url(file.getOriginalFilename());
-					File savefile = new ClassPathResource("static/img").getFile();
-					System.out.println(savefile);
-					Path path = Paths.get(savefile.getAbsolutePath() + File.separator + file.getOriginalFilename());
-					System.out.println("PATH " + path);
-					Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-					System.out.println(file.getOriginalFilename());
-					System.out.println("FILE UPLOAD SUCESS ");
-
-				} else {
-					session.setAttribute("message",
-							new Message(
-									"Alert !! Profile Not Updated Because Image Extension Should Be in JPG/JPEG/PNG",
-									"alert-danger"));
-					return "redirect:/admin/admin_profile_edit_1/" + user.getId();
-				}
-			}
-			if (file1.isEmpty()) {
-				user.setResume_file_url("NA");
-				user.setEditdate(new Date());
-				servicelayer.update_profile(user);
-				session.setAttribute("message", new Message("Success !! Profile Updated !!", "alert-success"));
-//            return "File uploaded successfully";
-				return "redirect:/admin/admin_profile_edit_1/" + user.getId();
-			} else {
-				System.out.println("FILE SIZE   " + file.getSize());
-				if (file1.getSize() < 3000000) {
-					// Check if file is PDF or Word document
-					String contentType = file1.getContentType();
-					if (contentType.equals("application/pdf") || contentType.equals("application/msword")) {
-						// File is either a PDF or Word document, process accordingly
-						// Your code here
-						System.out.println("File Is Uploaded And Custom Image Is Uploaded");
-						user.setResume_file_url(file1.getOriginalFilename());
-						File savefile = new ClassPathResource("static/resume").getFile();
-						Path path = Paths
-								.get(savefile.getAbsolutePath() + File.separator + file1.getOriginalFilename());
-						System.out.println("PATH " + path);
-						Files.copy(file1.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-						System.out.println(file1.getOriginalFilename());
-						System.out.println("FILE UPLOAD SUCESS ");
-						user.setEditdate(new Date());
-						servicelayer.update_profile(user);
-						session.setAttribute("message", new Message("Success !! Profile Updated !!", "alert-success"));
-//	                return "File uploaded successfully";
-						return "redirect:/admin/admin_profile_edit_1/" + user.getId();
-					} else {
-						session.setAttribute("message",
-								new Message(
-										"Alert !! Profile Not Updated Because Resume Extension Should Be in PDF/WORD",
-										"alert-danger"));
-						return "redirect:/admin/admin_profile_edit_1/" + user.getId();
-					}
-				} else {
-					session.setAttribute("message",
-							new Message("Alert !! Profile Not Updated Because Resume size Should Be Less Than 3MB",
-									"alert-danger"));
-					return "redirect:/admin/admin_profile_edit_1/" + user.getId();
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			String exceptionAsString = e.toString();
-			// Get the current class
-			Class<?> currentClass = Homecontroller.class;
-
-			// Get the name of the class
-			String className = currentClass.getName();
-			String errorMessage = e.getMessage();
-			StackTraceElement[] stackTrace = e.getStackTrace();
-			String methodName = stackTrace[0].getMethodName();
-			int lineNumber = stackTrace[0].getLineNumber();
-			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
-			servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
-
-//			getCaptcha(user);
-//			System.out.println(hiddenCaptcha);
-//			String Captcha_Created=user.getHidden();
-//			EMSMAIN.captcha_validate_map.put(Captcha_Created, new Date());
-			servicelayer.AllIntanceVariableClear(user);
-			session.setAttribute("message", new Message("Something went wrong !! " + e.getMessage(), "alert-danger"));
-			return "redirect:/admin/admin_profile_edit_1/" + user.getId();
-		}
+	        // Handle resume upload
+	        if (file1.isEmpty()) {
+	            user.setResume_file_url("NA");
+	            user.setEditdate(new Date());
+	            servicelayer.update_profile(user);
+	            session.setAttribute("message", new Message("Success !! Profile Updated !!", "alert-success"));
+	            return "redirect:/admin/admin_profile_edit_1/" + user.getId();
+	        } else {
+	            System.out.println("FILE SIZE " + file.getSize());
+	            if (file1.getSize() < 3000000) {
+	                String contentType = file1.getContentType();
+	                if (contentType.equals("application/pdf") || contentType.equals("application/msword")) {
+	                    System.out.println("File Is Uploaded And Custom Image Is Uploaded");
+	                    user.setResume_file_url(file1.getOriginalFilename());
+	                    // Save the file to the upload directory
+	                    Path uploadPath = Paths.get(System.getProperty("user.dir") + "/uploads/resume");
+	                    if (!Files.exists(uploadPath)) {
+	                        Files.createDirectories(uploadPath);
+	                    }
+	                    Path path = uploadPath.resolve(file1.getOriginalFilename());
+	                    Files.copy(file1.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+	                    System.out.println(file1.getOriginalFilename());
+	                    System.out.println("FILE UPLOAD SUCCESS");
+	                    user.setEditdate(new Date());
+	                    servicelayer.update_profile(user);
+	                    session.setAttribute("message", new Message("Success !! Profile Updated !!", "alert-success"));
+	                    return "redirect:/admin/admin_profile_edit_1/" + user.getId();
+	                } else {
+	                    session.setAttribute("message",
+	                            new Message(
+	                                    "Alert !! Profile Not Updated Because Resume Extension Should Be in PDF/WORD",
+	                                    "alert-danger"));
+	                    return "redirect:/admin/admin_profile_edit_1/" + user.getId();
+	                }
+	            } else {
+	                session.setAttribute("message",
+	                        new Message("Alert !! Profile Not Updated Because Resume size Should Be Less Than 3MB",
+	                                "alert-danger"));
+	                return "redirect:/admin/admin_profile_edit_1/" + user.getId();
+	            }
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        String exceptionAsString = e.toString();
+	        Class<?> currentClass = Homecontroller.class;
+	        String className = currentClass.getName();
+	        String errorMessage = e.getMessage();
+	        StackTraceElement[] stackTrace = e.getStackTrace();
+	        String methodName = stackTrace[0].getMethodName();
+	        int lineNumber = stackTrace[0].getLineNumber();
+	        System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+	        servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+	        servicelayer.AllIntanceVariableClear(user);
+	        session.setAttribute("message", new Message("Something went wrong !! " + e.getMessage(), "alert-danger"));
+	        return "redirect:/admin/admin_profile_edit_1/" + user.getId();
+	    }
 	}
 
+	
+	
 	@PostMapping("/profile1/{id}")
 	public String update_profile() {
 		return null;
