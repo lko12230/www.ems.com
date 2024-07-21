@@ -38,8 +38,9 @@
               class="rounded-circle img-fluid" style="width: 150px;">  
 			  </div>
 			  <div th:if="${!user.Image_Url.equals('default.jpg')}">
-                <img  th:src="@{'/img/'+${user.Image_Url}}" alt="avatar"
-              class="rounded-circle img-fluid" style="width: 150px;">
+                <img th:src="@{'/uploads/img/' + ${user.image_Url}}"
+										alt="avatar" class="rounded-circle img-fluid"
+										style="width: 150px;">
 			  </div>
             <h5 class="my-3"><span th:text="${user.username}"></span></h5>
             <p class="text-muted mb-1"><span th:text="${user.designation}"></span></p>

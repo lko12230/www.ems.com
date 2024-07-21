@@ -48,9 +48,9 @@
 						(<span th:text="${user.username}" class="text-warning"></span>)
 					</a></li>
 					<div th:if="${user.Image_Url.equals('default.jpg')}">
-				<li class="nav-item active bg-light" style="border-radius: 50%;"><img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar"
-             style="height: 50px; width: 50px; border-radius: 50%;"
-						class="nav-link">  </li>
+				<li class="nav-item active bg-light" style="border-radius: 50%;"><img th:src="@{'/uploads/img/' + ${user.image_Url}}"
+										alt="avatar" class="rounded-circle img-fluid"
+										style="width: 150px;"></li>
 					</div>
 					
 					<div th:if="${!user.Image_Url.equals('default.jpg')}">
