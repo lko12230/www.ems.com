@@ -54,9 +54,8 @@
 					</div>
 					
 					<div th:if="${!user.Image_Url.equals('default.jpg')}">
-							<li class="nav-item active"><img th:src="@{'/uploads/img/' + ${user.image_Url}}"
-										alt="avatar" class="rounded-circle img-fluid"
-										style="width: 150px;"></li>
+							<li class="nav-item active"><img src="" style="height: 50px; width: 50px; border-radius: 50%;"
+						class="nav-link" th:src="@{'/uploads/img/' + ${user.image_Url}}"></li>
 					</div>
 
 				<li class="nav-item active">

@@ -72,9 +72,8 @@
 					<li class="nav-item active"><a class="nav-link" href="#">WELCOME
 							(<span th:text="${user.username}" class="text-warning"></span>)
 						</a></li>
-					<li class="nav-item active"><img th:src="@{'/uploads/img/' + ${user.image_Url}}"
-										alt="avatar" class="rounded-circle img-fluid"
-										style="width: 150px;"></li>
+					<li class="nav-item active"><img src="" style="height: 50px; width: 50px; border-radius: 50%;"
+							class="nav-link" th:src="@{'/uploads/img/' + ${user.image_Url}}""></li>
 
 					<li class="nav-item active">
 						<a class="nav-link" th:href="@{/hr/careers}" href="#">Careers</a>
