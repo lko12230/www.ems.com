@@ -127,7 +127,7 @@ public class ManagerController {
 	        System.out.println("ERRRRRRRRRRRRR " + e + " " + count);
 
 	        String exceptionAsString = e.toString();
-	        Class<?> currentClass = AdminController.class;
+	        Class<?> currentClass = ManagerController.class;
 	        String className = currentClass.getName();
 	        String errorMessage = e.getMessage();
 	        StackTraceElement[] stackTrace = e.getStackTrace();
@@ -245,7 +245,7 @@ public class ManagerController {
 			System.out.println("ERRRRRRRRRRRRR " + e + " " + count);
 			String exceptionAsString = e.toString();
 			// Get the current class
-			Class<?> currentClass = AdminController.class;
+			Class<?> currentClass = ManagerController.class;
 
 			// Get the name of the class
 			String className = currentClass.getName();
@@ -285,7 +285,7 @@ public class ManagerController {
 //			{
 			String exceptionAsString = e.toString();
 			// Get the current class
-			Class<?> currentClass = AdminController.class;
+			Class<?> currentClass = ManagerController.class;
 
 			// Get the name of the class
 			String className = currentClass.getName();
@@ -338,7 +338,7 @@ public class ManagerController {
 //			{
 			String exceptionAsString = e.toString();
 			// Get the current class
-			Class<?> currentClass = AdminController.class;
+			Class<?> currentClass = ManagerController.class;
 
 			// Get the name of the class
 			String className = currentClass.getName();
@@ -381,7 +381,7 @@ public class ManagerController {
 //			{
 			String exceptionAsString = e.toString();
 			// Get the current class
-			Class<?> currentClass = AdminController.class;
+			Class<?> currentClass = ManagerController.class;
 
 			// Get the name of the class
 			String className = currentClass.getName();
@@ -758,7 +758,7 @@ public class ManagerController {
 	                        new Message(
 	                                "Alert !! Profile Not Updated Because Image Extension Should Be in JPG/JPEG/PNG",
 	                                "alert-danger"));
-	                return "redirect:/admin/admin_profile_edit_1/" + user.getId();
+	                return "redirect:/manger/manager_profile_edit_1/" + user.getId();
 	            }
 	        }
 
@@ -768,7 +768,7 @@ public class ManagerController {
 	            user.setEditdate(new Date());
 	            servicelayer.update_profile(user);
 	            session.setAttribute("message", new Message("Success !! Profile Updated !!", "alert-success"));
-	            return "redirect:/admin/admin_profile_edit_1/" + user.getId();
+	            return "redirect:/manager/manager_profile_edit_1/" + user.getId();
 	        } else {
 	            System.out.println("FILE SIZE " + file.getSize());
 	            if (file1.getSize() < 3000000) {
@@ -788,19 +788,19 @@ public class ManagerController {
 	                    user.setEditdate(new Date());
 	                    servicelayer.update_profile(user);
 	                    session.setAttribute("message", new Message("Success !! Profile Updated !!", "alert-success"));
-	                    return "redirect:/admin/admin_profile_edit_1/" + user.getId();
+	                    return "redirect:/manager/manager_profile_edit_1/" + user.getId();
 	                } else {
 	                    session.setAttribute("message",
 	                            new Message(
 	                                    "Alert !! Profile Not Updated Because Resume Extension Should Be in PDF/WORD",
 	                                    "alert-danger"));
-	                    return "redirect:/admin/admin_profile_edit_1/" + user.getId();
+	                    return "redirect:/manager/manager_profile_edit_1/" + user.getId();
 	                }
 	            } else {
 	                session.setAttribute("message",
 	                        new Message("Alert !! Profile Not Updated Because Resume size Should Be Less Than 3MB",
 	                                "alert-danger"));
-	                return "redirect:/admin/admin_profile_edit_1/" + user.getId();
+	                return "redirect:/manager/manager_profile_edit_1/" + user.getId();
 	            }
 	        }
 	    } catch (Exception e) {
@@ -816,7 +816,7 @@ public class ManagerController {
 	        servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
 	        servicelayer.AllIntanceVariableClear(user);
 	        session.setAttribute("message", new Message("Something went wrong !! " + e.getMessage(), "alert-danger"));
-	        return "redirect:/admin/admin_profile_edit_1/" + user.getId();
+	        return "redirect:/manager/manager_profile_edit_1/" + user.getId();
 	    }
 	}
 }
