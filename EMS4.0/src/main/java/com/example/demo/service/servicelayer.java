@@ -1561,7 +1561,7 @@ String designarionArrowSplit = user.getDesignation();
 			return false;
 		}
 	}
-
+	
 	public boolean update_profile(User user) {
 		try {
 			Optional<UserDetail> userDetail = userDetailDao.findById(user.getId());
@@ -1598,6 +1598,49 @@ String designarionArrowSplit = user.getDesignation();
 	}
 
 	@Transactional
+	public void emp_bank_profile_update(UserDetail userDetail, String current_user) {
+	    System.out.println(userDetail.getBank_account_holder_name());
+	    System.out.println(userDetail.getBank_account_number());
+	    System.out.println(userDetail.getBank_name());
+		Optional<UserDetail> userDetail2 = userDetailDao.findById(userDetail.getId());
+		if(userDetail2.isPresent())
+		{
+			if(userDetail.getBank_account_holder_name().trim().isEmpty())
+			{
+		UserDetail userDetail3=userDetail2.get();
+		userDetail3.setBank_name("NA");
+		userDetail3.setBank_account_number(0);
+		userDetail3.setBank_account_holder_name("NA");
+		userDetail3.setIfsc_code("NA");
+		Optional<User> user = userdao.findById(userDetail3.getId());
+		User user1 = user.get();
+		user1.setBank_name("NA");
+		user1.setBank_account_number(0);
+		user1.setBank_account_holder_name("NA");
+		user1.setIfsc_code("NA");
+		userDetailDao.save(userDetail3);
+		userdao.save(user1);
+			}
+	else
+	{
+		UserDetail userDetail3=userDetail2.get();
+		userDetail3.setBank_name(userDetail.getBank_name());
+		userDetail3.setBank_account_number(userDetail.getBank_account_number());
+		userDetail3.setBank_account_holder_name(userDetail.getBank_account_holder_name());
+		userDetail3.setIfsc_code(userDetail.getIfsc_code());
+		Optional<User> user = userdao.findById(userDetail3.getId());
+		User user1 = user.get();
+		user1.setBank_name(userDetail.getBank_name());
+		user1.setBank_account_number(userDetail.getBank_account_number());
+		user1.setBank_account_holder_name(userDetail.getBank_account_holder_name());
+		user1.setIfsc_code(userDetail.getIfsc_code());
+		userDetailDao.save(userDetail3);
+		userdao.save(user1);			
+	}
+		}
+	}
+	
+	@Transactional
 	public void emp_update_profile(UserDetail userDetail, String CurrentUser) throws Exception {
 		try {
 			System.out.println(userDetail.getId());
@@ -1606,19 +1649,17 @@ String designarionArrowSplit = user.getDesignation();
 			System.out.println(userDetail.getLaptop_serial_number());
 			Optional<UserDetail> userDetail2 = userDetailDao.findById(userDetail.getId());
 			if (userDetail2.isPresent()) {
-				System.out.println("USERDETAIL INPUT GET " + userDetail.getLaptop_brand());
-				if (userDetail.getLaptop_brand().equals("NA")) {
+				System.out.println("USERDETAIL INPUT GET " + userDetail.getLaptop_brand()+" <<<<<<< "+userDetail.getBank_account_holder_name()+">>>");
+				if (userDetail.getLaptop_brand().trim().isEmpty()) {
 					UserDetail userDetail3 = userDetail2.get();
 					Optional<User> user = userdao.findById(userDetail3.getId());
 					User user1 = user.get();
 					userDetail3.setLaptop_assign_or_not(false);
-					userDetail3.setLaptop_brand(userDetail.getLaptop_brand());
-					userDetail3.setLaptop_id(userDetail.getLaptop_id());
-					userDetail3.setLaptop_serial_number(userDetail.getLaptop_serial_number());
-					userDetail3.setLaptop_assign_date(new Date());
-					userDetail3.setWho_assign_laptop(CurrentUser);
+					userDetail3.setLaptop_brand("NA");
 					userDetail3.setLaptop_id("NA");
 					userDetail3.setLaptop_serial_number("NA");
+					userDetail3.setLaptop_assign_date(new Date());
+					userDetail3.setWho_assign_laptop(CurrentUser);
 					userDetail3.setLaptop_status(userDetail.getLaptop_status());
 					userDetail3.setWho_assign_laptop_employee_id(user1.getId());
 					user1.setLaptop_brand(userDetail3.getLaptop_brand());
@@ -1648,17 +1689,7 @@ String designarionArrowSplit = user.getDesignation();
 				}
 			}
 		} catch (Exception e) {
-			String exceptionAsString = e.toString();
-			// Get the current class
-			Class<?> currentClass = servicelayer.class;
-			// Get the name of the class
-			String className = currentClass.getName();
-			String errorMessage = e.getMessage();
-			StackTraceElement[] stackTrace = e.getStackTrace();
-			String methodName = stackTrace[0].getMethodName();
-			int lineNumber = stackTrace[0].getLineNumber();
-			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
-			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+			e.printStackTrace();
 		}
 	}
 

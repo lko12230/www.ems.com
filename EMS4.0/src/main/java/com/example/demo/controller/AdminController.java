@@ -525,44 +525,101 @@ public class AdminController {
 	}
 
 	@PostMapping("/processing_profilee/{id}")
-	public String yourProfileUpdatee(@ModelAttribute("user") User user, HttpSession session) {
-		try {
-			
-			System.out.println(" --------------- " + user.getDob() + " ---------- " + user.getBank_name());
-			 if (user.getBank_account_holder_name().trim().isEmpty()) {
-		            user.setBank_account_holder_name("NA");
-		            user.setBank_name("NA");
-		            user.setIfsc_code("NA");
-		            user.setBank_account_number(0);
-		        }
-			servicelayer.update_profile(user);
-			session.setAttribute("message", new Message("Success !! Profile Updated !!", "alert-success"));
-			return "redirect:/admin/emp_profile_edit_1/" + user.getId();
-		} catch (Exception e) {
-			e.printStackTrace();
-			String exceptionAsString = e.toString();
-			// Get the current class
-			Class<?> currentClass = Homecontroller.class;
-
-			// Get the name of the class
-			String className = currentClass.getName();
-			String errorMessage = e.getMessage();
-			StackTraceElement[] stackTrace = e.getStackTrace();
-			String methodName = stackTrace[0].getMethodName();
-			int lineNumber = stackTrace[0].getLineNumber();
-			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
-			servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
-
-//			getCaptcha(user);
-//			System.out.println(hiddenCaptcha);
-//			String Captcha_Created=user.getHidden();
-//			EMSMAIN.captcha_validate_map.put(Captcha_Created, new Date());
-			servicelayer.AllIntanceVariableClear(user);
-			session.setAttribute("message", new Message("Something went wrong !! " + e.getMessage(), "alert-danger"));
-			return "redirect:/admin/admin_profile_edit_1/" + user.getId();
-		}
+	public String yourProfileUpdatee(@PathVariable("id") int id, @ModelAttribute("userdetail") UserDetail userDetail,
+	                                 Principal principal, HttpSession session) {
+	    try {
+	        String currentUser = null;
+	        if (principal != null) {
+	            currentUser = principal.getName();
+	        }
+	        System.out.println("TEST MODE");
+	        System.out.println(userDetail.getLaptop_brand());
+	        System.out.println(userDetail.getLaptop_id());
+	        System.out.println(userDetail.getLaptop_serial_number());
+	        System.out.println(userDetail.getBank_name());
+	        System.out.println(userDetail.getBank_account_number());
+	        System.out.println(userDetail.getBank_account_holder_name());
+	        
+	        servicelayer.emp_bank_profile_update(userDetail, currentUser);
+	        
+	        session.setAttribute("message", new Message("Success !! Profile Updated !!", "alert-success"));
+	        return "redirect:/admin/emp_profile_edit_1/" + userDetail.getId();
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        String exceptionAsString = e.toString();
+	        Class<?> currentClass = Homecontroller.class;
+	        String className = currentClass.getName();
+	        String errorMessage = e.getMessage();
+	        StackTraceElement[] stackTrace = e.getStackTrace();
+	        String methodName = stackTrace[0].getMethodName();
+	        int lineNumber = stackTrace[0].getLineNumber();
+	        System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+	        
+	        servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+	        
+	        session.setAttribute("message", new Message("Something went wrong !! " + e.getMessage(), "alert-danger"));
+	        return "redirect:/admin/emp_profile_edit_1/" + userDetail.getId();
+	    }
 	}
-
+	
+	
+	@PostMapping("/emp_processing_profile/{id}")
+	public String empProfileUpdate(@PathVariable("id") int getid, @ModelAttribute("userdetail") UserDetail userDetail,
+			Principal principal, HttpSession session) throws Exception {
+	
+			String CurrentUser = null;
+			if (principal != null) {
+				CurrentUser = principal.getName();
+			}
+			System.out.println(userDetail.getLaptop_brand());
+			System.out.println(userDetail.getLaptop_id());
+			System.out.println(userDetail.getLaptop_serial_number());
+			servicelayer.emp_update_profile(userDetail, CurrentUser);
+			System.out.println("USERDETAIL ID ");
+			session.setAttribute("message", new Message("Profile Updated !!", "alert-success"));
+			 return "redirect:/admin/emp_profile_edit_1/" + userDetail.getId();
+		} 
+	
+	
+	@PostMapping("/processing_profileee/{id}")
+	public String yourProfileUpdateee(@PathVariable("id") int id, @ModelAttribute("userdetail") UserDetail userDetail,
+	                                 Principal principal, HttpSession session) {
+	    try {
+	        String currentUser = null;
+	        if (principal != null) {
+	            currentUser = principal.getName();
+	        }
+	        System.out.println("TEST MODE");
+	        System.out.println(userDetail.getLaptop_brand());
+	        System.out.println(userDetail.getLaptop_id());
+	        System.out.println(userDetail.getLaptop_serial_number());
+	        System.out.println(userDetail.getBank_name());
+	        System.out.println(userDetail.getBank_account_number());
+	        System.out.println(userDetail.getBank_account_holder_name());
+	        
+	        servicelayer.emp_update_profile(userDetail, currentUser);
+	        
+	        session.setAttribute("message", new Message("Success !! Profile Updated !!", "alert-success"));
+	        return "redirect:/admin/emp_profile_edit_1/" + userDetail.getId();
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        String exceptionAsString = e.toString();
+	        Class<?> currentClass = Homecontroller.class;
+	        String className = currentClass.getName();
+	        String errorMessage = e.getMessage();
+	        StackTraceElement[] stackTrace = e.getStackTrace();
+	        String methodName = stackTrace[0].getMethodName();
+	        int lineNumber = stackTrace[0].getLineNumber();
+	        System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+	        
+	        servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+	        
+	        session.setAttribute("message", new Message("Something went wrong !! " + e.getMessage(), "alert-danger"));
+	        return "redirect:/admin/emp_profile_edit_1/" + userDetail.getId();
+	    }
+	}
+	
+	
 //	@PostMapping("/processing_profile/{id}")
 //	public String yourProfileUpdate(@ModelAttribute("user") User user, @RequestParam("profileImage") MultipartFile file,
 //			@RequestParam("resume") MultipartFile file1, HttpSession session) {
