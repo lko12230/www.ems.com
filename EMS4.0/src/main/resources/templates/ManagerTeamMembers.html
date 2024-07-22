@@ -47,7 +47,7 @@
 	
 		<div th:if="${!c.Image_Url.equals('default.jpg')}">
     <a th:href="@{'/amanager/teamprofile/'+${c.id}}" class="member-img"> 
-         <img  th:src="@{'/img/'+${user.Image_Url}}" class="rounded-circle img-fluid"> 
+         <img th:src="@{'/uploads/img/' + ${c.image_Url}}" class="rounded-circle img-fluid"> 
         <i class="fa fa-forward"></i> 
         
     </a> 
