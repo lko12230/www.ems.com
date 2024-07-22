@@ -72,8 +72,20 @@
 					<li class="nav-item active"><a class="nav-link" href="#">WELCOME
 							(<span th:text="${user.username}" class="text-warning"></span>)
 						</a></li>
-					<li class="nav-item active"><img src="" style="height: 50px; width: 50px; border-radius: 50%;"
-							class="nav-link" th:src="@{'/uploads/img/' + ${user.image_Url}}"></li>
+				
+
+<li class="nav-item active bg-light" style="border-radius: 50%; height: 50px;">
+						<div th:if="${user.Image_Url.equals('default.jpg')}">
+				<img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar"
+             style="height: 50px; width: 50px; border-radius: 50%;"
+						class="nav-link">
+					</div>
+					
+					<div th:if="${!user.Image_Url.equals('default.jpg')}">
+						<img src="" style="height: 50px; width: 50px; border-radius: 50%;"
+						class="nav-link" th:src="@{'/uploads/img/' + ${user.image_Url}}">
+					</div>
+ </li>
 
 					<li class="nav-item active">
 						<a class="nav-link" th:href="@{/hr/careers}" href="#">Careers</a>

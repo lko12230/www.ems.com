@@ -77,17 +77,25 @@
 					<li class="nav-item active">
 					<a class="nav-link" th:href="@{/admin/payment}" href="#">Payment</a>
 				</li>
-						<div th:if="${user.Image_Url.equals('default.jpg')}">
-				<li class="nav-item active bg-light" style="border-radius: 50%;"><img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar"
+				<li class="nav-item active bg-light" style="border-radius: 50%; height: 50px;">
+						<div th:if="${user.Image_Url.equals('default.jpg') and user.gender.equals('Male')}">
+				<img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar"
              style="height: 50px; width: 50px; border-radius: 50%;"
-						class="nav-link">  </li>
+						class="nav-link">
+					</div>
+					
+								<div th:if="${user.Image_Url.equals('default.jpg') and user.gender.equals('Female')}">
+				<img src="https://img.freepik.com/premium-vector/portrait-beautiful-lady-with-sunglasses_684058-1186.jpg?size=626&ext=jpg&ga=GA1.1.1331334970.1715351181&semt=ais_user" alt="avatar"
+             style="height: 50px; width: 50px; border-radius: 50%;"
+						class="nav-link">
 					</div>
 					
 					<div th:if="${!user.Image_Url.equals('default.jpg')}">
-							<li class="nav-item active"><img src="" style="height: 50px; width: 50px; border-radius: 50%;"
-						class="nav-link" th:src="@{'/uploads/img/' + ${user.image_Url}}"></li>
-					</div>
-
+							<img src=""
+								style="height: 50px; width: 50px; border-radius: 50%;"
+								class="nav-link" th:src="@{'/uploads/img/' + ${user.image_Url}}">
+						</div>
+ </li>
 
 					<li class="nav-item active">
 						<a class="nav-link" th:href="@{/admin/careers}" href="#">Careers</a>
