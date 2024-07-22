@@ -527,7 +527,14 @@ public class AdminController {
 	@PostMapping("/processing_profilee/{id}")
 	public String yourProfileUpdatee(@ModelAttribute("user") User user, HttpSession session) {
 		try {
+			
 			System.out.println(" --------------- " + user.getDob() + " ---------- " + user.getBank_name());
+			 if (user.getBank_account_holder_name().trim().isEmpty()) {
+		            user.setBank_account_holder_name("NA");
+		            user.setBank_name("NA");
+		            user.setIfsc_code("NA");
+		            user.setBank_account_number(0);
+		        }
 			servicelayer.update_profile(user);
 			session.setAttribute("message", new Message("Success !! Profile Updated !!", "alert-success"));
 			return "redirect:/admin/emp_profile_edit_1/" + user.getId();

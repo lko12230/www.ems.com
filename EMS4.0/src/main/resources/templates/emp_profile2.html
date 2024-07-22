@@ -216,7 +216,7 @@
         </div>
           
           
-           <div class="card mb-4">
+ <div class="card mb-4">
           <div class="card-body">
 			   <div class="row">
             <div class="col-sm-6">
@@ -227,7 +227,7 @@
                 <div class="text-right">
                     <b>
                         <a href="" th:href="@{'/admin/emp_profile_edit_21/'+${userdetail.id}}" class="item">
-                            <p>EDIT <i class="fas fa-edit"></i></p>
+                            EDIT <i class="fas fa-edit"></i>
                         </a>
                     </b>
                 </div>
@@ -239,7 +239,16 @@
                 <p class="mb-0">Laptop Brand</p>
               </div>
               <div class="col-sm-9">
-                <p class="text-muted mb-0"><span th:text="${userdetail.laptop_brand}"></span></p>
+              <div th:if="${userdetail.laptop_brand!=('NA')}">
+											<p class="text-muted mb-0">
+												<span th:text="${userdetail.laptop_brand}"></span>
+											</p>
+										</div>
+										<div th:if="${userdetail.laptop_brand.equals('NA')}">
+											<b class="text-muted mb-0"> <span style="color: blue;">No
+													Record Found</span>
+											</b>
+										</div>
               </div>
             </div>
             <hr>
@@ -248,7 +257,16 @@
                 <p class="mb-0">Serial Number</p>
               </div>
               <div class="col-sm-9">
-                   <p class="text-muted mb-0"><span th:text="${userdetail.laptop_serial_number}"></span></p>
+                  <div th:if="${userdetail.laptop_serial_number!=('NA')}">
+											<p class="text-muted mb-0">
+												<span th:text="${userdetail.laptop_serial_number}"></span>
+											</p>
+										</div>
+										<div th:if="${userdetail.laptop_serial_number.equals('NA')}">
+											<b class="text-muted mb-0"> <span style="color: blue;">No
+													Record Found</span>
+											</b>
+										</div>
               </div>
             </div>
             <hr>
@@ -257,12 +275,43 @@
                 <p class="mb-0">Product Id</p>
               </div>
               <div class="col-sm-9">
-                <p class="text-muted mb-0"><span th:text="${userdetail.laptop_id}"></span></p>
+              <div th:if="${userdetail.laptop_id!=('NA')}">
+											<p class="text-muted mb-0">
+												<span th:text="${userdetail.laptop_id}"></span>
+											</p>
+										</div>
+										<div th:if="${userdetail.laptop_id.equals('NA')}">
+											<b class="text-muted mb-0"> <span style="color: blue;">No
+													Record Found</span>
+											</b>
+										</div>
               </div>
             </div>
-            
+            <hr>
+            <div class="row">
+									<div class="col-sm-3">
+										<p class="mb-0">Laptop Status</p>
+									</div>
+									<div class="col-sm-9">
+										<p class="text-muted mb-0">
+
+
+<div th:if="${userdetail.laptop_assign_or_not==true}">
+											<b><i class="fa-solid fa-laptop"></i> <span
+												style="color: limegreen;">ASSIGNED</span></b>
+											
+									</div>
+											
+											<div th:if="${userdetail.laptop_assign_or_not==false}">
+					<b><i class="fa-solid fa-laptop"></i>  <span
+											style="color: red;">NOT ASSIGNED</span></b>
+					</div>
+										
+									
+									</div>
+								</div>
           </div>
-        </div>      
+        </div>   
     </div>
   </div>
 			</form>
