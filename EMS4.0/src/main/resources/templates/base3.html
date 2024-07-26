@@ -83,8 +83,6 @@
 		<a href="" th:href="@{/manager/viewTeamMembersOnly}" class="item"><i class="fa-solid fa-id-card-clip"></i>View
 			Team
 			Members</a>
-					<a href="" th:href="@{'/manager/manager_profile_edit_1/'+${user.id}}" class="item"><i
-				class="fa-solid fa-user"></i>Your Profile</a>
 		<!--<a href="" th:href="@{/manager/add-contact}" class="item"><i class="fa-solid fa-pen"></i>Add New Team Member</a> -->
 		<a href="" th:href="@{/manager/add-contact}" class="item"><i class="fa-solid fa-pen"></i>Assign Task</a>
 		<a href="" th:href="@{/manager/performance}" class="item"><i class="fa-solid fa-chart-simple"></i>Employee
@@ -93,6 +91,8 @@
 		<a href="" th:href="@{/manager/employee_leave_policy}" class="item"><i class="fa-solid fa-user"></i>Company
 			Leave Policy</a>
 		<a href="" th:href="@{/manager/seperation}" class="item"><i class="fa-solid fa-user"></i>Seperation</a>
+			<a href="" th:href="@{'/manager/manager_profile_edit_1/'+${user.id}}" class="item"><i
+				class="fa-solid fa-user"></i>Your Profile</a>
 		<a href="" th:href="@{/manager/assetpolicy}" class="item"><i class="fa-solid fa-user"></i>Asset Policy</a>
 		<a href="" th:href="@{/manager/ChangeCurrentPassword}" class="item"> <i class="fa-solid fa-key"></i>Change
 			Password</a>

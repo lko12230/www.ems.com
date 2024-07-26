@@ -106,4 +106,5 @@ public class UserDetail implements Serializable {
 	private String manager_or_not;
 	private String resume_file_url;
 	private String team_desc;
+	private String review_rating;
 }

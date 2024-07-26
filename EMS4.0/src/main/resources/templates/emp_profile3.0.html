@@ -183,7 +183,15 @@
                 <p class="mb-0">Team ID</p>
               </div>
               <div class="col-sm-9">
+               <div th:if="${userdetail.team!=('0')}">
                 <p class="text-muted mb-0"><span th:text="${userdetail.team}"></span></p>
+                </div>
+                  <div th:if="${userdetail.team.equals('0')}">
+										<p class="text-muted mb-0">
+												<b class="text-muted mb-0"> <span style="color: blue;">No
+													Record Found</span></b>
+										</p>
+										</div>
               </div>
             </div>
             <hr>
@@ -192,7 +200,15 @@
                 <p class="mb-0">Designation</p>
               </div>
               <div class="col-sm-9">
+               <div th:if="${userdetail.designation!=('NA')}">
                 <p class="text-muted mb-0"><span th:text="${userdetail.designation}"></span></p>
+                </div>
+                 <div th:if="${userdetail.designation.equals('NA')}">
+										<p class="text-muted mb-0">
+												<b class="text-muted mb-0"> <span style="color: blue;">No
+													Record Found</span></b>
+										</p>
+										</div>
               </div>
             </div>
             <hr>
@@ -200,8 +216,17 @@
               <div class="col-sm-3">
                 <p class="mb-0">Base Location</p>
               </div>
+              
               <div class="col-sm-9">
+               <div th:if="${userdetail.base_location!=('NA')}">
                    <p class="text-muted mb-0"><span th:text="${userdetail.base_location}"></span></p>
+                   </div>
+                   <div th:if="${userdetail.base_location.equals('NA')}">
+										<p class="text-muted mb-0">
+												<b class="text-muted mb-0"> <span style="color: blue;">No
+													Record Found</span></b>
+										</p>
+										</div>
               </div>
             </div>
             <hr>
@@ -210,7 +235,15 @@
                 <p class="mb-0">Review Rating</p>
               </div>
               <div class="col-sm-9">
-                <p class="text-muted mb-0"><span th:text="${userdetail.ifsc_code}"></span></p>
+               <div th:if="${userdetail.review_rating!=('NA')}">
+                <p class="text-muted mb-0"><span th:text="${userdetail.review_rating}"></span></p>
+                </div>
+                <div th:if="${userdetail.review_rating.equals('NA')}">
+										<p class="text-muted mb-0">
+												<b class="text-muted mb-0"> <span style="color: blue;">No
+													Record Found</span></b>
+										</p>
+										</div>
               </div>
             </div>
             
@@ -240,7 +273,15 @@
                 <p class="mb-0">Bank Holder Name</p>
               </div>
               <div class="col-sm-9">
+               <div th:if="${userdetail.bank_account_holder_name!=('NA')}">
                 <p class="text-muted mb-0"><span th:text="${userdetail.bank_account_holder_name}"></span></p>
+                </div>
+                <div th:if="${userdetail.bank_account_holder_name.equals('NA')}">
+										<p class="text-muted mb-0">
+												<b class="text-muted mb-0"> <span style="color: blue;">No
+													Record Found</span></b>
+										</p>
+										</div>
               </div>
             </div>
             <hr>
@@ -249,7 +290,15 @@
                 <p class="mb-0">Bank Name</p>
               </div>
               <div class="col-sm-9">
+               <div th:if="${userdetail.bank_name!=('NA')}">
                 <p class="text-muted mb-0"><span th:text="${userdetail.bank_name}"></span></p>
+                </div>
+                 <div th:if="${userdetail.bank_name.equals('NA')}">
+										<p class="text-muted mb-0">
+												<b class="text-muted mb-0"> <span style="color: blue;">No
+													Record Found</span></b>
+										</p>
+										</div>
               </div>
             </div>
             <hr>
@@ -258,7 +307,15 @@
                 <p class="mb-0">Account Number</p>
               </div>
               <div class="col-sm-9">
+              <div th:if="${userdetail.bank_account_number!=0}">
                    <p class="text-muted mb-0"><span th:text="${userdetail.bank_account_number}"></span></p>
+                   </div>
+                   <div th:if="${userdetail.bank_account_number==0}">
+										<p class="text-muted mb-0">
+												<b class="text-muted mb-0"> <span style="color: blue;">No
+													Record Found</span></b>
+										</p>
+										</div>
               </div>
             </div>
             <hr>
@@ -267,7 +324,15 @@
                 <p class="mb-0">Ifsc Code</p>
               </div>
               <div class="col-sm-9">
+              <div th:if="${userdetail.ifsc_code!=('NA')}">
                 <p class="text-muted mb-0"><span th:text="${userdetail.ifsc_code}"></span></p>
+                </div>
+                <div th:if="${userdetail.ifsc_code.equals('NA')}">
+										<p class="text-muted mb-0">
+												<b class="text-muted mb-0"> <span style="color: blue;">No
+													Record Found</span></b>
+										</p>
+										</div>
               </div>
             </div>
             
@@ -296,8 +361,17 @@
               <div class="col-sm-3">
                 <p class="mb-0">Laptop Brand</p>
               </div>
+              
               <div class="col-sm-9">
+                  <div th:if="${userdetail.laptop_brand!=('NA')}">
                 <p class="text-muted mb-0"><span th:text="${userdetail.laptop_brand}"></span></p>
+                </div>
+                <div th:if="${userdetail.laptop_brand.equals('NA')}">
+										<p class="text-muted mb-0">
+												<b class="text-muted mb-0"> <span style="color: blue;">No
+													Record Found</span></b>
+										</p>
+										</div>
               </div>
             </div>
             <hr>
@@ -306,7 +380,15 @@
                 <p class="mb-0">Serial Number</p>
               </div>
               <div class="col-sm-9">
+                <div th:if="${userdetail.laptop_serial_number!=('NA')}">
                    <p class="text-muted mb-0"><span th:text="${userdetail.laptop_serial_number}"></span></p>
+                   </div>
+                      <div th:if="${userdetail.laptop_serial_number.equals('NA')}">
+										<p class="text-muted mb-0">
+												<b class="text-muted mb-0"> <span style="color: blue;">No
+													Record Found</span></b>
+										</p>
+										</div>
               </div>
             </div>
             <hr>
@@ -315,7 +397,15 @@
                 <p class="mb-0">Product Id</p>
               </div>
               <div class="col-sm-9">
+               <div th:if="${userdetail.laptop_id!=('NA')}">
                 <p class="text-muted mb-0"><span th:text="${userdetail.laptop_id}"></span></p>
+                </div>
+                <div th:if="${userdetail.laptop_id.equals('NA')}">
+										<p class="text-muted mb-0">
+												<b class="text-muted mb-0"> <span style="color: blue;">No
+													Record Found</span></b>
+										</p>
+										</div>
               </div>
             </div>
             
