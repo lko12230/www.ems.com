@@ -275,7 +275,14 @@
                 <p class="mb-0">Laptop Brand</p>
               </div>
               <div class="col-sm-9">
-                <input type="text" class="text-muted mb-0" name="laptop_brand" th:value="${userdetail.laptop_brand}"/> <i class="fas fa-edit"></i>
+                  <select id="laptop_brand" name="laptop_brand" onchange="toggleRoleTypeOptions()">
+                                        <option>NA</option>
+                                        <option>HP</option>
+                                        <option>DELL</option>
+                                        <option>LENOVO</option>
+                                        <option>SAMSUNG</option>
+                                        <option>APPLE</option>
+                                    </select>
               </div>
             </div>
             <hr>

@@ -1650,7 +1650,8 @@ String designarionArrowSplit = user.getDesignation();
 			Optional<UserDetail> userDetail2 = userDetailDao.findById(userDetail.getId());
 			if (userDetail2.isPresent()) {
 				System.out.println("USERDETAIL INPUT GET " + userDetail.getLaptop_brand()+" <<<<<<< "+userDetail.getBank_account_holder_name()+">>>");
-				if (userDetail.getLaptop_brand().trim().isEmpty()) {
+//				if (userDetail.getLaptop_brand().trim().isEmpty()) {
+				if (userDetail.getLaptop_brand().equals("NA")) {
 					UserDetail userDetail3 = userDetail2.get();
 					Optional<User> user = userdao.findById(userDetail3.getId());
 					User user1 = user.get();
@@ -1660,7 +1661,7 @@ String designarionArrowSplit = user.getDesignation();
 					userDetail3.setLaptop_serial_number("NA");
 					userDetail3.setLaptop_assign_date(new Date());
 					userDetail3.setWho_assign_laptop(CurrentUser);
-					userDetail3.setLaptop_status(userDetail.getLaptop_status());
+					userDetail3.setLaptop_status("NOT ASSIGNED");
 					userDetail3.setWho_assign_laptop_employee_id(user1.getId());
 					user1.setLaptop_brand(userDetail3.getLaptop_brand());
 					user1.setLaptop_id(userDetail3.getLaptop_id());
@@ -1679,7 +1680,7 @@ String designarionArrowSplit = user.getDesignation();
 					userDetail3.setLaptop_assign_date(new Date());
 					userDetail3.setWho_assign_laptop(CurrentUser);
 					userDetail3.setWho_assign_laptop_employee_id(user1.getId());
-					userDetail3.setLaptop_status(userDetail.getLaptop_status());
+					userDetail3.setLaptop_status("ASSIGNED");
 					user1.setLaptop_brand(userDetail3.getLaptop_brand());
 					user1.setLaptop_id(userDetail3.getLaptop_id());
 					user1.setLaptop_serial_number(userDetail3.getLaptop_serial_number());

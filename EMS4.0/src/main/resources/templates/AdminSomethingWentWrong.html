@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="ISO-8859-1">
+    <link rel="icon" type="image/x-icon"
+        href="https://www.freepnglogos.com/uploads/google-logo-png/google-logo-png-webinar-optimizing-for-success-google-business-webinar-13.png">
+    <title>Internal Server Error</title>
+    <style type="text/css">
+        .clearfix:before,
+        .clearfix:after {
+            display: table;
+            content: ' ';
+        }
+
+        .clearfix:after {
+            clear: both;
+        }
+
+        body {
+            background: #f0f0f0 !important;
+            font-family: Arial, sans-serif;
+            margin: 0;
+        }
+
+        .page-404 .outer {
+            position: absolute;
+            top: 50px;
+            display: table;
+            width: 100%;
+            height: calc(100% - 50px);
+        }
+
+        .page-404 .outer .middle {
+            display: table-cell;
+            vertical-align: middle;
+        }
+
+        .page-404 .outer .middle .inner {
+            width: 300px;
+            margin-right: auto;
+            margin-left: auto;
+        }
+
+        .page-404 .outer .middle .inner .inner-circle {
+            height: 300px;
+            border-radius: 50%;
+            background-color: #ffffff;
+        }
+
+        .page-404 .outer .middle .inner .inner-circle:hover i {
+            color: #39bbdb !important;
+            background-color: #f5f5f5;
+            box-shadow: 0 0 0 15px #39bbdb;
+        }
+
+        .page-404 .outer .middle .inner .inner-circle:hover span {
+            color: #39bbdb;
+        }
+
+        .page-404 .outer .middle .inner .inner-circle i {
+            font-size: 5em;
+            line-height: 1em;
+            float: right;
+            width: 1.6em;
+            height: 1.6em;
+            margin-top: -.7em;
+            margin-right: -.5em;
+            padding: 20px;
+            -webkit-transition: all .4s;
+            transition: all .4s;
+            text-align: center;
+            color: #f5f5f5 !important;
+            border-radius: 50%;
+            background-color: #39bbdb;
+            box-shadow: 0 0 0 15px #f0f0f0;
+        }
+
+        .page-404 .outer .middle .inner .inner-circle span {
+            font-size: 11em;
+            font-weight: 700;
+            line-height: 1.2em;
+            display: block;
+            -webkit-transition: all .4s;
+            transition: all .4s;
+            text-align: center;
+            color: #e0e0e0;
+        }
+
+        .page-404 .outer .middle .inner .inner-status {
+            font-size: 20px;
+            display: block;
+            margin-top: 20px;
+            margin-bottom: 5px;
+            text-align: center;
+            color: #39bbdb;
+        }
+
+        .page-404 .outer .middle .inner .inner-detail {
+            line-height: 1.4em;
+            display: block;
+            margin-bottom: 10px;
+            text-align: center;
+            color: #999999;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            height: 100%;
+            width: 250px;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            left: 0;
+            background-color: #111;
+            overflow-x: hidden;
+            padding-top: 20px;
+            transition: 0.5s;
+        }
+
+        .sidebar a {
+            padding: 10px 15px;
+            text-decoration: none;
+            font-size: 18px;
+            color: #818181;
+            display: block;
+            transition: 0.3s;
+        }
+
+        .sidebar a:hover {
+            color: #f1f1f1;
+        }
+
+        .sidebar .closebtn {
+            position: absolute;
+            top: 0;
+            right: 25px;
+            font-size: 36px;
+            margin-left: 50px;
+            cursor: pointer;
+        }
+
+        .sidebar .openbtn {
+            display: none;
+        }
+
+        #main {
+            transition: margin-left .5s;
+            padding: 16px;
+            margin-left: 250px;
+        }
+
+        @media screen and (max-height: 450px) {
+            .sidebar {
+                padding-top: 15px;
+            }
+
+            .sidebar a {
+                font-size: 18px;
+            }
+        }
+
+        /* Nav Bar Styles */
+        .navbar {
+            overflow: hidden;
+            background-color: #333;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 2;
+        }
+
+        .navbar a {
+            float: left;
+            display: block;
+            color: #f2f2f2;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+            font-size: 17px;
+        }
+
+        .navbar a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        .navbar .sidebar-toggle {
+            cursor: pointer;
+        }
+
+        .navbar .logo {
+            float: left;
+            padding: 5px 10px;
+            height: 40px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <div class="navbar">
+        <img src="https://www.freepnglogos.com/uploads/google-logo-png/google-logo-png-webinar-optimizing-for-success-google-business-webinar-13.png" alt="Company Logo" class="logo" height="40">
+        <a class="sidebar-toggle" onclick="toggleSidebar()">&#9776; Toggle Sidebar</a>
+        <a href="#">Home</a>
+        <a href="#">About</a>
+        <a href="#">Contact</a>
+    </div>
+
+    <!-- Sidebar -->
+    <div id="mySidebar" class="sidebar">
+        <span class="closebtn" onclick="toggleSidebar()">&times;</span>
+        <a href="#">Dashboard</a>
+        <a href="#">View ALL Employees</a>
+        <a href="#">View Team Members</a>
+        <a href="#">Company Leave Calendar</a>
+        <a href="#">Employee Performance</a>
+        <a href="#">Your Profile</a>
+        <a href="#">Separation</a>
+        <a href="#">Change Password</a>
+        <a href="#">Asset Policy</a>
+        <a href="#">Login Records</a>
+        <a href="#">Logout</a>
+    </div>
+
+    <span class="openbtn" id="openbtn" onclick="toggleSidebar()">&#9776; Open Sidebar</span>
+
+    <!-- Main content -->
+    <div id="main">
+        <div class="page-404">
+            <div class="outer">
+                <div class="middle">
+                    <div class="inner">
+                        <!--BEGIN CONTENT-->
+                        <div class="inner-circle"><i class="fa fa-cogs"></i><span>500</span></div>
+                        <span class="inner-status">Oops! Internal Server Error!</span>
+                        <span class="inner-detail">Unfortunately we're having trouble loading the page you are looking for. Please come back in a while.</span>
+                        <!--END CONTENT-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            function toggleSidebar() {
+                if ($("#mySidebar").width() === 250) {
+                    $("#mySidebar").css("width", "0");
+                    $("#main").css("margin-left", "0");
+                    $("#openbtn").show();
+                } else {
+                    $("#mySidebar").css("width", "250px");
+                    $("#main").css("margin-left", "250px");
+                    $("#openbtn").hide();
+                }
+            }
+
+            $(".sidebar-toggle, .closebtn, #openbtn").on("click", toggleSidebar);
+        });
+    </script>
+</body>
+
+</html>

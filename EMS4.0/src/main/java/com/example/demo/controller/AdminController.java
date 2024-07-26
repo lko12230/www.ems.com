@@ -306,7 +306,7 @@ public class AdminController {
 
 	@GetMapping("/swrr")
 	public String swr() {
-		return "SomethingWentWrong";
+		return "AdminSomethingWentWrong";
 	}
 
 	@GetMapping("/emp_profile_edit_1/{id}")
@@ -582,7 +582,7 @@ public class AdminController {
 	
 	
 	@PostMapping("/processing_profileee/{id}")
-	public String yourProfileUpdateee(@PathVariable("id") int id, @ModelAttribute("userdetail") UserDetail userDetail,
+	public String yourProfileUpdateee(@ModelAttribute("userdetail") UserDetail userDetail,
 	                                 Principal principal, HttpSession session) {
 	    try {
 	        String currentUser = null;
