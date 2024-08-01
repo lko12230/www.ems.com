@@ -130,7 +130,7 @@ public class EMSMAIN {
 	 */
 
 	@Scheduled(cron = "0 0/1 * * * *")
-	public void m5() {
+	public void Is_Disabled_Inactive_User_Job() {
 		try {
 			String status = servicelayer.getjob_active_or_not("Is_Disabled_Inactive_User_Job");
 			if (status.equalsIgnoreCase("Y")) {
@@ -162,7 +162,7 @@ public class EMSMAIN {
 
 	@Scheduled(cron = "0 0/1 * * * *")
 
-	public void m7() {
+	public void Update_User_Inactive_Status() {
 		try {
 			String status = servicelayer.getjob_active_or_not("Update_User_Inactive_Status");
 			if (status.equalsIgnoreCase("Y")) {
@@ -178,7 +178,7 @@ public class EMSMAIN {
 
 	@Scheduled(cron = "0 0/1 * * * *")
 
-	public void m8() {
+	public void get_user_status() {
 		try {
 			String status = servicelayer.getjob_active_or_not("get_user_status");
 			if (status.equalsIgnoreCase("Y")) {
@@ -276,7 +276,7 @@ public class EMSMAIN {
 //	}
 
 	@Scheduled(cron = "0 0/1 * * * *")
-	public void m10() {
+	public void remove_garbage_data_session_id() {
 		try {
 			String status = servicelayer.getjob_active_or_not("remove_garbage_data_session_id");
 			System.out.println("remove_garbage_data_session_id " + status);
@@ -317,7 +317,7 @@ public class EMSMAIN {
 	int i = 0;
 
 	@Scheduled(cron = "* * * * * *")
-	public void m11() {
+	public void captchaValidate() {
 		try {
 
 			String status = servicelayer.getjob_active_or_not("Captcha Validate");
@@ -359,7 +359,7 @@ public class EMSMAIN {
 	int j = 0;
 
 	@Scheduled(cron = "* * * * * *")
-	public void m12() {
+	public void otpValidate() {
 		try {
 			String status = servicelayer.getjob_active_or_not("OTP Validate");
 			System.out.println("OTP Validate " + status);
@@ -398,7 +398,7 @@ public class EMSMAIN {
 	}
 
 	@Scheduled(cron = "* * * * * *")
-	public void m13() throws Exception {
+	public void loginAlertWithFail() throws Exception {
 		try {
 			String status = servicelayer.getjob_active_or_not("failed_attempt_alert");
 			System.out.println("failed_attempt_alert " + status);
@@ -478,7 +478,7 @@ public class EMSMAIN {
 
 	@Scheduled(cron = "* * * * * *")
 
-	public void m14() throws Exception {
+	public void loginAlertWithSuccess() throws Exception {
 
 		try {
 			String status = servicelayer.getjob_active_or_not("success_attempt_alert");
@@ -567,7 +567,7 @@ public class EMSMAIN {
 				for (Map.Entry<String, Integer> entry : admin_otp_sent_during_registration) {
 					String to = entry.getKey();
 					Integer otp = entry.getValue();
-					String subject = "Google : Admin Verification";
+					String subject = "Admin Verification";
 					String message = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<h1>" + "OTP :"
 							+ "<b>" + otp + "</n>" + "</h1>" + "</div>";
 					boolean flag = this.emailService.sendEmail(message, subject, to);
@@ -634,7 +634,7 @@ public class EMSMAIN {
 
 									for (Map.Entry<Integer, Date> id_with_lastworkingday_entry_loop : id_with_lastworkingday_entry) {
 										int id3 = id_with_lastworkingday_entry_loop.getKey();
-										String subject = "Google : Seperation Request EMPID: GOOGLEIN00" + id3;
+										String subject = "Seperation Request EMPID: EMPID" + id3;
 										Date lastdate = id_with_lastworkingday_entry_loop.getValue();
 										if (id2 == id3) {
 											servicelayer.sentMessage2(to, subject, username, lastdate, cc, id3);
@@ -711,7 +711,7 @@ public class EMSMAIN {
 										int id3 = team_id_sent_loop.getKey();
 										String team_iid = team_id_sent_loop.getValue();
 										if (id2 == id3) {
-											String subject = "Google : Employee GOOGLEIN" + id3 + " Team Assigned";
+											String subject = "Employee EMPID" + id3 + " Team Assigned";
 											servicelayer.sentMessage1(id, to, subject, team_iid, username, team_desc);
 											servicelayer.jobrunning("team_email_sent");
 										}
@@ -821,7 +821,7 @@ public class EMSMAIN {
 	
 	
 	@Scheduled(cron = "* * * * * *")
-	public void m18() {
+	public void forgot_otp_sent_verification() {
 		try {
 			String status = servicelayer.getjob_active_or_not("forgot_otp_sent_verification");
 			System.out.println("forgot_otp_sent_verification " + status);
@@ -832,7 +832,7 @@ public class EMSMAIN {
 				for (Map.Entry<String, Integer> entry : forgot_otp_sent_during_registration) {
 					String to = entry.getKey();
 					Integer otp = entry.getValue();
-					String subject = "Google : Forgot Email OTP Verification";
+					String subject = "Forgot Email OTP Verification";
 					String message = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<h1>" + "OTP :" + "<b>"
 							+ otp + "</n>" + "</h1>" + "</div>";
 					boolean flag = this.emailService.sendEmail(message, subject, to);

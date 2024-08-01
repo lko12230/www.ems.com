@@ -7,11 +7,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.Principal;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Calendar;
@@ -21,6 +24,7 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.UUID;
 
 import javax.imageio.ImageIO;
@@ -1934,6 +1938,12 @@ String designarionArrowSplit = user.getDesignation();
 			}
 			user.setSession_Id(getSession);
 			userDetail2.setUser_status(true);
+			 // Get current time in IST
+            ZonedDateTime nowIST = ZonedDateTime.now(ZoneId.of("Asia/Kolkata"));
+            String formattedDate = nowIST.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"));
+            
+            // Convert formattedDate back to Date object
+            Date loginDate = parseDateInIST(formattedDate);
 			userLoginDateTime.setLoginDateAndTime(new Date());
 			userLoginDateTime.setUsername(user.getUsername());
 			userLoginDao.save(userLoginDateTime);
@@ -1985,6 +1995,12 @@ String designarionArrowSplit = user.getDesignation();
 		}
 	}
 
+	private Date parseDateInIST(String dateString) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Kolkata"));
+        return sdf.parse(dateString);
+    }
+	
 	public String downtime_satus(String server) {
 		try {
 			String status = downtime_Maintaince_Dao.server_status_check(server);

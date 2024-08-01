@@ -7,6 +7,21 @@
     <title>Billing History</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <style>
+        .card {
+            overflow-x: auto;
+            word-wrap: break-word;
+        }
+
+        .table td, .table th {
+            white-space: nowrap;
+            text-align: center;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+    </style>
 </head>
 <body>
 <section>
@@ -15,6 +30,7 @@
         <div class="card-header">Billing History</div>
         <div class="card-body p-0">
             <!-- Billing history table-->
+            <div class="table-responsive">
                 <table class="table mb-0">
                     <thead>
                         <tr>
@@ -51,11 +67,11 @@
                         </tr>
                     </tbody>
                 </table>
-                   </div>
-            <div th:if="${payment_Order_Info == null or #lists.size(payment_Order_Info) == 0}" class="d-flex justify-content-center align-items-center" style="height: 100px;">
-               <span class="badge" style="text-transform: uppercase; color: red;">No Transactions Available</span>
             </div>
-    
+        </div>
+        <div th:if="${payment_Order_Info == null or #lists.size(payment_Order_Info) == 0}" class="d-flex justify-content-center align-items-center" style="height: 100px;">
+            <span class="badge" style="text-transform: uppercase; color: red;">No Transactions Available</span>
+        </div>
     </div>
 </section>
 </body>
