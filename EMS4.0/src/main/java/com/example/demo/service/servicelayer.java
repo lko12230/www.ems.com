@@ -1944,7 +1944,7 @@ String designarionArrowSplit = user.getDesignation();
             
             // Convert formattedDate back to Date object
             Date loginDate = parseDateInIST(formattedDate);
-            System.out.println("INDIA ASIA/KOLKATA "+loginDate);
+            System.out.println("----------------------------------------INDIA ASIA/KOLKATA-------------------------------- "+loginDate);
 			userLoginDateTime.setLoginDateAndTime(loginDate);
 			userLoginDateTime.setUsername(user.getUsername());
 			userLoginDao.save(userLoginDateTime);
@@ -1977,7 +1977,7 @@ String designarionArrowSplit = user.getDesignation();
 	            
 	            // Convert formattedDate back to Date object
 	            Date loginDate = parseDateInIST(formattedDate);
-	            System.out.println("INDIA ASIA/KOLKATA "+loginDate);
+	            System.out.println("-------------------------INDIA ASIA/KOLKATA------------------- "+loginDate);
 				userLoginDateTime.setLoginDateAndTime(loginDate);
 				userLoginDateTime.setUsername(user.getUsername());
 				userLoginDao.save(userLoginDateTime);
