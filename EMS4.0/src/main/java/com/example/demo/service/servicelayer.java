@@ -1939,11 +1939,9 @@ String designarionArrowSplit = user.getDesignation();
 			user.setSession_Id(getSession);
 			userDetail2.setUser_status(true);
 			 // Get current time in IST
-            ZonedDateTime nowIST = ZonedDateTime.now(ZoneId.of("Asia/Kolkata"));
-            String formattedDate = nowIST.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"));
-            
-            // Convert formattedDate back to Date object
-            Date loginDate = parseDateInIST(formattedDate);
+	        ZonedDateTime nowIST = ZonedDateTime.now(ZoneId.of("Asia/Kolkata"));
+	        // Convert to Date
+	        Date loginDate = Date.from(nowIST.toInstant());
             System.out.println("----------------------------------------INDIA ASIA/KOLKATA-------------------------------- "+loginDate);
 			userLoginDateTime.setLoginDateAndTime(loginDate);
 			userLoginDateTime.setUsername(user.getUsername());
@@ -1972,11 +1970,9 @@ String designarionArrowSplit = user.getDesignation();
 				user.setSession_Id(getSession);
 				userDetail2.setUser_status(true);
 				 // Get current time in IST
-	            ZonedDateTime nowIST = ZonedDateTime.now(ZoneId.of("Asia/Kolkata"));
-	            String formattedDate = nowIST.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"));
-	            
-	            // Convert formattedDate back to Date object
-	            Date loginDate = parseDateInIST(formattedDate);
+		        ZonedDateTime nowIST = ZonedDateTime.now(ZoneId.of("Asia/Kolkata"));
+		        // Convert to Date
+		        Date loginDate = Date.from(nowIST.toInstant());
 	            System.out.println("-------------------------INDIA ASIA/KOLKATA------------------- "+loginDate);
 				userLoginDateTime.setLoginDateAndTime(loginDate);
 				userLoginDateTime.setUsername(user.getUsername());
