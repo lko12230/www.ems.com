@@ -1938,12 +1938,15 @@ String designarionArrowSplit = user.getDesignation();
 			}
 			user.setSession_Id(getSession);
 			userDetail2.setUser_status(true);
-			 // Get current time in IST
+			  // Get current time in IST
 	        ZonedDateTime nowIST = ZonedDateTime.now(ZoneId.of("Asia/Kolkata"));
-	        // Convert to Date
-	        Date loginDate = Date.from(nowIST.toInstant());
-            System.out.println("----------------------------------------INDIA ASIA/KOLKATA-------------------------------- "+loginDate);
-			userLoginDateTime.setLoginDateAndTime(loginDate);
+	        // Format the ZonedDateTime for display
+	        String formattedDate = nowIST.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss z"));
+	        System.out.println("----------------------------------------INDIA ASIA/KOLKATA-------------------------------- " + formattedDate);
+
+	        // Convert formattedDate back to Date object with IST time zone
+	        Date loginDate = parseDateInIST(formattedDate);
+	        userLoginDateTime.setLoginDateAndTime(loginDate);
 			userLoginDateTime.setUsername(user.getUsername());
 			userLoginDao.save(userLoginDateTime);
 			userdao.save(user);
@@ -1969,12 +1972,15 @@ String designarionArrowSplit = user.getDesignation();
 				}
 				user.setSession_Id(getSession);
 				userDetail2.setUser_status(true);
-				 // Get current time in IST
+				  // Get current time in IST
 		        ZonedDateTime nowIST = ZonedDateTime.now(ZoneId.of("Asia/Kolkata"));
-		        // Convert to Date
-		        Date loginDate = Date.from(nowIST.toInstant());
-	            System.out.println("-------------------------INDIA ASIA/KOLKATA------------------- "+loginDate);
-				userLoginDateTime.setLoginDateAndTime(loginDate);
+		        // Format the ZonedDateTime for display
+		        String formattedDate = nowIST.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss z"));
+		        System.out.println("----------------------------------------INDIA ASIA/KOLKATA-------------------------------- " + formattedDate);
+
+		        // Convert formattedDate back to Date object with IST time zone
+		        Date loginDate = parseDateInIST(formattedDate);
+		        userLoginDateTime.setLoginDateAndTime(loginDate);
 				userLoginDateTime.setUsername(user.getUsername());
 				userLoginDao.save(userLoginDateTime);
 				userdao.save(user);
