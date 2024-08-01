@@ -1560,45 +1560,57 @@ String designarionArrowSplit = user.getDesignation();
 //	}
 	
 	public String generateExcel() throws IOException {
-        List<UserLoginDateTime> records = userLoginDao.findAll();
-        Workbook workbook = new XSSFWorkbook();
-        Sheet sheet = workbook.createSheet("Login History");
+	    List<UserLoginDateTime> records = userLoginDao.findAll();
+	    Workbook workbook = new XSSFWorkbook();
+	    Sheet sheet = workbook.createSheet("Login History");
 
-        Row headerRow = sheet.createRow(0);
-        String[] columns = {"Sno", "Employee ID", "Name", "Email", "Login Time", "Logout Time", "IP Address", "Is Session Interrupted", "Location"};
+	    Row headerRow = sheet.createRow(0);
+	    String[] columns = {"Sno", "Employee ID", "Name", "Email", "Login Time", "Logout Time", "IP Address", "Is Session Interrupted", "Location"};
 
-        for (int i = 0; i < columns.length; i++) {
-            org.apache.poi.ss.usermodel.Cell cell = headerRow.createCell(i);
-            cell.setCellValue(columns[i]);
-        }
+	    for (int i = 0; i < columns.length; i++) {
+	        org.apache.poi.ss.usermodel.Cell cell = headerRow.createCell(i);
+	        cell.setCellValue(columns[i]);
+	    }
 
-        int rowNum = 1;
-        for (UserLoginDateTime record : records) {
-            Row row = sheet.createRow(rowNum++);
+	    // Create a date cell style
+	    CellStyle dateCellStyle = workbook.createCellStyle();
+	    CreationHelper createHelper = workbook.getCreationHelper();
+	    dateCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("yyyy-mm-dd hh:mm:ss"));
 
-            row.createCell(0).setCellValue(rowNum - 1);
-            row.createCell(1).setCellValue(record.getId());
-            row.createCell(2).setCellValue(record.getUsername());
-            row.createCell(3).setCellValue(record.getEmail());
-            row.createCell(4).setCellValue(record.getLoginDateAndTime());
-            row.createCell(5).setCellValue(record.getLogoutDateAndTime());
-            row.createCell(6).setCellValue(record.getIpAddress());
-            row.createCell(7).setCellValue(record.is_session_interrupted());
-            row.createCell(8).setCellValue(record.getLocation());
-        }
+	    int rowNum = 1;
+	    for (UserLoginDateTime record : records) {
+	        Row row = sheet.createRow(rowNum++);
 
-        // Use a temporary directory for storing the Excel file
-        Path tempDirectory = Files.createTempDirectory("excelFiles");
-        Path filePath = Paths.get(tempDirectory.toString(), "login_history.xlsx");
+	        row.createCell(0).setCellValue(rowNum - 1);
+	        row.createCell(1).setCellValue(record.getId());
+	        row.createCell(2).setCellValue(record.getUsername());
+	        row.createCell(3).setCellValue(record.getEmail());
 
-        try (FileOutputStream fileOut = new FileOutputStream(filePath.toFile())) {
-            workbook.write(fileOut);
-        } finally {
-            workbook.close();
-        }
+	        org.apache.poi.ss.usermodel.Cell loginTimeCell = row.createCell(4);
+	        loginTimeCell.setCellValue(record.getLoginDateAndTime());
+	        loginTimeCell.setCellStyle(dateCellStyle);
 
-        return filePath.toString();
-    }
+	        org.apache.poi.ss.usermodel.Cell logoutTimeCell = row.createCell(5);
+	        logoutTimeCell.setCellValue(record.getLogoutDateAndTime());
+	        logoutTimeCell.setCellStyle(dateCellStyle);
+
+	        row.createCell(6).setCellValue(record.getIpAddress());
+	        row.createCell(7).setCellValue(record.is_session_interrupted());
+	        row.createCell(8).setCellValue(record.getLocation());
+	    }
+
+	    // Use a temporary directory for storing the Excel file
+	    Path tempDirectory = Files.createTempDirectory("excelFiles");
+	    Path filePath = Paths.get(tempDirectory.toString(), "login_history.xlsx");
+
+	    try (FileOutputStream fileOut = new FileOutputStream(filePath.toFile())) {
+	        workbook.write(fileOut);
+	    } finally {
+	        workbook.close();
+	    }
+
+	    return filePath.toString();
+	}
 	
 	public ByteArrayOutputStream exportUserLoginData() throws IOException {
         List<UserLoginDateTime> dataInsertExcelList = userLoginDao.findAll();
