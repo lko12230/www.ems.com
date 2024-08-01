@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -28,6 +29,8 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -165,7 +168,31 @@ public class AdminController {
 	        return "redirect:/logout";
 	    }
 	}
-	
+
+	public String getClientIpAddressString(HttpServletRequest request) {
+	    String ip = request.getHeader("X-Forwarded-For");
+	    if (ip != null && !ip.isEmpty() && !"unknown".equalsIgnoreCase(ip)) {
+	        return ip.split(",")[0];
+	    }
+	    ip = request.getHeader("Proxy-Client-IP");
+	    if (ip != null && !ip.isEmpty() && !"unknown".equalsIgnoreCase(ip)) {
+	        return ip;
+	    }
+	    ip = request.getHeader("WL-Proxy-Client-IP");
+	    if (ip != null && !ip.isEmpty() && !"unknown".equalsIgnoreCase(ip)) {
+	        return ip;
+	    }
+	    ip = request.getHeader("HTTP_CLIENT_IP");
+	    if (ip != null && !ip.isEmpty() && !"unknown".equalsIgnoreCase(ip)) {
+	        return ip;
+	    }
+	    ip = request.getHeader("HTTP_X_FORWARDED_FOR");
+	    if (ip != null && !ip.isEmpty() && !"unknown".equalsIgnoreCase(ip)) {
+	        return ip;
+	    }
+	    return request.getRemoteAddr();
+	}
+
 	
 	/**
 	 * Get the client IP address from the request.
@@ -1388,96 +1415,116 @@ public class AdminController {
 	}
 
 //  EXCEL download start ****   Added By Ayush Gupta 16 March 2024
-	@PostMapping("/export_excel")
-	public String export_excel(User user, HttpSession httpSession, Principal principal, Model model)
-			throws IOException, InvalidFormatException {
-		boolean result = servicelayer.data_insert_excel();
-		if (result) {
-			try {
-				if (all_users_login_records != null && principal != null) {
-					System.out.println("find all " + all_users_login_records);
-					model.addAttribute("all_users_login_records", all_users_login_records);
-					System.out.println("IN");
-					httpSession.setAttribute("message",
-							new Message("Users Login Data !! Download Successfully", "alert-success"));
-					user.setExcel_Download(true);
-					user.setExcel_Download_Date(new Date());
-					user.setDownload_count(user.getDownload_count() + 1);
-					userdao.save(user);
-					return "getloginrecords";
-				} else {
-					throw new Exception();
-				}
-			} catch (Exception e) {
-				System.out.println(e);
-				System.out.println("ERRRRRRRRRRRRR " + e + " " + count);
-//		String exString=e.toString();
-//		if(exString.equals("Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null") && count==1 || count==0)
-//		{
-				String exceptionAsString = e.toString();
-				// Get the current class
-				Class<?> currentClass = AdminController.class;
-
-				// Get the name of the class
-				String className = currentClass.getName();
-				String errorMessage = e.getMessage();
-				StackTraceElement[] stackTrace = e.getStackTrace();
-				String methodName = stackTrace[0].getMethodName();
-				int lineNumber = stackTrace[0].getLineNumber();
-				System.out.println("METHOD NAME " + methodName + " " + lineNumber);
-				servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
-//		return "SomethingWentWrong";)
-//			return "redirect:/swr";
+//	@PostMapping("/export_excel")
+//	public String export_excel(User user, HttpSession httpSession, Principal principal, Model model)
+//			throws IOException, InvalidFormatException {
+//		boolean result = servicelayer.data_insert_excel();
+//		if (result) {
+//			try {
+//				if (all_users_login_records != null && principal != null) {
+//					System.out.println("find all " + all_users_login_records);
+//					model.addAttribute("all_users_login_records", all_users_login_records);
+//					System.out.println("IN");
+//					httpSession.setAttribute("message",
+//							new Message("Users Login Data !! Download Successfully", "alert-success"));
+//					user.setExcel_Download(true);
+//					user.setExcel_Download_Date(new Date());
+//					user.setDownload_count(user.getDownload_count() + 1);
+//					userdao.save(user);
+//					return "getloginrecords";
+//				} else {
+//					throw new Exception();
+//				}
+//			} catch (Exception e) {
+//				System.out.println(e);
+//				System.out.println("ERRRRRRRRRRRRR " + e + " " + count);
+////		String exString=e.toString();
+////		if(exString.equals("Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null") && count==1 || count==0)
+////		{
+//				String exceptionAsString = e.toString();
+//				// Get the current class
+//				Class<?> currentClass = AdminController.class;
+//
+//				// Get the name of the class
+//				String className = currentClass.getName();
+//				String errorMessage = e.getMessage();
+//				StackTraceElement[] stackTrace = e.getStackTrace();
+//				String methodName = stackTrace[0].getMethodName();
+//				int lineNumber = stackTrace[0].getLineNumber();
+//				System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+//				servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+////		return "SomethingWentWrong";)
+////			return "redirect:/swr";
+////		}
+////		else
+////		{
+//				return "redirect:/logout";
+////		}
+//
+//			}
+//		} else {
+//			try {
+//				if (all_users_login_records != null && principal != null) {
+//					System.out.println("find all " + all_users_login_records);
+//					model.addAttribute("all_users_login_records", all_users_login_records);
+//					System.out.println("IN");
+////	httpSession.setAttribute("message", new Message("Users Login Data !! Download Successfully", "alert-success"));
+//					System.out.println("no insert");
+//					httpSession.setAttribute("message",
+//							new Message("Something Went Wrong !! Download Failed", "alert-danger"));
+//					return "getloginrecords";
+//				} else {
+//					throw new Exception();
+//				}
+//			} catch (Exception e) {
+//				System.out.println(e);
+//				System.out.println("ERRRRRRRRRRRRR " + e + " " + count);
+////		String exString=e.toString();
+////		if(exString.equals("Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null") && count==1 || count==0)
+////		{
+//				String exceptionAsString = e.toString();
+//				// Get the current class
+//				Class<?> currentClass = AdminController.class;
+//
+//				// Get the name of the class
+//				String className = currentClass.getName();
+//				String errorMessage = e.getMessage();
+//				StackTraceElement[] stackTrace = e.getStackTrace();
+//				String methodName = stackTrace[0].getMethodName();
+//				int lineNumber = stackTrace[0].getLineNumber();
+//				System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+//				servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+////		return "SomethingWentWrong";)
+////			return "redirect:/swr";
+////		}
+////		else
+////		{
+//				return "redirect:/logout";
+////		}
+//
+//			}
 //		}
-//		else
-//		{
-				return "redirect:/logout";
-//		}
+//	} // method end***
+	
+	 @PostMapping("/export_excel")
+	 public ResponseEntity<byte[]> exportExcel(HttpSession httpSession) {
+	        ByteArrayOutputStream out;
+	        try {
+	            out = servicelayer.exportUserLoginData();
+	        } catch (IOException e) {
+	            return ResponseEntity.internalServerError().build();
+	        }
 
-			}
-		} else {
-			try {
-				if (all_users_login_records != null && principal != null) {
-					System.out.println("find all " + all_users_login_records);
-					model.addAttribute("all_users_login_records", all_users_login_records);
-					System.out.println("IN");
-//	httpSession.setAttribute("message", new Message("Users Login Data !! Download Successfully", "alert-success"));
-					System.out.println("no insert");
-					httpSession.setAttribute("message",
-							new Message("Something Went Wrong !! Download Failed", "alert-danger"));
-					return "getloginrecords";
-				} else {
-					throw new Exception();
-				}
-			} catch (Exception e) {
-				System.out.println(e);
-				System.out.println("ERRRRRRRRRRRRR " + e + " " + count);
-//		String exString=e.toString();
-//		if(exString.equals("Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null") && count==1 || count==0)
-//		{
-				String exceptionAsString = e.toString();
-				// Get the current class
-				Class<?> currentClass = AdminController.class;
+	        byte[] bytes = out.toByteArray();
 
-				// Get the name of the class
-				String className = currentClass.getName();
-				String errorMessage = e.getMessage();
-				StackTraceElement[] stackTrace = e.getStackTrace();
-				String methodName = stackTrace[0].getMethodName();
-				int lineNumber = stackTrace[0].getLineNumber();
-				System.out.println("METHOD NAME " + methodName + " " + lineNumber);
-				servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
-//		return "SomethingWentWrong";)
-//			return "redirect:/swr";
-//		}
-//		else
-//		{
-				return "redirect:/logout";
-//		}
+	        HttpHeaders headers = new HttpHeaders();
+	        headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
+	        headers.setContentDispositionFormData("attachment", "USER_LOGIN_DATA.xlsx");
 
-			}
-		}
-	} // method end***
+	        return ResponseEntity.ok()
+	                .headers(headers)
+	                .body(bytes);
+	    }
 
 	@PostMapping("/create_order")
 	@ResponseBody

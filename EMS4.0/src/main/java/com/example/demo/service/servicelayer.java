@@ -35,6 +35,7 @@ import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -1230,337 +1231,413 @@ String designarionArrowSplit = user.getDesignation();
 		}
 	}
 
-	List<UserLoginDateTime> data_insert_excel_list = new ArrayList<>();
+//	List<UserLoginDateTime> data_insert_excel_list = new ArrayList<>();
+//
+//	public boolean data_insert_excel() throws IOException { 
+//		try {
+//			String path = "C:\\Users\\ayush.gupta\\Desktop\\USER_LOGIN_DATA.xlsx";
+//			data_insert_excel_list = userLoginDao.findAll();
+//			ListIterator<UserLoginDateTime> excel = data_insert_excel_list.listIterator();
+//			File file = new File(path);
+//			if (!file.exists()) {
+//				OutputStream fileOut = new FileOutputStream(file);
+//				Workbook workbook = new XSSFWorkbook();
+//				org.apache.poi.ss.usermodel.Sheet sheet = workbook.createSheet("USER_LOGIN_DATA");
+//				sheet.setColumnWidth(0, 4000);
+//				sheet.setColumnWidth(1, 5000);
+//				sheet.setColumnWidth(2, 5000);
+//				sheet.setColumnWidth(3, 7000);
+//				sheet.setColumnWidth(4, 7000);
+//				sheet.setColumnWidth(5, 5000);
+//				sheet.setColumnWidth(6, 5000);
+//				sheet.setColumnWidth(7, 5000);
+//				sheet.setColumnWidth(8, 5000);
+//				sheet.setColumnWidth(9, 10000);
+//
+//				int rowCount = 0;
+////			Row row = sheet.createRow(rowCount + 4);
+//				sheet.createRow(rowCount + 4);
+//				org.apache.poi.ss.usermodel.Sheet sheetAtt = workbook.getSheetAt(0);
+//
+//				System.out.println(sheetAtt);
+//
+//				Font font = workbook.createFont();
+//				font.setFontHeightInPoints((short) 10);
+//				font.setFontName("Arial");
+//				font.setBold(true);
+//				font.setItalic(true);
+//
+//				int lastRowNum = sheetAtt.getLastRowNum();
+//				// XSSFRow row = sheetAt.getRow(lastRowNum);
+//				System.out.println(lastRowNum);
+//				Font fontt = workbook.createFont();
+//				fontt.setColor(HSSFColor.HSSFColorPredefined.WHITE.getIndex());
+//				CellStyle style = workbook.createCellStyle();
+//				style.setFillBackgroundColor(IndexedColors.BRIGHT_GREEN.getIndex());
+//				style.setFillPattern(FillPatternType.DIAMONDS);
+//				style.setAlignment(HorizontalAlignment.CENTER);
+//				style.setFont(fontt);
+//				CellStyle style2 = workbook.createCellStyle();
+//				style2.setFont(font);
+//				// Row header = sheet.createRow(0);
+//
+////		        header.createCell(0).setCellValue("ID");
+////		        header.createCell(1).setCellValue("DATE");
+////		        header.createCell(2).setCellValue("ABOUT");
+////		        header.createCell(3).setCellValue("EMAIL");
+////		        header.createCell(4).setCellValue("ENABLED");
+////		        header.createCell(5).setCellValue("IMAGE_URL");
+////		        header.createCell(6).setCellValue("NAME");
+////		        header.createCell(7).setCellValue("PASSWORD");
+////		        header.createCell(8).setCellValue("ROLE");
+//
+//				// create for excel file for create date heading on top
+//
+//				XSSFRow rowww = (XSSFRow) sheet.createRow(0);
+//				XSSFCell celll = rowww.createCell(0);
+//				celll.setCellValue("Date (dd/MM/yyyy):");
+//				celll.setCellStyle(style2);
+//				celll = rowww.createCell(1);
+//				// create for excel file creation date
+//				SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+//				String timeStamp = df.format(new Date());
+//				celll.setCellValue(timeStamp);
+//				celll.setCellStyle(style2);
+//
+//				rowww = (XSSFRow) sheet.createRow(1);
+//				celll = rowww.createCell(0);
+//				celll.setCellValue("Time(HH:mm:ss):");
+//				celll.setCellStyle(style2);
+//				celll = rowww.createCell(1);
+//				// create for excel file creation date
+//				SimpleDateFormat dff = new SimpleDateFormat("HH:mm:ss");
+//				String timeStampp = dff.format(new Date());
+//
+////			SimpleDateFormat dfff = new SimpleDateFormat("dd/MM/yyyy.HH:mm:ss");
+////			String timeStampppp = dfff.format(new Date());
+//				celll.setCellValue(timeStampp);
+//				celll.setCellStyle(style2);
+//
+//				CreationHelper createHelper = workbook.getCreationHelper();
+//				CellStyle dateCellStyle = workbook.createCellStyle();
+//				dateCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("yyyy-MM-dd hh:mm:ss")); // Set
+//																												// the
+//																												// desired
+//																												// date
+//																												// format
+//
+//				XSSFRow roww = (XSSFRow) sheet.createRow(3);
+//				XSSFCell cell = roww.createCell(0);
+//				cell.setCellValue("ID");
+//				cell.setCellStyle(style);
+//
+//				cell = roww.createCell(1);
+//				cell.setCellValue("LOGIN DATE TIME");
+//				cell.setCellStyle(style);
+//
+//				cell = roww.createCell(2);
+//				cell.setCellValue("LOGOUT DATE TIME");
+//				cell.setCellStyle(style);
+//
+//				cell = roww.createCell(3);
+//				cell.setCellValue("EMAIL");
+//				cell.setCellStyle(style);
+//
+//				cell = roww.createCell(4);
+//				cell.setCellValue("IP ADDRESS");
+//				cell.setCellStyle(style);
+//
+//				cell = roww.createCell(5);
+//				cell.setCellValue("IS SESSION EXPIRED");
+//				cell.setCellStyle(style);
+//
+//				cell = roww.createCell(6);
+//				cell.setCellValue("USERNAME");
+//				cell.setCellStyle(style);
+//
+//				cell = roww.createCell(7);
+//				cell.setCellValue("USER STATUS");
+//				cell.setCellStyle(style);
+//
+//				cell = roww.createCell(8);
+//				cell.setCellValue("SESSION ID");
+//				cell.setCellStyle(style);
+//
+//				while (excel.hasNext()) {
+//					CellStyle style1 = workbook.createCellStyle();
+//					style1.setAlignment(HorizontalAlignment.CENTER);
+//					UserLoginDateTime userDateTime = excel.next();
+//					Row datarow = sheetAtt.createRow(++lastRowNum);
+//					datarow.createCell(0).setCellValue(userDateTime.getId());
+//					datarow.createCell(1).setCellValue(userDateTime.getLoginDateAndTime());
+//					datarow.getCell(1).setCellStyle(dateCellStyle);
+//					datarow.createCell(2).setCellValue(userDateTime.getLogoutDateAndTime());
+//					datarow.getCell(2).setCellStyle(dateCellStyle);
+//					datarow.createCell(3).setCellValue(userDateTime.getEmail());
+//					datarow.createCell(4).setCellValue(userDateTime.getIpAddress());
+//					datarow.createCell(5).setCellValue(userDateTime.is_session_interrupted());
+//					datarow.createCell(6).setCellValue(userDateTime.getUsername());
+//					datarow.createCell(7).setCellValue(userDateTime.isUser_status());
+//					datarow.createCell(8).setCellValue(userDateTime.getSession_Id());
+//					String st = (userDateTime.getId() + " " + userDateTime.getLoginDateAndTime() + " "
+//							+ userDateTime.getLogoutDateAndTime() + " " + userDateTime.getEmail() + " "
+//							+ userDateTime.getIpAddress() + " " + userDateTime.is_session_interrupted() + " "
+//							+ userDateTime.getUsername() + " " + userDateTime.isUser_status() + " "
+//							+ userDateTime.getSession_Id());
+//					System.out.println(st);
+//				}
+////				 FileOutputStream fileOutputStream=new FileOutputStream(path,true);
+//				workbook.write(fileOut);
+//				fileOut.flush();
+//				fileOut.close();
+//				workbook.close();
+//				return true;
+//
+//			} else {
+//				OutputStream fileOut = new FileOutputStream(file);
+//				Workbook workbook = new XSSFWorkbook();
+//				org.apache.poi.ss.usermodel.Sheet sheet = workbook.createSheet("USER_LOGIN_DATA");
+//				sheet.setColumnWidth(0, 4000);
+//				sheet.setColumnWidth(1, 5000);
+//				sheet.setColumnWidth(2, 5000);
+//				sheet.setColumnWidth(3, 7000);
+//				sheet.setColumnWidth(4, 7000);
+//				sheet.setColumnWidth(5, 5000);
+//				sheet.setColumnWidth(6, 5000);
+//				sheet.setColumnWidth(7, 5000);
+//				sheet.setColumnWidth(8, 5000);
+//				sheet.setColumnWidth(9, 10000);
+//
+//				int rowCount = 0;
+////			Row row = sheet.createRow(rowCount + 4);
+//				sheet.createRow(rowCount + 4);
+//				org.apache.poi.ss.usermodel.Sheet sheetAtt = workbook.getSheetAt(0);
+//
+//				System.out.println(sheetAtt);
+//
+//				Font font = workbook.createFont();
+//				font.setFontHeightInPoints((short) 10);
+//				font.setFontName("Arial");
+//				font.setBold(true);
+//				font.setItalic(true);
+//
+//				int lastRowNum = sheetAtt.getLastRowNum();
+//				// XSSFRow row = sheetAt.getRow(lastRowNum);
+//				System.out.println(lastRowNum);
+//				Font fontt = workbook.createFont();
+//				fontt.setColor(HSSFColor.HSSFColorPredefined.WHITE.getIndex());
+//				CellStyle style = workbook.createCellStyle();
+//				style.setFillBackgroundColor(IndexedColors.BRIGHT_GREEN.getIndex());
+//				style.setFillPattern(FillPatternType.DIAMONDS);
+//				style.setAlignment(HorizontalAlignment.CENTER);
+//				style.setFont(fontt);
+//				CellStyle style2 = workbook.createCellStyle();
+//				style2.setFont(font);
+//				// Row header = sheet.createRow(0);
+//
+////		        header.createCell(0).setCellValue("ID");
+////		        header.createCell(1).setCellValue("DATE");
+////		        header.createCell(2).setCellValue("ABOUT");
+////		        header.createCell(3).setCellValue("EMAIL");
+////		        header.createCell(4).setCellValue("ENABLED");
+////		        header.createCell(5).setCellValue("IMAGE_URL");
+////		        header.createCell(6).setCellValue("NAME");
+////		        header.createCell(7).setCellValue("PASSWORD");
+////		        header.createCell(8).setCellValue("ROLE");
+//
+//				// create for excel file for create date heading on top
+//
+//				XSSFRow rowww = (XSSFRow) sheet.createRow(0);
+//				XSSFCell celll = rowww.createCell(0);
+//				celll.setCellValue("Date (dd/MM/yyyy):");
+//				celll.setCellStyle(style2);
+//				celll = rowww.createCell(1);
+//				// create for excel file creation date
+//				SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+//				String timeStamp = df.format(new Date());
+//				celll.setCellValue(timeStamp);
+//				celll.setCellStyle(style2);
+//
+//				rowww = (XSSFRow) sheet.createRow(1);
+//				celll = rowww.createCell(0);
+//				celll.setCellValue("Time(HH:mm:ss):");
+//				celll.setCellStyle(style2);
+//				celll = rowww.createCell(1);
+//				// create for excel file creation date
+//				SimpleDateFormat dff = new SimpleDateFormat("HH:mm:ss");
+//				String timeStampp = dff.format(new Date());
+//
+////			SimpleDateFormat dfff = new SimpleDateFormat("dd/MM/yyyy.HH:mm:ss");
+////			String timeStampppp = dfff.format(new Date());
+//				celll.setCellValue(timeStampp);
+//				celll.setCellStyle(style2);
+//
+//				CreationHelper createHelper = workbook.getCreationHelper();
+//				CellStyle dateCellStyle = workbook.createCellStyle();
+//				dateCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("yyyy-MM-dd hh:mm:ss")); // Set
+//																												// the
+//																												// desired
+//																												// date
+//																												// format
+//
+//				XSSFRow roww = (XSSFRow) sheet.createRow(3);
+//				XSSFCell cell = roww.createCell(0);
+//				cell.setCellValue("ID");
+//				cell.setCellStyle(style);
+//
+//				cell = roww.createCell(1);
+//				cell.setCellValue("LOGIN DATE TIME");
+//				cell.setCellStyle(style);
+//
+//				cell = roww.createCell(2);
+//				cell.setCellValue("LOGOUT DATE TIME");
+//				cell.setCellStyle(style);
+//
+//				cell = roww.createCell(3);
+//				cell.setCellValue("EMAIL");
+//				cell.setCellStyle(style);
+//
+//				cell = roww.createCell(4);
+//				cell.setCellValue("IP ADDRESS");
+//				cell.setCellStyle(style);
+//
+//				cell = roww.createCell(5);
+//				cell.setCellValue("IS SESSION EXPIRED");
+//				cell.setCellStyle(style);
+//
+//				cell = roww.createCell(6);
+//				cell.setCellValue("USERNAME");
+//				cell.setCellStyle(style);
+//
+//				cell = roww.createCell(7);
+//				cell.setCellValue("USER STATUS");
+//				cell.setCellStyle(style);
+//
+//				cell = roww.createCell(8);
+//				cell.setCellValue("SESSION ID");
+//				cell.setCellStyle(style);
+//
+//				while (excel.hasNext()) {
+//					CellStyle style1 = workbook.createCellStyle();
+//					style1.setAlignment(HorizontalAlignment.CENTER);
+//					UserLoginDateTime userDateTime = excel.next();
+//					Row datarow = sheetAtt.createRow(++lastRowNum);
+//					datarow.createCell(0).setCellValue(userDateTime.getId());
+//					datarow.createCell(1).setCellValue(userDateTime.getLoginDateAndTime());
+//					datarow.getCell(1).setCellStyle(dateCellStyle);
+//					datarow.createCell(2).setCellValue(userDateTime.getLogoutDateAndTime());
+//					datarow.getCell(2).setCellStyle(dateCellStyle);
+//					datarow.createCell(3).setCellValue(userDateTime.getEmail());
+//					datarow.createCell(4).setCellValue(userDateTime.getIpAddress());
+//					datarow.createCell(5).setCellValue(userDateTime.is_session_interrupted());
+//					datarow.createCell(6).setCellValue(userDateTime.getUsername());
+//					datarow.createCell(7).setCellValue(userDateTime.isUser_status());
+//					datarow.createCell(8).setCellValue(userDateTime.getSession_Id());
+//					String st = (userDateTime.getId() + " " + userDateTime.getLoginDateAndTime() + " "
+//							+ userDateTime.getLogoutDateAndTime() + " " + userDateTime.getEmail() + " "
+//							+ userDateTime.getIpAddress() + " " + userDateTime.is_session_interrupted() + " "
+//							+ userDateTime.getUsername() + " " + userDateTime.isUser_status() + " "
+//							+ userDateTime.getSession_Id());
+//					System.out.println(st);
+//				}
+////				 FileOutputStream fileOutputStream=new FileOutputStream(path,true);
+//				workbook.write(fileOut);
+//				fileOut.flush();
+//				fileOut.close();
+//				workbook.close();
+//				return true;
+//			}
+//		} catch (Exception e) {
+//			String exceptionAsString = e.toString();
+//			// Get the current class
+//			Class<?> currentClass = servicelayer.class;
+//			// Get the name of the class
+//			String className = currentClass.getName();
+//			String errorMessage = e.getMessage();
+//			StackTraceElement[] stackTrace = e.getStackTrace();
+//			String methodName = stackTrace[0].getMethodName();
+//			int lineNumber = stackTrace[0].getLineNumber();
+//			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+//			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+//			return false;
+//		}
+//	}
+	
+	
+	
+	public ByteArrayOutputStream exportUserLoginData() throws IOException {
+        List<UserLoginDateTime> dataInsertExcelList = userLoginDao.findAll();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("USER_LOGIN_DATA");
 
-	public boolean data_insert_excel() throws IOException { 
-		try {
-			String path = "C:\\Users\\ayush.gupta\\Desktop\\USER_LOGIN_DATA.xlsx";
-			data_insert_excel_list = userLoginDao.findAll();
-			ListIterator<UserLoginDateTime> excel = data_insert_excel_list.listIterator();
-			File file = new File(path);
-			if (!file.exists()) {
-				OutputStream fileOut = new FileOutputStream(file);
-				Workbook workbook = new XSSFWorkbook();
-				org.apache.poi.ss.usermodel.Sheet sheet = workbook.createSheet("USER_LOGIN_DATA");
-				sheet.setColumnWidth(0, 4000);
-				sheet.setColumnWidth(1, 5000);
-				sheet.setColumnWidth(2, 5000);
-				sheet.setColumnWidth(3, 7000);
-				sheet.setColumnWidth(4, 7000);
-				sheet.setColumnWidth(5, 5000);
-				sheet.setColumnWidth(6, 5000);
-				sheet.setColumnWidth(7, 5000);
-				sheet.setColumnWidth(8, 5000);
-				sheet.setColumnWidth(9, 10000);
+        // Set column widths
+        sheet.setColumnWidth(0, 4000);
+        sheet.setColumnWidth(1, 5000);
+        sheet.setColumnWidth(2, 5000);
+        sheet.setColumnWidth(3, 7000);
+        sheet.setColumnWidth(4, 7000);
+        sheet.setColumnWidth(5, 5000);
+        sheet.setColumnWidth(6, 5000);
+        sheet.setColumnWidth(7, 5000);
+        sheet.setColumnWidth(8, 5000);
 
-				int rowCount = 0;
-//			Row row = sheet.createRow(rowCount + 4);
-				sheet.createRow(rowCount + 4);
-				org.apache.poi.ss.usermodel.Sheet sheetAtt = workbook.getSheetAt(0);
+        // Create styles
+        Font headerFont = workbook.createFont();
+        headerFont.setFontHeightInPoints((short) 10);
+        headerFont.setFontName("Arial");
+        headerFont.setBold(true);
+        headerFont.setColor(IndexedColors.WHITE.getIndex());
 
-				System.out.println(sheetAtt);
+        CellStyle headerStyle = workbook.createCellStyle();
+        headerStyle.setFillForegroundColor(IndexedColors.GREEN.getIndex());
+        headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        headerStyle.setFont(headerFont);
 
-				Font font = workbook.createFont();
-				font.setFontHeightInPoints((short) 10);
-				font.setFontName("Arial");
-				font.setBold(true);
-				font.setItalic(true);
+        CellStyle dateCellStyle = workbook.createCellStyle();
+        CreationHelper createHelper = workbook.getCreationHelper();
+        dateCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("yyyy-MM-dd HH:mm:ss"));
 
-				int lastRowNum = sheetAtt.getLastRowNum();
-				// XSSFRow row = sheetAt.getRow(lastRowNum);
-				System.out.println(lastRowNum);
-				Font fontt = workbook.createFont();
-				fontt.setColor(HSSFColor.HSSFColorPredefined.WHITE.getIndex());
-				CellStyle style = workbook.createCellStyle();
-				style.setFillBackgroundColor(IndexedColors.BRIGHT_GREEN.getIndex());
-				style.setFillPattern(FillPatternType.DIAMONDS);
-				style.setAlignment(HorizontalAlignment.CENTER);
-				style.setFont(fontt);
-				CellStyle style2 = workbook.createCellStyle();
-				style2.setFont(font);
-				// Row header = sheet.createRow(0);
+        // Create header row
+        Row headerRow = sheet.createRow(0);
+        String[] columnHeaders = {
+                "ID", "LOGIN DATE TIME", "LOGOUT DATE TIME", "EMAIL", "IP ADDRESS",
+                "IS SESSION EXPIRED", "USERNAME", "USER STATUS", "SESSION ID"
+        };
 
-//		        header.createCell(0).setCellValue("ID");
-//		        header.createCell(1).setCellValue("DATE");
-//		        header.createCell(2).setCellValue("ABOUT");
-//		        header.createCell(3).setCellValue("EMAIL");
-//		        header.createCell(4).setCellValue("ENABLED");
-//		        header.createCell(5).setCellValue("IMAGE_URL");
-//		        header.createCell(6).setCellValue("NAME");
-//		        header.createCell(7).setCellValue("PASSWORD");
-//		        header.createCell(8).setCellValue("ROLE");
+        for (int i = 0; i < columnHeaders.length; i++) {
+            org.apache.poi.ss.usermodel.Cell cell = headerRow.createCell(i);
+            cell.setCellValue(columnHeaders[i]);
+            cell.setCellStyle(headerStyle);
+        }
 
-				// create for excel file for create date heading on top
+        // Populate data rows
+        int rowNum = 1;
+        for (UserLoginDateTime userLogin : dataInsertExcelList) {
+            Row row = sheet.createRow(rowNum++);
 
-				XSSFRow rowww = (XSSFRow) sheet.createRow(0);
-				XSSFCell celll = rowww.createCell(0);
-				celll.setCellValue("Date (dd/MM/yyyy):");
-				celll.setCellStyle(style2);
-				celll = rowww.createCell(1);
-				// create for excel file creation date
-				SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-				String timeStamp = df.format(new Date());
-				celll.setCellValue(timeStamp);
-				celll.setCellStyle(style2);
+            row.createCell(0).setCellValue(userLogin.getId());
+            org.apache.poi.ss.usermodel.Cell loginDateCell = row.createCell(1);
+            loginDateCell.setCellValue(userLogin.getLoginDateAndTime());
+            loginDateCell.setCellStyle(dateCellStyle);
 
-				rowww = (XSSFRow) sheet.createRow(1);
-				celll = rowww.createCell(0);
-				celll.setCellValue("Time(HH:mm:ss):");
-				celll.setCellStyle(style2);
-				celll = rowww.createCell(1);
-				// create for excel file creation date
-				SimpleDateFormat dff = new SimpleDateFormat("HH:mm:ss");
-				String timeStampp = dff.format(new Date());
+            org.apache.poi.ss.usermodel.Cell logoutDateCell = row.createCell(2);
+            logoutDateCell.setCellValue(userLogin.getLogoutDateAndTime());
+            logoutDateCell.setCellStyle(dateCellStyle);
 
-//			SimpleDateFormat dfff = new SimpleDateFormat("dd/MM/yyyy.HH:mm:ss");
-//			String timeStampppp = dfff.format(new Date());
-				celll.setCellValue(timeStampp);
-				celll.setCellStyle(style2);
+            row.createCell(3).setCellValue(userLogin.getEmail());
+            row.createCell(4).setCellValue(userLogin.getIpAddress());
+            row.createCell(5).setCellValue(userLogin.is_session_interrupted());
+            row.createCell(6).setCellValue(userLogin.getUsername());
+            row.createCell(7).setCellValue(userLogin.isUser_status());
+            row.createCell(8).setCellValue(userLogin.getSession_Id());
+        }
 
-				CreationHelper createHelper = workbook.getCreationHelper();
-				CellStyle dateCellStyle = workbook.createCellStyle();
-				dateCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("yyyy-MM-dd hh:mm:ss")); // Set
-																												// the
-																												// desired
-																												// date
-																												// format
-
-				XSSFRow roww = (XSSFRow) sheet.createRow(3);
-				XSSFCell cell = roww.createCell(0);
-				cell.setCellValue("ID");
-				cell.setCellStyle(style);
-
-				cell = roww.createCell(1);
-				cell.setCellValue("LOGIN DATE TIME");
-				cell.setCellStyle(style);
-
-				cell = roww.createCell(2);
-				cell.setCellValue("LOGOUT DATE TIME");
-				cell.setCellStyle(style);
-
-				cell = roww.createCell(3);
-				cell.setCellValue("EMAIL");
-				cell.setCellStyle(style);
-
-				cell = roww.createCell(4);
-				cell.setCellValue("IP ADDRESS");
-				cell.setCellStyle(style);
-
-				cell = roww.createCell(5);
-				cell.setCellValue("IS SESSION EXPIRED");
-				cell.setCellStyle(style);
-
-				cell = roww.createCell(6);
-				cell.setCellValue("USERNAME");
-				cell.setCellStyle(style);
-
-				cell = roww.createCell(7);
-				cell.setCellValue("USER STATUS");
-				cell.setCellStyle(style);
-
-				cell = roww.createCell(8);
-				cell.setCellValue("SESSION ID");
-				cell.setCellStyle(style);
-
-				while (excel.hasNext()) {
-					CellStyle style1 = workbook.createCellStyle();
-					style1.setAlignment(HorizontalAlignment.CENTER);
-					UserLoginDateTime userDateTime = excel.next();
-					Row datarow = sheetAtt.createRow(++lastRowNum);
-					datarow.createCell(0).setCellValue(userDateTime.getId());
-					datarow.createCell(1).setCellValue(userDateTime.getLoginDateAndTime());
-					datarow.getCell(1).setCellStyle(dateCellStyle);
-					datarow.createCell(2).setCellValue(userDateTime.getLogoutDateAndTime());
-					datarow.getCell(2).setCellStyle(dateCellStyle);
-					datarow.createCell(3).setCellValue(userDateTime.getEmail());
-					datarow.createCell(4).setCellValue(userDateTime.getIpAddress());
-					datarow.createCell(5).setCellValue(userDateTime.is_session_interrupted());
-					datarow.createCell(6).setCellValue(userDateTime.getUsername());
-					datarow.createCell(7).setCellValue(userDateTime.isUser_status());
-					datarow.createCell(8).setCellValue(userDateTime.getSession_Id());
-					String st = (userDateTime.getId() + " " + userDateTime.getLoginDateAndTime() + " "
-							+ userDateTime.getLogoutDateAndTime() + " " + userDateTime.getEmail() + " "
-							+ userDateTime.getIpAddress() + " " + userDateTime.is_session_interrupted() + " "
-							+ userDateTime.getUsername() + " " + userDateTime.isUser_status() + " "
-							+ userDateTime.getSession_Id());
-					System.out.println(st);
-				}
-//				 FileOutputStream fileOutputStream=new FileOutputStream(path,true);
-				workbook.write(fileOut);
-				fileOut.flush();
-				fileOut.close();
-				workbook.close();
-				return true;
-
-			} else {
-				OutputStream fileOut = new FileOutputStream(file);
-				Workbook workbook = new XSSFWorkbook();
-				org.apache.poi.ss.usermodel.Sheet sheet = workbook.createSheet("USER_LOGIN_DATA");
-				sheet.setColumnWidth(0, 4000);
-				sheet.setColumnWidth(1, 5000);
-				sheet.setColumnWidth(2, 5000);
-				sheet.setColumnWidth(3, 7000);
-				sheet.setColumnWidth(4, 7000);
-				sheet.setColumnWidth(5, 5000);
-				sheet.setColumnWidth(6, 5000);
-				sheet.setColumnWidth(7, 5000);
-				sheet.setColumnWidth(8, 5000);
-				sheet.setColumnWidth(9, 10000);
-
-				int rowCount = 0;
-//			Row row = sheet.createRow(rowCount + 4);
-				sheet.createRow(rowCount + 4);
-				org.apache.poi.ss.usermodel.Sheet sheetAtt = workbook.getSheetAt(0);
-
-				System.out.println(sheetAtt);
-
-				Font font = workbook.createFont();
-				font.setFontHeightInPoints((short) 10);
-				font.setFontName("Arial");
-				font.setBold(true);
-				font.setItalic(true);
-
-				int lastRowNum = sheetAtt.getLastRowNum();
-				// XSSFRow row = sheetAt.getRow(lastRowNum);
-				System.out.println(lastRowNum);
-				Font fontt = workbook.createFont();
-				fontt.setColor(HSSFColor.HSSFColorPredefined.WHITE.getIndex());
-				CellStyle style = workbook.createCellStyle();
-				style.setFillBackgroundColor(IndexedColors.BRIGHT_GREEN.getIndex());
-				style.setFillPattern(FillPatternType.DIAMONDS);
-				style.setAlignment(HorizontalAlignment.CENTER);
-				style.setFont(fontt);
-				CellStyle style2 = workbook.createCellStyle();
-				style2.setFont(font);
-				// Row header = sheet.createRow(0);
-
-//		        header.createCell(0).setCellValue("ID");
-//		        header.createCell(1).setCellValue("DATE");
-//		        header.createCell(2).setCellValue("ABOUT");
-//		        header.createCell(3).setCellValue("EMAIL");
-//		        header.createCell(4).setCellValue("ENABLED");
-//		        header.createCell(5).setCellValue("IMAGE_URL");
-//		        header.createCell(6).setCellValue("NAME");
-//		        header.createCell(7).setCellValue("PASSWORD");
-//		        header.createCell(8).setCellValue("ROLE");
-
-				// create for excel file for create date heading on top
-
-				XSSFRow rowww = (XSSFRow) sheet.createRow(0);
-				XSSFCell celll = rowww.createCell(0);
-				celll.setCellValue("Date (dd/MM/yyyy):");
-				celll.setCellStyle(style2);
-				celll = rowww.createCell(1);
-				// create for excel file creation date
-				SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-				String timeStamp = df.format(new Date());
-				celll.setCellValue(timeStamp);
-				celll.setCellStyle(style2);
-
-				rowww = (XSSFRow) sheet.createRow(1);
-				celll = rowww.createCell(0);
-				celll.setCellValue("Time(HH:mm:ss):");
-				celll.setCellStyle(style2);
-				celll = rowww.createCell(1);
-				// create for excel file creation date
-				SimpleDateFormat dff = new SimpleDateFormat("HH:mm:ss");
-				String timeStampp = dff.format(new Date());
-
-//			SimpleDateFormat dfff = new SimpleDateFormat("dd/MM/yyyy.HH:mm:ss");
-//			String timeStampppp = dfff.format(new Date());
-				celll.setCellValue(timeStampp);
-				celll.setCellStyle(style2);
-
-				CreationHelper createHelper = workbook.getCreationHelper();
-				CellStyle dateCellStyle = workbook.createCellStyle();
-				dateCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("yyyy-MM-dd hh:mm:ss")); // Set
-																												// the
-																												// desired
-																												// date
-																												// format
-
-				XSSFRow roww = (XSSFRow) sheet.createRow(3);
-				XSSFCell cell = roww.createCell(0);
-				cell.setCellValue("ID");
-				cell.setCellStyle(style);
-
-				cell = roww.createCell(1);
-				cell.setCellValue("LOGIN DATE TIME");
-				cell.setCellStyle(style);
-
-				cell = roww.createCell(2);
-				cell.setCellValue("LOGOUT DATE TIME");
-				cell.setCellStyle(style);
-
-				cell = roww.createCell(3);
-				cell.setCellValue("EMAIL");
-				cell.setCellStyle(style);
-
-				cell = roww.createCell(4);
-				cell.setCellValue("IP ADDRESS");
-				cell.setCellStyle(style);
-
-				cell = roww.createCell(5);
-				cell.setCellValue("IS SESSION EXPIRED");
-				cell.setCellStyle(style);
-
-				cell = roww.createCell(6);
-				cell.setCellValue("USERNAME");
-				cell.setCellStyle(style);
-
-				cell = roww.createCell(7);
-				cell.setCellValue("USER STATUS");
-				cell.setCellStyle(style);
-
-				cell = roww.createCell(8);
-				cell.setCellValue("SESSION ID");
-				cell.setCellStyle(style);
-
-				while (excel.hasNext()) {
-					CellStyle style1 = workbook.createCellStyle();
-					style1.setAlignment(HorizontalAlignment.CENTER);
-					UserLoginDateTime userDateTime = excel.next();
-					Row datarow = sheetAtt.createRow(++lastRowNum);
-					datarow.createCell(0).setCellValue(userDateTime.getId());
-					datarow.createCell(1).setCellValue(userDateTime.getLoginDateAndTime());
-					datarow.getCell(1).setCellStyle(dateCellStyle);
-					datarow.createCell(2).setCellValue(userDateTime.getLogoutDateAndTime());
-					datarow.getCell(2).setCellStyle(dateCellStyle);
-					datarow.createCell(3).setCellValue(userDateTime.getEmail());
-					datarow.createCell(4).setCellValue(userDateTime.getIpAddress());
-					datarow.createCell(5).setCellValue(userDateTime.is_session_interrupted());
-					datarow.createCell(6).setCellValue(userDateTime.getUsername());
-					datarow.createCell(7).setCellValue(userDateTime.isUser_status());
-					datarow.createCell(8).setCellValue(userDateTime.getSession_Id());
-					String st = (userDateTime.getId() + " " + userDateTime.getLoginDateAndTime() + " "
-							+ userDateTime.getLogoutDateAndTime() + " " + userDateTime.getEmail() + " "
-							+ userDateTime.getIpAddress() + " " + userDateTime.is_session_interrupted() + " "
-							+ userDateTime.getUsername() + " " + userDateTime.isUser_status() + " "
-							+ userDateTime.getSession_Id());
-					System.out.println(st);
-				}
-//				 FileOutputStream fileOutputStream=new FileOutputStream(path,true);
-				workbook.write(fileOut);
-				fileOut.flush();
-				fileOut.close();
-				workbook.close();
-				return true;
-			}
-		} catch (Exception e) {
-			String exceptionAsString = e.toString();
-			// Get the current class
-			Class<?> currentClass = servicelayer.class;
-			// Get the name of the class
-			String className = currentClass.getName();
-			String errorMessage = e.getMessage();
-			StackTraceElement[] stackTrace = e.getStackTrace();
-			String methodName = stackTrace[0].getMethodName();
-			int lineNumber = stackTrace[0].getLineNumber();
-			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
-			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
-			return false;
-		}
-	}
+        workbook.write(out);
+        workbook.close();
+        return out;
+    }
 	
 	public boolean update_profile(User user) {
 		try {
