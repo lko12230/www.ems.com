@@ -150,7 +150,7 @@ body {
                         </tr>
                     </thead>
                     <tbody>
-                   <tr th:each="c ,lineNumber  : ${all_users_login_records}">
+                     <tr th:each="c ,lineNumber  : ${all_users_login_records}" th:if="${all_users_login_records != null and #lists.size(all_users_login_records) > 0}">
 		<td style="text-align: center;"> <span th:text="${lineNumber.index+1}">1</span></td>
     
       <th scope="row" th:text="${'EMPID'+c.id}">1</th>
@@ -176,11 +176,20 @@ body {
                     </tbody>
                 </table>
                    </div>
-            <div th:if="${payment_Order_Info == null or #lists.size(payment_Order_Info) == 0}" class="d-flex justify-content-center align-items-center" style="height: 100px;">
-               <span class="badge" style="text-transform: uppercase; color: red;">No Transactions Available</span>
+           <div th:if="${all_users_login_records == null or #lists.size(all_users_login_records) == 0}" class="d-flex justify-content-center align-items-center" style="height: 100px;">
+               <span class="badge" style="text-transform: uppercase; color: red;">No Records Available</span>
             </div>
     
     </div>
+    <script>
+    function EmailExcel() {
+        const emailForm = document.createElement("form");
+        emailForm.method = "post";
+        emailForm.action = "/admin/export_email_excel";
+        document.body.appendChild(emailForm);
+        emailForm.submit();
+    }
+    </script>
     </section>
 </body>
 </html>

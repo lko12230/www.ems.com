@@ -1,10 +1,11 @@
 package com.example.demo.service;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.Principal;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
@@ -26,19 +27,14 @@ import javax.imageio.ImageIO;
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
-
-import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -634,7 +630,7 @@ String designarionArrowSplit = user.getDesignation();
 			String message = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<p>" + "Dear " + username
 					+ "<br>" + "<br>" + "Your Team Changed and your new team is " + "<b>" + team_id + " -> " + team_desc
 					+ "</b>" + ",You will get mail from your manager within 2 working days." + "<br><br>"
-					+ "Google Resource Management Team" + "</p>" + "</div>";
+					+ "Resource Management Team" + "</p>" + "</div>";
 			flag = this.emailService.sendEmail(message, subject, to);
 			if (flag == true) {
 				System.out.println(true);
@@ -672,7 +668,7 @@ String designarionArrowSplit = user.getDesignation();
 			boolean flag = false;
 			String message = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<p>" + "Dear " + username
 					+ "<br>" + "<br>" + "You have removed from team ," + "<b>" + teamDescwithid + "</b>" + " on "
-					+ "<b>" + new Date() + "</b>" + "<br><br>" + "Google Resource Management Team" + "</p>" + "</div>";
+					+ "<b>" + new Date() + "</b>" + "<br><br>" + "Resource Management Team" + "</p>" + "</div>";
 			flag = this.emailService.sendEmail(message, subject, to);
 			if (flag == true) {
 				System.out.println(true);
@@ -704,7 +700,7 @@ String designarionArrowSplit = user.getDesignation();
 			String message = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<p>" + "Dear " + username
 					+ "<br>" + "<br>" + "Your Resignation Request Accepted and your last working day is " + "<b>"
 					+ lastworkingday + "</b>" + "<br><br>" + "All the best for your future endavours" + "<br>"
-					+ "Google HR Team " + "</p>" + "</div>";
+					+ "HR Team " + "</p>" + "</div>";
 			flag = this.emailService1.sendEmail(message, subject, to, cc);
 			if (flag == true) {
 				System.out.println(true);
@@ -740,7 +736,7 @@ String designarionArrowSplit = user.getDesignation();
 			String message = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<p>" + "Dear " + username
 					+ "<br>" + "<br>" + "You are job service is terminated by GOOGLE and your last working day is "
 					+ "<b>" + lastworkingday + "</b>" + "<br><br>" + "All the best for your future endavours" + "<br>"
-					+ "Google HR Team " + "</p>" + "</div>";
+					+ "HR Team " + "</p>" + "</div>";
 			flag = this.emailService1.sendEmail(message, subject, to, cc);
 			if (flag == true) {
 				System.out.println(true);
@@ -779,7 +775,7 @@ String designarionArrowSplit = user.getDesignation();
 					+ ipaddress + "</b>" + "<br>" + "Device LOGIN TIME : " + "<b>" + login_date_time + "</b>" + "</b>"
 					+ "<br>" + "Device OS : " + "<b>" + osName + "</b>" + "<br>" + "Device Version : " + "<b>"
 					+ osVersion + "</b>" + "<br>" + "Device Architecture : " + "<b>" + osArchitecture + "</b>" + "<br>"
-					+ "<br>" + "Google Cyber Team " + "</p>" + "</div>";
+					+ "<br>" + "Cyber Team " + "</p>" + "</div>";
 			flag = this.emailService.sendEmail(message, subject, to);
 			System.out.println(" EMAIL IPADDRESS !!!!!!!!!!!!" + flag);
 			System.out.println(" EMAIL DEVICE OS  !!!!!!!!!!!!!" + flag);
@@ -839,7 +835,7 @@ String designarionArrowSplit = user.getDesignation();
 					+ "IP ADDRESS : " + "<b>" + ipaddress + "</b>" + "<br>" + "Device LOGIN TIME : " + "<b>"
 					+ login_date_time + "</b>" + "</b>" + "<br>" + "Device OS : " + "<b>" + osName + "</b>" + "<br>"
 					+ "Device Version : " + "<b>" + osVersion + "</b>" + "<br>" + "Device Architecture : " + "<b>"
-					+ osArchitecture + "</b>" + "<br>" + "<br>" + "Google Cyber Team " + "</p>" + "</div>";
+					+ osArchitecture + "</b>" + "<br>" + "<br>" + "Cyber Team " + "</p>" + "</div>";
 			flag = this.emailService.sendEmail(message, subject, to);
 			if (flag == true) {
 				System.out.println(true);
@@ -894,7 +890,7 @@ String designarionArrowSplit = user.getDesignation();
 					+ "License Number : " + "<b>" + license_number + "</b>" + "</b>" + "<br>" + "License Status : "
 					+ "<b style='color:green'>" + license_status + "</b>" + "<br>" + "Payment Status : "
 					+ "<b style='text-transform: uppercase; color: green'>" + payment_status + "</b>" + "<br>" + "<br>"
-					+ "Google Payment Team " + "</p>" + "</div>";
+					+ "Payment Team " + "</p>" + "</div>";
 
 			flag = this.paymentSucessEmailService.sendEmail(invoicepath, message, subject, to);
 			if (flag == true) {
@@ -1563,7 +1559,46 @@ String designarionArrowSplit = user.getDesignation();
 //		}
 //	}
 	
-	
+	public String generateExcel() throws IOException {
+        List<UserLoginDateTime> records = userLoginDao.findAll();
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Login History");
+
+        Row headerRow = sheet.createRow(0);
+        String[] columns = {"Sno", "Employee ID", "Name", "Email", "Login Time", "Logout Time", "IP Address", "Is Session Interrupted", "Location"};
+
+        for (int i = 0; i < columns.length; i++) {
+            org.apache.poi.ss.usermodel.Cell cell = headerRow.createCell(i);
+            cell.setCellValue(columns[i]);
+        }
+
+        int rowNum = 1;
+        for (UserLoginDateTime record : records) {
+            Row row = sheet.createRow(rowNum++);
+
+            row.createCell(0).setCellValue(rowNum - 1);
+            row.createCell(1).setCellValue(record.getId());
+            row.createCell(2).setCellValue(record.getUsername());
+            row.createCell(3).setCellValue(record.getEmail());
+            row.createCell(4).setCellValue(record.getLoginDateAndTime());
+            row.createCell(5).setCellValue(record.getLogoutDateAndTime());
+            row.createCell(6).setCellValue(record.getIpAddress());
+            row.createCell(7).setCellValue(record.is_session_interrupted());
+            row.createCell(8).setCellValue(record.getLocation());
+        }
+
+        // Use a temporary directory for storing the Excel file
+        Path tempDirectory = Files.createTempDirectory("excelFiles");
+        Path filePath = Paths.get(tempDirectory.toString(), "login_history.xlsx");
+
+        try (FileOutputStream fileOut = new FileOutputStream(filePath.toFile())) {
+            workbook.write(fileOut);
+        } finally {
+            workbook.close();
+        }
+
+        return filePath.toString();
+    }
 	
 	public ByteArrayOutputStream exportUserLoginData() throws IOException {
         List<UserLoginDateTime> dataInsertExcelList = userLoginDao.findAll();

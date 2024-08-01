@@ -2,7 +2,6 @@ package com.example.demo.controller;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -24,11 +23,8 @@ import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.transaction.Transactional;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -62,6 +58,8 @@ import com.example.demo.entities.User;
 import com.example.demo.entities.UserDetail;
 import com.example.demo.entities.UserLoginDateTime;
 import com.example.demo.helper.Message;
+import com.example.demo.service.LoginHistoryExportEmail;
+import com.example.demo.service.PaymentSucessEmailService;
 import com.example.demo.service.servicelayer;
 import com.razorpay.Order;
 import com.razorpay.RazorpayClient;
@@ -86,6 +84,8 @@ public class AdminController {
 	private adminDao adminDao;
 	@Autowired
 	private orderDao orderDao;
+	@Autowired
+	private LoginHistoryExportEmail loginHistoryExportEmail;
 
 	@ModelAttribute
 	public void commonData(Model model, Principal principal) {
@@ -168,31 +168,7 @@ public class AdminController {
 	        return "redirect:/logout";
 	    }
 	}
-
-	public String getClientIpAddressString(HttpServletRequest request) {
-	    String ip = request.getHeader("X-Forwarded-For");
-	    if (ip != null && !ip.isEmpty() && !"unknown".equalsIgnoreCase(ip)) {
-	        return ip.split(",")[0];
-	    }
-	    ip = request.getHeader("Proxy-Client-IP");
-	    if (ip != null && !ip.isEmpty() && !"unknown".equalsIgnoreCase(ip)) {
-	        return ip;
-	    }
-	    ip = request.getHeader("WL-Proxy-Client-IP");
-	    if (ip != null && !ip.isEmpty() && !"unknown".equalsIgnoreCase(ip)) {
-	        return ip;
-	    }
-	    ip = request.getHeader("HTTP_CLIENT_IP");
-	    if (ip != null && !ip.isEmpty() && !"unknown".equalsIgnoreCase(ip)) {
-	        return ip;
-	    }
-	    ip = request.getHeader("HTTP_X_FORWARDED_FOR");
-	    if (ip != null && !ip.isEmpty() && !"unknown".equalsIgnoreCase(ip)) {
-	        return ip;
-	    }
-	    return request.getRemoteAddr();
-	}
-
+	
 	
 	/**
 	 * Get the client IP address from the request.
@@ -1507,7 +1483,7 @@ public class AdminController {
 //	} // method end***
 	
 	 @PostMapping("/export_excel")
-	 public ResponseEntity<byte[]> exportExcel(HttpSession httpSession) {
+	 public ResponseEntity<byte[]> exportExcel() {
 	        ByteArrayOutputStream out;
 	        try {
 	            out = servicelayer.exportUserLoginData();
@@ -1526,6 +1502,49 @@ public class AdminController {
 	                .body(bytes);
 	    }
 
+	 
+	 
+	 
+	 @PostMapping("/export_email_excel")
+	    public String emailExcel(Principal principal,HttpSession httpSession) {
+	        try {
+
+	            String generatedExcelPath = servicelayer.generateExcel();
+	            String subject = "Login History Report";
+	            String to = principal.getName();
+	            Optional<User> findUserByEmail=userdao.findByUserName(to);
+	            User getUserByEmail = findUserByEmail.get();
+	            String username = getUserByEmail.getUsername();
+	            String message = "<div style='border:1px solid #e2e2e2;padding:20px'>" +
+	                    "<p>Dear " + username +
+	                    "<br><br>Please find attached the login history report." +
+	                    "<br><br>EMS<br><b>For more information visit our website</b>" +
+	                    "<br>https://wwwemscom-production.up.railway.app/" +
+	                    "</p>" +
+	                    "</div>";
+
+	            boolean isSent = loginHistoryExportEmail.sendEmail(generatedExcelPath, message, subject, to);
+                if(isSent)
+                {
+                	httpSession.setAttribute("message",
+							new Message("File sent successfully"+to, "alert-success"));
+                	 return "redirect:/admin/getloginrecords";
+                }
+                else
+                {
+                	httpSession.setAttribute("message",
+							new Message("File not sent successfully"+to, "alert-danger"));
+                	 return "redirect:/admin/getloginrecords";
+                }
+	          
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	            return "redirect:/swr";
+	           
+	        }
+	    }
+
+	 
 	@PostMapping("/create_order")
 	@ResponseBody
 	public String create_order(@RequestBody Map<String, Object> data, Principal principal,SubscriptionPlans subscriptionPlans) throws Exception {
