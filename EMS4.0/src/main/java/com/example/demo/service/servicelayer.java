@@ -1564,18 +1564,42 @@ String designarionArrowSplit = user.getDesignation();
 	    Workbook workbook = new XSSFWorkbook();
 	    Sheet sheet = workbook.createSheet("Login History");
 
+	    // Set column widths
+	    sheet.setColumnWidth(0, 4000);
+	    sheet.setColumnWidth(1, 5000);
+	    sheet.setColumnWidth(2, 5000);
+	    sheet.setColumnWidth(3, 7000);
+	    sheet.setColumnWidth(4, 7000);
+	    sheet.setColumnWidth(5, 5000);
+	    sheet.setColumnWidth(6, 5000);
+	    sheet.setColumnWidth(7, 5000);
+	    sheet.setColumnWidth(8, 5000);
+
+	    // Create styles
+	    Font headerFont = workbook.createFont();
+	    headerFont.setFontHeightInPoints((short) 10);
+	    headerFont.setFontName("Arial");
+	    headerFont.setBold(true);
+	    headerFont.setColor(IndexedColors.WHITE.getIndex());
+
+	    CellStyle headerStyle = workbook.createCellStyle();
+	    headerStyle.setFillForegroundColor(IndexedColors.GREEN.getIndex());
+	    headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+	    headerStyle.setFont(headerFont);
+
+	    CellStyle dateCellStyle = workbook.createCellStyle();
+	    CreationHelper createHelper = workbook.getCreationHelper();
+	    dateCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("yyyy-MM-dd HH:mm:ss"));
+
+	    // Create header row
 	    Row headerRow = sheet.createRow(0);
 	    String[] columns = {"Sno", "Employee ID", "Name", "Email", "Login Time", "Logout Time", "IP Address", "Is Session Interrupted", "Location"};
 
 	    for (int i = 0; i < columns.length; i++) {
 	        org.apache.poi.ss.usermodel.Cell cell = headerRow.createCell(i);
 	        cell.setCellValue(columns[i]);
+	        cell.setCellStyle(headerStyle);
 	    }
-
-	    // Create a date cell style
-	    CellStyle dateCellStyle = workbook.createCellStyle();
-	    CreationHelper createHelper = workbook.getCreationHelper();
-	    dateCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("yyyy-mm-dd hh:mm:ss"));
 
 	    int rowNum = 1;
 	    for (UserLoginDateTime record : records) {
@@ -1628,7 +1652,6 @@ String designarionArrowSplit = user.getDesignation();
         sheet.setColumnWidth(5, 5000);
         sheet.setColumnWidth(6, 5000);
         sheet.setColumnWidth(7, 5000);
-        sheet.setColumnWidth(8, 5000);
 
         // Create styles
         Font headerFont = workbook.createFont();
@@ -1650,7 +1673,7 @@ String designarionArrowSplit = user.getDesignation();
         Row headerRow = sheet.createRow(0);
         String[] columnHeaders = {
                 "ID", "LOGIN DATE TIME", "LOGOUT DATE TIME", "EMAIL", "IP ADDRESS",
-                "IS SESSION EXPIRED", "USERNAME", "USER STATUS", "SESSION ID"
+                "IS SESSION EXPIRED", "USERNAME", "USER STATUS"
         };
 
         for (int i = 0; i < columnHeaders.length; i++) {
@@ -1678,7 +1701,6 @@ String designarionArrowSplit = user.getDesignation();
             row.createCell(5).setCellValue(userLogin.is_session_interrupted());
             row.createCell(6).setCellValue(userLogin.getUsername());
             row.createCell(7).setCellValue(userLogin.isUser_status());
-            row.createCell(8).setCellValue(userLogin.getSession_Id());
         }
 
         workbook.write(out);
