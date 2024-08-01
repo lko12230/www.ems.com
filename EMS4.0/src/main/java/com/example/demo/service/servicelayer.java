@@ -1944,7 +1944,7 @@ String designarionArrowSplit = user.getDesignation();
             
             // Convert formattedDate back to Date object
             Date loginDate = parseDateInIST(formattedDate);
-			userLoginDateTime.setLoginDateAndTime(new Date());
+			userLoginDateTime.setLoginDateAndTime(loginDate);
 			userLoginDateTime.setUsername(user.getUsername());
 			userLoginDao.save(userLoginDateTime);
 			userdao.save(user);
@@ -1970,7 +1970,13 @@ String designarionArrowSplit = user.getDesignation();
 				}
 				user.setSession_Id(getSession);
 				userDetail2.setUser_status(true);
-				userLoginDateTime.setLoginDateAndTime(new Date());
+				 // Get current time in IST
+	            ZonedDateTime nowIST = ZonedDateTime.now(ZoneId.of("Asia/Kolkata"));
+	            String formattedDate = nowIST.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"));
+	            
+	            // Convert formattedDate back to Date object
+	            Date loginDate = parseDateInIST(formattedDate);
+				userLoginDateTime.setLoginDateAndTime(loginDate);
 				userLoginDateTime.setUsername(user.getUsername());
 				userLoginDao.save(userLoginDateTime);
 				userdao.save(user);
