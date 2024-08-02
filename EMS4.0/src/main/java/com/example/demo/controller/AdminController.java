@@ -1527,13 +1527,13 @@ public class AdminController {
                 if(isSent)
                 {
                 	httpSession.setAttribute("message",
-							new Message("File sent successfully "+to, "alert-success"));
+							new Message("File sent successfully to"+to, "alert-success"));
                 	 return "redirect:/admin/getloginrecords";
                 }
                 else
                 {
                 	httpSession.setAttribute("message",
-							new Message("File not sent successfully "+to, "alert-danger"));
+							new Message("File not sent successfully to "+to, "alert-danger"));
                 	 return "redirect:/admin/getloginrecords";
                 }
 	          

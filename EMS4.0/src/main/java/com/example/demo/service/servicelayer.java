@@ -1587,7 +1587,7 @@ String designarionArrowSplit = user.getDesignation();
 	    headerFont.setColor(IndexedColors.WHITE.getIndex());
 
 	    CellStyle headerStyle = workbook.createCellStyle();
-	    headerStyle.setFillForegroundColor(IndexedColors.GREEN.getIndex());
+	    headerStyle.setFillForegroundColor(IndexedColors.BLACK.getIndex());
 	    headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 	    headerStyle.setFont(headerFont);
 
@@ -1665,7 +1665,7 @@ String designarionArrowSplit = user.getDesignation();
         headerFont.setColor(IndexedColors.WHITE.getIndex());
 
         CellStyle headerStyle = workbook.createCellStyle();
-        headerStyle.setFillForegroundColor(IndexedColors.GREEN.getIndex());
+        headerStyle.setFillForegroundColor(IndexedColors.BLACK.getIndex());
         headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         headerStyle.setFont(headerFont);
 
@@ -1676,7 +1676,7 @@ String designarionArrowSplit = user.getDesignation();
         // Create header row
         Row headerRow = sheet.createRow(0);
         String[] columnHeaders = {
-                "ID", "LOGIN DATE TIME", "LOGOUT DATE TIME", "EMAIL", "IP ADDRESS",
+                "Employee ID", "LOGIN DATE TIME", "LOGOUT DATE TIME", "EMAIL", "IP ADDRESS",
                 "IS SESSION EXPIRED", "USERNAME", "USER STATUS"
         };
 

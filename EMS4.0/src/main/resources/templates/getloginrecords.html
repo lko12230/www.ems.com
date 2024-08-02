@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>############</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+      <section>
     <style type="text/css">
         /* Importing fonts from Google */
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
@@ -114,6 +115,11 @@
             text-align: center;
         }
 
+        .table thead th {
+            background-color: #000 !important; /* Set background color for table header */
+            color: #fff !important; /* Set text color for table header */
+        }
+
         @media(max-width: 380px) {
             .wrapper {
                 margin: 30px 20px;
@@ -123,7 +129,6 @@
     </style>
 </head>
 <body>
-    <section>
         <form id="ExcelFormToDownloads" th:action="@{/admin/export_excel}" method="post">
             <div class="row justify-content-center">
                 <div th:if="${session.message}" th:classappend="${session.message.type}" class="alert text-center" role="alert text-center">
@@ -164,9 +169,17 @@
                                 <td> <span th:text="${lineNumber.index + 1}">1</span></td>
                                 <th scope="row" th:text="${'EMPID' + c.id}">1</th>
                                 <td> <span th:text="${c.username}"></span></td>
-                                <td><span th:text="${c.email}"></span></td>
-                                <td><span th:text="${c.LoginDateAndTime}"></span></td>
-                                <td><span th:text="${c.LogoutDateAndTime}"></span></td>
+                                <td><span th:if="${c.email != null}" th:text="${c.email}"></span>
+                                 <span th:if="${c.email == null}" style="color: blue;"><b>Not Available</b></span>
+                                 </td>
+                                <td>
+                                <span th:if="${c.LoginDateAndTime!=null}" th:text="${c.LoginDateAndTime}"></span>
+                                  <span th:if="${c.LoginDateAndTime == null}" style="color: blue;"><b>Not Available</b></span>
+                                  </td>
+                                <td>
+                                    <span th:if="${c.LogoutDateAndTime!=null}" th:text="${c.LogoutDateAndTime}"></span>
+                                    <span th:if="${c.LogoutDateAndTime == null}" style="color: blue;"><b>Not Available</b></span>
+                                </td>
                                 <td><span th:text="${c.ipAddress}"></span></td>
                                 <td><span th:text="${c.is_session_interrupted}"></span></td>
                                 <td><span th:text="${c.location}"></span></td>
@@ -190,7 +203,7 @@
         </script>
     </section>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwr7x9JvoRxT2MZw1T" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KV7phtPhzWj9WO1clHTMGa3JDZwr7x9JvoRxT2MZw1T" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-smHYkd/y0pCw3c5zfiKdBV7PRo65eNtE7fF6pGJp53daKmsPbnIY+L8K7R06ANa9" crossorigin="anonymous"></script>
 </body>
 </html>

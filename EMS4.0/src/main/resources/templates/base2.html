@@ -53,68 +53,42 @@
 <body onload="renderTime();">
 	<form id="logoutForm" th:action="@{/logout}" method="post">
 		<!--  <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />  -->
-		<nav class="fixed-top navbar navbar-expand-lg navbar-dark bg-dark">
-			<a class="navbar-brand" href="/">
-				<!-- <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAclBMVEXz8/PzUyWBvAYFpvD/ugjz9PX19PXz+fr39fr69vPy9fp5uAAAofD/tgDz3Nji6tfzRADzTBfzmYew0oB/xfH70IDX5/P16tfz5eLo7eHzPADzlICs0Hfh6/N3wvH7znj07eEAnvDzvbPL3q6u1/L43q6vy/leAAABd0lEQVR4nO3cR1IDQRREwcb0SEgj770B7n9FNmhEBL1g8zUs8l2gIi9QKUmSpHs5vPtWFV4uANMwunUD3IyiS7+Jebgdx7bddb63uvt+dKOqIBw/xTaZNsLZc3CEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEjxVuJ7GNfwj7LQjTejcN7noTVu+z4PabgjB1wmumqm50JaAkSX/oLbxmKveiK/zqp8NxHtvx40bMn6dFbKdzgbi81MEdb8LeaRDdqiSsX2Kr541wMXiNjZCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkPCxwuj/0kvb/6V5Gd2hmTqvokulm90HluNrFyhJ0j/rC6N0RI28dGy3AAAAAElFTkSuQmCC"; style="width: 40px; height: 40px">-->
-			<!--	<img th:src="${company_info.company_image_logo_url}"
-					style="width: 110px; height: 35px">-->
-						<img th:src="@{/img/EMS.png}" style="width: 200px; height: 35px" alt="EMS Logo">
-			</a>
-			<div class="collapse navbar-collapse" id="navbarSupportedContent">
+		<nav class="fixed-top navbar navbar-expand-lg navbar-dark" style="background-color: black;">
+    <a class="navbar-brand" href="/">
+        <img th:src="@{/img/EMS.png}" style="width: 200px; height: 35px" alt="EMS Logo">
+    </a>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ml-auto text-uppercase">
+            <li class="nav-item active">
+                <p class="nav-link" href="#">WELCOME
+                    (<span th:text="${user.username}" class="text-warning"></span>)
+                </p>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" th:href="@{/admin/payment}" href="#">Payment</a>
+            </li>
+            <li class="nav-item active bg-light" style="border-radius: 50%; height: 50px;">
+                <div th:if="${user.Image_Url.equals('default.jpg') and user.gender.equals('Male')}">
+                    <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar" style="height: 50px; width: 50px; border-radius: 50%;" class="nav-link">
+                </div>
+                <div th:if="${user.Image_Url.equals('default.jpg') and user.gender.equals('Female')}">
+                    <img src="https://img.freepik.com/premium-vector/portrait-beautiful-lady-with-sunglasses_684058-1186.jpg?size=626&ext=jpg&ga=GA1.1.1331334970.1715351181&semt=ais_user" alt="avatar" style="height: 50px; width: 50px; border-radius: 50%;" class="nav-link">
+                </div>
+                <div th:if="${!user.Image_Url.equals('default.jpg')}">
+                    <img src="" style="height: 50px; width: 50px; border-radius: 50%;" class="nav-link" th:src="@{'/uploads/img/' + ${user.image_Url}}">
+                </div>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" th:href="@{/admin/careers}" href="#">Careers</a>
+            </li>
+            <li class="nav-item active">
+                <input type="text" class="form-control" id="liveDateTime" readonly>
+            </li>
+            <li class="nav-item active"><a class="nav-link" onclick="submitLogoutForm()" href="#"><i class="fa-solid fa-right-from-bracket"></i>logout</a></li>
+        </ul>
+    </div>
+</nav>
 
-				<ul class="navbar-nav ml-auto text-uppercase">
-
-
-					<!--	<li class="nav-item active">
-					<a class="nav-link" th:href="@{/about/}" href="#">About</a>
-				</li> -->
-
-					<li class="nav-item active">
-						<p class="nav-link" href="#">WELCOME
-							(<span th:text="${user.username}" class="text-warning"></span>)
-						</p>
-					</li>
-					<li class="nav-item active">
-					<a class="nav-link" th:href="@{/admin/payment}" href="#">Payment</a>
-				</li>
-				<li class="nav-item active bg-light" style="border-radius: 50%; height: 50px;">
-						<div th:if="${user.Image_Url.equals('default.jpg') and user.gender.equals('Male')}">
-				<img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar"
-             style="height: 50px; width: 50px; border-radius: 50%;"
-						class="nav-link">
-					</div>
-					
-								<div th:if="${user.Image_Url.equals('default.jpg') and user.gender.equals('Female')}">
-				<img src="https://img.freepik.com/premium-vector/portrait-beautiful-lady-with-sunglasses_684058-1186.jpg?size=626&ext=jpg&ga=GA1.1.1331334970.1715351181&semt=ais_user" alt="avatar"
-             style="height: 50px; width: 50px; border-radius: 50%;"
-						class="nav-link">
-					</div>
-					
-					<div th:if="${!user.Image_Url.equals('default.jpg')}">
-							<img src=""
-								style="height: 50px; width: 50px; border-radius: 50%;"
-								class="nav-link" th:src="@{'/uploads/img/' + ${user.image_Url}}">
-						</div>
- </li>
-
-					<li class="nav-item active">
-						<a class="nav-link" th:href="@{/admin/careers}" href="#">Careers</a>
-					</li>
-
-
-					<li class="nav-item active">
-						<input type="text" class="form-control" id="liveDateTime" readonly>
-					</li>
-
-					<li class="nav-item active"><a class="nav-link" onclick="submitLogoutForm()" href="#"><i
-								class="fa-solid fa-right-from-bracket"></i>logout</a></li>
-
-
-				</ul>
-
-
-			</div>
-		</nav>
 	</form>
 
 	<div class="sidebar" id="sidebar">
