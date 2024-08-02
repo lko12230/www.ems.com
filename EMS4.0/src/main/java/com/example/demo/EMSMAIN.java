@@ -146,7 +146,7 @@ public class EMSMAIN {
 
 	@Scheduled(cron = "0 0 0 * * *")
 
-	public void m6() {
+	public void Password_FailedAttempt_Reset() {
 		try {
 			String status = servicelayer.getjob_active_or_not("Password_FailedAttempt_Reset");
 			if (status.equalsIgnoreCase("Y")) {
@@ -194,7 +194,7 @@ public class EMSMAIN {
 
 	@Scheduled(cron = "0 0/1 * * * *")
 
-	public void m9() {
+	public void delete_old_error_log() {
 		try {
 			String status = servicelayer.getjob_active_or_not("delete_old_error_log");
 			if (status.equalsIgnoreCase("Y")) {
@@ -261,7 +261,7 @@ public class EMSMAIN {
 
 //	@Scheduled(cron = "0 0/1 * * * *")
 //	
-//	public void m13() {
+//	public void login_employeedetail_user_status_correct() {
 //		try {
 //			String status = servicelayer.getjob_active_or_not("login_employeedetail_user_status_correct");
 //			if (status.equals("Y")) {
@@ -557,7 +557,7 @@ public class EMSMAIN {
 	}
 
 	@Scheduled(cron = "* * * * * *")
-	public void m15() {
+	public void admin_otp_sent_verification() {
 		try {
 			String status = servicelayer.getjob_active_or_not("admin_otp_sent_verification");
 			System.out.println("admin_otp_sent_verification " + status);
@@ -607,7 +607,7 @@ public class EMSMAIN {
 	}
 
 	@Scheduled(cron = "* * * * * *")
-	public void m16() {
+	public void seperation_email_sent() {
 		try {
 			String status = servicelayer.getjob_active_or_not("seperation_email_sent");
 			System.out.println("seperation_email_sent " + status);
@@ -683,7 +683,7 @@ public class EMSMAIN {
 	}
 
 	@Scheduled(cron = "* * * * * *")
-	public void m17() {
+	public void team_email_sent() {
 		try {
 			String status = servicelayer.getjob_active_or_not("team_email_sent");
 			System.out.println("team_email_sent " + status);
