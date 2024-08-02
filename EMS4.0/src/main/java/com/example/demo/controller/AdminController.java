@@ -1527,7 +1527,7 @@ public class AdminController {
                 if(isSent)
                 {
                 	httpSession.setAttribute("message",
-							new Message("File sent successfully to"+to, "alert-success"));
+							new Message("File sent successfully to "+to, "alert-success"));
                 	 return "redirect:/admin/getloginrecords";
                 }
                 else
