@@ -53,7 +53,10 @@
     </a> 
 	</div>
     <div class="member-details"> 
-       <td> <h4> <a th:href="@{'/IT/emp_profile_edit_1/'+${c.id}}"><span th:text="${c.username}"></span></a> (<span th:text="${'GOOGLEIN00'+c.id}"></span>)  
+       <td> <h4> 
+       
+       <a th:href="@{'/IT/emp_profile_edit_1/'+${c.id}}"><span th:text="${c.username}"></span></a> 
+       (<span th:text="${'EMPID'+c.id}"></span>)  
        
        
        </h4> 
