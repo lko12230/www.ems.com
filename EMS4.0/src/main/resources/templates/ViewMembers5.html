@@ -14,6 +14,12 @@
 <div class="row bootstrap snippets bootdeys"> 
     <div class="col-md-9 col-sm-7"> 
         <h2>Employees</h2> 
+         <select class="form-control border-0 col-md-2 ml-2"
+                            id="exampleOption" onchange="location = this.value;">
+                            <option value="/IT/employees?sort=">Sort By</option>
+                            <option value="/IT/employees?sort=az">Names (A-Z)</option>
+                            <option value="/IT/employees?sort=za">Names (Z-A)</option>
+                        </select>
     </div> 
     <div class="col-md-3 col-sm-5"> 
         <form method="get" role="form" class="search-form-full"> 

@@ -219,12 +219,50 @@ public class ManagerController {
 			} else {
 				throw new Exception();
 			}
-		} catch (Exception e) {
-//			return "redirect:/manager/swr";
-			return "redirect:/signin?expiredsession=true";
+		}catch (Exception e) {
+//			return "SomethingWentWrong";
+//			String error=" java.lang.NullPointerException: Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null";
+			System.out.println("ERRRRRRRRRRRRR " + e + " " + count);
+//			String exString=e.toString();
+//			if(exString.equals("Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null") && count==1 || count==0)
+//			{
+			String exceptionAsString = e.toString();
+			// Get the current class
+			Class<?> currentClass = ManagerController.class;
+
+			// Get the name of the class
+			String className = currentClass.getName();
+			String errorMessage = e.getMessage();
+			StackTraceElement[] stackTrace = e.getStackTrace();
+			String methodName = stackTrace[0].getMethodName();
+			int lineNumber = stackTrace[0].getLineNumber();
+			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+			servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+//			return "SomethingWentWrong";)
+//				return "redirect:/swr";
+//			}
+//			else
+//			{
+			return "redirect:/logout";
+//			}
+
 		}
 	}
 
+	@GetMapping("/employees")
+    public String getAllEmployees(@RequestParam(name = "sort", required = false) String sort, Model model) {
+        
+		all_users = userDetailDao.findAll();
+        if ("az".equals(sort)) {
+        	all_users.sort((a, b) -> a.getUsername().compareToIgnoreCase(b.getUsername()));
+        } else if ("za".equals(sort)) {
+        	all_users.sort((a, b) -> b.getUsername().compareToIgnoreCase(a.getUsername()));
+        }
+
+        model.addAttribute("all_users", all_users);
+        return "ViewMembers2";
+    }
+	
 	@GetMapping("/emp_profile_edit_1/{id}")
 	public String profile(@PathVariable("id") Integer id, Model model, Principal principal) {
 		try {

@@ -306,6 +306,21 @@ public class AdminController {
 
 		}
 	}
+	
+	
+	@GetMapping("/employees")
+    public String getAllEmployees(@RequestParam(name = "sort", required = false) String sort, Model model) {
+        
+		all_users = userDetailDao.findAll();
+        if ("az".equals(sort)) {
+        	all_users.sort((a, b) -> a.getUsername().compareToIgnoreCase(b.getUsername()));
+        } else if ("za".equals(sort)) {
+        	all_users.sort((a, b) -> b.getUsername().compareToIgnoreCase(a.getUsername()));
+        }
+
+        model.addAttribute("all_users", all_users);
+        return "ViewMembers2";
+    }
 
 	@GetMapping("/swrr")
 	public String swr() {

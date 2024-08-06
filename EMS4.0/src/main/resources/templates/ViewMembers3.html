@@ -15,12 +15,12 @@
 				<div class="col-md-9 col-sm-7">
 					<div class="row">
 						<h2>Employees</h2>
-						 <select class="form-control border-0 col-md-2 ml-2"
-							id="exampleOption">
-								<option value="1">Sort By</option>
-								<option value="2">Names (A-Z)</option>
-								<option value="3">Names (Z-A)</option>
-						</select>
+						  <select class="form-control border-0 col-md-2 ml-2"
+                            id="exampleOption" onchange="location = this.value;">
+                            <option value="/manager/employees?sort=">Sort By</option>
+                            <option value="/manager/employees?sort=az">Names (A-Z)</option>
+                            <option value="/manager/employees?sort=za">Names (Z-A)</option>
+                        </select>
 						
 					</div>
 				</div>
