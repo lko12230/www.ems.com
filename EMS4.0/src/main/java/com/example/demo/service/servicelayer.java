@@ -3065,4 +3065,8 @@ String designarionArrowSplit = user.getDesignation();
 //		forgot_otp_sent_verification
 //		payment_success_email_alert
 	}
+	
+	  public List<UserDetail> searchEmployees(String term) {
+	        return userDetailDao.findByNameContainingOrEmailContainingOrIdContaining(term);
+	    }
 }

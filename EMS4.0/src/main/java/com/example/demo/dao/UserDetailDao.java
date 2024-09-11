@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
 import com.example.demo.entities.UserDetail;
 
 public interface UserDetailDao extends JpaRepository<UserDetail, Integer> {
@@ -15,4 +17,6 @@ public interface UserDetailDao extends JpaRepository<UserDetail, Integer> {
 	@Modifying
 	public void update_user_status(String username);
 	
+	 @Query("SELECT u FROM UserDetail u WHERE u.username = :input OR u.email = :input OR u.id = :input")
+	  public List<UserDetail> findByNameContainingOrEmailContainingOrIdContaining(@Param("input") String input);
 }

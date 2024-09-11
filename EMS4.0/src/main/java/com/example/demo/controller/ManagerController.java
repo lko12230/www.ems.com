@@ -260,7 +260,7 @@ public class ManagerController {
         }
 
         model.addAttribute("all_users", all_users);
-        return "ViewMembers2";
+        return "ViewMembers3";
     }
 	
 	@GetMapping("/emp_profile_edit_1/{id}")

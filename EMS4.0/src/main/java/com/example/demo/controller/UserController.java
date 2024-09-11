@@ -427,7 +427,7 @@ public class UserController {
         }
 
         model.addAttribute("all_users", all_users);
-        return "ViewMembers2";
+        return "ViewMembers";
     }
 	
 	@GetMapping("/emp_profile_edit_1/{id}")

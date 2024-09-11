@@ -1,11 +1,18 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
-	th:replace="base2::layout(~{::section})">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="base2::layout(~{::section})">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="X-UA-Compatible" content="ie=edge">
-<title>Sign Up Form</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Employee Directory</title>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <style>
+        .ui-autocomplete {
+            z-index: 1050;
+        }
+    </style>
 </head>
 <body>
     <section>
@@ -37,98 +44,71 @@
                     <tr th:each="c : ${all_users}">
                         <td>
                             <div class="member-entry">
-                                <div
-                                    th:if="${c.gender.equals('Male') and c.Image_Url.equals('default.jpg')}">
-                                    <a th:href="@{'/admin/emp_profile_edit_1/'+${c.id}}"
-                                        class="member-img"> <img
-                                        src="https://bootdey.com/img/Content/avatar/avatar7.png"
-                                        alt="avatar" class="rounded-circle img-fluid"> <i
-                                        class="fa fa-forward"></i>
+                                <div th:if="${c.gender.equals('Male') and c.Image_Url.equals('default.jpg')}">
+                                    <a th:href="@{'/admin/emp_profile_edit_1/'+${c.id}}" class="member-img">
+                                        <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar" class="rounded-circle img-fluid">
+                                        <i class="fa fa-forward"></i>
                                     </a>
                                 </div>
-                                <div
-                                    th:if="${c.gender.equals('Female') and c.Image_Url.equals('default.jpg')}">
-                                    <a th:href="@{'/admin/emp_profile_edit_1/'+${c.id}}"
-                                        class="member-img"> <img
-                                        src="https://img.freepik.com/premium-vector/portrait-beautiful-lady-with-sunglasses_684058-1186.jpg?size=626&ext=jpg&ga=GA1.1.1331334970.1715351181&semt=ais_user"
-                                        alt="avatar" class="rounded-circle img-fluid"> <i
-                                        class="fa fa-forward"></i>
+                                <div th:if="${c.gender.equals('Female') and c.Image_Url.equals('default.jpg')}">
+                                    <a th:href="@{'/admin/emp_profile_edit_1/'+${c.id}}" class="member-img">
+                                        <img src="https://img.freepik.com/premium-vector/portrait-beautiful-lady-with-sunglasses_684058-1186.jpg?size=626&ext=jpg&ga=GA1.1.1331334970.1715351181&semt=ais_user" alt="avatar" class="rounded-circle img-fluid">
+                                        <i class="fa fa-forward"></i>
                                     </a>
                                 </div>
                                 <div th:if="${!c.Image_Url.equals('default.jpg')}">
-                                    <a th:href="@{'/admin/emp_profile_edit_1/'+${c.id}}"
-                                        class="member-img"> <img th:src="@{'/uploads/img/' + ${c.image_Url}}"
-                                        class="rounded-circle img-fluid"> <i class="fa fa-forward"></i>
+                                    <a th:href="@{'/admin/emp_profile_edit_1/'+${c.id}}" class="member-img">
+                                        <img th:src="@{'/uploads/img/' + ${c.image_Url}}" class="rounded-circle img-fluid">
+                                        <i class="fa fa-forward"></i>
                                     </a>
                                 </div>
                                 <div class="member-details">
                                     <h4>
-                                        <a th:href="@{'/admin/emp_profile_edit_1/'+${c.id}}"><span
-                                            th:text="${c.username}"></span></a> (<span
-                                            th:text="${'EMPID'+c.id}"></span>)
+                                        <a th:href="@{'/admin/emp_profile_edit_1/'+${c.id}}"><span th:text="${c.username}"></span></a> (<span th:text="${'EMPID'+c.id}"></span>)
                                     </h4>
                                     <div class="row info-list">
                                         <div class="col-sm-4">
                                             <div th:if="${c.Designation!=('NA')}">
-                                                <i class="fa fa-briefcase"></i> Designation : <span
-                                                    th:text="${c.Designation}" style="color: blue"></span>
+                                                <i class="fa fa-briefcase"></i> Designation : <span th:text="${c.Designation}" style="color: blue"></span>
                                             </div>
                                             <div th:if="${c.Designation.equals('NA')}">
-                                                <i class="fa fa-briefcase"></i> Designation : <b class="text-muted mb-0">
-                                                    <span style="color: blue;">No Record Found</span>
-                                                </b>
+                                                <i class="fa fa-briefcase"></i> Designation : <b class="text-muted mb-0"><span style="color: blue;">No Record Found</span></b>
                                             </div>
                                         </div>
                                         <div class="col-sm-4">
-                                            <i class="fa-solid fa-phone"></i> Phone : <span
-                                                th:text="${c.phone}" style="color: blue"></span>
+                                            <i class="fa-solid fa-phone"></i> Phone : <span th:text="${c.phone}" style="color: blue"></span>
                                         </div>
                                         <div class="col-sm-4">
                                             <div th:if="${!c.team.equals('0')}">
                                                 <i class="fa-solid fa-user-group"></i> <b> Team : <span th:text="${c.team}" style="color: blue"></span></b>
                                             </div>
                                             <div th:if="${c.team.equals('0')}">
-                                                <i class="fa-solid fa-user-group"></i> <b> Team :
-                                                    <span style="color: red;">No Team Assigned</span>
-                                                </b>
+                                                <i class="fa-solid fa-user-group"></i> <b> Team : <span style="color: red;">No Team Assigned</span></b>
                                             </div>
                                         </div>
                                         <div class="clear"></div>
                                         <div class="col-sm-4">
                                             <div th:if="${c.base_location!=('NA')}">
-                                                <i class="fa fa-location"></i> Base Location : <span
-                                                    th:text="${c.base_location}" style="color: blue"></span>
+                                                <i class="fa fa-location"></i> Base Location : <span th:text="${c.base_location}" style="color: blue"></span>
                                             </div>
                                             <div th:if="${c.base_location.equals('NA')}">
-                                                <i class="fa fa-location"></i> Base Location : 
-                                                <b class="text-muted mb-0">
-                                                    <span style="color: blue;">No Record Found</span>
-                                                </b>
+                                                <i class="fa fa-location"></i> Base Location : <b class="text-muted mb-0"><span style="color: blue;">No Record Found</span></b>
                                             </div>
                                         </div>
                                         <div class="col-sm-4">
                                             <div th:if="${c.email!=('NA')}">
-                                                <i class="fa fa-envelope"></i> Email : <span
-                                                    th:text="${c.email}" style="color: blue"></span>
+                                                <i class="fa fa-envelope"></i> Email : <span th:text="${c.email}" style="color: blue"></span>
                                             </div>
                                             <div th:if="${c.email.equals('NA')}">
-                                                <i class="fa fa-envelope"></i> Email : <b class="text-muted mb-0">
-                                                    <span style="color: blue;">No Record Found</span>
-                                                </b>
+                                                <i class="fa fa-envelope"></i> Email : <b class="text-muted mb-0"><span style="color: blue;">No Record Found</span></b>
                                             </div>
                                         </div>
                                         <div class="col-sm-4">
                                             <div th:if="${c.user_status==true}">
-                                                <b>
-                                                    <i class="fa-solid fa-user"></i> Status : <span
-                                                        style="color: limegreen;">ACTIVE</span>
-                                                </b>
+                                                <b><i class="fa-solid fa-user"></i> Status : <span style="color: limegreen;">ACTIVE</span></b>
                                             </div>
                                             <div th:if="${c.user_status==false}">
-                                                <b>
-                                                    <i class="fa-solid fa-user"></i> Status : <span
-                                                        style="color: red;">INACTIVE</span>
-                                                </b>
+                                                <b><i class="fa-solid fa-user"></i> Status : <span style="color: red;">INACTIVE</span></b>
                                             </div>
                                         </div>
                                     </div>
@@ -140,5 +120,37 @@
             </table>
         </div>
     </section>
+
+    <script>
+        $(function() {
+            $("#search-input").autocomplete({
+                source: function(request, response) {
+                    console.log("Requesting data for term:", request.term); // Debugging line
+                    $.ajax({
+                        url: "/admin/employeeSuggestions",
+                        data: { term: request.term },
+                        success: function(data) {
+                            console.log("Data received:", data); // Debugging line
+                            response($.map(data, function(item) {
+                                return {
+                                    label: item.name + " (" + item.email + ")",
+                                    value: item.name,
+                                    id: item.id
+                                };
+                            }));
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Error fetching data:", status, error); // Debugging line
+                        }
+                    });
+                },
+                minLength: 2,
+                select: function(event, ui) {
+                    console.log("Selected:", ui.item); // Debugging line
+                    window.location.href = "/admin/emp_profile_edit_1/" + ui.item.id;
+                }
+            });
+        });
+    </script>
 </body>
 </html>

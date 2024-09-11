@@ -18,6 +18,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
@@ -50,6 +51,7 @@ import com.example.demo.dao.adminDao;
 import com.example.demo.dao.orderDao;
 import com.example.demo.entities.Admin;
 import com.example.demo.entities.CompanyInfo;
+import com.example.demo.entities.EmployeeSuggestion;
 import com.example.demo.entities.Error_Log;
 import com.example.demo.entities.Payment_Order_Info;
 import com.example.demo.entities.Performance;
@@ -320,6 +322,15 @@ public class AdminController {
 
         model.addAttribute("all_users", all_users);
         return "ViewMembers2";
+    }
+	
+	@GetMapping("/employeeSuggestions")
+    @ResponseBody
+    public List<EmployeeSuggestion> getEmployeeSuggestions(@RequestParam("term") String term) {
+        List<UserDetail> employees = servicelayer.searchEmployees(term);
+        return employees.stream()
+                .map(userdetail -> new EmployeeSuggestion(userdetail.getId(), userdetail.getUsername(), userdetail.getEmail()))
+                .collect(Collectors.toList());
     }
 
 	@GetMapping("/swrr")

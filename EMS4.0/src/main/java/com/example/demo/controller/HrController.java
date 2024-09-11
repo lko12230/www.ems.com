@@ -522,7 +522,7 @@ public class HrController {
         }
 
         model.addAttribute("all_users", all_users);
-        return "ViewMembers2";
+        return "ViewMembers4";
     }
 	
 	@GetMapping("/emp_profile_edit_1/{id}")
