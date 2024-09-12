@@ -139,15 +139,17 @@
                     <table class="table table-striped mb-0">
                     <thead>
                         <tr>
+                         <th class="border-gray-200" scope="col">Sno</th>
                             <th class="border-gray-200" scope="col">Transaction ID</th>
-                            <th class="border-gray-200" scope="col">Date</th>
+                            <th class="border-gray-200" scope="col">Transaction_Date</th>
                             <th class="border-gray-200" scope="col">Amount (INR)</th>
                             <th class="border-gray-200" scope="col">Status</th>
                             <th class="border-gray-200" scope="col">Receipt/Invoice</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr th:each="c : ${payment_Order_Info}" th:if="${payment_Order_Info != null and #lists.size(payment_Order_Info) > 0}">
+                        <tr th:each="c,lineNumber : ${payment_Order_Info}" th:if="${payment_Order_Info != null and #lists.size(payment_Order_Info) > 0}">
+                             <td> <span th:text="${lineNumber.index + 1}">1</span></td>
                             <td><span th:text="${c.orderId}"></span></td>
                             <td><span th:text="${c.system_date_and_time}"></span></td>
                             <td><i class="fa-solid fa-indian-rupee-sign"></i> <span th:text="${c.amount}"></span></td>

@@ -26,6 +26,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 import javax.mail.MessagingException;
@@ -2097,68 +2098,6 @@ String designarionArrowSplit = user.getDesignation();
 		}
 	}
 
-	public boolean sync_employee_employeedetail() {
-		try {
-			List<User> user = userdao.findAll();
-			List<UserDetail> userDetails = userDetailDao.findAll();
-			ListIterator<User> get_user_one_by_one = user.listIterator();
-			ListIterator<UserDetail> get_userDetail_one_by_one = userDetails.listIterator();
-			while (get_user_one_by_one.hasNext()) {
-				while (get_userDetail_one_by_one.hasNext()) {
-					User user1 = get_user_one_by_one.next();
-					UserDetail userDetail = get_userDetail_one_by_one.next();
-					int id = user1.getId();
-					int id1 = userDetail.getId();
-					if (id == id1) {
-						String email = user1.getUsername();
-						String email1 = userDetail.getUsername();
-						if (email != email1) {
-							userDetail.setEmail(email);
-						}
-						String user_phone = user1.getPhone();
-						String userDetail_phone = userDetail.getPhone();
-						if (user_phone != userDetail_phone) {
-							userDetail.setPhone(user_phone);
-						}
-						boolean user_enabled = user1.isEnabled();
-						boolean userDetail_enabled = userDetail.isEnabled();
-						if (user_enabled != userDetail_enabled) {
-							userDetail.setEnabled(user_enabled);
-						}
-						Date user_last_working_day = user1.getLastWorkingDay();
-						Date userDetail_last_working_day = userDetail.getLastWorkingDay();
-						if (user_last_working_day != userDetail_last_working_day) {
-							userDetail.setLastWorkingDay(user_last_working_day);
-						}
-					}
-				}
-			}
-
-			return true;
-		} catch (Exception e) {
-			String exceptionAsString = e.toString();
-			// Get the current class
-			Class<?> currentClass = servicelayer.class;
-
-			// Get the name of the class
-			String className = currentClass.getName();
-			String errorMessage = e.getMessage();
-			StackTraceElement[] stackTrace = e.getStackTrace();
-			String methodName = stackTrace[0].getMethodName();
-			int lineNumber = stackTrace[0].getLineNumber();
-			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
-			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
-//			return "SomethingWentWrong";)
-//				return "redirect:/swr";
-//			}
-//			else
-
-			return false;
-//			}
-
-		}
-	}
-
 	@Transactional
 	public void enabled_server_up_permitted(String server_name) {
 		try {
@@ -2181,24 +2120,50 @@ String designarionArrowSplit = user.getDesignation();
 	}
 
 	@Transactional
-	public void employee_login_user_status_sync_correction() {
-		try {
-			jobrunning("login_employeedetail_user_status_correct");
-		} catch (Exception e) {
-			String exceptionAsString = e.toString();
-			// Get the current class
-			Class<?> currentClass = servicelayer.class;
+	public void syncEmployeeAndEmployeeDetailTable() {
+	    try {
+	        // Fetch all User and UserDetail data
+	        List<User> users = userdao.findAll();
+	        List<UserDetail> userDetails = userDetailDao.findAll();
 
-			// Get the name of the class
-			String className = currentClass.getName();
-			String errorMessage = e.getMessage();
-			StackTraceElement[] stackTrace = e.getStackTrace();
-			String methodName = stackTrace[0].getMethodName();
-			int lineNumber = stackTrace[0].getLineNumber();
-			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
-			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+	        // Create a map of UserDetail by id (Integer) for quick access
+	        Map<Integer, UserDetail> userDetailMap = userDetails.stream()
+	                .collect(Collectors.toMap(UserDetail::getId, userDetail -> userDetail));
 
-		}
+	        // Loop through all users and update UserDetail if needed
+	        for (User user : users) {
+	            UserDetail userDetail = userDetailMap.get(user.getId());
+
+	            if (userDetail != null && !user.getUsername().equals(userDetail.getUsername())) {
+	                // Update only if the usernames are different
+	                userDetail.setUsername(user.getUsername());
+	                userDetailDao.save(userDetail);  // Save the updated UserDetail
+	            }
+	            if (userDetail != null && !user.getEmail().equals(userDetail.getEmail())) {
+	                // Update only if the usernames are different
+	                userDetail.setEmail(user.getEmail());
+	                userDetailDao.save(userDetail);  // Save the updated UserDetail
+	            }
+	            if (userDetail != null && !user.getDesignation().equals(userDetail.getDesignation())) {
+	                // Update only if the usernames are different
+	                userDetail.setDesignation(user.getDesignation());
+	                userDetailDao.save(userDetail);  // Save the updated UserDetail
+	            }
+	        }
+
+	        // Log that the job has finished running
+	        jobrunning("sync_employee_and_employeedetail_table");
+
+	    } catch (Exception e) {
+	        // Capture and log the error
+	        String exceptionAsString = e.toString();
+	        String className = servicelayer.class.getName();
+	        String errorMessage = e.getMessage();
+	        StackTraceElement[] stackTrace = e.getStackTrace();
+	        String methodName = stackTrace[0].getMethodName();
+	        int lineNumber = stackTrace[0].getLineNumber();
+	        insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+	    }
 	}
 
 	@Transactional

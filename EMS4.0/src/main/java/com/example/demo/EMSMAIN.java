@@ -210,7 +210,7 @@ public class EMSMAIN {
 		}
 	}
 
-	@Scheduled(cron = "0 0 0 * * *")
+	@Scheduled(cron = "0 0/1 * * * *")
 	public void downtime() {
 		try {
 			String server_name = "downtime_maintaince";
@@ -220,11 +220,11 @@ public class EMSMAIN {
 				boolean result = servicelayer.check_server_status(server_name);
 				if (result) {
 					servicelayer.disabled_server_down_permitted(server_name);
-					Thread.sleep(3000);
 					servicelayer.correct_login_record_table();
-					Thread.sleep(3000);
-					servicelayer.sync_employee_employeedetail();
 				}
+				servicelayer.disabled_server_down_permitted(server_name);
+				Thread.sleep(3000);
+				servicelayer.syncEmployeeAndEmployeeDetailTable();
 				Thread.sleep(3000);
 				servicelayer.enabled_server_up_permitted(server_name);
 				System.out.println("SERVER UP");
@@ -259,19 +259,19 @@ public class EMSMAIN {
 		}
 	}
 
-//	@Scheduled(cron = "0 0/1 * * * *")
-//	
+//	@Scheduled(cron = "0 0/1  * * * *")
 //	public void login_employeedetail_user_status_correct() {
 //		try {
-//			String status = servicelayer.getjob_active_or_not("login_employeedetail_user_status_correct");
-//			if (status.equals("Y")) {
+//			String status = servicelayer.getjob_active_or_not("sync_employee_and_employeedetail_table");
+//			if (status.equalsIgnoreCase("Y")) {
 ////			throw new Exception();
-//				servicelayer.employee_login_user_status_sync_correction();
+//				System.out.println("sync_employee_and_employeedetail_table "+status);
+//				servicelayer.syncEmployeeAndEmployeeDetailTable();
 //			} else {
-//				servicelayer.jobnotrunning("login_employeedetail_user_status_correct");
+//				servicelayer.jobnotrunning("sync_employee_and_employeedetail_table");
 //			}
 //		} catch (Exception e) {
-//			servicelayer.jobtime("login_employeedetail_user_status_correct");
+//			servicelayer.jobtime("sync_employee_and_employeedetail_table");
 //		}
 //	}
 
