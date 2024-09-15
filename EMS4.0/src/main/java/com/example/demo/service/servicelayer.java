@@ -95,55 +95,55 @@ import cn.apiclub.captcha.text.producer.DefaultTextProducer;
 
 @Service
 public class servicelayer {
-	
+
 	@Autowired
 	private UserLoginDao userLoginDao;
-	
+
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
-	
+
 	@Autowired
 	private EmailService emailService;
-	
+
 	@Autowired
 	private EmailService1 emailService1;
 	// for register
 	@Autowired
 	private adminDao adminDao;
-	
+
 	@Autowired
 	private UserDetailDao userDetailDao;
-	
+
 	@Autowired
 	private Teamdao teamdao;
-	
+
 	@Autowired
 	private Userdao userdao;
-	
+
 	@Autowired
 	private JobDao jobDao;
-	
+
 	@Autowired
 	private error_log_dao error_log_dao;
-	
+
 	@Autowired
 	private performancedao performancedao;
-	
+
 	@Autowired
 	private record_activity_dao record_activity_dao;
-	
+
 	@Autowired
 	private Downtime_Maintaince_Dao downtime_Maintaince_Dao;
-	
+
 	@Autowired
 	private orderDao orderDao;
-	
+
 	@Autowired
 	private company_dao company_dao;
-	
+
 	@Autowired
 	private SubscriptionPlanDao subscriptionPlansDao;
-	
+
 	@Autowired
 	private PaymentSucessEmailService paymentSucessEmailService;
 
@@ -177,7 +177,7 @@ public class servicelayer {
 			user.setUsername(user.getUsername().toUpperCase());
 			user.setEnabled(true);
 			user.setBank_account_holder_name("NA");
-			user.setBank_account_number(0); 
+			user.setBank_account_number(0);
 			user.setBank_name("NA");
 			user.setBase_location("NA");
 			user.setIfsc_code("NA");
@@ -190,30 +190,30 @@ public class servicelayer {
 			user.setStatus("ACTIVE");
 			user.setSystemDateAndTime(new Date());
 			// This Logic Added By AYush Gupta 21 June 2024 For Split -> in Designation
-String designarionArrowSplit = user.getDesignation();
-	        
-	        // Split the input string by " -> " to get parts
-	        String[] parts = designarionArrowSplit.split(" -> ");
-	        
-	        // Check if split produced exactly two parts
-	        if (parts.length == 2) {
-	            // Single name scenario
-	            System.out.println("Extracted Name: " + parts[1]);
-	        } else if (parts.length > 2) {
-	            // Full name scenario
-	            StringBuilder fullName = new StringBuilder();
-	            for (int i = 1; i < parts.length; i++) {
-	                fullName.append(parts[i]);
-	                if (i < parts.length - 1) {
-	                    fullName.append(" ");
-	                }
-	            }
-	            user.setDesignation(designarionArrowSplit);
-	            System.out.println("Extracted Full Name: " + fullName.toString());
-	        } else {
-	            // Invalid input format scenario
-	            System.out.println("Invalid input format");
-	        }
+			String designarionArrowSplit = user.getDesignation();
+
+			// Split the input string by " -> " to get parts
+			String[] parts = designarionArrowSplit.split(" -> ");
+
+			// Check if split produced exactly two parts
+			if (parts.length == 2) {
+				// Single name scenario
+				System.out.println("Extracted Name: " + parts[1]);
+			} else if (parts.length > 2) {
+				// Full name scenario
+				StringBuilder fullName = new StringBuilder();
+				for (int i = 1; i < parts.length; i++) {
+					fullName.append(parts[i]);
+					if (i < parts.length - 1) {
+						fullName.append(" ");
+					}
+				}
+				user.setDesignation(designarionArrowSplit);
+				System.out.println("Extracted Full Name: " + fullName.toString());
+			} else {
+				// Invalid input format scenario
+				System.out.println("Invalid input format");
+			}
 			String subject = "www.ems.com : Your Crendential Created";
 			String message = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<p>" + "Dear "
 					+ user.getUsername() + "<br>" + "<br>" + "Your Default Password: " + "<b>" + generateRandomPassword
@@ -256,7 +256,7 @@ String designarionArrowSplit = user.getDesignation();
 					userdetail.setAaid(result.getAaid());
 					userdetail.setAccountNonLocked(true);
 					userdetail.setBank_account_holder_name("NA");
-					userdetail.setBank_account_number(0); 
+					userdetail.setBank_account_number(0);
 					userdetail.setBank_name("NA");
 					userdetail.setBase_location("NA");
 					userdetail.setStatus("ACTIVE");
@@ -359,7 +359,7 @@ String designarionArrowSplit = user.getDesignation();
 					userdetail.setTeam("0");
 					userdetail.setImage_Url(result.getImage_Url());
 					userdetail.setBank_account_holder_name("NA");
-					userdetail.setBank_account_number(0); 
+					userdetail.setBank_account_number(0);
 					userdetail.setBank_name("NA");
 					userdetail.setBase_location("NA");
 					userdetail.setEmployeeOnBench(true);
@@ -795,16 +795,13 @@ String designarionArrowSplit = user.getDesignation();
 				EMSMAIN.device_version.remove(to);
 				EMSMAIN.device_Architecture.remove(to);
 				EMSMAIN.login_date_time.remove(to);
-				Optional<User> get_user= userdao.findByUserName(to);
-				User user1=get_user.get();
-				if(user1.getAlert_message_sent()==0)
-				{
-				user1.setAlert_message_sent(1);
-				userdao.save(user1);
-				}
-				else
-				{
-					user1.setAlert_message_sent(user1.getAlert_message_sent()+1);
+				Optional<User> get_user = userdao.findByUserName(to);
+				User user1 = get_user.get();
+				if (user1.getAlert_message_sent() == 0) {
+					user1.setAlert_message_sent(1);
+					userdao.save(user1);
+				} else {
+					user1.setAlert_message_sent(user1.getAlert_message_sent() + 1);
 					userdao.save(user1);
 				}
 			} else {
@@ -851,16 +848,13 @@ String designarionArrowSplit = user.getDesignation();
 				EMSMAIN.device_version.remove(to);
 				EMSMAIN.device_Architecture.remove(to);
 				EMSMAIN.login_date_time.remove(to);
-				Optional<User> user=userdao.findByUserName(to);
-				User user1=user.get();
-				if(user1.getAlert_message_sent()==0)
-				{
+				Optional<User> user = userdao.findByUserName(to);
+				User user1 = user.get();
+				if (user1.getAlert_message_sent() == 0) {
 					user1.setAlert_message_sent(1);
 					userdao.save(user1);
-				}
-				else
-				{
-					user1.setAlert_message_sent(user1.getAlert_message_sent()+1);
+				} else {
+					user1.setAlert_message_sent(user1.getAlert_message_sent() + 1);
 					userdao.save(user1);
 				}
 			} else {
@@ -1565,156 +1559,155 @@ String designarionArrowSplit = user.getDesignation();
 //			return false;
 //		}
 //	}
-	
+
 	public String generateExcel() throws IOException {
-	    List<UserLoginDateTime> records = userLoginDao.findAll();
-	    Workbook workbook = new XSSFWorkbook();
-	    Sheet sheet = workbook.createSheet("Login History");
+		List<UserLoginDateTime> records = userLoginDao.findAll();
+		Workbook workbook = new XSSFWorkbook();
+		Sheet sheet = workbook.createSheet("Login History");
 
-	    // Set column widths
-	    sheet.setColumnWidth(0, 4000);
-	    sheet.setColumnWidth(1, 5000);
-	    sheet.setColumnWidth(2, 5000);
-	    sheet.setColumnWidth(3, 7000);
-	    sheet.setColumnWidth(4, 7000);
-	    sheet.setColumnWidth(5, 5000);
-	    sheet.setColumnWidth(6, 5000);
-	    sheet.setColumnWidth(7, 5000);
-	    sheet.setColumnWidth(8, 5000);
+		// Set column widths
+		sheet.setColumnWidth(0, 4000);
+		sheet.setColumnWidth(1, 5000);
+		sheet.setColumnWidth(2, 5000);
+		sheet.setColumnWidth(3, 7000);
+		sheet.setColumnWidth(4, 7000);
+		sheet.setColumnWidth(5, 5000);
+		sheet.setColumnWidth(6, 5000);
+		sheet.setColumnWidth(7, 5000);
+		sheet.setColumnWidth(8, 5000);
 
-	    // Create styles
-	    Font headerFont = workbook.createFont();
-	    headerFont.setFontHeightInPoints((short) 10);
-	    headerFont.setFontName("Arial");
-	    headerFont.setBold(true);
-	    headerFont.setColor(IndexedColors.WHITE.getIndex());
+		// Create styles
+		Font headerFont = workbook.createFont();
+		headerFont.setFontHeightInPoints((short) 10);
+		headerFont.setFontName("Arial");
+		headerFont.setBold(true);
+		headerFont.setColor(IndexedColors.WHITE.getIndex());
 
-	    CellStyle headerStyle = workbook.createCellStyle();
-	    headerStyle.setFillForegroundColor(IndexedColors.BLACK.getIndex());
-	    headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-	    headerStyle.setFont(headerFont);
+		CellStyle headerStyle = workbook.createCellStyle();
+		headerStyle.setFillForegroundColor(IndexedColors.BLACK.getIndex());
+		headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		headerStyle.setFont(headerFont);
 
-	    CellStyle dateCellStyle = workbook.createCellStyle();
-	    CreationHelper createHelper = workbook.getCreationHelper();
-	    dateCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("yyyy-MM-dd HH:mm:ss"));
+		CellStyle dateCellStyle = workbook.createCellStyle();
+		CreationHelper createHelper = workbook.getCreationHelper();
+		dateCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("yyyy-MM-dd HH:mm:ss"));
 
-	    // Create header row
-	    Row headerRow = sheet.createRow(0);
-	    String[] columns = {"Sno", "Employee ID", "Name", "Email", "Login Time", "Logout Time", "IP Address", "Is Session Interrupted", "Location"};
+		// Create header row
+		Row headerRow = sheet.createRow(0);
+		String[] columns = { "Sno", "Employee ID", "Name", "Email", "Login Time", "Logout Time", "IP Address",
+				"Is Session Interrupted", "Location" };
 
-	    for (int i = 0; i < columns.length; i++) {
-	        org.apache.poi.ss.usermodel.Cell cell = headerRow.createCell(i);
-	        cell.setCellValue(columns[i]);
-	        cell.setCellStyle(headerStyle);
-	    }
+		for (int i = 0; i < columns.length; i++) {
+			org.apache.poi.ss.usermodel.Cell cell = headerRow.createCell(i);
+			cell.setCellValue(columns[i]);
+			cell.setCellStyle(headerStyle);
+		}
 
-	    int rowNum = 1;
-	    for (UserLoginDateTime record : records) {
-	        Row row = sheet.createRow(rowNum++);
+		int rowNum = 1;
+		for (UserLoginDateTime record : records) {
+			Row row = sheet.createRow(rowNum++);
 
-	        row.createCell(0).setCellValue(rowNum - 1);
-	        row.createCell(1).setCellValue(record.getId());
-	        row.createCell(2).setCellValue(record.getUsername());
-	        row.createCell(3).setCellValue(record.getEmail());
+			row.createCell(0).setCellValue(rowNum - 1);
+			row.createCell(1).setCellValue(record.getId());
+			row.createCell(2).setCellValue(record.getUsername());
+			row.createCell(3).setCellValue(record.getEmail());
 
-	        org.apache.poi.ss.usermodel.Cell loginTimeCell = row.createCell(4);
-	        loginTimeCell.setCellValue(record.getLoginDateAndTime());
-	        loginTimeCell.setCellStyle(dateCellStyle);
+			org.apache.poi.ss.usermodel.Cell loginTimeCell = row.createCell(4);
+			loginTimeCell.setCellValue(record.getLoginDateAndTime());
+			loginTimeCell.setCellStyle(dateCellStyle);
 
-	        org.apache.poi.ss.usermodel.Cell logoutTimeCell = row.createCell(5);
-	        logoutTimeCell.setCellValue(record.getLogoutDateAndTime());
-	        logoutTimeCell.setCellStyle(dateCellStyle);
+			org.apache.poi.ss.usermodel.Cell logoutTimeCell = row.createCell(5);
+			logoutTimeCell.setCellValue(record.getLogoutDateAndTime());
+			logoutTimeCell.setCellStyle(dateCellStyle);
 
-	        row.createCell(6).setCellValue(record.getIpAddress());
-	        row.createCell(7).setCellValue(record.is_session_interrupted());
-	        row.createCell(8).setCellValue(record.getLocation());
-	    }
+			row.createCell(6).setCellValue(record.getIpAddress());
+			row.createCell(7).setCellValue(record.is_session_interrupted());
+			row.createCell(8).setCellValue(record.getLocation());
+		}
 
-	    // Use a temporary directory for storing the Excel file
-	    Path tempDirectory = Files.createTempDirectory("excelFiles");
-	    Path filePath = Paths.get(tempDirectory.toString(), "login_history.xlsx");
+		// Use a temporary directory for storing the Excel file
+		Path tempDirectory = Files.createTempDirectory("excelFiles");
+		Path filePath = Paths.get(tempDirectory.toString(), "login_history.xlsx");
 
-	    try (FileOutputStream fileOut = new FileOutputStream(filePath.toFile())) {
-	        workbook.write(fileOut);
-	    } finally {
-	        workbook.close();
-	    }
+		try (FileOutputStream fileOut = new FileOutputStream(filePath.toFile())) {
+			workbook.write(fileOut);
+		} finally {
+			workbook.close();
+		}
 
-	    return filePath.toString();
+		return filePath.toString();
 	}
-	
+
 	public ByteArrayOutputStream exportUserLoginData() throws IOException {
-        List<UserLoginDateTime> dataInsertExcelList = userLoginDao.findAll();
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        
-        Workbook workbook = new XSSFWorkbook();
-        Sheet sheet = workbook.createSheet("USER_LOGIN_DATA");
+		List<UserLoginDateTime> dataInsertExcelList = userLoginDao.findAll();
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-        // Set column widths
-        sheet.setColumnWidth(0, 4000);
-        sheet.setColumnWidth(1, 5000);
-        sheet.setColumnWidth(2, 5000);
-        sheet.setColumnWidth(3, 7000);
-        sheet.setColumnWidth(4, 7000);
-        sheet.setColumnWidth(5, 5000);
-        sheet.setColumnWidth(6, 5000);
-        sheet.setColumnWidth(7, 5000);
+		Workbook workbook = new XSSFWorkbook();
+		Sheet sheet = workbook.createSheet("USER_LOGIN_DATA");
 
-        // Create styles
-        Font headerFont = workbook.createFont();
-        headerFont.setFontHeightInPoints((short) 10);
-        headerFont.setFontName("Arial");
-        headerFont.setBold(true);
-        headerFont.setColor(IndexedColors.WHITE.getIndex());
+		// Set column widths
+		sheet.setColumnWidth(0, 4000);
+		sheet.setColumnWidth(1, 5000);
+		sheet.setColumnWidth(2, 5000);
+		sheet.setColumnWidth(3, 7000);
+		sheet.setColumnWidth(4, 7000);
+		sheet.setColumnWidth(5, 5000);
+		sheet.setColumnWidth(6, 5000);
+		sheet.setColumnWidth(7, 5000);
 
-        CellStyle headerStyle = workbook.createCellStyle();
-        headerStyle.setFillForegroundColor(IndexedColors.BLACK.getIndex());
-        headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-        headerStyle.setFont(headerFont);
+		// Create styles
+		Font headerFont = workbook.createFont();
+		headerFont.setFontHeightInPoints((short) 10);
+		headerFont.setFontName("Arial");
+		headerFont.setBold(true);
+		headerFont.setColor(IndexedColors.WHITE.getIndex());
 
-        CellStyle dateCellStyle = workbook.createCellStyle();
-        CreationHelper createHelper = workbook.getCreationHelper();
-        dateCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("yyyy-MM-dd HH:mm:ss"));
+		CellStyle headerStyle = workbook.createCellStyle();
+		headerStyle.setFillForegroundColor(IndexedColors.BLACK.getIndex());
+		headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+		headerStyle.setFont(headerFont);
 
-        // Create header row
-        Row headerRow = sheet.createRow(0);
-        String[] columnHeaders = {
-                "Employee ID", "LOGIN DATE TIME", "LOGOUT DATE TIME", "EMAIL", "IP ADDRESS",
-                "IS SESSION EXPIRED", "USERNAME", "USER STATUS"
-        };
+		CellStyle dateCellStyle = workbook.createCellStyle();
+		CreationHelper createHelper = workbook.getCreationHelper();
+		dateCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("yyyy-MM-dd HH:mm:ss"));
 
-        for (int i = 0; i < columnHeaders.length; i++) {
-            org.apache.poi.ss.usermodel.Cell cell = headerRow.createCell(i);
-            cell.setCellValue(columnHeaders[i]);
-            cell.setCellStyle(headerStyle);
-        }
+		// Create header row
+		Row headerRow = sheet.createRow(0);
+		String[] columnHeaders = { "Employee ID", "LOGIN DATE TIME", "LOGOUT DATE TIME", "EMAIL", "IP ADDRESS",
+				"IS SESSION EXPIRED", "USERNAME", "USER STATUS" };
 
-        // Populate data rows
-        int rowNum = 1;
-        for (UserLoginDateTime userLogin : dataInsertExcelList) {
-            Row row = sheet.createRow(rowNum++);
+		for (int i = 0; i < columnHeaders.length; i++) {
+			org.apache.poi.ss.usermodel.Cell cell = headerRow.createCell(i);
+			cell.setCellValue(columnHeaders[i]);
+			cell.setCellStyle(headerStyle);
+		}
 
-            row.createCell(0).setCellValue(userLogin.getId());
-            org.apache.poi.ss.usermodel.Cell loginDateCell = row.createCell(1);
-            loginDateCell.setCellValue(userLogin.getLoginDateAndTime());
-            loginDateCell.setCellStyle(dateCellStyle);
+		// Populate data rows
+		int rowNum = 1;
+		for (UserLoginDateTime userLogin : dataInsertExcelList) {
+			Row row = sheet.createRow(rowNum++);
 
-            org.apache.poi.ss.usermodel.Cell logoutDateCell = row.createCell(2);
-            logoutDateCell.setCellValue(userLogin.getLogoutDateAndTime());
-            logoutDateCell.setCellStyle(dateCellStyle);
+			row.createCell(0).setCellValue(userLogin.getId());
+			org.apache.poi.ss.usermodel.Cell loginDateCell = row.createCell(1);
+			loginDateCell.setCellValue(userLogin.getLoginDateAndTime());
+			loginDateCell.setCellStyle(dateCellStyle);
 
-            row.createCell(3).setCellValue(userLogin.getEmail());
-            row.createCell(4).setCellValue(userLogin.getIpAddress());
-            row.createCell(5).setCellValue(userLogin.is_session_interrupted());
-            row.createCell(6).setCellValue(userLogin.getUsername());
-            row.createCell(7).setCellValue(userLogin.isUser_status());
-        }
+			org.apache.poi.ss.usermodel.Cell logoutDateCell = row.createCell(2);
+			logoutDateCell.setCellValue(userLogin.getLogoutDateAndTime());
+			logoutDateCell.setCellStyle(dateCellStyle);
 
-        workbook.write(out);
-        workbook.close();
-        return out;
-    }
-	
+			row.createCell(3).setCellValue(userLogin.getEmail());
+			row.createCell(4).setCellValue(userLogin.getIpAddress());
+			row.createCell(5).setCellValue(userLogin.is_session_interrupted());
+			row.createCell(6).setCellValue(userLogin.getUsername());
+			row.createCell(7).setCellValue(userLogin.isUser_status());
+		}
+
+		workbook.write(out);
+		workbook.close();
+		return out;
+	}
+
 	public boolean update_profile(User user) {
 		try {
 			Optional<UserDetail> userDetail = userDetailDao.findById(user.getId());
@@ -1752,47 +1745,43 @@ String designarionArrowSplit = user.getDesignation();
 
 	@Transactional
 	public void emp_bank_profile_update(UserDetail userDetail, String current_user) {
-	    System.out.println(userDetail.getBank_account_holder_name());
-	    System.out.println(userDetail.getBank_account_number());
-	    System.out.println(userDetail.getBank_name());
+		System.out.println(userDetail.getBank_account_holder_name());
+		System.out.println(userDetail.getBank_account_number());
+		System.out.println(userDetail.getBank_name());
 		Optional<UserDetail> userDetail2 = userDetailDao.findById(userDetail.getId());
-		if(userDetail2.isPresent())
-		{
-			if(userDetail.getBank_account_holder_name().trim().isEmpty())
-			{
-		UserDetail userDetail3=userDetail2.get();
-		userDetail3.setBank_name("NA");
-		userDetail3.setBank_account_number(0);
-		userDetail3.setBank_account_holder_name("NA");
-		userDetail3.setIfsc_code("NA");
-		Optional<User> user = userdao.findById(userDetail3.getId());
-		User user1 = user.get();
-		user1.setBank_name("NA");
-		user1.setBank_account_number(0);
-		user1.setBank_account_holder_name("NA");
-		user1.setIfsc_code("NA");
-		userDetailDao.save(userDetail3);
-		userdao.save(user1);
+		if (userDetail2.isPresent()) {
+			if (userDetail.getBank_account_holder_name().trim().isEmpty()) {
+				UserDetail userDetail3 = userDetail2.get();
+				userDetail3.setBank_name("NA");
+				userDetail3.setBank_account_number(0);
+				userDetail3.setBank_account_holder_name("NA");
+				userDetail3.setIfsc_code("NA");
+				Optional<User> user = userdao.findById(userDetail3.getId());
+				User user1 = user.get();
+				user1.setBank_name("NA");
+				user1.setBank_account_number(0);
+				user1.setBank_account_holder_name("NA");
+				user1.setIfsc_code("NA");
+				userDetailDao.save(userDetail3);
+				userdao.save(user1);
+			} else {
+				UserDetail userDetail3 = userDetail2.get();
+				userDetail3.setBank_name(userDetail.getBank_name());
+				userDetail3.setBank_account_number(userDetail.getBank_account_number());
+				userDetail3.setBank_account_holder_name(userDetail.getBank_account_holder_name());
+				userDetail3.setIfsc_code(userDetail.getIfsc_code());
+				Optional<User> user = userdao.findById(userDetail3.getId());
+				User user1 = user.get();
+				user1.setBank_name(userDetail.getBank_name());
+				user1.setBank_account_number(userDetail.getBank_account_number());
+				user1.setBank_account_holder_name(userDetail.getBank_account_holder_name());
+				user1.setIfsc_code(userDetail.getIfsc_code());
+				userDetailDao.save(userDetail3);
+				userdao.save(user1);
 			}
-	else
-	{
-		UserDetail userDetail3=userDetail2.get();
-		userDetail3.setBank_name(userDetail.getBank_name());
-		userDetail3.setBank_account_number(userDetail.getBank_account_number());
-		userDetail3.setBank_account_holder_name(userDetail.getBank_account_holder_name());
-		userDetail3.setIfsc_code(userDetail.getIfsc_code());
-		Optional<User> user = userdao.findById(userDetail3.getId());
-		User user1 = user.get();
-		user1.setBank_name(userDetail.getBank_name());
-		user1.setBank_account_number(userDetail.getBank_account_number());
-		user1.setBank_account_holder_name(userDetail.getBank_account_holder_name());
-		user1.setIfsc_code(userDetail.getIfsc_code());
-		userDetailDao.save(userDetail3);
-		userdao.save(user1);			
-	}
 		}
 	}
-	
+
 	@Transactional
 	public void emp_update_profile(UserDetail userDetail, String CurrentUser) throws Exception {
 		try {
@@ -1802,7 +1791,8 @@ String designarionArrowSplit = user.getDesignation();
 			System.out.println(userDetail.getLaptop_serial_number());
 			Optional<UserDetail> userDetail2 = userDetailDao.findById(userDetail.getId());
 			if (userDetail2.isPresent()) {
-				System.out.println("USERDETAIL INPUT GET " + userDetail.getLaptop_brand()+" <<<<<<< "+userDetail.getBank_account_holder_name()+">>>");
+				System.out.println("USERDETAIL INPUT GET " + userDetail.getLaptop_brand() + " <<<<<<< "
+						+ userDetail.getBank_account_holder_name() + ">>>");
 //				if (userDetail.getLaptop_brand().trim().isEmpty()) {
 				if (userDetail.getLaptop_brand().equals("NA")) {
 					UserDetail userDetail3 = userDetail2.get();
@@ -1917,47 +1907,47 @@ String designarionArrowSplit = user.getDesignation();
 		}
 	}
 
-	public void login_record_save(User user, HttpSession session, String Ip_address, String location) throws InterruptedException {
+	public void login_record_save(User user, HttpSession session, String Ip_address, String location)
+			throws InterruptedException {
 		try {
 			UserLoginDateTime userLoginDateTime = new UserLoginDateTime();
-			int employee_login_record_count=userLoginDao.getLoginCount();
-			if(employee_login_record_count>0)
-			{
-			int last_sno = userLoginDao.getLastId();
-			userLoginDateTime.setSno(++last_sno);
-			userLoginDateTime.setId(user.getId());
-			userLoginDateTime.setEmail(user.getEmail());
-			userLoginDateTime.setIpAddress(Ip_address);
-			userLoginDateTime.setLocation(location);
-			userLoginDateTime.setUser_status(true);
-			user.setUser_status(true);
-			Optional<UserDetail> userDetail1 = userDetailDao.findById(user.getId());
-			UserDetail userDetail2 = userDetail1.get();
-			String getSession = session.getId();
-			if (getSession == null) {
-				userLoginDateTime.setSession_Id("NOT AVAILABLE");
-			} else {
-				userLoginDateTime.setSession_Id(getSession);
-			}
-			user.setSession_Id(getSession);
-			userDetail2.setUser_status(true);
-			  // Get current time in IST
-	        ZonedDateTime nowIST = ZonedDateTime.now(ZoneId.of("Asia/Kolkata"));
-	        // Format the ZonedDateTime for display
-	        String formattedDate = nowIST.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss z"));
-	        System.out.println("----------------------------------------INDIA ASIA/KOLKATA-------------------------------- " + formattedDate);
+			int employee_login_record_count = userLoginDao.getLoginCount();
+			if (employee_login_record_count > 0) {
+				int last_sno = userLoginDao.getLastId();
+				userLoginDateTime.setSno(++last_sno);
+				userLoginDateTime.setId(user.getId());
+				userLoginDateTime.setEmail(user.getEmail());
+				userLoginDateTime.setIpAddress(Ip_address);
+				userLoginDateTime.setLocation(location);
+				userLoginDateTime.setUser_status(true);
+				user.setUser_status(true);
+				Optional<UserDetail> userDetail1 = userDetailDao.findById(user.getId());
+				UserDetail userDetail2 = userDetail1.get();
+				String getSession = session.getId();
+				if (getSession == null) {
+					userLoginDateTime.setSession_Id("NOT AVAILABLE");
+				} else {
+					userLoginDateTime.setSession_Id(getSession);
+				}
+				user.setSession_Id(getSession);
+				userDetail2.setUser_status(true);
+				// Get current time in IST
+				ZonedDateTime nowIST = ZonedDateTime.now(ZoneId.of("Asia/Kolkata"));
+				// Format the ZonedDateTime for display
+				String formattedDate = nowIST.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss z"));
+				System.out.println(
+						"----------------------------------------INDIA ASIA/KOLKATA-------------------------------- "
+								+ formattedDate);
 
-	        // Convert formattedDate back to Date object with IST time zone
-	        Date loginDate = parseDateInIST(formattedDate);
-	        userLoginDateTime.setLoginDateAndTime(loginDate);
-			userLoginDateTime.setUsername(user.getUsername());
-			userLoginDao.save(userLoginDateTime);
-			userdao.save(user);
+				// Convert formattedDate back to Date object with IST time zone
+				Date loginDate = parseDateInIST(formattedDate);
+				userLoginDateTime.setLoginDateAndTime(loginDate);
+				userLoginDateTime.setUsername(user.getUsername());
+				userLoginDao.save(userLoginDateTime);
+				userdao.save(user);
 //		Thread.sleep(1000);
-			userDetailDao.save(userDetail2);
-			}
-			else
-			{
+				userDetailDao.save(userDetail2);
+			} else {
 				userLoginDateTime.setSno(1);
 				userLoginDateTime.setId(user.getId());
 				userLoginDateTime.setEmail(user.getEmail());
@@ -1975,21 +1965,23 @@ String designarionArrowSplit = user.getDesignation();
 				}
 				user.setSession_Id(getSession);
 				userDetail2.setUser_status(true);
-				  // Get current time in IST
-		        ZonedDateTime nowIST = ZonedDateTime.now(ZoneId.of("Asia/Kolkata"));
-		        // Format the ZonedDateTime for display
-		        String formattedDate = nowIST.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss z"));
-		        System.out.println("----------------------------------------INDIA ASIA/KOLKATA-------------------------------- " + formattedDate);
+				// Get current time in IST
+				ZonedDateTime nowIST = ZonedDateTime.now(ZoneId.of("Asia/Kolkata"));
+				// Format the ZonedDateTime for display
+				String formattedDate = nowIST.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss z"));
+				System.out.println(
+						"----------------------------------------INDIA ASIA/KOLKATA-------------------------------- "
+								+ formattedDate);
 
-		        // Convert formattedDate back to Date object with IST time zone
-		        Date loginDate = parseDateInIST(formattedDate);
-		        userLoginDateTime.setLoginDateAndTime(loginDate);
+				// Convert formattedDate back to Date object with IST time zone
+				Date loginDate = parseDateInIST(formattedDate);
+				userLoginDateTime.setLoginDateAndTime(loginDate);
 				userLoginDateTime.setUsername(user.getUsername());
 				userLoginDao.save(userLoginDateTime);
 				userdao.save(user);
 //			Thread.sleep(1000);
 				userDetailDao.save(userDetail2);
-				
+
 			}
 		} catch (Exception e) {
 			String exceptionAsString = e.toString();
@@ -2009,11 +2001,11 @@ String designarionArrowSplit = user.getDesignation();
 	}
 
 	private Date parseDateInIST(String dateString) throws ParseException {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Kolkata"));
-        return sdf.parse(dateString);
-    }
-	
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+		sdf.setTimeZone(TimeZone.getTimeZone("Asia/Kolkata"));
+		return sdf.parse(dateString);
+	}
+
 	public String downtime_satus(String server) {
 		try {
 			String status = downtime_Maintaince_Dao.server_status_check(server);
@@ -2121,49 +2113,54 @@ String designarionArrowSplit = user.getDesignation();
 
 	@Transactional
 	public void syncEmployeeAndEmployeeDetailTable() {
-	    try {
-	        // Fetch all User and UserDetail data
-	        List<User> users = userdao.findAll();
-	        List<UserDetail> userDetails = userDetailDao.findAll();
+		try {
+			// Fetch all User and UserDetail data
+			List<User> users = userdao.findAll();
+			List<UserDetail> userDetails = userDetailDao.findAll();
 
-	        // Create a map of UserDetail by id (Integer) for quick access
-	        Map<Integer, UserDetail> userDetailMap = userDetails.stream()
-	                .collect(Collectors.toMap(UserDetail::getId, userDetail -> userDetail));
+			// Create a map of UserDetail by id (Integer) for quick access
+			Map<Integer, UserDetail> userDetailMap = userDetails.stream()
+					.collect(Collectors.toMap(UserDetail::getId, userDetail -> userDetail));
 
-	        // Loop through all users and update UserDetail if needed
-	        for (User user : users) {
-	            UserDetail userDetail = userDetailMap.get(user.getId());
+			// Loop through all users and update UserDetail if needed
+			for (User user : users) {
+				UserDetail userDetail = userDetailMap.get(user.getId());
 
-	            if (userDetail != null && !user.getUsername().equals(userDetail.getUsername())) {
-	                // Update only if the usernames are different
-	                userDetail.setUsername(user.getUsername());
-	                userDetailDao.save(userDetail);  // Save the updated UserDetail
-	            }
-	            if (userDetail != null && !user.getEmail().equals(userDetail.getEmail())) {
-	                // Update only if the usernames are different
-	                userDetail.setEmail(user.getEmail());
-	                userDetailDao.save(userDetail);  // Save the updated UserDetail
-	            }
-	            if (userDetail != null && !user.getDesignation().equals(userDetail.getDesignation())) {
-	                // Update only if the usernames are different
-	                userDetail.setDesignation(user.getDesignation());
-	                userDetailDao.save(userDetail);  // Save the updated UserDetail
-	            }
-	        }
+				if (userDetail != null && !user.getUsername().equals(userDetail.getUsername())) {
+					// Update only if the usernames are different
+					userDetail.setUsername(user.getUsername());
+					userDetailDao.save(userDetail); // Save the updated UserDetail
+				}
+				if (userDetail != null && !user.getEmail().equals(userDetail.getEmail())) {
+					// Update only if the usernames are different
+					userDetail.setEmail(user.getEmail());
+					userDetailDao.save(userDetail); // Save the updated UserDetail
+				}
+				if (userDetail != null && !user.getDesignation().equals(userDetail.getDesignation())) {
+					// Update only if the usernames are different
+					userDetail.setDesignation(user.getDesignation());
+					userDetailDao.save(userDetail); // Save the updated UserDetail
+				}
+				if (userDetail != null && !user.getBank_account_holder_name().equals(userDetail.getBank_account_holder_name())) {
+					// Update only if the usernames are different
+					userDetail.setDesignation(user.getBank_account_holder_name());
+					userDetailDao.save(userDetail); // Save the updated UserDetail
+				}
+			}
 
-	        // Log that the job has finished running
-	        jobrunning("sync_employee_and_employeedetail_table");
+			// Log that the job has finished running
+			jobrunning("sync_employee_and_employeedetail_table");
 
-	    } catch (Exception e) {
-	        // Capture and log the error
-	        String exceptionAsString = e.toString();
-	        String className = servicelayer.class.getName();
-	        String errorMessage = e.getMessage();
-	        StackTraceElement[] stackTrace = e.getStackTrace();
-	        String methodName = stackTrace[0].getMethodName();
-	        int lineNumber = stackTrace[0].getLineNumber();
-	        insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
-	    }
+		} catch (Exception e) {
+			// Capture and log the error
+			String exceptionAsString = e.toString();
+			String className = servicelayer.class.getName();
+			String errorMessage = e.getMessage();
+			StackTraceElement[] stackTrace = e.getStackTrace();
+			String methodName = stackTrace[0].getMethodName();
+			int lineNumber = stackTrace[0].getLineNumber();
+			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+		}
 	}
 
 	@Transactional
@@ -2382,10 +2379,9 @@ String designarionArrowSplit = user.getDesignation();
 
 		}
 	}
-	
+
 	@Transactional
-	public boolean update_payment(User user,@RequestBody Map<String, Object> data)
-	{
+	public boolean update_payment(User user, @RequestBody Map<String, Object> data) {
 		Payment_Order_Info payment_Order_Info = orderDao.findByOrderId(data.get("order_id").toString());
 		payment_Order_Info.setPaymentId(data.get("payment_id").toString());
 		payment_Order_Info.setStatus(data.get("status").toString());
@@ -2406,21 +2402,21 @@ String designarionArrowSplit = user.getDesignation();
 		payment_Order_Info.setLicense_status("ACTIVE");
 		System.out.println("USER COMPANY ID" + user.getCompany_id());
 		update_enable_user_after_success_payment(user.getCompany_id());
-		SubscriptionPlans subscriptionPlans=findSubscriptionPlans();
-		float gst=subscriptionPlans.getGst() * 100;
-		String gst_no=Float.toString(gst);
+		SubscriptionPlans subscriptionPlans = findSubscriptionPlans();
+		float gst = subscriptionPlans.getGst() * 100;
+		String gst_no = Float.toString(gst);
 		payment_Order_Info.setDiscount(subscriptionPlans.getDiscount());
-		payment_Order_Info.setTax(gst_no+'%');
+		payment_Order_Info.setTax(gst_no + '%');
 		Optional<SubscriptionPlans> subscriptionPlansOptional = subscriptionPlansDao.getAllPlans();
 		SubscriptionPlans subscriptionPlans2 = subscriptionPlansOptional.get();
 		payment_Order_Info.setGst_amount(payment_Order_Info.getAmount() * subscriptionPlans2.getGst());
-		float without_gst_amount=payment_Order_Info.getAmount() - payment_Order_Info.getGst_amount();
+		float without_gst_amount = payment_Order_Info.getAmount() - payment_Order_Info.getGst_amount();
 		payment_Order_Info.setAmount_without_gst(without_gst_amount);
 		CompanyInfo companyInfo = findCompanyInfo();
 		payment_Order_Info.setGst_no(companyInfo.getGst_no());
 		orderDao.save(payment_Order_Info);
 		try {
-			generateAndSendInvoice(payment_Order_Info,subscriptionPlans,companyInfo,user,formattedLicenseNumber);
+			generateAndSendInvoice(payment_Order_Info, subscriptionPlans, companyInfo, user, formattedLicenseNumber);
 		} catch (IOException e) {
 			jobDao.getJobRunningTimeInterrupted("disbaled_expired_plan_users");
 			String exceptionAsString = e.toString();
@@ -2673,24 +2669,21 @@ String designarionArrowSplit = user.getDesignation();
 	@Transactional
 	public void expired_license_status() {
 		try {
-			int order_count=orderDao.countt();
-			if(order_count > 0)
-			{
-				List<Payment_Order_Info> info= orderDao.findAll();
-				for(Payment_Order_Info order_Info : info)
-				{
-					String company_id=order_Info.getCompany_id();
-					int expire_order_count=orderDao.check_users_subscription_plan(company_id);
-					if(expire_order_count>0)
-					{
+			int order_count = orderDao.countt();
+			if (order_count > 0) {
+				List<Payment_Order_Info> info = orderDao.findAll();
+				for (Payment_Order_Info order_Info : info) {
+					String company_id = order_Info.getCompany_id();
+					int expire_order_count = orderDao.check_users_subscription_plan(company_id);
+					if (expire_order_count > 0) {
 						orderDao.expired_license_status(company_id);
 						userdao.disbaled_expired_plan_users(company_id);
 					}
 				}
-			jobrunning("expired_license_status");
+				jobrunning("expired_license_status");
 			}
 		} catch (Exception e) {
-		jobDao.getJobRunningTimeInterrupted("expired_license_status");
+			jobDao.getJobRunningTimeInterrupted("expired_license_status");
 			String exceptionAsString = e.toString();
 			// Get the current class
 			Class<?> currentClass = servicelayer.class;
@@ -2707,10 +2700,10 @@ String designarionArrowSplit = user.getDesignation();
 		}
 	}
 
-
 	public void generateAndSendInvoice(Payment_Order_Info payment, SubscriptionPlans subscriptionPlans,
-			CompanyInfo companyInfo, User user,String formattedLicenseNumber) throws IOException, MessagingException {
-		String invoicePath = "C:\\Users\\ayush.gupta\\Documents\\Invoice Records\\invoice_" + payment.getPaymentId() + ".pdf";
+			CompanyInfo companyInfo, User user, String formattedLicenseNumber) throws IOException, MessagingException {
+		String invoicePath = "C:\\Users\\ayush.gupta\\Documents\\Invoice Records\\invoice_" + payment.getPaymentId()
+				+ ".pdf";
 		generatePdfInvoice(invoicePath, payment, subscriptionPlans, companyInfo, user);
 //	        sendInvoiceEmail("customer@example.com", "Your Invoice", "Please find attached your invoice.", invoicePath);
 		try {
@@ -2718,7 +2711,7 @@ String designarionArrowSplit = user.getDesignation();
 			EMSMAIN.license_number.put(user.getEmail(), formattedLicenseNumber);
 			EMSMAIN.license_status.put(user.getEmail(), payment.getLicense_status());
 			EMSMAIN.payment_time.put(user.getEmail(), payment.getSystem_date_and_time());
-			EMSMAIN.license_payment_status.put(user.getEmail(),payment.getStatus());
+			EMSMAIN.license_payment_status.put(user.getEmail(), payment.getStatus());
 			EMSMAIN.payment_invoice_email.put(user.getEmail(), invoicePath);
 		} catch (Exception e) {
 			String exceptionAsString = e.toString();
@@ -2754,35 +2747,35 @@ String designarionArrowSplit = user.getDesignation();
 		Paragraph title = new Paragraph("Invoice").setFont(boldFont).setFontSize(20)
 				.setTextAlignment(TextAlignment.CENTER).setMarginBottom(20);
 		document.add(title);
-		
+
 		// Create an array with the characters of the text
 		char[] textChars = "www.ems.com".toCharArray();
-     // Define the colors for each character
-        Color[] colors = {
-            new DeviceRgb(66, 133, 244),   // Blue
-            new DeviceRgb(219, 68, 55),    // Red
-            new DeviceRgb(244, 180, 0),    // Yellow
-            new DeviceRgb(66, 133, 244),   // Blue
-            new DeviceRgb(15, 157, 88),    // Green
-            new DeviceRgb(219, 68, 55),    // Red
-            new DeviceRgb(66, 133, 244),   // Blue
-            new DeviceRgb(219, 68, 55),    // Red
-            new DeviceRgb(244, 180, 0)     // Yellow
-        };
-        Paragraph title4 = new Paragraph();
-     // Add each character with its corresponding color
-        for (int i = 0; i < textChars.length; i++) {
-            // Create a Text object for each character
-            Text coloredText = new Text(String.valueOf(textChars[i]))
-                    .setFontColor(colors[i % colors.length]); // Rotate through the colors
-            
-            // Add the Text object to the Paragraph
-            title4.add(coloredText);
-        }
-	title4.setFont(boldFont).setFontSize(26)
-				.setTextAlignment(TextAlignment.LEFT).setMarginBottom(10);
+		// Define the colors for each character
+		Color[] colors = { new DeviceRgb(66, 133, 244), // Blue
+				new DeviceRgb(219, 68, 55), // Red
+				new DeviceRgb(244, 180, 0), // Yellow
+				new DeviceRgb(66, 133, 244), // Blue
+				new DeviceRgb(15, 157, 88), // Green
+				new DeviceRgb(219, 68, 55), // Red
+				new DeviceRgb(66, 133, 244), // Blue
+				new DeviceRgb(219, 68, 55), // Red
+				new DeviceRgb(244, 180, 0) // Yellow
+		};
+		Paragraph title4 = new Paragraph();
+		// Add each character with its corresponding color
+		for (int i = 0; i < textChars.length; i++) {
+			// Create a Text object for each character
+			Text coloredText = new Text(String.valueOf(textChars[i])).setFontColor(colors[i % colors.length]); // Rotate
+																												// through
+																												// the
+																												// colors
+
+			// Add the Text object to the Paragraph
+			title4.add(coloredText);
+		}
+		title4.setFont(boldFont).setFontSize(26).setTextAlignment(TextAlignment.LEFT).setMarginBottom(10);
 		document.add(title4);
-		
+
 		// Company Info
 		Paragraph title1 = new Paragraph("Billed From").setFont(boldFont).setFontSize(12)
 				.setTextAlignment(TextAlignment.LEFT).setMarginBottom(20);
@@ -2875,8 +2868,9 @@ String designarionArrowSplit = user.getDesignation();
 				.setBackgroundColor(ColorConstants.LIGHT_GRAY));
 		orderSummaryTable.addHeaderCell(new Cell().add(new Paragraph("Price (INR)").setFont(boldFont).setFontSize(12))
 				.setBackgroundColor(ColorConstants.LIGHT_GRAY));
-		orderSummaryTable.addHeaderCell(new Cell().add(new Paragraph("Discount (INR)").setFont(boldFont).setFontSize(12))
-				.setBackgroundColor(ColorConstants.LIGHT_GRAY));
+		orderSummaryTable
+				.addHeaderCell(new Cell().add(new Paragraph("Discount (INR)").setFont(boldFont).setFontSize(12))
+						.setBackgroundColor(ColorConstants.LIGHT_GRAY));
 		orderSummaryTable.addHeaderCell(new Cell().add(new Paragraph("Tax (GST)").setFont(boldFont).setFontSize(12))
 				.setBackgroundColor(ColorConstants.LIGHT_GRAY));
 //		orderSummaryTable.addHeaderCell(new Cell().add(new Paragraph("Quantity").setFont(boldFont).setFontSize(12))
@@ -2888,19 +2882,21 @@ String designarionArrowSplit = user.getDesignation();
 		orderSummaryTable.addCell(new Cell().add(new Paragraph(
 				"EMS SUBSCRIPTION\nValidity: " + subscriptionPlans.getPlan_description() + "\nLicense Number: "
 						+ payment.getLicense_number() + "\nLic. Issue Date: " + payment.getSubscription_start_date()
-						+ "\nLic. End Date: " + payment.getSubscription_expiry_date()+""
-								+ "\nQuantity: 1")
+						+ "\nLic. End Date: " + payment.getSubscription_expiry_date() + "" + "\nQuantity: 1")
 				.setFont(font).setFontSize(12)));
-		float amt_without_gst=payment.getAmount()-payment.getGst_amount();
-		float discount=payment.getDiscount();
-		float gst_amount=payment.getGst_amount();
+		float amt_without_gst = payment.getAmount() - payment.getGst_amount();
+		float discount = payment.getDiscount();
+		float gst_amount = payment.getGst_amount();
 		// Formatted values
-        String formattedAmtWithoutDiscount = String.format("%.2f", amt_without_gst);
-        String formattedDiscount = String.format("%.2f", discount);
-        String formattedGstAmount = String.format("%.2f", gst_amount);
-		orderSummaryTable.addCell(new Cell().add(new Paragraph("₹" + formattedAmtWithoutDiscount).setFont(font).setFontSize(12)));
-		orderSummaryTable.addCell(new Cell().add(new Paragraph("₹ -" +formattedDiscount)).setFont(font).setFontSize(12));
-		orderSummaryTable.addCell(new Cell().add(new Paragraph("₹" + payment.getTax() + "   "+formattedGstAmount)).setFont(font).setFontSize(12));
+		String formattedAmtWithoutDiscount = String.format("%.2f", amt_without_gst);
+		String formattedDiscount = String.format("%.2f", discount);
+		String formattedGstAmount = String.format("%.2f", gst_amount);
+		orderSummaryTable.addCell(
+				new Cell().add(new Paragraph("₹" + formattedAmtWithoutDiscount).setFont(font).setFontSize(12)));
+		orderSummaryTable
+				.addCell(new Cell().add(new Paragraph("₹ -" + formattedDiscount)).setFont(font).setFontSize(12));
+		orderSummaryTable.addCell(new Cell().add(new Paragraph("₹" + payment.getTax() + "   " + formattedGstAmount))
+				.setFont(font).setFontSize(12));
 //		orderSummaryTable.addCell(new Cell().add(new Paragraph("1").setFont(font).setFontSize(12)));
 		orderSummaryTable.addCell(new Cell().add(new Paragraph("₹" + payment.getAmount()).setFont(font).setFontSize(12))
 				.setTextAlignment(TextAlignment.RIGHT));
@@ -2910,19 +2906,15 @@ String designarionArrowSplit = user.getDesignation();
 		orderSummaryTable.addCell(new Cell().add(new Paragraph("₹" + payment.getAmount()).setFont(font).setFontSize(12))
 				.setTextAlignment(TextAlignment.RIGHT));
 
-		orderSummaryTable.addCell(new Cell(1, 5).add(new Paragraph("Discount").setFont(boldFont).setFontSize(12)
-				.setTextAlignment(TextAlignment.RIGHT)));
-		if(subscriptionPlans.getDiscount()==0)
-		{
-			orderSummaryTable
-			.addCell(new Cell().add(new Paragraph("₹ NA ").setFont(font).setFontSize(12))
+		orderSummaryTable.addCell(new Cell(1, 5).add(
+				new Paragraph("Discount").setFont(boldFont).setFontSize(12).setTextAlignment(TextAlignment.RIGHT)));
+		if (subscriptionPlans.getDiscount() == 0) {
+			orderSummaryTable.addCell(new Cell().add(new Paragraph("₹ NA ").setFont(font).setFontSize(12))
 					.setTextAlignment(TextAlignment.RIGHT));
-		}
-		else
-		{
-		orderSummaryTable
-				.addCell(new Cell().add(new Paragraph("₹" + subscriptionPlans.getDiscount()).setFont(font).setFontSize(12))
-						.setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
+		} else {
+			orderSummaryTable.addCell(
+					new Cell().add(new Paragraph("₹" + subscriptionPlans.getDiscount()).setFont(font).setFontSize(12))
+							.setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
 		}
 		orderSummaryTable.addCell(new Cell(1, 5)
 				.add(new Paragraph("Total").setFont(boldFont).setFontSize(12).setTextAlignment(TextAlignment.RIGHT)));
@@ -2930,84 +2922,77 @@ String designarionArrowSplit = user.getDesignation();
 				.setTextAlignment(TextAlignment.RIGHT));
 
 		document.add(orderSummaryTable);
-		
+
 		// Divider
-	    document.add(new Paragraph("\n"));
+		document.add(new Paragraph("\n"));
 
-	    // Terms and Conditions
-	    Paragraph termsTitle = new Paragraph("Terms and Conditions")
-	            .setFont(boldFont)
-	            .setFontSize(14)
-	            .setTextAlignment(TextAlignment.LEFT)
-	            .setMarginBottom(10);
-	    document.add(termsTitle);
+		// Terms and Conditions
+		Paragraph termsTitle = new Paragraph("Terms and Conditions").setFont(boldFont).setFontSize(14)
+				.setTextAlignment(TextAlignment.LEFT).setMarginBottom(10);
+		document.add(termsTitle);
 
-	    Div termsDiv = new Div();
-	    termsDiv.add(new Paragraph("1. Payment Invoice valid for 1 Day.").setFont(font).setFontSize(12));
-	    termsDiv.add(new Paragraph("2. Late payments may be subject to additional charges.").setFont(font).setFontSize(12));
-	    termsDiv.add(new Paragraph("3. Please contact support for any discrepancies in your invoice.").setFont(font).setFontSize(12));
-	    termsDiv.add(new Paragraph("4. All sales are final. No refunds.").setFont(font).setFontSize(12));
-	    termsDiv.add(new Paragraph("5. This invoice is subject to the terms and conditions of our service agreement.").setFont(font).setFontSize(12));
-	    document.add(termsDiv);
+		Div termsDiv = new Div();
+		termsDiv.add(new Paragraph("1. Payment Invoice valid for 1 Day.").setFont(font).setFontSize(12));
+		termsDiv.add(
+				new Paragraph("2. Late payments may be subject to additional charges.").setFont(font).setFontSize(12));
+		termsDiv.add(new Paragraph("3. Please contact support for any discrepancies in your invoice.").setFont(font)
+				.setFontSize(12));
+		termsDiv.add(new Paragraph("4. All sales are final. No refunds.").setFont(font).setFontSize(12));
+		termsDiv.add(new Paragraph("5. This invoice is subject to the terms and conditions of our service agreement.")
+				.setFont(font).setFontSize(12));
+		document.add(termsDiv);
 
 		document.close();
-	} 
-	
-	public void save_null_value_laptop_assign_by_IT(UserDetail detail)
-	{
+	}
+
+	public void save_null_value_laptop_assign_by_IT(UserDetail detail) {
 		userDetailDao.save(detail);
 	}
-	
-	public void insert_Job_First_Time()
-	{
-		List<Job> job=jobDao.findAll();
-		List<String> job_list=new ArrayList<>();
-	   if(job==null)
-		   {
-		 job_list.add("Account_Locked_job");
-		 job_list.add("Login_Delete_Job");
-		 job_list.add("Is_Enabled_Job");
-		 job_list.add("Is_Disabled_Inactive_User_Job");
-		 job_list.add("Password_FailedAttempt_Reset");
-		 job_list.add("Update_User_Inactive_Status");
-		 job_list.add("get_user_status");
-		 job_list.add("delete_old_error_log");
-		 job_list.add("login_employeedetail_user_status_correct");
-		 job_list.add("remove_garbage_data_session_id");
-		 job_list.add("Captcha Validate");
-		 job_list.add("OTP Validate");
-		 job_list.add("failed_attempt_alert");
-		 job_list.add("success_attempt_alert");
-		 job_list.add("admin_otp_sent_verification");
-		 job_list.add("seperation_email_sent");
-		 job_list.add("team_email_sent");
-		 job_list.add("disbaled_expired_plan_users");
-		 job_list.add("expired_license_status");
-		 job_list.add("team_email_sent");
-		 job_list.add("forgot_otp_sent_verification");
-		 job_list.add("team_email_sent");
-		 job_list.add("payment_success_email_alert");
-		 for(String c : job_list)
-		 {
-			 Job job1=new Job();
-			int count=jobDao.getJobCount();
-			if(count==0)
-			{
-				job1.setId(1);
-				job1.setJob_description(c);
-				job1.setJob_active_or_not("Y");
-				jobDao.save(job1);
+
+	public void insert_Job_First_Time() {
+		List<Job> job = jobDao.findAll();
+		List<String> job_list = new ArrayList<>();
+		if (job == null) {
+			job_list.add("Account_Locked_job");
+			job_list.add("Login_Delete_Job");
+			job_list.add("Is_Enabled_Job");
+			job_list.add("Is_Disabled_Inactive_User_Job");
+			job_list.add("Password_FailedAttempt_Reset");
+			job_list.add("Update_User_Inactive_Status");
+			job_list.add("get_user_status");
+			job_list.add("delete_old_error_log");
+			job_list.add("login_employeedetail_user_status_correct");
+			job_list.add("remove_garbage_data_session_id");
+			job_list.add("Captcha Validate");
+			job_list.add("OTP Validate");
+			job_list.add("failed_attempt_alert");
+			job_list.add("success_attempt_alert");
+			job_list.add("admin_otp_sent_verification");
+			job_list.add("seperation_email_sent");
+			job_list.add("team_email_sent");
+			job_list.add("disbaled_expired_plan_users");
+			job_list.add("expired_license_status");
+			job_list.add("team_email_sent");
+			job_list.add("forgot_otp_sent_verification");
+			job_list.add("team_email_sent");
+			job_list.add("payment_success_email_alert");
+			for (String c : job_list) {
+				Job job1 = new Job();
+				int count = jobDao.getJobCount();
+				if (count == 0) {
+					job1.setId(1);
+					job1.setJob_description(c);
+					job1.setJob_active_or_not("Y");
+					jobDao.save(job1);
+				} else {
+					int lastid = jobDao.getJobLastId();
+					job1.setId(++lastid);
+					job1.setJob_description(c);
+					job1.setJob_active_or_not("Y");
+					jobDao.save(job1);
+				}
 			}
-			else
-			{
-				int lastid=jobDao.getJobLastId();
-				job1.setId(++lastid);
-				job1.setJob_description(c);
-				job1.setJob_active_or_not("Y");
-				jobDao.save(job1);
-			}
-		 }
-		   }
+		}
 //		Login_Delete_Job
 //		Is_Enabled_Job
 //		Is_Disabled_Inactive_User_Job
@@ -3030,8 +3015,8 @@ String designarionArrowSplit = user.getDesignation();
 //		forgot_otp_sent_verification
 //		payment_success_email_alert
 	}
-	
-	  public List<UserDetail> searchEmployees(String term) {
-	        return userDetailDao.findByNameContainingOrEmailContainingOrIdContaining(term);
-	    }
+
+	public List<UserDetail> searchEmployees(String term) {
+		return userDetailDao.findByNameContainingOrEmailContainingOrIdContaining(term);
+	}
 }
