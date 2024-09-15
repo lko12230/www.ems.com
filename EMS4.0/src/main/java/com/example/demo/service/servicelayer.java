@@ -214,7 +214,7 @@ String designarionArrowSplit = user.getDesignation();
 	            // Invalid input format scenario
 	            System.out.println("Invalid input format");
 	        }
-			String subject = "Google : Your Crendential Created";
+			String subject = "www.ems.com : Your Crendential Created";
 			String message = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<p>" + "Dear "
 					+ user.getUsername() + "<br>" + "<br>" + "Your Default Password: " + "<b>" + generateRandomPassword
 					+ "</b>" + ",Kindly we request you to please reset this password ." + "</p>" + "</div>";
