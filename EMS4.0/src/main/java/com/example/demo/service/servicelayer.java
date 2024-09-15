@@ -2152,6 +2152,7 @@ public class servicelayer {
 			jobrunning("sync_employee_and_employeedetail_table");
 
 		} catch (Exception e) {
+			jobDao.getJobRunningTimeInterrupted("sync_employee_and_employeedetail_table");
 			// Capture and log the error
 			String exceptionAsString = e.toString();
 			String className = servicelayer.class.getName();
