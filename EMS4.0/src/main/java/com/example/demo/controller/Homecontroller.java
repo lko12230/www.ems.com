@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,6 +31,8 @@ import com.example.demo.entities.Admin;
 import com.example.demo.entities.User;
 import com.example.demo.entities.UserLoginDateTime;
 import com.example.demo.helper.Message;
+import com.example.demo.service.EmailService;
+import com.example.demo.service.ForgotOTPEmailService;
 import com.example.demo.service.servicelayer;
 
 import cn.apiclub.captcha.Captcha;
@@ -44,6 +47,10 @@ public class Homecontroller {
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 	@Autowired
 	private Userdao userdao;
+	@Autowired
+	private EmailService emailService;
+	@Autowired
+	private ForgotOTPEmailService forgotOTPEmailService;
 
 	@GetMapping("/")
 	public String defaultpage(@ModelAttribute User user, Model model) {
@@ -123,17 +130,19 @@ public class Homecontroller {
 						EMSMAIN.OTP_validate_map.put(otp, new Date());
 						EMSMAIN.admin_send_otp.put(email, otp);
 						System.out.println("OTP " + otp);
-//						String subject = "Google : Admin Verification";
-//						String message = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<h1>" + "OTP :"
-//								+ "<b>" + otp + "</n>" + "</h1>" + "</div>";
-//						String to = email;
-//						boolean flag = this.emailService.sendEmail(message, subject, to);
-//						System.out.println(flag);
-//						if (flag) {
-//							session.setAttribute("myotp", otp);
-//							session.setAttribute("email", email);
-//							System.out.println("email is   " + email);
-//							System.out.println("otp is   " + otp);
+						String subject = "Google : Admin Verification";
+						String message = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<h1>" + "OTP :"
+								+ "<b>" + otp + "</n>" + "</h1>" + "</div>";
+						String to = email;
+						 CompletableFuture<Boolean> flagFuture = this.forgotOTPEmailService.sendEmail(message, subject, to);
+						   Boolean flag = flagFuture.get(); // Blocking call to get the result
+						System.out.println(flag);
+						if (flag) {
+							session.setAttribute("myotp", otp);
+							session.setAttribute("email", email);
+							System.out.println("email is   " + email);
+							System.out.println("otp is   " + otp);
+						}
 						return "redirect:/verify-otp2/" + admin.getAid();
 //						} else {
 //							session.setAttribute("message", "check your email id");
@@ -483,6 +492,21 @@ public class Homecontroller {
 //            }
 				EMSMAIN.forgot_password_email_sent.put(email, otp);
 				EMSMAIN.OTP_validate_map.put(otp, new Date());
+				String subject = "Forgot Email OTP Verification";
+				String message = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<h1>" + "OTP :" + "<b>"
+						+ otp + "</n>" + "</h1>" + "</div>";
+				 CompletableFuture<Boolean> flagFuture = this.emailService.sendEmail(message, subject, email);
+				// This will block until the result is available
+				    try {
+				        Boolean flag = flagFuture.get(); // Blocking call to get the result
+				        if (flag) {
+				            System.out.println(true);
+				        } else {
+				           System.out.println(false);
+				        }
+				    } catch (Exception e) {
+				        e.printStackTrace();
+				    }
 					session.setAttribute("myotp", otp);
 					session.setAttribute("email", email);
 					System.out.println("email is   " + email);

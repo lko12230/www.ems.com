@@ -15,6 +15,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -43,6 +44,7 @@ import com.example.demo.entities.Performance;
 import com.example.demo.entities.User;
 import com.example.demo.entities.UserDetail;
 import com.example.demo.helper.Message;
+import com.example.demo.service.SeperationEmailService;
 import com.example.demo.service.servicelayer;
 
 @Controller
@@ -59,6 +61,8 @@ public class UserController {
 	private UserDetailDao userDetailDao;
 	@Autowired
 	private adminDao adminDao;
+	@Autowired
+	private SeperationEmailService emailService1;
 //	@ModelAttribute
 //	public void commonData(Model model, Principal principal) {
 //		String userName = principal.getName();
@@ -684,11 +688,31 @@ public class UserController {
 			Optional<Admin> admin = adminDao.findById(find);
 			Admin admin1 = admin.get();
 			String cc = admin1.getEmail();
-			EMSMAIN.id_with_email.put(user1.getId(), to);
-			EMSMAIN.id_with_cc.put(user1.getId(), cc);
-			EMSMAIN.id_with_last_working_day_date.put(user1.getId(), lastdate);
-			EMSMAIN.id_with_username.put(user1.getId(), username);
+//			EMSMAIN.id_with_email.put(user1.getId(), to);
+//			EMSMAIN.id_with_cc.put(user1.getId(), cc);
+//			EMSMAIN.id_with_last_working_day_date.put(user1.getId(), lastdate);
+//			EMSMAIN.id_with_username.put(user1.getId(), username);
 //			servicelayer.sentMessage2(to, subject, username, lastdate, cc);
+			String subject = "Seperation Request EMPID: EMPID" + user1.getId();
+			String message = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<p>" + "Dear " + user1.getUsername()
+					+ "<br>" + "<br>" + "Your Resignation Request Accepted and your last working day is " + "<b>"
+					+ lastdate + "</b>" + "<br><br>" + "All the best for your future endavours" + "<br>"
+					+ "HR Team " + "</p>" + "</div>";
+			CompletableFuture<Boolean> flagFuture = this.emailService1.sendEmail(message, subject, to, cc);
+		    
+		    // This will block until the result is available
+			try {
+		        Boolean flag = flagFuture.get(); // Blocking call to get the result
+		        if (flag) {
+		           System.out.println(true);
+		        } else {
+		            System.out.println(false);
+		        }
+			}
+			catch (Exception e) {
+		        e.printStackTrace();
+		       System.out.println("ERROR");
+		    }
 			return "Seperation2";
 		} else {
 			lastdate = user1.getLastWorkingDay();

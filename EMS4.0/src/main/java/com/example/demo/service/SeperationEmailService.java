@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import java.util.Properties;
+import java.util.concurrent.CompletableFuture;
 
 import javax.mail.Authenticator;
 import javax.mail.Message;
@@ -11,14 +12,16 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
-public class EmailService1 {
+public class SeperationEmailService {
 	@Autowired
 	private servicelayer servicelayer;
-	public boolean sendEmail(String message, String subject, String to, String cc) {
-		boolean f = false;
+	@Async
+	public CompletableFuture<Boolean> sendEmail(String message, String subject, String to, String cc) {
+		boolean success = false;
 		// variable for gmail host
 		String from = "guptaayush12418@gmail.com";
 		String host = "smtp.gmail.com";
@@ -58,7 +61,7 @@ public class EmailService1 {
 			Transport.send(m);
 			System.out.println("sent success");
 
-			f = true;
+			success = true;
 		} catch (Exception e) {
 //			e.printStackTrace();
 			String exceptionAsString = e.toString();
@@ -74,7 +77,7 @@ public class EmailService1 {
 			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
 			servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
 		}
-		return f;
+		return CompletableFuture.completedFuture(success);
 	}
 
 }

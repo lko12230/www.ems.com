@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import java.io.File;
 import java.util.Properties;
+import java.util.concurrent.CompletableFuture;
 
 import javax.mail.Authenticator;
 import javax.mail.Message;
@@ -14,14 +15,16 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PaymentSucessEmailService {
 	@Autowired
 	private servicelayer servicelayer;
-	public boolean sendEmail(String get_path,String message, String subject, String to) {
-		boolean f = false;
+	@Async
+	public CompletableFuture<Boolean> sendEmail(String get_path,String message, String subject, String to) {
+		boolean success = false;
 		// variable for gmail host
 		String from = "guptaayush12418@gmail.com";
 		String host = "smtp.gmail.com";
@@ -106,7 +109,7 @@ session.setDebug(true);
 		Transport.send(m);
 		
 		
-		f=true;
+		success=true;
 		} catch (Exception e) {
 //			e.printStackTrace();
 			String exceptionAsString = e.toString();
@@ -122,7 +125,8 @@ session.setDebug(true);
 			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
 			servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
 		}
-		return f;
+		// Return a CompletableFuture
+        return CompletableFuture.completedFuture(success);
 	}
 
 }

@@ -9,7 +9,7 @@ import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
 
 @Service
-public class EmailService {
+public class TeamEmailService {
 
     @Async
     public CompletableFuture<Boolean> sendEmail(String message, String subject, String to) {

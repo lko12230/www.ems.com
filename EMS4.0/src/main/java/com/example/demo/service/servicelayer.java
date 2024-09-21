@@ -26,6 +26,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
@@ -106,7 +107,7 @@ public class servicelayer {
 	private EmailService emailService;
 
 	@Autowired
-	private EmailService1 emailService1;
+	private SeperationEmailService emailService1;
 	// for register
 	@Autowired
 	private adminDao adminDao;
@@ -311,7 +312,8 @@ public class servicelayer {
 					userDetailDao.save(userdetail);
 					adminDao.save(admin);
 					if (sentornot) {
-						flag = this.emailService.sendEmail(message, subject, to);
+						CompletableFuture<Boolean> flagFuture = this.emailService.sendEmail(message, subject, to);
+						    flag = flagFuture.get(); // Blocking call to get the result
 						if (flag) {
 							user.setDefaultPasswordSent(true);
 						} else {
@@ -399,12 +401,13 @@ public class servicelayer {
 					performancedao.save(performance);
 					userDetailDao.save(userdetail);
 					if (sentornot) {
-						flag = this.emailService.sendEmail(message, subject, to);
-						if (flag) {
-							user.setDefaultPasswordSent(true);
-						} else {
-							user.setDefaultPasswordSent(false);
-						}
+						CompletableFuture<Boolean> flagFuture = this.emailService.sendEmail(message, subject, to);
+					    flag = flagFuture.get(); // Blocking call to get the result
+					if (flag) {
+						user.setDefaultPasswordSent(true);
+					} else {
+						user.setDefaultPasswordSent(false);
+					}
 						userdao.save(user);
 					}
 
@@ -598,331 +601,331 @@ public class servicelayer {
 //		}
 //	}
 
-	public void sentMessage(String to, String subject, String team_id, String username) throws Exception {
-		try {
-			String teamDescwithid = teamdao.getAllDataFromTeamDescription(team_id);
-			boolean flag = false;
-			String message = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<p>" + "Dear " + username
-					+ "<br>" + "<br>" + "Welcome To New Team " + "<b>" + teamDescwithid + "</b>"
-					+ ",You will get mail from your manager within 2 working days." + "</p>" + "</div>";
-			flag = this.emailService.sendEmail(message, subject, to);
-			if (flag == true) {
-				System.out.println(true);
-			} else {
-				System.out.println(false);
-			}
-//		userDetailDao.save(userDetail);	
-		} catch (Exception e) {
-			String exceptionAsString = e.toString();
-			// Get the current class
-			Class<?> currentClass = servicelayer.class;
+//	public void sentMessage(String to, String subject, String team_id, String username) throws Exception {
+//		try {
+//			String teamDescwithid = teamdao.getAllDataFromTeamDescription(team_id);
+//			boolean flag = false;
+//			String message = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<p>" + "Dear " + username
+//					+ "<br>" + "<br>" + "Welcome To New Team " + "<b>" + teamDescwithid + "</b>"
+//					+ ",You will get mail from your manager within 2 working days." + "</p>" + "</div>";
+//			flag = this.emailService.sendEmail(message, subject, to);
+//			if (flag == true) {
+//				System.out.println(true);
+//			} else {
+//				System.out.println(false);
+//			}
+////		userDetailDao.save(userDetail);	
+//		} catch (Exception e) {
+//			String exceptionAsString = e.toString();
+//			// Get the current class
+//			Class<?> currentClass = servicelayer.class;
+//
+//			// Get the name of the class
+//			String className = currentClass.getName();
+//			String errorMessage = e.getMessage();
+//			StackTraceElement[] stackTrace = e.getStackTrace();
+//			String methodName = stackTrace[0].getMethodName();
+//			int lineNumber = stackTrace[0].getLineNumber();
+//			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+//			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+//
+//		}
+//	}
 
-			// Get the name of the class
-			String className = currentClass.getName();
-			String errorMessage = e.getMessage();
-			StackTraceElement[] stackTrace = e.getStackTrace();
-			String methodName = stackTrace[0].getMethodName();
-			int lineNumber = stackTrace[0].getLineNumber();
-			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
-			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
-
-		}
-	}
-
-	public void sentMessage1(int id, String to, String subject, String team_id, String username, String team_desc)
-			throws Exception {
-		try {
-//		String teamDescwithid = teamdao.getAllDataFromTeamDescription(team_id);
-			boolean flag = false;
-			String message = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<p>" + "Dear " + username
-					+ "<br>" + "<br>" + "Your Team Changed and your new team is " + "<b>" + team_id + " -> " + team_desc
-					+ "</b>" + ",You will get mail from your manager within 2 working days." + "<br><br>"
-					+ "Resource Management Team" + "</p>" + "</div>";
-			flag = this.emailService.sendEmail(message, subject, to);
-			if (flag == true) {
-				System.out.println(true);
-				EMSMAIN.id_with_email.remove(id);
-				EMSMAIN.id_with_team_id.remove(id);
-				EMSMAIN.id_with_username.remove(id);
-				EMSMAIN.id_with_team_desc.remove(id);
-				jobrunning("team_email_sent");
-			} else {
-				System.out.println(false);
-				jobrunning("team_email_sent");
-			}
-//		userDetailDao.save(userDetail);	
-		} catch (Exception e) {
-			jobDao.getJobRunningTimeInterrupted("team_email_sent");
-			String exceptionAsString = e.toString();
-			// Get the current class
-			Class<?> currentClass = servicelayer.class;
-
-			// Get the name of the class
-			String className = currentClass.getName();
-			String errorMessage = e.getMessage();
-			StackTraceElement[] stackTrace = e.getStackTrace();
-			String methodName = stackTrace[0].getMethodName();
-			int lineNumber = stackTrace[0].getLineNumber();
-			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
-			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
-
-		}
-	}
-
-	public void sentMessage3(String to, String subject, String team_id, String username) throws Exception {
-		try {
-			String teamDescwithid = teamdao.getAllDataFromTeamDescription(team_id);
-			boolean flag = false;
-			String message = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<p>" + "Dear " + username
-					+ "<br>" + "<br>" + "You have removed from team ," + "<b>" + teamDescwithid + "</b>" + " on "
-					+ "<b>" + new Date() + "</b>" + "<br><br>" + "Resource Management Team" + "</p>" + "</div>";
-			flag = this.emailService.sendEmail(message, subject, to);
-			if (flag == true) {
-				System.out.println(true);
-			} else {
-				System.out.println(false);
-			}
-//		userDetailDao.save(userDetail);	
-		} catch (Exception e) {
-//			jobDao.getJobRunningTimeInterrupted("remove_garbage_data_session_id");
-			String exceptionAsString = e.toString();
-			// Get the current class
-			Class<?> currentClass = servicelayer.class;
-
-			// Get the name of the class
-			String className = currentClass.getName();
-			String errorMessage = e.getMessage();
-			StackTraceElement[] stackTrace = e.getStackTrace();
-			String methodName = stackTrace[0].getMethodName();
-			int lineNumber = stackTrace[0].getLineNumber();
-			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
-			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
-
-		}
-	}
-
-	public void sentMessage2(String to, String subject, String username, Date lastworkingday, String cc, int id) {
-		try {
-			boolean flag = false;
-			String message = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<p>" + "Dear " + username
-					+ "<br>" + "<br>" + "Your Resignation Request Accepted and your last working day is " + "<b>"
-					+ lastworkingday + "</b>" + "<br><br>" + "All the best for your future endavours" + "<br>"
-					+ "HR Team " + "</p>" + "</div>";
-			flag = this.emailService1.sendEmail(message, subject, to, cc);
-			if (flag == true) {
-				System.out.println(true);
-				EMSMAIN.id_with_email.remove(id);
-				EMSMAIN.id_with_cc.remove(id);
-				EMSMAIN.id_with_username.remove(id);
-				EMSMAIN.id_with_last_working_day_date.remove(id);
-			} else {
-				System.out.println(false);
-			}
-//		userDetailDao.save(userDetail);	
-		} catch (Exception e) {
-			jobDao.getJobRunningTimeInterrupted("seperation_email_sent");
-			String exceptionAsString = e.toString();
-			// Get the current class
-			Class<?> currentClass = servicelayer.class;
-
-			// Get the name of the class
-			String className = currentClass.getName();
-			String errorMessage = e.getMessage();
-			StackTraceElement[] stackTrace = e.getStackTrace();
-			String methodName = stackTrace[0].getMethodName();
-			int lineNumber = stackTrace[0].getLineNumber();
-			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
-			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
-
-		}
-	}
-
-	public void sentMessage4(String to, String subject, String username, Date lastworkingday, String cc) {
-		try {
-			boolean flag = false;
-			String message = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<p>" + "Dear " + username
-					+ "<br>" + "<br>" + "You are job service is terminated by GOOGLE and your last working day is "
-					+ "<b>" + lastworkingday + "</b>" + "<br><br>" + "All the best for your future endavours" + "<br>"
-					+ "HR Team " + "</p>" + "</div>";
-			flag = this.emailService1.sendEmail(message, subject, to, cc);
-			if (flag == true) {
-				System.out.println(true);
-			} else {
-				System.out.println(false);
-			}
-		} catch (Exception e) {
-			jobDao.getJobRunningTimeInterrupted("----");
-			String exceptionAsString = e.toString();
-			// Get the current class
-			Class<?> currentClass = servicelayer.class;
-
-			// Get the name of the class
-			String className = currentClass.getName();
-			String errorMessage = e.getMessage();
-			StackTraceElement[] stackTrace = e.getStackTrace();
-			String methodName = stackTrace[0].getMethodName();
-			int lineNumber = stackTrace[0].getLineNumber();
-			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
-			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
-
-		}
-	}
-
-	public void sentMessage5(String to, String subject, String ipaddress, String username, String device_os,
-			String device_version, String device_architecture, Date login_date_time) throws Exception {
-		try {
-			boolean flag = false;
-			String osName = device_os;
-			String osVersion = device_version;
-			String osArchitecture = device_architecture;
-			String message = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<p>" + "Dear " + username
-					+ "<br>" + "<br>"
-					+ "SomeOne Try To Attempt Login Failed Attempt . If not you , Please Change Password Immediately . "
-					+ "<br>" + "<br>" + "Username : " + "<b>" + to + "</b>" + "<br>" + "IP ADDRESS : " + "<b>"
-					+ ipaddress + "</b>" + "<br>" + "Device LOGIN TIME : " + "<b>" + login_date_time + "</b>" + "</b>"
-					+ "<br>" + "Device OS : " + "<b>" + osName + "</b>" + "<br>" + "Device Version : " + "<b>"
-					+ osVersion + "</b>" + "<br>" + "Device Architecture : " + "<b>" + osArchitecture + "</b>" + "<br>"
-					+ "<br>" + "Cyber Team " + "</p>" + "</div>";
-			flag = this.emailService.sendEmail(message, subject, to);
-			System.out.println(" EMAIL IPADDRESS !!!!!!!!!!!!" + flag);
-			System.out.println(" EMAIL DEVICE OS  !!!!!!!!!!!!!" + flag);
-			System.out.println(" EMAIL DEVICE VERSION !!!!!!!!!" + flag);
-			System.out.println(" EMAIL DEVICE ARCHITECTURE !!!!!" + flag);
-			if (flag == true) {
-				System.out.println(true);
-				EMSMAIN.failed_login_Attempt.remove(to);
-				EMSMAIN.device_os.remove(to);
-				EMSMAIN.device_version.remove(to);
-				EMSMAIN.device_Architecture.remove(to);
-				EMSMAIN.login_date_time.remove(to);
-				Optional<User> get_user = userdao.findByUserName(to);
-				User user1 = get_user.get();
-				if (user1.getAlert_message_sent() == 0) {
-					user1.setAlert_message_sent(1);
-					userdao.save(user1);
-				} else {
-					user1.setAlert_message_sent(user1.getAlert_message_sent() + 1);
-					userdao.save(user1);
-				}
-			} else {
-				System.out.println(false);
-			}
-//		userDetailDao.save(userDetail);	
-		} catch (Exception e) {
-			jobDao.getJobRunningTimeInterrupted("failed_attempt_alert");
-			String exceptionAsString = e.toString();
-			// Get the current class
-			Class<?> currentClass = servicelayer.class;
-
-			// Get the name of the class
-			String className = currentClass.getName();
-			String errorMessage = e.getMessage();
-			StackTraceElement[] stackTrace = e.getStackTrace();
-			String methodName = stackTrace[0].getMethodName();
-			int lineNumber = stackTrace[0].getLineNumber();
-			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
-			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
-
-		}
-	}
-
-	@Transactional
-	public void sentMessage6(String to, String subject, String ipaddress, String username, String device_os,
-			String device_version, String device_architecture, Date login_date_time) throws Exception {
-		try {
-			boolean flag = false;
-			String osName = device_os;
-			String osVersion = device_version;
-			String osArchitecture = device_architecture;
-			String message = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<p>" + "Dear " + username
-					+ "<br>" + "<br>" + "Login Success" + "<br>" + "<br>" + "Username : " + "<b>" + to + "</b>" + "<br>"
-					+ "IP ADDRESS : " + "<b>" + ipaddress + "</b>" + "<br>" + "Device LOGIN TIME : " + "<b>"
-					+ login_date_time + "</b>" + "</b>" + "<br>" + "Device OS : " + "<b>" + osName + "</b>" + "<br>"
-					+ "Device Version : " + "<b>" + osVersion + "</b>" + "<br>" + "Device Architecture : " + "<b>"
-					+ osArchitecture + "</b>" + "<br>" + "<br>" + "Cyber Team " + "</p>" + "</div>";
-			flag = this.emailService.sendEmail(message, subject, to);
-			if (flag == true) {
-				System.out.println(true);
-				EMSMAIN.success_login_Attempt.remove(to);
-				EMSMAIN.device_os.remove(to);
-				EMSMAIN.device_version.remove(to);
-				EMSMAIN.device_Architecture.remove(to);
-				EMSMAIN.login_date_time.remove(to);
-				Optional<User> user = userdao.findByUserName(to);
-				User user1 = user.get();
-				if (user1.getAlert_message_sent() == 0) {
-					user1.setAlert_message_sent(1);
-					userdao.save(user1);
-				} else {
-					user1.setAlert_message_sent(user1.getAlert_message_sent() + 1);
-					userdao.save(user1);
-				}
-			} else {
-				System.out.println(false);
-			}
-//		userDetailDao.save(userDetail);	
-		} catch (Exception e) {
-			jobDao.getJobRunningTimeInterrupted("success_attempt_alert");
-			String exceptionAsString = e.toString();
-			// Get the current class
-			Class<?> currentClass = servicelayer.class;
-
-			// Get the name of the class
-			String className = currentClass.getName();
-			String errorMessage = e.getMessage();
-			StackTraceElement[] stackTrace = e.getStackTrace();
-			String methodName = stackTrace[0].getMethodName();
-			int lineNumber = stackTrace[0].getLineNumber();
-			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
-			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
-
-		}
-	}
-
-	public void sentMessage7(String payment_status, String license_number, Date payment_time, String license_status,
-			String subject, String to, String invoicepath) throws Exception {
-		try {
-			Optional<User> user = userdao.findByUserName(to);
-			User user1 = user.get();
-			boolean flag = false;
-			String message = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<p>" + "Dear "
-					+ user1.getUsername() + "<br>" + "<br>" + "Payment Success" + "<br>" + "<br>" + "Username : "
-					+ "<b>" + to + "</b>" + "<br>" + "Payment Time : " + "<b>" + payment_time + "</b>" + "<br>"
-					+ "License Number : " + "<b>" + license_number + "</b>" + "</b>" + "<br>" + "License Status : "
-					+ "<b style='color:green'>" + license_status + "</b>" + "<br>" + "Payment Status : "
-					+ "<b style='text-transform: uppercase; color: green'>" + payment_status + "</b>" + "<br>" + "<br>"
-					+ "Payment Team " + "</p>" + "</div>";
-
-			flag = this.paymentSucessEmailService.sendEmail(invoicepath, message, subject, to);
-			if (flag == true) {
-				System.out.println(true);
-				EMSMAIN.payment_success_email_alert.remove(to);
-				EMSMAIN.license_number.remove(to);
-				EMSMAIN.license_status.remove(to);
-				EMSMAIN.payment_time.remove(to);
-				EMSMAIN.license_payment_status.remove(to);
-				EMSMAIN.payment_invoice_email.remove(to);
-			} else {
-				System.out.println(false);
-			}
-//		userDetailDao.save(userDetail);	
-		} catch (Exception e) {
-//			jobDao.getJobRunningTimeInterrupted("remove_garbage_data_session_id");
-			String exceptionAsString = e.toString();
-			// Get the current class
-			Class<?> currentClass = servicelayer.class;
-
-			// Get the name of the class
-			String className = currentClass.getName();
-			String errorMessage = e.getMessage();
-			StackTraceElement[] stackTrace = e.getStackTrace();
-			String methodName = stackTrace[0].getMethodName();
-			int lineNumber = stackTrace[0].getLineNumber();
-			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
-			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
-
-		}
-	}
+//	public void sentMessage1(int id, String to, String subject, String team_id, String username, String team_desc)
+//			throws Exception {
+//		try {
+////		String teamDescwithid = teamdao.getAllDataFromTeamDescription(team_id);
+//			boolean flag = false;
+//			String message = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<p>" + "Dear " + username
+//					+ "<br>" + "<br>" + "Your Team Changed and your new team is " + "<b>" + team_id + " -> " + team_desc
+//					+ "</b>" + ",You will get mail from your manager within 2 working days." + "<br><br>"
+//					+ "Resource Management Team" + "</p>" + "</div>";
+//			flag = this.emailService.sendEmail(message, subject, to);
+//			if (flag == true) {
+//				System.out.println(true);
+//				EMSMAIN.id_with_email.remove(id);
+//				EMSMAIN.id_with_team_id.remove(id);
+//				EMSMAIN.id_with_username.remove(id);
+//				EMSMAIN.id_with_team_desc.remove(id);
+//				jobrunning("team_email_sent");
+//			} else {
+//				System.out.println(false);
+//				jobrunning("team_email_sent");
+//			}
+////		userDetailDao.save(userDetail);	
+//		} catch (Exception e) {
+//			jobDao.getJobRunningTimeInterrupted("team_email_sent");
+//			String exceptionAsString = e.toString();
+//			// Get the current class
+//			Class<?> currentClass = servicelayer.class;
+//
+//			// Get the name of the class
+//			String className = currentClass.getName();
+//			String errorMessage = e.getMessage();
+//			StackTraceElement[] stackTrace = e.getStackTrace();
+//			String methodName = stackTrace[0].getMethodName();
+//			int lineNumber = stackTrace[0].getLineNumber();
+//			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+//			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+//
+//		}
+//	}
+//
+//	public void sentMessage3(String to, String subject, String team_id, String username) throws Exception {
+//		try {
+//			String teamDescwithid = teamdao.getAllDataFromTeamDescription(team_id);
+//			boolean flag = false;
+//			String message = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<p>" + "Dear " + username
+//					+ "<br>" + "<br>" + "You have removed from team ," + "<b>" + teamDescwithid + "</b>" + " on "
+//					+ "<b>" + new Date() + "</b>" + "<br><br>" + "Resource Management Team" + "</p>" + "</div>";
+//			flag = this.emailService.sendEmail(message, subject, to);
+//			if (flag == true) {
+//				System.out.println(true);
+//			} else {
+//				System.out.println(false);
+//			}
+////		userDetailDao.save(userDetail);	
+//		} catch (Exception e) {
+////			jobDao.getJobRunningTimeInterrupted("remove_garbage_data_session_id");
+//			String exceptionAsString = e.toString();
+//			// Get the current class
+//			Class<?> currentClass = servicelayer.class;
+//
+//			// Get the name of the class
+//			String className = currentClass.getName();
+//			String errorMessage = e.getMessage();
+//			StackTraceElement[] stackTrace = e.getStackTrace();
+//			String methodName = stackTrace[0].getMethodName();
+//			int lineNumber = stackTrace[0].getLineNumber();
+//			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+//			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+//
+//		}
+//	}
+//
+//	public void sentMessage2(String to, String subject, String username, Date lastworkingday, String cc, int id) {
+//		try {
+//			boolean flag = false;
+//			String message = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<p>" + "Dear " + username
+//					+ "<br>" + "<br>" + "Your Resignation Request Accepted and your last working day is " + "<b>"
+//					+ lastworkingday + "</b>" + "<br><br>" + "All the best for your future endavours" + "<br>"
+//					+ "HR Team " + "</p>" + "</div>";
+//			flag = this.emailService1.sendEmail(message, subject, to, cc);
+//			if (flag == true) {
+//				System.out.println(true);
+//				EMSMAIN.id_with_email.remove(id);
+//				EMSMAIN.id_with_cc.remove(id);
+//				EMSMAIN.id_with_username.remove(id);
+//				EMSMAIN.id_with_last_working_day_date.remove(id);
+//			} else {
+//				System.out.println(false);
+//			}
+////		userDetailDao.save(userDetail);	
+//		} catch (Exception e) {
+//			jobDao.getJobRunningTimeInterrupted("seperation_email_sent");
+//			String exceptionAsString = e.toString();
+//			// Get the current class
+//			Class<?> currentClass = servicelayer.class;
+//
+//			// Get the name of the class
+//			String className = currentClass.getName();
+//			String errorMessage = e.getMessage();
+//			StackTraceElement[] stackTrace = e.getStackTrace();
+//			String methodName = stackTrace[0].getMethodName();
+//			int lineNumber = stackTrace[0].getLineNumber();
+//			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+//			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+//
+//		}
+//	}
+//
+//	public void sentMessage4(String to, String subject, String username, Date lastworkingday, String cc) {
+//		try {
+//			boolean flag = false;
+//			String message = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<p>" + "Dear " + username
+//					+ "<br>" + "<br>" + "You are job service is terminated by GOOGLE and your last working day is "
+//					+ "<b>" + lastworkingday + "</b>" + "<br><br>" + "All the best for your future endavours" + "<br>"
+//					+ "HR Team " + "</p>" + "</div>";
+//			flag = this.emailService1.sendEmail(message, subject, to, cc);
+//			if (flag == true) {
+//				System.out.println(true);
+//			} else {
+//				System.out.println(false);
+//			}
+//		} catch (Exception e) {
+//			jobDao.getJobRunningTimeInterrupted("----");
+//			String exceptionAsString = e.toString();
+//			// Get the current class
+//			Class<?> currentClass = servicelayer.class;
+//
+//			// Get the name of the class
+//			String className = currentClass.getName();
+//			String errorMessage = e.getMessage();
+//			StackTraceElement[] stackTrace = e.getStackTrace();
+//			String methodName = stackTrace[0].getMethodName();
+//			int lineNumber = stackTrace[0].getLineNumber();
+//			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+//			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+//
+//		}
+//	}
+//
+//	public void sentMessage5(String to, String subject, String ipaddress, String username, String device_os,
+//			String device_version, String device_architecture, Date login_date_time) throws Exception {
+//		try {
+//			boolean flag = false;
+//			String osName = device_os;
+//			String osVersion = device_version;
+//			String osArchitecture = device_architecture;
+//			String message = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<p>" + "Dear " + username
+//					+ "<br>" + "<br>"
+//					+ "SomeOne Try To Attempt Login Failed Attempt . If not you , Please Change Password Immediately . "
+//					+ "<br>" + "<br>" + "Username : " + "<b>" + to + "</b>" + "<br>" + "IP ADDRESS : " + "<b>"
+//					+ ipaddress + "</b>" + "<br>" + "Device LOGIN TIME : " + "<b>" + login_date_time + "</b>" + "</b>"
+//					+ "<br>" + "Device OS : " + "<b>" + osName + "</b>" + "<br>" + "Device Version : " + "<b>"
+//					+ osVersion + "</b>" + "<br>" + "Device Architecture : " + "<b>" + osArchitecture + "</b>" + "<br>"
+//					+ "<br>" + "Cyber Team " + "</p>" + "</div>";
+//			flag = this.emailService.sendEmail(message, subject, to);
+//			System.out.println(" EMAIL IPADDRESS !!!!!!!!!!!!" + flag);
+//			System.out.println(" EMAIL DEVICE OS  !!!!!!!!!!!!!" + flag);
+//			System.out.println(" EMAIL DEVICE VERSION !!!!!!!!!" + flag);
+//			System.out.println(" EMAIL DEVICE ARCHITECTURE !!!!!" + flag);
+//			if (flag == true) {
+//				System.out.println(true);
+//				EMSMAIN.failed_login_Attempt.remove(0);
+//				EMSMAIN.failed_os_name.remove(0);
+//				EMSMAIN.failed_device_version.remove(0);
+//				EMSMAIN.failed_device_Architecture.remove(0);
+//				EMSMAIN.failed_login_date_time.remove(0);
+//				Optional<User> get_user = userdao.findByUserName(to);
+//				User user1 = get_user.get();
+//				if (user1.getAlert_message_sent() == 0) {
+//					user1.setAlert_message_sent(1);
+//					userdao.save(user1);
+//				} else {
+//					user1.setAlert_message_sent(user1.getAlert_message_sent() + 1);
+//					userdao.save(user1);
+//				}
+//			} else {
+//				System.out.println(false);
+//			}
+////		userDetailDao.save(userDetail);	
+//		} catch (Exception e) {
+//			jobDao.getJobRunningTimeInterrupted("failed_attempt_alert");
+//			String exceptionAsString = e.toString();
+//			// Get the current class
+//			Class<?> currentClass = servicelayer.class;
+//
+//			// Get the name of the class
+//			String className = currentClass.getName();
+//			String errorMessage = e.getMessage();
+//			StackTraceElement[] stackTrace = e.getStackTrace();
+//			String methodName = stackTrace[0].getMethodName();
+//			int lineNumber = stackTrace[0].getLineNumber();
+//			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+//			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+//
+//		}
+//	}
+//
+//	@Transactional
+//	public void sentMessage6(String to, String subject, String ipaddress, String username, String device_os,
+//			String device_version, String device_architecture, Date login_date_time) throws Exception {
+//		try {
+//			boolean flag = false;
+//			String osName = device_os;
+//			String osVersion = device_version;
+//			String osArchitecture = device_architecture;
+//			String message = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<p>" + "Dear " + username
+//					+ "<br>" + "<br>" + "Login Success" + "<br>" + "<br>" + "Username : " + "<b>" + to + "</b>" + "<br>"
+//					+ "IP ADDRESS : " + "<b>" + ipaddress + "</b>" + "<br>" + "Device LOGIN TIME : " + "<b>"
+//					+ login_date_time + "</b>" + "</b>" + "<br>" + "Device OS : " + "<b>" + osName + "</b>" + "<br>"
+//					+ "Device Version : " + "<b>" + osVersion + "</b>" + "<br>" + "Device Architecture : " + "<b>"
+//					+ osArchitecture + "</b>" + "<br>" + "<br>" + "Cyber Team " + "</p>" + "</div>";
+//			flag = this.emailService.sendEmail(message, subject, to);
+//			if (flag == true) {
+//				System.out.println(true);
+//				EMSMAIN.success_login_Attempt.remove(0);
+//				EMSMAIN.device_os.remove(0);
+//				EMSMAIN.device_version.remove(0);
+//				EMSMAIN.device_Architecture.remove(0);
+//				EMSMAIN.login_date_time.remove(0);
+//				Optional<User> user = userdao.findByUserName(to);
+//				User user1 = user.get();
+//				if (user1.getAlert_message_sent() == 0) {
+//					user1.setAlert_message_sent(1);
+//					userdao.save(user1);
+//				} else {
+//					user1.setAlert_message_sent(user1.getAlert_message_sent() + 1);
+//					userdao.save(user1);
+//				}
+//			} else {
+//				System.out.println(false);
+//			}
+////		userDetailDao.save(userDetail);	
+//		} catch (Exception e) {
+//			jobDao.getJobRunningTimeInterrupted("success_attempt_alert");
+//			String exceptionAsString = e.toString();
+//			// Get the current class
+//			Class<?> currentClass = servicelayer.class;
+//
+//			// Get the name of the class
+//			String className = currentClass.getName();
+//			String errorMessage = e.getMessage();
+//			StackTraceElement[] stackTrace = e.getStackTrace();
+//			String methodName = stackTrace[0].getMethodName();
+//			int lineNumber = stackTrace[0].getLineNumber();
+//			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+//			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+//
+//		}
+//	}
+//
+//	public void sentMessage7(String payment_status, String license_number, Date payment_time, String license_status,
+//			String subject, String to, String invoicepath) throws Exception {
+//		try {
+//			Optional<User> user = userdao.findByUserName(to);
+//			User user1 = user.get();
+//			boolean flag = false;
+//			String message = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<p>" + "Dear "
+//					+ user1.getUsername() + "<br>" + "<br>" + "Payment Success" + "<br>" + "<br>" + "Username : "
+//					+ "<b>" + to + "</b>" + "<br>" + "Payment Time : " + "<b>" + payment_time + "</b>" + "<br>"
+//					+ "License Number : " + "<b>" + license_number + "</b>" + "</b>" + "<br>" + "License Status : "
+//					+ "<b style='color:green'>" + license_status + "</b>" + "<br>" + "Payment Status : "
+//					+ "<b style='text-transform: uppercase; color: green'>" + payment_status + "</b>" + "<br>" + "<br>"
+//					+ "Payment Team " + "</p>" + "</div>";
+//
+//			flag = this.paymentSucessEmailService.sendEmail(invoicepath, message, subject, to);
+//			if (flag == true) {
+//				System.out.println(true);
+//				EMSMAIN.payment_success_email_alert.remove(to);
+//				EMSMAIN.license_number.remove(to);
+//				EMSMAIN.license_status.remove(to);
+//				EMSMAIN.payment_time.remove(to);
+//				EMSMAIN.license_payment_status.remove(to);
+//				EMSMAIN.payment_invoice_email.remove(to);
+//			} else {
+//				System.out.println(false);
+//			}
+////		userDetailDao.save(userDetail);	
+//		} catch (Exception e) {
+////			jobDao.getJobRunningTimeInterrupted("remove_garbage_data_session_id");
+//			String exceptionAsString = e.toString();
+//			// Get the current class
+//			Class<?> currentClass = servicelayer.class;
+//
+//			// Get the name of the class
+//			String className = currentClass.getName();
+//			String errorMessage = e.getMessage();
+//			StackTraceElement[] stackTrace = e.getStackTrace();
+//			String methodName = stackTrace[0].getMethodName();
+//			int lineNumber = stackTrace[0].getLineNumber();
+//			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+//			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+//
+//		}
+//	}
 
 	@Transactional
 	public void seperationLogic(Integer id, User user) {
@@ -2707,27 +2710,49 @@ public class servicelayer {
 				+ ".pdf";
 		generatePdfInvoice(invoicePath, payment, subscriptionPlans, companyInfo, user);
 //	        sendInvoiceEmail("customer@example.com", "Your Invoice", "Please find attached your invoice.", invoicePath);
-		try {
-			EMSMAIN.payment_success_email_alert.put(user.getEmail(), user.getUsername());
-			EMSMAIN.license_number.put(user.getEmail(), formattedLicenseNumber);
-			EMSMAIN.license_status.put(user.getEmail(), payment.getLicense_status());
-			EMSMAIN.payment_time.put(user.getEmail(), payment.getSystem_date_and_time());
-			EMSMAIN.license_payment_status.put(user.getEmail(), payment.getStatus());
-			EMSMAIN.payment_invoice_email.put(user.getEmail(), invoicePath);
-		} catch (Exception e) {
-			String exceptionAsString = e.toString();
-			// Get the current class
-			Class<?> currentClass = servicelayer.class;
-
-			// Get the name of the class
-			String className = currentClass.getName();
-			String errorMessage = e.getMessage();
-			StackTraceElement[] stackTrace = e.getStackTrace();
-			String methodName = stackTrace[0].getMethodName();
-			int lineNumber = stackTrace[0].getLineNumber();
-			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
-			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
-		}
+		String subject = "Payment Successful";
+		String message = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<p>" + "Dear "
+				+ user.getUsername() + "<br>" + "<br>" + "Payment Success" + "<br>" + "<br>" + "Username : "
+				+ "<b>" + user.getEmail() + "</b>" + "<br>" + "Payment Time : " + "<b>" + payment.getSystem_date_and_time() + "</b>" + "<br>"
+				+ "License Number : " + "<b>" + payment.getLicense_number() + "</b>" + "</b>" + "<br>" + "License Status : "
+				+ "<b style='color:green'>" + payment.getLicense_number() + "</b>" + "<br>" + "Payment Status : "
+				+ "<b style='text-transform: uppercase; color: green'>" + payment.getLicense_status() + "</b>" + "<br>" + "<br>"
+				+ "Payment Team " + "</p>" + "</div>";
+		CompletableFuture<Boolean>  flagFuture =paymentSucessEmailService.sendEmail(invoicePath, message, subject, user.getEmail());
+		 try {
+		        Boolean flag = flagFuture.get(); // Blocking call to get the result
+		        if (flag) {
+		        	payment.setInvoice_sent_or_not(true);
+		           System.out.println(true);
+		        } else {
+		        	payment.setInvoice_sent_or_not(false);
+		            System.out.println(false);
+		        }
+		    } catch (Exception e) {
+		        e.printStackTrace();
+		        user.setDefaultPasswordSent(false);
+		    }
+//		try {
+//			EMSMAIN.payment_success_email_alert.put(user.getEmail(), user.getUsername());
+//			EMSMAIN.license_number.put(user.getEmail(), formattedLicenseNumber);
+//			EMSMAIN.license_status.put(user.getEmail(), payment.getLicense_status());
+//			EMSMAIN.payment_time.put(user.getEmail(), payment.getSystem_date_and_time());
+//			EMSMAIN.license_payment_status.put(user.getEmail(), payment.getStatus());
+//			EMSMAIN.payment_invoice_email.put(user.getEmail(), invoicePath);
+//		} catch (Exception e) {
+//			String exceptionAsString = e.toString();
+//			// Get the current class
+//			Class<?> currentClass = servicelayer.class;
+//
+//			// Get the name of the class
+//			String className = currentClass.getName();
+//			String errorMessage = e.getMessage();
+//			StackTraceElement[] stackTrace = e.getStackTrace();
+//			String methodName = stackTrace[0].getMethodName();
+//			int lineNumber = stackTrace[0].getLineNumber();
+//			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+//			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+//		}
 
 	}
 
@@ -3021,3 +3046,6 @@ public class servicelayer {
 		return userDetailDao.findByNameContainingOrEmailContainingOrIdContaining(term);
 	}
 }
+
+
+

@@ -15,6 +15,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -45,6 +46,9 @@ import com.example.demo.entities.Team;
 import com.example.demo.entities.User;
 import com.example.demo.entities.UserDetail;
 import com.example.demo.helper.Message;
+import com.example.demo.service.EmailService;
+import com.example.demo.service.SeperationEmailService;
+import com.example.demo.service.TeamEmailService;
 import com.example.demo.service.servicelayer;
 
 @Controller
@@ -64,6 +68,12 @@ public class ManagerController {
 	private Teamdao teamdao;
 	@Autowired
 	private adminDao adminDao;
+	@Autowired
+	private EmailService emailService;
+	@Autowired
+	private SeperationEmailService emailService1;
+	@Autowired
+	private TeamEmailService teamEmailService;
 
 	@ModelAttribute
 	public void commonData(Model model, Principal principal) {
@@ -503,6 +513,33 @@ public class ManagerController {
 				if (input_team_by_manager.equals(team_id) && input_team_by_manager.equals(user_team_check)) {
 					session.setAttribute("message", new Message(" Same Team Cannot Be Reassigned!!", "alert-danger"));
 				}
+				if(input_team_by_manager.equals("0") && input_team_by_manager.equals(team_id))
+				{
+					username = userDetail3.getUsername();
+					email = userDetail3.getEmail();
+					System.out.println("EMAIL " + email);
+					System.out.println("TEAMID " + team_id);
+					System.out.println("USERNAME " + username);
+					System.out.println("TEAMDESC " + team_desc);
+//					EMSMAIN.id_with_email.put(id, email);
+//					EMSMAIN.id_with_team_id.put(id, team_id);
+//					EMSMAIN.id_with_username.put(id, username);
+//					EMSMAIN.id_with_team_desc.put(id, team_desc);
+					servicelayer.update_team_by_team_id(userDetail3, team_id, team_desc);
+//					String teamDescwithid = teamdao.getAllDataFromTeamDescription(team_id);
+					String message = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<p>" + "Dear " + username
+							+ "<br>" + "<br>" + "You have removed from team , " + "<b>" + team_id + " -> " + team_desc
+							+ "</b>" + " on "+ "<b>"+ new Date() +"</b>" + "<br><br>"
+							+ "Resource Management Team" + "</p>" + "</div>";
+					String subject = "Employee EMPID" + id + " Team Assigned";
+					  CompletableFuture<Boolean> flagFuture = this.teamEmailService.sendEmail(message, subject, email);
+					  Boolean flag = flagFuture.get(); // Blocking call to get the result
+				        if (flag) {
+				           System.out.println(true);
+				        } else {
+				            System.out.println(false);
+				        }
+				}
 				if (input_team_by_manager.startsWith("EMS") && input_team_by_manager.length() == 9
 						&& input_team_by_manager.equals(team_id)) {
 					username = userDetail3.getUsername();
@@ -511,11 +548,24 @@ public class ManagerController {
 					System.out.println("TEAMID " + team_id);
 					System.out.println("USERNAME " + username);
 					System.out.println("TEAMDESC " + team_desc);
-					EMSMAIN.id_with_email.put(id, email);
-					EMSMAIN.id_with_team_id.put(id, team_id);
-					EMSMAIN.id_with_username.put(id, username);
-					EMSMAIN.id_with_team_desc.put(id, team_desc);
+//					EMSMAIN.id_with_email.put(id, email);
+//					EMSMAIN.id_with_team_id.put(id, team_id);
+//					EMSMAIN.id_with_username.put(id, username);
+//					EMSMAIN.id_with_team_desc.put(id, team_desc);
 					servicelayer.update_team_by_team_id(userDetail3, team_id, team_desc);
+//					String teamDescwithid = teamdao.getAllDataFromTeamDescription(team_id);
+					String message = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<p>" + "Dear " + username
+							+ "<br>" + "<br>" + "Your Team Changed and your new team is " + "<b>" + team_id + " -> " + team_desc
+							+ "</b>" + ",You will get mail from your manager within 2 working days." + "<br><br>"
+							+ "Resource Management Team" + "</p>" + "</div>";
+					String subject = "Employee EMPID" + id + " Team Assigned";
+					  CompletableFuture<Boolean> flagFuture = this.emailService.sendEmail(message, subject, email);
+					  Boolean flag = flagFuture.get(); // Blocking call to get the result
+				        if (flag) {
+				           System.out.println(true);
+				        } else {
+				            System.out.println(false);
+				        }
 					session.setAttribute("message",
 							new Message("Employee Details Successfully Updated !!", "alert-success"));
 				}
@@ -557,11 +607,31 @@ public class ManagerController {
 			Optional<Admin> admin = adminDao.findById(find);
 			Admin admin1 = admin.get();
 			String cc = admin1.getEmail();
-			EMSMAIN.id_with_email.put(user1.getId(), to);
-			EMSMAIN.id_with_cc.put(user1.getId(), cc);
-			EMSMAIN.id_with_last_working_day_date.put(user1.getId(), lastdate);
-			EMSMAIN.id_with_username.put(user1.getId(), username);
+//			EMSMAIN.id_with_email.put(user1.getId(), to);
+//			EMSMAIN.id_with_cc.put(user1.getId(), cc);
+//			EMSMAIN.id_with_last_working_day_date.put(user1.getId(), lastdate);
+//			EMSMAIN.id_with_username.put(user1.getId(), username);
 //			servicelayer.sentMessage2(to, subject, username, lastdate, cc,id);
+			String subject = "Seperation Request EMPID: EMPID" + user1.getId();
+			String message = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<p>" + "Dear " + user1.getUsername()
+					+ "<br>" + "<br>" + "Your Resignation Request Accepted and your last working day is " + "<b>"
+					+ lastdate + "</b>" + "<br><br>" + "All the best for your future endavours" + "<br>"
+					+ "HR Team " + "</p>" + "</div>";
+			CompletableFuture<Boolean> flagFuture = this.emailService1.sendEmail(message, subject, to, cc);
+		    
+		    // This will block until the result is available
+			try {
+		        Boolean flag = flagFuture.get(); // Blocking call to get the result
+		        if (flag) {
+		           System.out.println(true);
+		        } else {
+		            System.out.println(false);
+		        }
+			}
+			catch (Exception e) {
+		        e.printStackTrace();
+		       System.out.println("ERROR");
+		    }
 			return "Seperation";
 		} else {
 			lastdate = user1.getLastWorkingDay();
@@ -642,7 +712,7 @@ public class ManagerController {
 			Optional<Admin> admin = adminDao.findById(find);
 			Admin admin1 = admin.get();
 			String cc = admin1.getEmail();
-			servicelayer.sentMessage4(to, subject, username, lastdate, cc);
+//			servicelayer.sentMessage4(to, subject, username, lastdate, cc);
 			System.out.println("?????????????" + user1.getId());
 			return "redirect:/manager/teamprofile/" + user1.getId();
 		} else {

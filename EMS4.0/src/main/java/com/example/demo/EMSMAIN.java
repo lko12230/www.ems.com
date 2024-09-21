@@ -3,6 +3,7 @@ package com.example.demo;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -32,12 +33,16 @@ public class EMSMAIN {
 	public static Map<String, java.util.Date> session_map_data = new HashMap<>();
 	public static Map<String, java.util.Date> captcha_validate_map = new HashMap<>();
 	public static Map<Integer, java.util.Date> OTP_validate_map = new HashMap<>();
-	public static HashMap<String, String> failed_login_Attempt = new HashMap<>();
-	public static HashMap<String, String> success_login_Attempt = new HashMap<>();
-	public static HashMap<String, String> device_os = new HashMap<>();
-	public static HashMap<String, String> device_version = new HashMap<>();
-	public static HashMap<String, String> device_Architecture = new HashMap<>();
-	public static HashMap<String, Date> login_date_time = new HashMap<>();
+	public static HashMap<String, List<String>> failed_login_Attempt = new HashMap<>();
+	public static HashMap<String, List<String>> failed_os_name = new HashMap<>();
+	public static HashMap<String, List<String>> failed_device_version = new HashMap<>();
+	public static HashMap<String, List<String>> failed_device_Architecture = new HashMap<>();
+	public static HashMap<String, List<Date>> failed_login_date_time = new HashMap<>();
+	public static HashMap<String, List<String>> success_login_Attempt = new HashMap<>();
+	public static HashMap<String, List<String>> device_os = new HashMap<>();
+	public static HashMap<String, List<String>> device_version = new HashMap<>();
+	public static HashMap<String, List<String>> device_Architecture = new HashMap<>();
+	public static HashMap<String, List<Date>> login_date_time = new HashMap<>();
 	public static HashMap<String, Date> login_captcha = new HashMap<>();
 	public static HashMap<String, Integer> admin_send_otp = new HashMap<>();
 	public static HashMap<Integer, String> id_with_email = new HashMap<>();
@@ -210,7 +215,7 @@ public class EMSMAIN {
 		}
 	}
 
-	@Scheduled(cron = "0 0/1 * * * *")
+	@Scheduled(cron = "0 0 0 * * *")
 	public void downtime() {
 		try {
 			String server_name = "downtime_maintaince";
@@ -397,365 +402,365 @@ public class EMSMAIN {
 
 	}
 
-	@Scheduled(cron = "* * * * * *")
-	public void loginAlertWithFail() throws Exception {
-		try {
-			String status = servicelayer.getjob_active_or_not("failed_attempt_alert");
-			System.out.println("failed_attempt_alert " + status);
-			if (status.equalsIgnoreCase("Y")) {
-				Set<Map.Entry<String, String>> get_email_ipaddress = failed_login_Attempt.entrySet();
-				Set<Map.Entry<String, String>> get_device_os = device_os.entrySet();
-				Set<Map.Entry<String, String>> get_device_version = device_version.entrySet();
-				Set<Map.Entry<String, String>> get_device_architecture = device_Architecture.entrySet();
-				Set<Map.Entry<String, Date>> get_failed_login_date_time = login_date_time.entrySet();
-				System.out.println("FAIL EMAIL IPADDRESS " + failed_login_Attempt);
-				System.out.println("FAIL EMAIL DEVICE OS " + device_os);
-				System.out.println("FAIL EMAIL DEVICE VERSION " + device_version);
-				System.out.println("FAIL EMAIL DEVICE ARCHITECTURE " + device_Architecture);
-				System.out.println("FAIL EMAIL DEVICE LOGIN DATE TIME " + login_date_time);
-				for (Map.Entry<String, String> entry : get_email_ipaddress) {
-
-					String email = entry.getKey();
-					String ipaddress = entry.getValue();
-					User user1 = servicelayer.get_user(email);
-					String username = user1.getUsername();
-					String subject = "LOGIN ALERT (" + user1.getUsername() + ")";
-					for (Map.Entry<String, String> entry_get_device_os : get_device_os) {
-						if (email.equals(entry_get_device_os.getKey())) {
-							for (Map.Entry<String, String> entry_get_device_version : get_device_version) {
-								if (email.equals(entry_get_device_version.getKey())) {
-									for (Map.Entry<String, String> entry_get_device_architecture : get_device_architecture) {
-										if (email.equals(entry_get_device_architecture.getKey())) {
-											for (Map.Entry<String, Date> entry_failed_login_date_time : get_failed_login_date_time) {
-												if (email.equals(entry_failed_login_date_time.getKey())) {
-													String device_os = entry_get_device_os.getValue();
-													String device_version = entry_get_device_version.getValue();
-													String device_architecture = entry_get_device_architecture
-															.getValue();
-													Date get_login_date_time = entry_failed_login_date_time.getValue();
-													servicelayer.sentMessage5(email, subject, ipaddress, username,
-															device_os, device_version, device_architecture,
-															get_login_date_time);
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-				if (failed_login_Attempt.size() == 0) {
-					servicelayer.jobrunning("failed_attempt_alert");
-				}
-			} else {
-				servicelayer.jobnotrunning("failed_attempt_alert");
-			}
-		} catch (Exception e) {
-//			String error=" java.lang.NullPointerException: Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null";
-//			String exString=e.toString();
-//			if(exString.equals("Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null") && count==1 || count==0)
-//			{
-			String exceptionAsString = e.toString();
-			// Get the current class
-			Class<?> currentClass = EMSMAIN.class;
-
-			// Get the name of the class
-			String className = currentClass.getName();
-			String errorMessage = e.getMessage();
-			StackTraceElement[] stackTrace = e.getStackTrace();
-			String methodName = stackTrace[0].getMethodName();
-			int lineNumber = stackTrace[0].getLineNumber();
-			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
-			servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
-//			return "SomethingWentWrong";)
-//				return "redirect:/swr";
+//	@Scheduled(cron = "* * * * * *")
+//	public void loginAlertWithFail() throws Exception {
+//		try {
+//			String status = servicelayer.getjob_active_or_not("failed_attempt_alert");
+//			System.out.println("failed_attempt_alert " + status);
+//			if (status.equalsIgnoreCase("Y")) {
+////				Set<Map.Entry<String, String>> get_email_ipaddress = failed_login_Attempt.entrySet();
+////				Set<Map.Entry<String, String>> get_device_os = device_os.entrySet();
+////				Set<Map.Entry<String, String>> get_device_version = device_version.entrySet();
+////				Set<Map.Entry<String, String>> get_device_architecture = device_Architecture.entrySet();
+////				Set<Map.Entry<String, Date>> get_failed_login_date_time = login_date_time.entrySet();
+//				System.out.println("FAIL EMAIL IPADDRESS " + failed_login_Attempt);
+//				System.out.println("FAIL EMAIL DEVICE OS " + device_os);
+//				System.out.println("FAIL EMAIL DEVICE VERSION " + device_version);
+//				System.out.println("FAIL EMAIL DEVICE ARCHITECTURE " + device_Architecture);
+//				System.out.println("FAIL EMAIL DEVICE LOGIN DATE TIME " + login_date_time);
+//				for (Map.Entry<String, String> entry : get_email_ipaddress) {
+//
+//					String email = entry.getKey();
+//					String ipaddress = entry.getValue();
+//					User user1 = servicelayer.get_user(email);
+//					String username = user1.getUsername();
+//					String subject = "LOGIN ALERT (" + user1.getUsername() + ")";
+//					for (Map.Entry<String, String> entry_get_device_os : get_device_os) {
+//						if (email.equals(entry_get_device_os.getKey())) {
+//							for (Map.Entry<String, String> entry_get_device_version : get_device_version) {
+//								if (email.equals(entry_get_device_version.getKey())) {
+//									for (Map.Entry<String, String> entry_get_device_architecture : get_device_architecture) {
+//										if (email.equals(entry_get_device_architecture.getKey())) {
+//											for (Map.Entry<String, Date> entry_failed_login_date_time : get_failed_login_date_time) {
+//												if (email.equals(entry_failed_login_date_time.getKey())) {
+//													String device_os = entry_get_device_os.getValue();
+//													String device_version = entry_get_device_version.getValue();
+//													String device_architecture = entry_get_device_architecture
+//															.getValue();
+//													Date get_login_date_time = entry_failed_login_date_time.getValue();
+//													servicelayer.sentMessage5(email, subject, ipaddress, username,
+//															device_os, device_version, device_architecture,
+//															get_login_date_time);
+//												}
+//											}
+//										}
+//									}
+//								}
+//							}
+//						}
+//					}
+//				}
+//				if (failed_login_Attempt.size() == 0) {
+//					servicelayer.jobrunning("failed_attempt_alert");
+//				}
+//			} else {
+//				servicelayer.jobnotrunning("failed_attempt_alert");
 //			}
-//			else
-
-		}
-	}
-
-	@Scheduled(cron = "* * * * * *")
-
-	public void loginAlertWithSuccess() throws Exception {
-
-		try {
-			String status = servicelayer.getjob_active_or_not("success_attempt_alert");
-			System.out.println("success_attempt_alert " + status);
-			if (status.equalsIgnoreCase("Y")) {
-				Set<Map.Entry<String, String>> get_email_ipaddress = success_login_Attempt.entrySet();
-				Set<Map.Entry<String, String>> get_device_os = device_os.entrySet();
-				Set<Map.Entry<String, String>> get_device_version = device_version.entrySet();
-				Set<Map.Entry<String, String>> get_device_architecture = device_Architecture.entrySet();
-				Set<Map.Entry<String, Date>> get_success_login_date_time = login_date_time.entrySet();
-				System.out.println("SUCCESS EMAIL IPADDRESS " + success_login_Attempt);
-				System.out.println("SUCCESS EMAIL DEVICE OS " + device_os);
-				System.out.println("SUCCESS EMAIL DEVICE VERSION " + device_version);
-				System.out.println("SUCCESS EMAIL DEVICE ARCHITECTURE " + device_Architecture);
-				System.out.println("SUCCESS EMAIL DEVICE LOGIN DATE TIME " + login_date_time);
-				for (Map.Entry<String, String> entry : get_email_ipaddress) {
-					String email = entry.getKey();
-					String ipaddress = entry.getValue();
-					User user1 = servicelayer.get_user(email);
-					String username = user1.getUsername();
-					String subject = "LOGIN ALERT (" + user1.getUsername() + ")";
-					for (Map.Entry<String, String> entry_get_device_os : get_device_os) {
-						if (email.equals(entry_get_device_os.getKey())) {
-							for (Map.Entry<String, String> entry_get_device_version : get_device_version) {
-								if (email.equals(entry_get_device_version.getKey())) {
-									for (Map.Entry<String, String> entry_get_device_architecture : get_device_architecture) {
-										if (email.equals(entry_get_device_architecture.getKey())) {
-											for (Map.Entry<String, Date> entry_succes_login_date_time : get_success_login_date_time) {
-												if (email.equals(entry_succes_login_date_time.getKey())) {
-													String device_os = entry_get_device_os.getValue();
-													String device_version = entry_get_device_version.getValue();
-													String device_architecture = entry_get_device_architecture
-															.getValue();
-													Date get_login_date_time = entry_succes_login_date_time.getValue();
-													servicelayer.sentMessage6(email, subject, ipaddress, username,
-															device_os, device_version, device_architecture,
-															get_login_date_time);
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-				if (success_login_Attempt.size() == 0) {
-					servicelayer.jobrunning("success_attempt_alert");
-				}
-			} else {
-				servicelayer.jobnotrunning("success_attempt_alert");
-			}
-		} catch (Exception e) {
-//			String error=" java.lang.NullPointerException: Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null";
-//			String exString=e.toString();
-//			if(exString.equals("Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null") && count==1 || count==0)
-//			{
-			String exceptionAsString = e.toString();
-			// Get the current class
-			Class<?> currentClass = EMSMAIN.class;
-
-			// Get the name of the class
-			String className = currentClass.getName();
-			String errorMessage = e.getMessage();
-			StackTraceElement[] stackTrace = e.getStackTrace();
-			String methodName = stackTrace[0].getMethodName();
-			int lineNumber = stackTrace[0].getLineNumber();
-			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
-			servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
-//			return "SomethingWentWrong";)
-//				return "redirect:/swr";
+//		} catch (Exception e) {
+////			String error=" java.lang.NullPointerException: Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null";
+////			String exString=e.toString();
+////			if(exString.equals("Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null") && count==1 || count==0)
+////			{
+//			String exceptionAsString = e.toString();
+//			// Get the current class
+//			Class<?> currentClass = EMSMAIN.class;
+//
+//			// Get the name of the class
+//			String className = currentClass.getName();
+//			String errorMessage = e.getMessage();
+//			StackTraceElement[] stackTrace = e.getStackTrace();
+//			String methodName = stackTrace[0].getMethodName();
+//			int lineNumber = stackTrace[0].getLineNumber();
+//			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+//			servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+////			return "SomethingWentWrong";)
+////				return "redirect:/swr";
+////			}
+////			else
+//
+//		}
+//	}
+//
+//	@Scheduled(cron = "* * * * * *")
+//
+//	public void loginAlertWithSuccess() throws Exception {
+//
+//		try {
+//			String status = servicelayer.getjob_active_or_not("success_attempt_alert");
+//			System.out.println("success_attempt_alert " + status);
+//			if (status.equalsIgnoreCase("Y")) {
+////				Set<Map.Entry<String, String> get_email_ipaddress = success_login_Attempt.entrySet();
+////				Set<Map.Entry<String, String>> get_device_os = device_os.entrySet();
+////				Set<Map.Entry<String, String>> get_device_version = device_version.entrySet();
+////				Set<Map.Entry<String, String>> get_device_architecture = device_Architecture.entrySet();
+////				Set<Map.Entry<String, Date>> get_success_login_date_time = login_date_time.entrySet();
+//				System.out.println("SUCCESS EMAIL IPADDRESS " + success_login_Attempt);
+//				System.out.println("SUCCESS EMAIL DEVICE OS " + device_os);
+//				System.out.println("SUCCESS EMAIL DEVICE VERSION " + device_version);
+//				System.out.println("SUCCESS EMAIL DEVICE ARCHITECTURE " + device_Architecture);
+//				System.out.println("SUCCESS EMAIL DEVICE LOGIN DATE TIME " + login_date_time);
+//				for (Map.Entry<String, List<String>> entry : success_login_Attempt.entrySet()) {
+//					String email = entry.getKey();
+//					List<String> ipaddress = entry.getValue();
+//					User user1 = servicelayer.get_user(email);
+//					String username = user1.getUsername();
+//					String subject = "LOGIN ALERT (" + user1.getUsername() + ")";
+//					for (Map.Entry<String, List<String>> entry_get_device_os : device_os.entrySet()) {
+//						if (email.equals(entry_get_device_os.getKey())) {
+//							for (Map.Entry<String, List<String>> entry_get_device_version : device_version.entrySet()) {
+//								if (email.equals(entry_get_device_version.getKey())) {
+//									for (Map.Entry<String, List<String>> entry_get_device_architecture : device_Architecture.entrySet()) {
+//										if (email.equals(entry_get_device_architecture.getKey())) {
+//											for (Map.Entry<String, List<Date>> entry_succes_login_date_time : login_date_time.entrySet()) {
+//												if (email.equals(entry_succes_login_date_time.getKey())) {
+//													List<String> device_os = entry_get_device_os.getValue();
+//													List<String> device_version = entry_get_device_version.getValue();
+//													List<String> device_architecture = entry_get_device_architecture
+//															.getValue();
+//													List<Date> get_login_date_time = entry_succes_login_date_time.getValue();
+//													servicelayer.sentMessage6(email, subject, ipaddress, username,
+//															device_os, device_version, device_architecture,
+//															get_login_date_time);
+//												}
+//											}
+//										}
+//									}
+//								}
+//							}
+//						}
+//					}
+//				}
+//				if (success_login_Attempt.size() == 0) {
+//					servicelayer.jobrunning("success_attempt_alert");
+//				}
+//			} else {
+//				servicelayer.jobnotrunning("success_attempt_alert");
 //			}
-//			else
-
-		}
-	}
-
-	@Scheduled(cron = "* * * * * *")
-	public void admin_otp_sent_verification() {
-		try {
-			String status = servicelayer.getjob_active_or_not("admin_otp_sent_verification");
-			System.out.println("admin_otp_sent_verification " + status);
-			if (status.equalsIgnoreCase("Y")) {
-				Set<Map.Entry<String, Integer>> admin_otp_sent_during_registration = admin_send_otp.entrySet();
-				System.out.println("ADMIN SENT OTP WITH EMAIL " + admin_send_otp);
-				for (Map.Entry<String, Integer> entry : admin_otp_sent_during_registration) {
-					String to = entry.getKey();
-					Integer otp = entry.getValue();
-					String subject = "Admin Verification";
-					String message = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<h1>" + "OTP :"
-							+ "<b>" + otp + "</n>" + "</h1>" + "</div>";
-					boolean flag = this.emailService.sendEmail(message, subject, to);
-					System.out.println(to + " FLAG " + flag);
-					if (flag) {
-						admin_send_otp.remove(to);
-					}
-				}
-				servicelayer.jobrunning("admin_otp_sent_verification");
-			} else {
-				servicelayer.jobnotrunning("admin_otp_sent_verification");
-			}
-		} catch (Exception e) {
-//			String error=" java.lang.NullPointerException: Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null";
-//			String exString=e.toString();
-//			if(exString.equals("Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null") && count==1 || count==0)
-//			{
-			String exceptionAsString = e.toString();
-			// Get the current class
-			Class<?> currentClass = EMSMAIN.class;
-
-			// Get the name of the class
-			String className = currentClass.getName();
-			String errorMessage = e.getMessage();
-			StackTraceElement[] stackTrace = e.getStackTrace();
-			String methodName = stackTrace[0].getMethodName();
-			int lineNumber = stackTrace[0].getLineNumber();
-			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
-			servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
-//			return "SomethingWentWrong";)
-//				return "redirect:/swr";
+//		} catch (Exception e) {
+////			String error=" java.lang.NullPointerException: Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null";
+////			String exString=e.toString();
+////			if(exString.equals("Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null") && count==1 || count==0)
+////			{
+//			String exceptionAsString = e.toString();
+//			// Get the current class
+//			Class<?> currentClass = EMSMAIN.class;
+//
+//			// Get the name of the class
+//			String className = currentClass.getName();
+//			String errorMessage = e.getMessage();
+//			StackTraceElement[] stackTrace = e.getStackTrace();
+//			String methodName = stackTrace[0].getMethodName();
+//			int lineNumber = stackTrace[0].getLineNumber();
+//			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+//			servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+////			return "SomethingWentWrong";)
+////				return "redirect:/swr";
+////			}
+////			else
+//
+//		}
+//	}
+//
+//	@Scheduled(cron = "* * * * * *")
+//	public void admin_otp_sent_verification() {
+//		try {
+//			String status = servicelayer.getjob_active_or_not("admin_otp_sent_verification");
+//			System.out.println("admin_otp_sent_verification " + status);
+//			if (status.equalsIgnoreCase("Y")) {
+//				Set<Map.Entry<String, Integer>> admin_otp_sent_during_registration = admin_send_otp.entrySet();
+//				System.out.println("ADMIN SENT OTP WITH EMAIL " + admin_send_otp);
+//				for (Map.Entry<String, Integer> entry : admin_otp_sent_during_registration) {
+//					String to = entry.getKey();
+//					Integer otp = entry.getValue();
+//					String subject = "Admin Verification";
+//					String message = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<h1>" + "OTP :"
+//							+ "<b>" + otp + "</n>" + "</h1>" + "</div>";
+//					boolean flag = this.emailService.sendEmail(message, subject, to);
+//					System.out.println(to + " FLAG " + flag);
+//					if (flag) {
+//						admin_send_otp.remove(to);
+//					}
+//				}
+//				servicelayer.jobrunning("admin_otp_sent_verification");
+//			} else {
+//				servicelayer.jobnotrunning("admin_otp_sent_verification");
 //			}
-//			else
-
-		}
-
-	}
-
-	@Scheduled(cron = "* * * * * *")
-	public void seperation_email_sent() {
-		try {
-			String status = servicelayer.getjob_active_or_not("seperation_email_sent");
-			System.out.println("seperation_email_sent " + status);
-			if (status.equalsIgnoreCase("Y")) {
-				Set<Map.Entry<Integer, String>> id_with_email_entry = id_with_email.entrySet();
-				Set<Map.Entry<Integer, String>> id_with_cc_entry = id_with_cc.entrySet();
-				Set<Map.Entry<Integer, String>> id_with_username_entry = id_with_username.entrySet();
-				Set<Map.Entry<Integer, Date>> id_with_lastworkingday_entry = id_with_last_working_day_date.entrySet();
-				System.out.println("SUCCESS ID WITH EMAIL " + id_with_email);
-				System.out.println("SUCCESS ID WITH CC " + id_with_cc);
-				System.out.println("SUCCESS ID WITH USERNAME " + id_with_username);
-				System.out.println("SUCCESS ID WITH LASTWORKINGDAY " + id_with_last_working_day_date);
-				for (Map.Entry<Integer, String> id_with_email_entry_loop : id_with_email_entry) {
-					int id = id_with_email_entry_loop.getKey();
-					String to = id_with_email_entry_loop.getValue();
-					for (Map.Entry<Integer, String> id_with_cc_entry_loop : id_with_cc_entry) {
-						int id1 = id_with_cc_entry_loop.getKey();
-						String cc = id_with_cc_entry_loop.getValue();
-						if (id == id1) {
-							for (Map.Entry<Integer, String> id_with_username_entry_loop : id_with_username_entry) {
-								int id2 = id_with_username_entry_loop.getKey();
-								String username = id_with_username_entry_loop.getValue();
-								if (id1 == id2) {
-
-									for (Map.Entry<Integer, Date> id_with_lastworkingday_entry_loop : id_with_lastworkingday_entry) {
-										int id3 = id_with_lastworkingday_entry_loop.getKey();
-										String subject = "Seperation Request EMPID: EMPID" + id3;
-										Date lastdate = id_with_lastworkingday_entry_loop.getValue();
-										if (id2 == id3) {
-											servicelayer.sentMessage2(to, subject, username, lastdate, cc, id3);
-											servicelayer.jobrunning("seperation_email_sent");
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-				if (id_with_email.size() == 0) {
-					servicelayer.jobrunning("seperation_email_sent");
-				} else {
-					servicelayer.jobnotrunning("seperation_email_sent");
-				}
-			}
-			else {
-				servicelayer.jobnotrunning("seperation_email_sent");
-			}
-		} catch (Exception e) {
-//			String error=" java.lang.NullPointerException: Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null";
-//			String exString=e.toString();
-//			if(exString.equals("Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null") && count==1 || count==0)
-//			{
-			String exceptionAsString = e.toString();
-			// Get the current class
-			Class<?> currentClass = EMSMAIN.class;
-
-			// Get the name of the class
-			String className = currentClass.getName();
-			String errorMessage = e.getMessage();
-			StackTraceElement[] stackTrace = e.getStackTrace();
-			String methodName = stackTrace[0].getMethodName();
-			int lineNumber = stackTrace[0].getLineNumber();
-			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
-			servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
-//			return "SomethingWentWrong";)
-//				return "redirect:/swr";
+//		} catch (Exception e) {
+////			String error=" java.lang.NullPointerException: Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null";
+////			String exString=e.toString();
+////			if(exString.equals("Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null") && count==1 || count==0)
+////			{
+//			String exceptionAsString = e.toString();
+//			// Get the current class
+//			Class<?> currentClass = EMSMAIN.class;
+//
+//			// Get the name of the class
+//			String className = currentClass.getName();
+//			String errorMessage = e.getMessage();
+//			StackTraceElement[] stackTrace = e.getStackTrace();
+//			String methodName = stackTrace[0].getMethodName();
+//			int lineNumber = stackTrace[0].getLineNumber();
+//			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+//			servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+////			return "SomethingWentWrong";)
+////				return "redirect:/swr";
+////			}
+////			else
+//
+//		}
+//
+//	}
+//
+//	@Scheduled(cron = "* * * * * *")
+//	public void seperation_email_sent() {
+//		try {
+//			String status = servicelayer.getjob_active_or_not("seperation_email_sent");
+//			System.out.println("seperation_email_sent " + status);
+//			if (status.equalsIgnoreCase("Y")) {
+//				Set<Map.Entry<Integer, String>> id_with_email_entry = id_with_email.entrySet();
+//				Set<Map.Entry<Integer, String>> id_with_cc_entry = id_with_cc.entrySet();
+//				Set<Map.Entry<Integer, String>> id_with_username_entry = id_with_username.entrySet();
+//				Set<Map.Entry<Integer, Date>> id_with_lastworkingday_entry = id_with_last_working_day_date.entrySet();
+//				System.out.println("SUCCESS ID WITH EMAIL " + id_with_email);
+//				System.out.println("SUCCESS ID WITH CC " + id_with_cc);
+//				System.out.println("SUCCESS ID WITH USERNAME " + id_with_username);
+//				System.out.println("SUCCESS ID WITH LASTWORKINGDAY " + id_with_last_working_day_date);
+//				for (Map.Entry<Integer, String> id_with_email_entry_loop : id_with_email_entry) {
+//					int id = id_with_email_entry_loop.getKey();
+//					String to = id_with_email_entry_loop.getValue();
+//					for (Map.Entry<Integer, String> id_with_cc_entry_loop : id_with_cc_entry) {
+//						int id1 = id_with_cc_entry_loop.getKey();
+//						String cc = id_with_cc_entry_loop.getValue();
+//						if (id == id1) {
+//							for (Map.Entry<Integer, String> id_with_username_entry_loop : id_with_username_entry) {
+//								int id2 = id_with_username_entry_loop.getKey();
+//								String username = id_with_username_entry_loop.getValue();
+//								if (id1 == id2) {
+//
+//									for (Map.Entry<Integer, Date> id_with_lastworkingday_entry_loop : id_with_lastworkingday_entry) {
+//										int id3 = id_with_lastworkingday_entry_loop.getKey();
+//										String subject = "Seperation Request EMPID: EMPID" + id3;
+//										Date lastdate = id_with_lastworkingday_entry_loop.getValue();
+//										if (id2 == id3) {
+//											servicelayer.sentMessage2(to, subject, username, lastdate, cc, id3);
+//											servicelayer.jobrunning("seperation_email_sent");
+//										}
+//									}
+//								}
+//							}
+//						}
+//					}
+//				}
+//				if (id_with_email.size() == 0) {
+//					servicelayer.jobrunning("seperation_email_sent");
+//				} else {
+//					servicelayer.jobnotrunning("seperation_email_sent");
+//				}
 //			}
-//			else
-//			{
+//			else {
+//				servicelayer.jobnotrunning("seperation_email_sent");
 //			}
-
-		}
-	}
-
-	@Scheduled(cron = "* * * * * *")
-	public void team_email_sent() {
-		try {
-			String status = servicelayer.getjob_active_or_not("team_email_sent");
-			System.out.println("team_email_sent " + status);
-			if (status.equalsIgnoreCase("Y")) {
-				Set<Map.Entry<Integer, String>> team_email_sent = id_with_email.entrySet();
-				Set<Map.Entry<Integer, String>> team_username_sent = id_with_username.entrySet();
-				Set<Map.Entry<Integer, String>> team_desc_sent = id_with_team_desc.entrySet();
-				Set<Map.Entry<Integer, String>> team_id_sent = id_with_team_id.entrySet();
-				System.out.println("SUCCESS ID WITH EMAIL " + id_with_email);
-				System.out.println("SUCCESS ID WITH TEAM DESCRIPTION " + id_with_team_desc);
-				System.out.println("SUCCESS ID WITH USERNAME " + id_with_username);
-				System.out.println("SUCCESS ID WITH TEAM ID " + id_with_team_id);
-				for (Map.Entry<Integer, String> team_email_sent_loop : team_email_sent) {
-					int id = team_email_sent_loop.getKey();
-					String to = team_email_sent_loop.getValue();
-					for (Map.Entry<Integer, String> team_username_sent_loop : team_username_sent) {
-						int id1 = team_username_sent_loop.getKey();
-						String username = team_username_sent_loop.getValue();
-						if (id == id1) {
-							for (Map.Entry<Integer, String> team_desc_sent_loop : team_desc_sent) {
-								int id2 = team_desc_sent_loop.getKey();
-								String team_desc = team_desc_sent_loop.getValue();
-								if (id1 == id2) {
-									for (Map.Entry<Integer, String> team_id_sent_loop : team_id_sent) {
-										int id3 = team_id_sent_loop.getKey();
-										String team_iid = team_id_sent_loop.getValue();
-										if (id2 == id3) {
-											String subject = "Employee EMPID" + id3 + " Team Assigned";
-											servicelayer.sentMessage1(id, to, subject, team_iid, username, team_desc);
-											servicelayer.jobrunning("team_email_sent");
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-				if (id_with_email.size() == 0) {
-					servicelayer.jobrunning("team_email_sent");
-				} else {
-					servicelayer.jobnotrunning("team_email_sent");
-				}
-			}
-			else {
-				servicelayer.jobnotrunning("team_email_sent");
-			}
-		} catch (Exception e) {
-//			String error=" java.lang.NullPointerException: Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null";
-//			String exString=e.toString();
-//			if(exString.equals("Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null") && count==1 || count==0)
-//			{
-			String exceptionAsString = e.toString();
-			// Get the current class
-			Class<?> currentClass = EMSMAIN.class;
-
-			// Get the name of the class
-			String className = currentClass.getName();
-			String errorMessage = e.getMessage();
-			StackTraceElement[] stackTrace = e.getStackTrace();
-			String methodName = stackTrace[0].getMethodName();
-			int lineNumber = stackTrace[0].getLineNumber();
-			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
-			servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
-//			return "SomethingWentWrong";)
-//				return "redirect:/swr";
+//		} catch (Exception e) {
+////			String error=" java.lang.NullPointerException: Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null";
+////			String exString=e.toString();
+////			if(exString.equals("Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null") && count==1 || count==0)
+////			{
+//			String exceptionAsString = e.toString();
+//			// Get the current class
+//			Class<?> currentClass = EMSMAIN.class;
+//
+//			// Get the name of the class
+//			String className = currentClass.getName();
+//			String errorMessage = e.getMessage();
+//			StackTraceElement[] stackTrace = e.getStackTrace();
+//			String methodName = stackTrace[0].getMethodName();
+//			int lineNumber = stackTrace[0].getLineNumber();
+//			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+//			servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+////			return "SomethingWentWrong";)
+////				return "redirect:/swr";
+////			}
+////			else
+////			{
+////			}
+//
+//		}
+//	}
+//
+//	@Scheduled(cron = "* * * * * *")
+//	public void team_email_sent() {
+//		try {
+//			String status = servicelayer.getjob_active_or_not("team_email_sent");
+//			System.out.println("team_email_sent " + status);
+//			if (status.equalsIgnoreCase("Y")) {
+//				Set<Map.Entry<Integer, String>> team_email_sent = id_with_email.entrySet();
+//				Set<Map.Entry<Integer, String>> team_username_sent = id_with_username.entrySet();
+//				Set<Map.Entry<Integer, String>> team_desc_sent = id_with_team_desc.entrySet();
+//				Set<Map.Entry<Integer, String>> team_id_sent = id_with_team_id.entrySet();
+//				System.out.println("SUCCESS ID WITH EMAIL " + id_with_email);
+//				System.out.println("SUCCESS ID WITH TEAM DESCRIPTION " + id_with_team_desc);
+//				System.out.println("SUCCESS ID WITH USERNAME " + id_with_username);
+//				System.out.println("SUCCESS ID WITH TEAM ID " + id_with_team_id);
+//				for (Map.Entry<Integer, String> team_email_sent_loop : team_email_sent) {
+//					int id = team_email_sent_loop.getKey();
+//					String to = team_email_sent_loop.getValue();
+//					for (Map.Entry<Integer, String> team_username_sent_loop : team_username_sent) {
+//						int id1 = team_username_sent_loop.getKey();
+//						String username = team_username_sent_loop.getValue();
+//						if (id == id1) {
+//							for (Map.Entry<Integer, String> team_desc_sent_loop : team_desc_sent) {
+//								int id2 = team_desc_sent_loop.getKey();
+//								String team_desc = team_desc_sent_loop.getValue();
+//								if (id1 == id2) {
+//									for (Map.Entry<Integer, String> team_id_sent_loop : team_id_sent) {
+//										int id3 = team_id_sent_loop.getKey();
+//										String team_iid = team_id_sent_loop.getValue();
+//										if (id2 == id3) {
+//											String subject = "Employee EMPID" + id3 + " Team Assigned";
+//											servicelayer.sentMessage1(id, to, subject, team_iid, username, team_desc);
+//											servicelayer.jobrunning("team_email_sent");
+//										}
+//									}
+//								}
+//							}
+//						}
+//					}
+//				}
+//				if (id_with_email.size() == 0) {
+//					servicelayer.jobrunning("team_email_sent");
+//				} else {
+//					servicelayer.jobnotrunning("team_email_sent");
+//				}
 //			}
-//			else
-
-		}
-
-	}
-
+//			else {
+//				servicelayer.jobnotrunning("team_email_sent");
+//			}
+//		} catch (Exception e) {
+////			String error=" java.lang.NullPointerException: Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null";
+////			String exString=e.toString();
+////			if(exString.equals("Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null") && count==1 || count==0)
+////			{
+//			String exceptionAsString = e.toString();
+//			// Get the current class
+//			Class<?> currentClass = EMSMAIN.class;
+//
+//			// Get the name of the class
+//			String className = currentClass.getName();
+//			String errorMessage = e.getMessage();
+//			StackTraceElement[] stackTrace = e.getStackTrace();
+//			String methodName = stackTrace[0].getMethodName();
+//			int lineNumber = stackTrace[0].getLineNumber();
+//			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+//			servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+////			return "SomethingWentWrong";)
+////				return "redirect:/swr";
+////			}
+////			else
+//
+//		}
+//
+//	}
+//
 	@Scheduled(cron = "* * * * * *")
 	public void disable_expired_plan_users() {
 		try {
@@ -818,155 +823,155 @@ public class EMSMAIN {
 
 		}
 	}
-	
-	
-	@Scheduled(cron = "* * * * * *")
-	public void forgot_otp_sent_verification() {
-		try {
-			String status = servicelayer.getjob_active_or_not("forgot_otp_sent_verification");
-			System.out.println("forgot_otp_sent_verification " + status);
-			if (status.equalsIgnoreCase("Y")) {
-				Set<Map.Entry<String, Integer>> forgot_otp_sent_during_registration = forgot_password_email_sent.entrySet();
-				System.out.println("FORGOT SENT OTP WITH EMAIL " + forgot_password_email_sent);
-				System.out.println("MAP OTP " + OTP_validate_map);
-				for (Map.Entry<String, Integer> entry : forgot_otp_sent_during_registration) {
-					String to = entry.getKey();
-					Integer otp = entry.getValue();
-					String subject = "Forgot Email OTP Verification";
-					String message = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<h1>" + "OTP :" + "<b>"
-							+ otp + "</n>" + "</h1>" + "</div>";
-					boolean flag = this.emailService.sendEmail(message, subject, to);
-					System.out.println(to + " FLAG " + flag);
-					if (flag) {
-						forgot_password_email_sent.remove(to);
-					}
-				}
-				servicelayer.jobrunning("forgot_otp_sent_verification");
-			} else {
-				servicelayer.jobnotrunning("forgot_otp_sent_verification");
-			}
-		} catch (Exception e) {
-//			String error=" java.lang.NullPointerException: Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null";
-//			String exString=e.toString();
-//			if(exString.equals("Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null") && count==1 || count==0)
-//			{
-			String exceptionAsString = e.toString();
-			// Get the current class
-			Class<?> currentClass = EMSMAIN.class;
-
-			// Get the name of the class
-			String className = currentClass.getName();
-			String errorMessage = e.getMessage();
-			StackTraceElement[] stackTrace = e.getStackTrace();
-			String methodName = stackTrace[0].getMethodName();
-			int lineNumber = stackTrace[0].getLineNumber();
-			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
-			servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
-//			return "SomethingWentWrong";)
-//				return "redirect:/swr";
+//	
+//	
+//	@Scheduled(cron = "* * * * * *")
+//	public void forgot_otp_sent_verification() {
+//		try {
+//			String status = servicelayer.getjob_active_or_not("forgot_otp_sent_verification");
+//			System.out.println("forgot_otp_sent_verification " + status);
+//			if (status.equalsIgnoreCase("Y")) {
+//				Set<Map.Entry<String, Integer>> forgot_otp_sent_during_registration = forgot_password_email_sent.entrySet();
+//				System.out.println("FORGOT SENT OTP WITH EMAIL " + forgot_password_email_sent);
+//				System.out.println("MAP OTP " + OTP_validate_map);
+//				for (Map.Entry<String, Integer> entry : forgot_otp_sent_during_registration) {
+//					String to = entry.getKey();
+//					Integer otp = entry.getValue();
+//					String subject = "Forgot Email OTP Verification";
+//					String message = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<h1>" + "OTP :" + "<b>"
+//							+ otp + "</n>" + "</h1>" + "</div>";
+//					boolean flag = this.emailService.sendEmail(message, subject, to);
+//					System.out.println(to + " FLAG " + flag);
+//					if (flag) {
+//						forgot_password_email_sent.remove(to);
+//					}
+//				}
+//				servicelayer.jobrunning("forgot_otp_sent_verification");
+//			} else {
+//				servicelayer.jobnotrunning("forgot_otp_sent_verification");
+//			}
+//		} catch (Exception e) {
+////			String error=" java.lang.NullPointerException: Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null";
+////			String exString=e.toString();
+////			if(exString.equals("Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null") && count==1 || count==0)
+////			{
+//			String exceptionAsString = e.toString();
+//			// Get the current class
+//			Class<?> currentClass = EMSMAIN.class;
+//
+//			// Get the name of the class
+//			String className = currentClass.getName();
+//			String errorMessage = e.getMessage();
+//			StackTraceElement[] stackTrace = e.getStackTrace();
+//			String methodName = stackTrace[0].getMethodName();
+//			int lineNumber = stackTrace[0].getLineNumber();
+//			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+//			servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+////			return "SomethingWentWrong";)
+////				return "redirect:/swr";
+////			}
+////			else
+//
+//		}
+//
+//	}
+//	
+//	@Scheduled(cron = "* * * * * *")
+//	public void payment_success_email_alert() {
+//		try
+//		{
+//			String subject = "Payment Successful";
+//			String status = servicelayer.getjob_active_or_not("payment_success_email_alert");
+//			System.out.println("payment_success_email_alert " + status);
+//			if (status.equalsIgnoreCase("Y")) {
+//				Set<Map.Entry<String, String>> payment_success_email_alert_map=payment_success_email_alert.entrySet();
+//				Set<Map.Entry<String, Date>> payment_success_time_alert_map=payment_time.entrySet();
+//				Set<Map.Entry<String, String>> payment_success_license_number_alert_map=license_number.entrySet();
+//				Set<Map.Entry<String, String>> payment_success_license_status_alert_map=license_status.entrySet();
+//				Set<Map.Entry<String, String>> payment_success_status_alert_map=license_payment_status.entrySet();
+//				Set<Map.Entry<String, String>> payment_invoice_email_alert=payment_invoice_email.entrySet();
+//				for(Map.Entry<String, String> email_entry : payment_success_email_alert_map)
+//				{
+//					String email=email_entry.getKey();
+//					for(Map.Entry<String, Date> payment_success_time_alert_map_iterate : payment_success_time_alert_map )
+//					{
+//						String email1=payment_success_time_alert_map_iterate.getKey();
+//						Date payment_time=payment_success_time_alert_map_iterate.getValue();
+//					if(email.equals(email1))
+//					{
+//						for(Map.Entry<String, String> payment_license_number_alert_map_iterate : payment_success_license_number_alert_map )
+//						{
+//							String email2=payment_license_number_alert_map_iterate.getKey();
+//							String license_number=payment_license_number_alert_map_iterate.getValue();
+//							if(email1.equals(email2))
+//							{
+//								for(Map.Entry<String, String> payment_success_license_status_alert_map_iterate : payment_success_license_status_alert_map)
+//								{
+//									String email3=payment_success_license_status_alert_map_iterate.getKey();
+//									String license_status=payment_success_license_status_alert_map_iterate.getValue();
+//									if(email2.equals(email3))
+//									{
+//										for(Map.Entry<String, String> payment_success_status_alert_map_iterate : payment_success_status_alert_map)
+//										{
+//											String email4=payment_success_status_alert_map_iterate.getKey();
+//											String payment_status=payment_success_status_alert_map_iterate.getValue();
+//											if(email3.equals(email4))
+//											{
+//												for(Map.Entry<String, String> payment_invoice_alert_email_iterate : payment_invoice_email_alert)
+//												{
+//													String email5=payment_invoice_alert_email_iterate.getKey();
+//													String invoicePath=payment_invoice_alert_email_iterate.getValue();
+//													if(email4.equals(email5))
+//													{
+//														servicelayer.sentMessage7(payment_status, license_number, payment_time,
+//																license_status, subject, email5, invoicePath);
+//													}
+//												}
+//											}
+//										}
+//									}
+//								}
+//							}
+//						}
+//					}
+//					}
+//				}
+//				if (payment_success_email_alert.size() == 0) {
+//					servicelayer.jobrunning("payment_success_email_alert");
+//				} else {
+//					servicelayer.jobnotrunning("payment_success_email_alert");
+//				}
 //			}
 //			else
-
-		}
-
-	}
-	
-	@Scheduled(cron = "* * * * * *")
-	public void payment_success_email_alert() {
-		try
-		{
-			String subject = "Payment Successful";
-			String status = servicelayer.getjob_active_or_not("payment_success_email_alert");
-			System.out.println("payment_success_email_alert " + status);
-			if (status.equalsIgnoreCase("Y")) {
-				Set<Map.Entry<String, String>> payment_success_email_alert_map=payment_success_email_alert.entrySet();
-				Set<Map.Entry<String, Date>> payment_success_time_alert_map=payment_time.entrySet();
-				Set<Map.Entry<String, String>> payment_success_license_number_alert_map=license_number.entrySet();
-				Set<Map.Entry<String, String>> payment_success_license_status_alert_map=license_status.entrySet();
-				Set<Map.Entry<String, String>> payment_success_status_alert_map=license_payment_status.entrySet();
-				Set<Map.Entry<String, String>> payment_invoice_email_alert=payment_invoice_email.entrySet();
-				for(Map.Entry<String, String> email_entry : payment_success_email_alert_map)
-				{
-					String email=email_entry.getKey();
-					for(Map.Entry<String, Date> payment_success_time_alert_map_iterate : payment_success_time_alert_map )
-					{
-						String email1=payment_success_time_alert_map_iterate.getKey();
-						Date payment_time=payment_success_time_alert_map_iterate.getValue();
-					if(email.equals(email1))
-					{
-						for(Map.Entry<String, String> payment_license_number_alert_map_iterate : payment_success_license_number_alert_map )
-						{
-							String email2=payment_license_number_alert_map_iterate.getKey();
-							String license_number=payment_license_number_alert_map_iterate.getValue();
-							if(email1.equals(email2))
-							{
-								for(Map.Entry<String, String> payment_success_license_status_alert_map_iterate : payment_success_license_status_alert_map)
-								{
-									String email3=payment_success_license_status_alert_map_iterate.getKey();
-									String license_status=payment_success_license_status_alert_map_iterate.getValue();
-									if(email2.equals(email3))
-									{
-										for(Map.Entry<String, String> payment_success_status_alert_map_iterate : payment_success_status_alert_map)
-										{
-											String email4=payment_success_status_alert_map_iterate.getKey();
-											String payment_status=payment_success_status_alert_map_iterate.getValue();
-											if(email3.equals(email4))
-											{
-												for(Map.Entry<String, String> payment_invoice_alert_email_iterate : payment_invoice_email_alert)
-												{
-													String email5=payment_invoice_alert_email_iterate.getKey();
-													String invoicePath=payment_invoice_alert_email_iterate.getValue();
-													if(email4.equals(email5))
-													{
-														servicelayer.sentMessage7(payment_status, license_number, payment_time,
-																license_status, subject, email5, invoicePath);
-													}
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-					}
-				}
-				if (payment_success_email_alert.size() == 0) {
-					servicelayer.jobrunning("payment_success_email_alert");
-				} else {
-					servicelayer.jobnotrunning("payment_success_email_alert");
-				}
-			}
-			else
-			{
-				servicelayer.jobnotrunning("payment_success_email_alert");
-			}
-		}
-		catch (Exception e) {
-//			String error=" java.lang.NullPointerException: Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null";
-//			String exString=e.toString();
-//			if(exString.equals("Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null") && count==1 || count==0)
 //			{
-			String exceptionAsString = e.toString();
-			// Get the current class
-			Class<?> currentClass = EMSMAIN.class;
-
-			// Get the name of the class
-			String className = currentClass.getName();
-			String errorMessage = e.getMessage();
-			StackTraceElement[] stackTrace = e.getStackTrace();
-			String methodName = stackTrace[0].getMethodName();
-			int lineNumber = stackTrace[0].getLineNumber();
-			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
-			servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
-//			return "SomethingWentWrong";)
-//				return "redirect:/swr";
+//				servicelayer.jobnotrunning("payment_success_email_alert");
 //			}
-//			else
-
-		}
-
-	}
+//		}
+//		catch (Exception e) {
+////			String error=" java.lang.NullPointerException: Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null";
+////			String exString=e.toString();
+////			if(exString.equals("Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null") && count==1 || count==0)
+////			{
+//			String exceptionAsString = e.toString();
+//			// Get the current class
+//			Class<?> currentClass = EMSMAIN.class;
+//
+//			// Get the name of the class
+//			String className = currentClass.getName();
+//			String errorMessage = e.getMessage();
+//			StackTraceElement[] stackTrace = e.getStackTrace();
+//			String methodName = stackTrace[0].getMethodName();
+//			int lineNumber = stackTrace[0].getLineNumber();
+//			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+//			servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+////			return "SomethingWentWrong";)
+////				return "redirect:/swr";
+////			}
+////			else
+//
+//		}
+//
+//	}
 	
 //	@Override
 //	public void run(String... args) throws Exception {

@@ -35,4 +35,5 @@ public class Payment_Order_Info {
 	private float amount;
 	private float gst_amount;
 	private String gst_no;
+	private boolean invoice_sent_or_not;
 }
