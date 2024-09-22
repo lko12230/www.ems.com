@@ -34,7 +34,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.annotation.SessionScope;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.example.demo.EMSMAIN;
 import com.example.demo.dao.Teamdao;
 import com.example.demo.dao.UserDetailDao;
 import com.example.demo.dao.Userdao;
@@ -601,7 +600,7 @@ public class ManagerController {
 			lastdate = user1.getLastWorkingDay();
 			System.out.println("}}}}}}}}}}}}}}} " + lastdate);
 			session.setAttribute("message", new Message("Your last working day is " + lastdate, "alert-success"));
-			String username = user1.getUsername();
+//			String username = user1.getUsername();
 			String to = user1.getEmail();
 			int find = user1.getAaid();
 			Optional<Admin> admin = adminDao.findById(find);
@@ -705,13 +704,13 @@ public class ManagerController {
 			lastdate = user1.getLastWorkingDay();
 			System.out.println("}}}}}}}}}}}}}}} " + lastdate);
 			session.setAttribute("message", new Message("Your last working day is " + lastdate, "alert-success"));
-			String subject = "Google : Seperation Request EMPID: GOOGLEIN" + user1.getId();
-			String username = user1.getUsername();
-			String to = user1.getEmail();
-			int find = user1.getAaid();
-			Optional<Admin> admin = adminDao.findById(find);
-			Admin admin1 = admin.get();
-			String cc = admin1.getEmail();
+//			String subject = "Google : Seperation Request EMPID: GOOGLEIN" + user1.getId();
+//			String username = user1.getUsername();
+//			String to = user1.getEmail();
+//			int find = user1.getAaid();
+//			Optional<Admin> admin = adminDao.findById(find);
+//			Admin admin1 = admin.get();
+//			String cc = admin1.getEmail();
 //			servicelayer.sentMessage4(to, subject, username, lastdate, cc);
 			System.out.println("?????????????" + user1.getId());
 			return "redirect:/manager/teamprofile/" + user1.getId();

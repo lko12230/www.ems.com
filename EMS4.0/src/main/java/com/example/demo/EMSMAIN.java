@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -13,7 +12,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
-import com.example.demo.entities.User;
 import com.example.demo.service.EmailService;
 import com.example.demo.service.ForgotOTPEmailService;
 import com.example.demo.service.LoginHistoryExportEmail;

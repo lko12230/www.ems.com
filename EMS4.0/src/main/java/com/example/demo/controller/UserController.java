@@ -34,7 +34,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.annotation.SessionScope;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.example.demo.EMSMAIN;
 import com.example.demo.dao.UserDetailDao;
 import com.example.demo.dao.Userdao;
 import com.example.demo.dao.adminDao;
@@ -682,7 +681,7 @@ public class UserController {
 			lastdate = user1.getLastWorkingDay();
 			System.out.println("}}}}}}}}}}}}}}} " + lastdate);
 			session.setAttribute("message", new Message("Your last working day is " + lastdate, "alert-success"));
-			String username = user1.getUsername();
+//			String username = user1.getUsername();
 			String to = user1.getEmail();
 			int find = user1.getAaid();
 			Optional<Admin> admin = adminDao.findById(find);

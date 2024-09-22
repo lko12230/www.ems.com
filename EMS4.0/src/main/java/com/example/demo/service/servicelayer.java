@@ -51,7 +51,6 @@ import com.example.demo.EMSMAIN;
 import com.example.demo.dao.Downtime_Maintaince_Dao;
 import com.example.demo.dao.JobDao;
 import com.example.demo.dao.SubscriptionPlanDao;
-import com.example.demo.dao.Teamdao;
 import com.example.demo.dao.UserDetailDao;
 import com.example.demo.dao.UserLoginDao;
 import com.example.demo.dao.Userdao;
@@ -112,9 +111,6 @@ public class servicelayer {
 
 	@Autowired
 	private UserDetailDao userDetailDao;
-
-	@Autowired
-	private Teamdao teamdao;
 
 	@Autowired
 	private Userdao userdao;
