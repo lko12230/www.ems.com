@@ -1,7 +1,9 @@
 package com.example.demo.service;
 
 import java.io.File;
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 import javax.mail.Authenticator;
@@ -13,15 +15,17 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import com.example.demo.entities.PaymentEmailRequest;
 
 @Service
 public class LoginHistoryExportEmail {
-	@Autowired
-	private servicelayer servicelayer;
+	
+	
+	// Retry queue for failed emails (using a Set to prevent duplicates)
+    private final Set<PaymentEmailRequest> retryQueue = new HashSet<>();
+    
 	@Async
 	public CompletableFuture<Boolean> sendEmail(String get_path,String message, String subject, String to) {
 		boolean success = false;
@@ -111,22 +115,32 @@ session.setDebug(true);
 		
 		success=true;
 		} catch (Exception e) {
-//			e.printStackTrace();
-			String exceptionAsString = e.toString();
-			// Get the current class
-			Class<?> currentClass = LoginHistoryExportEmail.class;
-
-			// Get the name of the class
-			String className = currentClass.getName();
-			String errorMessage = e.getMessage();
-			StackTraceElement[] stackTrace = e.getStackTrace();
-			String methodName = stackTrace[0].getMethodName();
-			int lineNumber = stackTrace[0].getLineNumber();
-			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
-			servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+//				  // If sending fails, add to retry queue
+            System.out.println("Failed to send email, adding to retry queue");
+            retryQueue.add(new PaymentEmailRequest(get_path,message, subject, to));
+            e.printStackTrace();
 		}
 		// Return a CompletableFuture
         return CompletableFuture.completedFuture(success);
 	}
 
+	
+	  // Method to retry sending emails from the queue
+    public void retryFailedEmails() {
+    	  Set<PaymentEmailRequest> retryList = new HashSet<>(retryQueue); // Copy the queue
+//        List<EmailRequest> retryList = new LinkedList<>(retryQueue);
+        retryQueue.clear(); // Clear queue before retry
+       System.out.println("CLEAR LIST AFTER COPY LIST INTO RETRY LIST -> "+retryQueue);
+       System.out.println("RETRY LIST -> "+retryList);
+       System.out.println("Size "+retryList.size());
+        for (PaymentEmailRequest request : retryList) {
+            CompletableFuture<Boolean> result = sendEmail(request.getInvoice(),request.getMessage(), request.getSubject(), request.getTo());
+            result.thenAccept(success -> {
+                if (!success) {
+                    retryQueue.add(request); // Add back to queue if it fails again
+                }
+            });
+            System.out.println("SUCCESS LIST "+retryList);
+        }
+    }
 }

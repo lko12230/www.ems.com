@@ -2,15 +2,25 @@ package com.example.demo.service;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.entities.EmailRequest;
+
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 @Service
 public class TeamEmailService {
-
+	 // Retry queue for failed emails
+//    private final List<EmailRequest> retryQueue = new LinkedList<>();
+	
+	// Retry queue for failed emails (using a Set to prevent duplicates)
+    private final Set<EmailRequest> retryQueue = new HashSet<>();
+    
     @Async
     public CompletableFuture<Boolean> sendEmail(String message, String subject, String to) {
         boolean success = false;
@@ -45,10 +55,33 @@ public class TeamEmailService {
             System.out.println("Email sent successfully!");
             success = true;
         } catch (MessagingException e) {
+        	  // If sending fails, add to retry queue
+            System.out.println("Failed to send email, adding to retry queue");
+            retryQueue.add(new EmailRequest(message, subject, to));
             e.printStackTrace();
         }
 
         // Return a CompletableFuture
         return CompletableFuture.completedFuture(success);
+    }
+    
+    
+    // Method to retry sending emails from the queue
+    public void retryFailedEmails() {
+    	  Set<EmailRequest> retryList = new HashSet<>(retryQueue); // Copy the queue
+//        List<EmailRequest> retryList = new LinkedList<>(retryQueue);
+        retryQueue.clear(); // Clear queue before retry
+       System.out.println("CLEAR LIST AFTER COPY LIST INTO RETRY LIST -> "+retryQueue);
+       System.out.println("RETRY LIST -> "+retryList);
+       System.out.println("Size "+retryList.size());
+        for (EmailRequest request : retryList) {
+            CompletableFuture<Boolean> result = sendEmail(request.getMessage(), request.getSubject(), request.getTo());
+            result.thenAccept(success -> {
+                if (!success) {
+                    retryQueue.add(request); // Add back to queue if it fails again
+                }
+            });
+            System.out.println("SUCCESS LIST "+retryList);
+        }
     }
 }

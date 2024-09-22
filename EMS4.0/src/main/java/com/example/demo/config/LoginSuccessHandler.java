@@ -51,7 +51,7 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
             System.out.println("Sending email to: " + auth.getName());
             
             
-			String emailContent = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<p>" + "Dear " + username
+			String emailContent = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<p>" + "Dear " + auth.getName()
 			+ "<br>" + "<br>" + "Login Success" + "<br>" + "<br>" + "Username : " + "<b>" + username + "</b>" + "<br>"
 			+ "IP ADDRESS : " + "<b>" + ipAddress + "</b>" + "<br>" + "Device LOGIN TIME : " + "<b>"
 			+ new Date() + "</b>" + "</b>" + "<br>" + "Device OS : " + "<b>" + osName + "</b>" + "<br>"

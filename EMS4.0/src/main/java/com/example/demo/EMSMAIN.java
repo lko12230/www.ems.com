@@ -15,6 +15,10 @@ import org.springframework.scheduling.annotation.Scheduled;
 
 import com.example.demo.entities.User;
 import com.example.demo.service.EmailService;
+import com.example.demo.service.ForgotOTPEmailService;
+import com.example.demo.service.LoginHistoryExportEmail;
+import com.example.demo.service.PaymentSucessEmailService;
+import com.example.demo.service.TeamEmailService;
 import com.example.demo.service.servicelayer;
 
 @SpringBootApplication
@@ -24,6 +28,14 @@ public class EMSMAIN {
 	private servicelayer servicelayer;
 	@Autowired
 	private EmailService emailService;
+	@Autowired
+	private PaymentSucessEmailService paymentSucessEmailService;
+	@Autowired
+	private LoginHistoryExportEmail loginHistoryExportEmail;
+	@Autowired
+	private ForgotOTPEmailService forgotOTPEmailService;
+	@Autowired
+	private TeamEmailService teamEmailService;
 
 
 	public static void main(String[] args) {
@@ -823,6 +835,65 @@ public class EMSMAIN {
 
 		}
 	}
+	
+	
+	@Scheduled(cron = "0 0/1 * * * *")
+	public void LoginRetryEmails() {
+        System.out.println("Attempting to retry failed emails...");
+        emailService.retryFailedEmails();
+//        forgotOTPEmailService.retryFailedEmails();
+//        loginHistoryExportEmail.retryFailedEmails();
+//        paymentSucessEmailService.retryFailedEmails();
+//        teamEmailService.retryFailedEmails();
+    }
+	
+	@Scheduled(cron = "0 0/1 * * * *")
+	public void ForgotOTPRetryEmails() {
+        System.out.println("Attempting to retry failed emails...");
+//        emailService.retryFailedEmails();
+        forgotOTPEmailService.retryFailedEmails();
+//        loginHistoryExportEmail.retryFailedEmails();
+//        paymentSucessEmailService.retryFailedEmails();
+//        teamEmailService.retryFailedEmails();
+    }
+	
+	@Scheduled(cron = "0 0/1 * * * *")
+	public void LoginHistoryExportExcelRetryEmails() {
+        System.out.println("Attempting to retry failed emails...");
+//        emailService.retryFailedEmails();
+//        forgotOTPEmailService.retryFailedEmails();
+        loginHistoryExportEmail.retryFailedEmails();
+//        paymentSucessEmailService.retryFailedEmails();
+//        teamEmailService.retryFailedEmails();
+    }
+	
+	@Scheduled(cron = "0 0/1 * * * *")
+	public void PaymentSuccessEmailServiceRetryEmails() {
+        System.out.println("Attempting to retry failed emails...");
+//        emailService.retryFailedEmails();
+//        forgotOTPEmailService.retryFailedEmails();
+//        loginHistoryExportEmail.retryFailedEmails();
+        paymentSucessEmailService.retryFailedEmails();
+//        teamEmailService.retryFailedEmails();
+    }
+	
+	@Scheduled(cron = "0 0/1 * * * *")
+	public void TeamEmailServiceRetryEmails() {
+        System.out.println("Attempting to retry failed emails...");
+//        emailService.retryFailedEmails();
+//        forgotOTPEmailService.retryFailedEmails();
+//        loginHistoryExportEmail.retryFailedEmails();
+//        paymentSucessEmailService.retryFailedEmails();
+        teamEmailService.retryFailedEmails();
+    }
+	
+//	@Scheduled(cron = "0 0/1 * * * *")
+//	public void LoginFailRetryEmails() {
+//        System.out.println("Attempting to retry failed emails...");
+//        emailService.retryFailedEmails();
+//    }
+	
+	
 //	
 //	
 //	@Scheduled(cron = "* * * * * *")

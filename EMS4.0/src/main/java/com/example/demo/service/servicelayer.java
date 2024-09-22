@@ -106,8 +106,6 @@ public class servicelayer {
 	@Autowired
 	private EmailService emailService;
 
-	@Autowired
-	private SeperationEmailService emailService1;
 	// for register
 	@Autowired
 	private adminDao adminDao;

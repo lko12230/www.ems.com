@@ -69,6 +69,7 @@ public class CustomLoginFailureHandler extends SimpleUrlAuthenticationFailureHan
 								 // Get the username and IP address
 					            String ipAddress = request.getRemoteAddr();
 					            String username = user.getUsername();
+					            email = user.getEmail();
 								String osName = System.getProperty("os.name");
 								String osVersion = System.getProperty("os.version");
 								String osArchitecture = System.getProperty("os.arch");
@@ -80,7 +81,7 @@ public class CustomLoginFailureHandler extends SimpleUrlAuthenticationFailureHan
 	                            String emailContent = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<p>" + "Dear " + username
 	                					+ "<br>" + "<br>"
 	                					+ "We noticed a failed login attempt for your account.If this wasn't you, please take necessary actions."
-	                					+ "<br>" + "<br>" + "Username : " + "<b>" + username + "</b>" + "<br>" + "IP ADDRESS : " + "<b>"
+	                					+ "<br>" + "<br>" + "Username : " + "<b>" + email + "</b>" + "<br>" + "IP ADDRESS : " + "<b>"
 	                					+ ipAddress + "</b>" + "<br>" + "Device LOGIN TIME : " + "<b>" + new Date() + "</b>" + "</b>"
 	                					+ "<br>" + "Device OS : " + "<b>" + osName + "</b>" + "<br>" + "Device Version : " + "<b>"
 	                					+ osVersion + "</b>" + "<br>" + "Device Architecture : " + "<b>" + osArchitecture + "</b>" + "<br>"
