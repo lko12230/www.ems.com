@@ -20,74 +20,88 @@ import java.util.concurrent.CompletableFuture;
 @Component
 public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 
-    @Autowired
-    private EmailService emailService;
-    @Autowired
-    private Userdao userdao;
+	@Autowired
+	private EmailService emailService;
+	@Autowired
+	private Userdao userdao;
 
-    @Override
-    protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String role = auth.getAuthorities().toString();
-        
-        if (role == null) {
-            throw new UsernameNotFoundException("hi");
-        } else {
-        	
-        	User user = userdao.getUserByUserName(auth.getName());
-        	
-            // Get the username and IP address
-            String ipAddress = request.getRemoteAddr();
-            String username = user.getUsername();
+	@Override
+	protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		String role = auth.getAuthorities().toString();
+
+		if (role == null) {
+			throw new UsernameNotFoundException("hi");
+		} else {
+
+			User user = userdao.getUserByUserName(auth.getName());
+
+			// Get the username and IP address
+			String ipAddress = request.getRemoteAddr();
+			String username = user.getUsername();
 			String osName = System.getProperty("os.name");
 			String osVersion = System.getProperty("os.version");
 			String osArchitecture = System.getProperty("os.arch");
 
 			// Prepare email subject
-			String subject = "Success Login Attempt";
-			
-            // Prepare email content
+			String subject = "Security Update: Successful Login Detected";
+
+			// Prepare email content
 //            String emailContent = "Dear " + username + ", your IP address is " + ipAddress;
-            System.out.println("Sending email to: " + auth.getName());
-            
-            
-			String emailContent = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<p>" + "Dear " + auth.getName()
-			+ "<br>" + "<br>" + "Login Success" + "<br>" + "<br>" + "Username : " + "<b>" + username + "</b>" + "<br>"
-			+ "IP ADDRESS : " + "<b>" + ipAddress + "</b>" + "<br>" + "Device LOGIN TIME : " + "<b>"
-			+ new Date() + "</b>" + "</b>" + "<br>" + "Device OS : " + "<b>" + osName + "</b>" + "<br>"
-			+ "Device Version : " + "<b>" + osVersion + "</b>" + "<br>" + "Device Architecture : " + "<b>"
-			+ osArchitecture + "</b>" + "<br>" + "<br>" + "Cyber Team " + "</p>" + "</div>";
-            
-          
-            // Send email asynchronously
-            CompletableFuture<Boolean> resultFuture = emailService.sendEmail(emailContent, subject, auth.getName());
-            
-            // Handle the result asynchronously
-            resultFuture.thenAccept(result -> {
-                if (result) {
-                    System.out.println("Email sent successfully to " + username);
-                } else {
-                    System.out.println("Failed to send email to " + username);
-                }
-            });
+			System.out.println("Sending email to: " + auth.getName());
 
-            String targetUrl = getTargetUrlBasedOnRole(role);
-            return targetUrl;
-        }
-    }
+			String emailContent = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<p>" + "Dear "
+					+ username + "<br>" + "<br>" + "We are pleased to inform you that your account was successfully logged into on:" + "<br>" + "<br>" + "Username : " + "<b>" + username
+					+ "</b>" + "<br>" + "Email : " + "<b>" + auth.getName() + "</b>" + "<br>" + "IP ADDRESS : " + "<b>"
+					+ ipAddress + "</b>" + "<br>" + "Device LOGIN TIME : " + "<b>" + new Date() + "</b>" + "</b>"
+					+ "<br>" + "Device OS : " + "<b>" + osName + "</b>" + "<br>" + "Device Version : " + "<b>"
+					+ osVersion + "</b>" + "<br>" + "Device Architecture : " + "<b>" + osArchitecture + "</b>" + "<br>"
+					+ "<br>" + "If this was you, no further action is needed. However, if this login"
+							+ " seems unfamiliar or unauthorized, we recommend that you:"+"<br>"
+					+"<br>"
+					+"1. Change your password immediately."
+					+"<br>"
+					+"2. Enable two-factor authentication (if not already enabled)."
+					+"<br>"
+					+"3. Review your recent account activity."
+					+"<br>"+"<br>"
+					+"If you need assistance, please reach out to our support team at [Support Contact Info]."
+					+ "Your security is our top priority."
+					+"<br>"
+					+"<br>"
+					+ "Best regards,"+"<br>"
+					+"Cyber Security Team"
+					+ "</p>" + "</div>";;
 
-    private String getTargetUrlBasedOnRole(String role) {
-        if (role.contains("ROLE_USER")) {
-            return "/user/new";
-        } else if (role.contains("ROLE_ADMIN")) {
-            return "/admin/new";
-        } else if (role.contains("ROLE_MANAGER")) {
-            return "/manager/new";
-        } else if (role.contains("ROLE_HR")) {
-            return "/hr/new";
-        } else if (role.contains("ROLE_IT")) {
-            return "/IT/new";
-        }
-        return "/";
-    }
+			// Send email asynchronously
+			CompletableFuture<Boolean> resultFuture = emailService.sendEmail(emailContent, subject, auth.getName());
+
+			// Handle the result asynchronously
+			resultFuture.thenAccept(result -> {
+				if (result) {
+					System.out.println("Email sent successfully to " + username);
+				} else {
+					System.out.println("Failed to send email to " + username);
+				}
+			});
+
+			String targetUrl = getTargetUrlBasedOnRole(role);
+			return targetUrl;
+		}
+	}
+
+	private String getTargetUrlBasedOnRole(String role) {
+		if (role.contains("ROLE_USER")) {
+			return "/user/new";
+		} else if (role.contains("ROLE_ADMIN")) {
+			return "/admin/new";
+		} else if (role.contains("ROLE_MANAGER")) {
+			return "/manager/new";
+		} else if (role.contains("ROLE_HR")) {
+			return "/hr/new";
+		} else if (role.contains("ROLE_IT")) {
+			return "/IT/new";
+		}
+		return "/";
+	}
 }

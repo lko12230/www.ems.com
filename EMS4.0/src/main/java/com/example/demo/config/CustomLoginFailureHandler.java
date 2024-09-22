@@ -37,8 +37,8 @@ public class CustomLoginFailureHandler extends SimpleUrlAuthenticationFailureHan
 	private Downtime_Maintaince_Dao downtime_Maintaince_Dao;
 //	@Autowired
 //	private UserDetailDao userDetailDao;
-	 @Autowired
-	    private EmailService emailService; // Inject EmailService
+	@Autowired
+	private EmailService emailService; // Inject EmailService
 
 	@Override
 	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
@@ -58,95 +58,111 @@ public class CustomLoginFailureHandler extends SimpleUrlAuthenticationFailureHan
 //			UserDetail userDetail2 = userDetail.get();
 			if (get_status) {
 //				if (!userDetail2.isUser_status()) {
-					if (user.isEnabled()) {
-						if (user.isAccountNonLocked()) {
-							if (user.getFailedAttempt() < UserServices.MAX_FAILED_ATTEMPTS - 1) {
-								userServices.increaseFailedAttempt(user);
-								exception = new BadCredentialsException(
-										"Bad Credentails " + (3 - (user.getFailedAttempt() + 1)) + " Attempt Left");
-								
-								
-								 // Get the username and IP address
-					            String ipAddress = request.getRemoteAddr();
-					            String username = user.getUsername();
-					            email = user.getEmail();
-								String osName = System.getProperty("os.name");
-								String osVersion = System.getProperty("os.version");
-								String osArchitecture = System.getProperty("os.arch");
+				if (user.isEnabled()) {
+					if (user.isAccountNonLocked()) {
+						if (user.getFailedAttempt() < UserServices.MAX_FAILED_ATTEMPTS - 1) {
+							userServices.increaseFailedAttempt(user);
+							exception = new BadCredentialsException(
+									"Bad Credentails " + (3 - (user.getFailedAttempt() + 1)) + " Attempt Left");
 
-								
-								// Send email for every failed login attempt
-	                            String subject = "Failed Login Attempt";
-	                            
-	                            String emailContent = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<p>" + "Dear " + username
-	                					+ "<br>" + "<br>"
-	                					+ "We noticed a failed login attempt for your account.If this wasn't you, please take necessary actions."
-	                					+ "<br>" + "<br>" + "Username : " + "<b>" + email + "</b>" + "<br>" + "IP ADDRESS : " + "<b>"
-	                					+ ipAddress + "</b>" + "<br>" + "Device LOGIN TIME : " + "<b>" + new Date() + "</b>" + "</b>"
-	                					+ "<br>" + "Device OS : " + "<b>" + osName + "</b>" + "<br>" + "Device Version : " + "<b>"
-	                					+ osVersion + "</b>" + "<br>" + "Device Architecture : " + "<b>" + osArchitecture + "</b>" + "<br>"
-	                					+ "<br>" + "Cyber Team " + "</p>" + "</div>";
-	                            		
-	                            
-	                           CompletableFuture<Boolean> flagFuture =emailService.sendEmail(emailContent, subject, email);
-	                           // This will block until the result is available
-	                           try {
-	                               Boolean flag = flagFuture.get(); // Blocking call to get the result
-	                               if (flag) {
-	                                  System.out.println(true);
-	                               } else {
-	                                  System.out.println(false);
-	                               }
-	                           } catch (Exception e) {
-	                               e.printStackTrace();
-	                               System.out.println(false);
-	                           }
-	                           
-//						EMSMAIN.failed_lofin_Attempt.add(email);
-//								EMSMAIN.failed_login_Attempt.computeIfAbsent(email,k ->  new ArrayList<>()).add(str1);
-//								EMSMAIN.failed_os_name.computeIfAbsent(email, k -> new ArrayList<>()).add(osName);
-//								EMSMAIN.failed_device_version.computeIfAbsent(email, k -> new ArrayList<>()).add(osVersion);
-//								EMSMAIN.failed_device_Architecture.computeIfAbsent(email, k -> new ArrayList<>()).add(osArchitecture);
-//								EMSMAIN.failed_login_date_time.computeIfAbsent(email, k -> new ArrayList<>()).add(new Date());
-							} else {
-								userServices.lock(user);
-								exception = new BadCredentialsException(
-										"Bad Credentails " + (3 - (user.getFailedAttempt() + 1)) + " Attempt Left");
-								// Send email when the account is locked
-	                            String subject = "Account Locked";
-	                            String content = "Dear " + email + ",\n\nYour account has been locked due to multiple failed login attempts. " +
-	                                    "Please contact the administrator if this was not you.\n\nDetails:\nIP Address: "  +
-	                                    "\nOperating System: "+ ")\n\nThank you!";
-	                            
-	                            emailService.sendEmail(content, subject, email);
-//						EMSMAIN.failed_lofin_Attempt.add(email);
-//								EMSMAIN.failed_login_Attempt.computeIfAbsent(email,k ->  new ArrayList<>()).add(str1);
-//								EMSMAIN.failed_os_name.computeIfAbsent(email, k -> new ArrayList<>()).add(osName);
-//								EMSMAIN.failed_device_version.computeIfAbsent(email, k -> new ArrayList<>()).add(osVersion);
-//								EMSMAIN.failed_device_Architecture.computeIfAbsent(email, k -> new ArrayList<>()).add(osArchitecture);
-//								EMSMAIN.failed_login_date_time.computeIfAbsent(email, k -> new ArrayList<>()).add(new Date());
+							// Get the username and IP address
+							String ipAddress = request.getRemoteAddr();
+							String username = user.getUsername();
+							email = user.getEmail();
+							String osName = System.getProperty("os.name");
+							String osVersion = System.getProperty("os.version");
+							String osArchitecture = System.getProperty("os.arch");
+
+							// Send email for every failed login attempt
+							String subject = "Security Alert: Failed Login Attempt on Your Account";
+
+							String emailContent = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<p>"
+									+ "Dear " + username + "<br>" + "<br>"
+									+ "We detected a failed login attempt on your account:" + "<br>" + "<br>"
+									+ "Username : " + "<b>" + username + "</b>"+ "<br>"
+									+ "Email : " + "<b>" + email + "</b>" + "<br>" + "IP ADDRESS : " + "<b>"
+									+ ipAddress + "</b>" + "<br>" + "Device LOGIN TIME : " + "<b>" + new Date() + "</b>"
+									+ "</b>" + "<br>" + "Device OS : " + "<b>" + osName + "</b>" + "<br>"
+									+ "Device Version : " + "<b>" + osVersion + "</b>" + "<br>"
+									+ "Device Architecture : " + "<b>" + osArchitecture + "</b>" + "<br>" + "<br>"
+									+ "If this was you and you simply entered the wrong password, no further action is required. However, "
+									+ "if this wasn't you, we recommend taking the following actions to secure your account:"+"<br>"
+									+"<br>"
+									+"1. Change your password immediately."
+									+"<br>"
+									+"2. Enable two-factor authentication (if not already enabled)."
+									+"<br>"
+									+"3. Review your recent account activity."
+									+"<br>"+"<br>"
+									+"If you need assistance, please reach out to our support team at [Support Contact Info]."
+									+ "Your security is our top priority."
+									+"<br>"
+									+"<br>"
+									+ "Best regards,"+"<br>"
+									+"Cyber Security Team"
+									+ "</p>" + "</div>";
+
+							CompletableFuture<Boolean> flagFuture = emailService.sendEmail(emailContent, subject,
+									email);
+							// This will block until the result is available
+							try {
+								Boolean flag = flagFuture.get(); // Blocking call to get the result
+								if (flag) {
+									System.out.println(true);
+								} else {
+									System.out.println(false);
+								}
+							} catch (Exception e) {
+								e.printStackTrace();
+								System.out.println(false);
 							}
-						} else if (!user.isAccountNonLocked()) {
+
+//						EMSMAIN.failed_lofin_Attempt.add(email);
+//								EMSMAIN.failed_login_Attempt.computeIfAbsent(email,k ->  new ArrayList<>()).add(str1);
+//								EMSMAIN.failed_os_name.computeIfAbsent(email, k -> new ArrayList<>()).add(osName);
+//								EMSMAIN.failed_device_version.computeIfAbsent(email, k -> new ArrayList<>()).add(osVersion);
+//								EMSMAIN.failed_device_Architecture.computeIfAbsent(email, k -> new ArrayList<>()).add(osArchitecture);
+//								EMSMAIN.failed_login_date_time.computeIfAbsent(email, k -> new ArrayList<>()).add(new Date());
+						} else {
+							userServices.lock(user);
+							exception = new BadCredentialsException(
+									"Bad Credentails " + (3 - (user.getFailedAttempt() + 1)) + " Attempt Left");
+							// Send email when the account is locked
+							String subject = "Account Locked";
+							String content = "Dear " + email
+									+ ",\n\nYour account has been locked due to multiple failed login attempts. "
+									+ "Please contact the administrator if this was not you.\n\nDetails:\nIP Address: "
+									+ "\nOperating System: " + ")\n\nThank you!";
+
+							emailService.sendEmail(content, subject, email);
+//						EMSMAIN.failed_lofin_Attempt.add(email);
+//								EMSMAIN.failed_login_Attempt.computeIfAbsent(email,k ->  new ArrayList<>()).add(str1);
+//								EMSMAIN.failed_os_name.computeIfAbsent(email, k -> new ArrayList<>()).add(osName);
+//								EMSMAIN.failed_device_version.computeIfAbsent(email, k -> new ArrayList<>()).add(osVersion);
+//								EMSMAIN.failed_device_Architecture.computeIfAbsent(email, k -> new ArrayList<>()).add(osArchitecture);
+//								EMSMAIN.failed_login_date_time.computeIfAbsent(email, k -> new ArrayList<>()).add(new Date());
+						}
+					} else if (!user.isAccountNonLocked()) {
 //					if(userServices.unlockAccountTimeExpired(user))
 //					{
 //					exception=new LockedException("Your Account Is UnLocked");
 //					}
 //					else
 //					{
-							exception = new LockedException(
-									"Your Account Is Locked Due to 3 Failed Login Attempt For 24 HOURS , And Your Account Will be Unlock At  :: ("
-											+ user.getExpirelockDateAndTime()
-											+ ") UnLockDate Shown This Formatted (YYYY-MM-DD HH:MM:SS)");
+						exception = new LockedException(
+								"Your Account Is Locked Due to 3 Failed Login Attempt For 24 HOURS , And Your Account Will be Unlock At  :: ("
+										+ user.getExpirelockDateAndTime()
+										+ ") UnLockDate Shown This Formatted (YYYY-MM-DD HH:MM:SS)");
 //					}
-						}
+					}
 //				else
 //				{
 //					exception=new LockedException("Your Acoount Is Locked Due to 3 Failed Attempts , Please Try After Sometime");
 //				}
-					} else {
-						exception = new LockedException(
-								"Your Acoount Is Disabled Due to Some Reasons , Please Contact Administrator");
-					}
+				} else {
+					exception = new LockedException(
+							"Your Acoount Is Disabled Due to Some Reasons , Please Contact Administrator");
+				}
 //				} else {
 //					exception = new LockedException("Your Have Already Loginned !!");
 //				}

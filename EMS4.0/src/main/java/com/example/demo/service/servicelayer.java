@@ -624,8 +624,6 @@ public class servicelayer {
 		}
 	}
 
-	
-	
 	@Transactional
 	public void getAllOrdersAdddate() {
 		try {
@@ -710,7 +708,6 @@ public class servicelayer {
 		}
 	}
 
-	
 //	public void getAllEmployees()
 //	{
 //		List<UserDetail> all_users=new ArrayList<>();
@@ -2464,17 +2461,20 @@ public class servicelayer {
 		}
 	}
 
+	@Transactional
 	public void processing_payment(Order order, Principal principal) {
 		try {
 			int amt = 0;
 			Payment_Order_Info order_Info = new Payment_Order_Info();
 			Optional<User> user = userdao.findByUserName(principal.getName());
-			int last_id = orderDao.countt();
-			if (last_id > 0) {
+			int count = orderDao.countt();
+			int last_id = orderDao.getLastId();
+			if (count > 0) {
 				order_Info.setSno(++last_id);
 			} else {
 				order_Info.setSno(1);
 			}
+			System.out.println("ORDER SNO "+last_id);
 			User user1 = user.get();
 			amt = order.get("amount");
 			int paise_to_rupee = amt / 100;
@@ -2833,14 +2833,20 @@ public class servicelayer {
 				+ ".pdf";
 		generatePdfInvoice(invoicePath, payment, subscriptionPlans, companyInfo, user);
 //	        sendInvoiceEmail("customer@example.com", "Your Invoice", "Please find attached your invoice.", invoicePath);
-		String subject = "Payment Successful";
+		String subject = "Subscription Confirmation: Welcome to [Pro Plus]!";
 		String message = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<p>" + "Dear "
-				+ user.getUsername() + "<br>" + "<br>" + "Payment Success" + "<br>" + "<br>" + "Username : " + "<b>"
-				+ user.getEmail() + "</b>" + "<br>" + "Payment Time : " + "<b>" + payment.getSystem_date_and_time()
-				+ "</b>" + "<br>" + "License Number : " + "<b>" + payment.getLicense_number() + "</b>" + "</b>" + "<br>"
-				+ "License Status : " + "<b style='color:green'>" + payment.getLicense_number() + "</b>" + "<br>"
-				+ "Payment Status : " + "<b style='text-transform: uppercase; color: green'>"
-				+ payment.getLicense_status() + "</b>" + "<br>" + "<br>" + "Payment Team " + "</p>" + "</div>";
+				+ user.getUsername() + "<br>" + "<br>"
+				+ "Thank you for subscribing to [Pro Plus]! We are excited to have you on board." + "<br>" + "<br>"
+				+ "Payment Success" + "<br>" + "<br>" + "Username : " + "<b>" + user.getUsername() + "</b>" + "<br>"
+				+ "Email : " + "<b>" + payment.getEmail() + "</b>" + "<br>" + "Payment Time : " + "<b>"
+				+ payment.getSystem_date_and_time() + "</b>" + "<br>" + "License Number : " + "<b>"
+				+ payment.getLicense_number() + "</b>" + "</b>" + "<br>" + "License Status : "
+				+ "<b style='color:green'>" + payment.getLicense_status() + "</b>" + "<br>" + "Payment Status : "
+				+ "<b style='text-transform: uppercase; color: green'>" + payment.getStatus() + "</b>" + "<br>"
+				+ "<br>" + "For your convenience, we have attached the invoice for your subscription." + "<br>" + "<br>"
+				+ "If you have any questions or need assistance, please do not hesitate to reach out to our support team at [Support Contact Info]."
+				+ "<br>" + "<br>" + "Thank you for choosing [WWW EMS COM]. We look forward to serving you!" + "<br>"
+				+ "<br>" + "Best regards," + "<br>" + "Payment Team " + "</p>" + "</div>";
 		CompletableFuture<Boolean> flagFuture = paymentSucessEmailService.sendEmail(invoicePath, message, subject,
 				user.getEmail());
 		try {
