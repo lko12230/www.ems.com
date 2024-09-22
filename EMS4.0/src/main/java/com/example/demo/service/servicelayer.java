@@ -27,6 +27,7 @@ import java.util.Set;
 import java.util.TimeZone;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
@@ -48,6 +49,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.example.demo.EMSMAIN;
+import com.example.demo.dao.ArchiveLoginDao;
+import com.example.demo.dao.ArchiveOldOrdersDao;
 import com.example.demo.dao.Downtime_Maintaince_Dao;
 import com.example.demo.dao.JobDao;
 import com.example.demo.dao.SubscriptionPlanDao;
@@ -61,9 +64,11 @@ import com.example.demo.dao.orderDao;
 import com.example.demo.dao.performancedao;
 import com.example.demo.dao.record_activity_dao;
 import com.example.demo.entities.Admin;
+import com.example.demo.entities.ArchiveOldOrders;
 import com.example.demo.entities.CompanyInfo;
 import com.example.demo.entities.Error_Log;
 import com.example.demo.entities.Job;
+import com.example.demo.entities.LoginDataArchive;
 import com.example.demo.entities.Payment_Order_Info;
 import com.example.demo.entities.Performance;
 import com.example.demo.entities.RecordActivity;
@@ -141,6 +146,10 @@ public class servicelayer {
 
 	@Autowired
 	private PaymentSucessEmailService paymentSucessEmailService;
+	@Autowired
+	private ArchiveLoginDao archiveLoginDao;
+	@Autowired
+	private ArchiveOldOrdersDao archiveOldOrdersDao;
 
 //@Autowired
 //private userdao userdao;
@@ -307,7 +316,7 @@ public class servicelayer {
 					adminDao.save(admin);
 					if (sentornot) {
 						CompletableFuture<Boolean> flagFuture = this.emailService.sendEmail(message, subject, to);
-						    flag = flagFuture.get(); // Blocking call to get the result
+						flag = flagFuture.get(); // Blocking call to get the result
 						if (flag) {
 							user.setDefaultPasswordSent(true);
 						} else {
@@ -396,12 +405,12 @@ public class servicelayer {
 					userDetailDao.save(userdetail);
 					if (sentornot) {
 						CompletableFuture<Boolean> flagFuture = this.emailService.sendEmail(message, subject, to);
-					    flag = flagFuture.get(); // Blocking call to get the result
-					if (flag) {
-						user.setDefaultPasswordSent(true);
-					} else {
-						user.setDefaultPasswordSent(false);
-					}
+						flag = flagFuture.get(); // Blocking call to get the result
+						if (flag) {
+							user.setDefaultPasswordSent(true);
+						} else {
+							user.setDefaultPasswordSent(false);
+						}
 						userdao.save(user);
 					}
 
@@ -556,22 +565,54 @@ public class servicelayer {
 	@Transactional
 	public void getAllLoginAdddate() {
 		try {
-			List<Date> login = userLoginDao.findBySystemAddate();
-			for (int i = 0; i < login.size(); i++) {
-				Date adddate = login.get(i);
-				jobrunning("Login_Delete_Job");
-				if (adddate != null) {
-					userLoginDao.deleteOldLoginRecord(adddate);
-//					System.out.println(adddate);
-				}
+			List<UserLoginDateTime> login = userLoginDao.findAll();
+			LoginDataArchive loginDataArchive = new LoginDataArchive();
+			Date currentDate = new Date();
+			for (UserLoginDateTime login_date_time : login) {
+				Date login_date = login_date_time.getLoginDateAndTime();
+				// Calculate the difference in days between the login date and current date
+				long diffInMillis = currentDate.getTime() - login_date.getTime();
+				long diffInDays = TimeUnit.DAYS.convert(diffInMillis, TimeUnit.MILLISECONDS);
 
+				int count = archiveLoginDao.getArchiveLoginCount();
+				// If the login date is older than 30 days
+				if (diffInDays > 30) {
+					if (count > 0) {
+						int last_sno = archiveLoginDao.getLastId();
+						loginDataArchive.setSno(++last_sno);
+						loginDataArchive.setId(login_date_time.getId());
+						loginDataArchive.setEmail(login_date_time.getEmail());
+						loginDataArchive.setIpAddress(login_date_time.getIpAddress());
+						loginDataArchive.setUser_status(login_date_time.isUser_status());
+						loginDataArchive.setLocation(login_date_time.getLocation());
+						loginDataArchive.setLoginDateAndTime(login_date_time.getLoginDateAndTime());
+						loginDataArchive.setLogoutDateAndTime(login_date_time.getLogoutDateAndTime());
+						loginDataArchive.set_session_interrupted(login_date_time.is_session_interrupted());
+						loginDataArchive.setUsername(login_date_time.getUsername());
+
+						userLoginDao.delete(login_date_time);
+					} else {
+						loginDataArchive.setSno(1);
+						loginDataArchive.setId(login_date_time.getId());
+						loginDataArchive.setEmail(login_date_time.getEmail());
+						loginDataArchive.setIpAddress(login_date_time.getIpAddress());
+						loginDataArchive.setUser_status(login_date_time.isUser_status());
+						loginDataArchive.setLocation(login_date_time.getLocation());
+						loginDataArchive.setLoginDateAndTime(login_date_time.getLoginDateAndTime());
+						loginDataArchive.setLogoutDateAndTime(login_date_time.getLogoutDateAndTime());
+						loginDataArchive.set_session_interrupted(login_date_time.is_session_interrupted());
+						loginDataArchive.setUsername(login_date_time.getUsername());
+						userLoginDao.delete(login_date_time);
+					}
+					archiveLoginDao.save(loginDataArchive);
+				}
 			}
-			jobDao.getJobRunningTime("Login_Delete_Job");
+			jobDao.getJobRunningTime("Login_Archive_Job");
 		} catch (Exception e) {
 			String exceptionAsString = e.toString();
 			// Get the current class
 			Class<?> currentClass = servicelayer.class;
-			jobDao.getJobRunningTimeInterrupted("Login_Delete_Job");
+			jobDao.getJobRunningTimeInterrupted("Login_Archive_Job");
 			// Get the name of the class
 			String className = currentClass.getName();
 			String errorMessage = e.getMessage();
@@ -583,6 +624,93 @@ public class servicelayer {
 		}
 	}
 
+	
+	
+	@Transactional
+	public void getAllOrdersAdddate() {
+		try {
+			List<Payment_Order_Info> AllOrders = orderDao.findAll();
+			ArchiveOldOrders archiveOldOrders = new ArchiveOldOrders();
+			Date currentDate = new Date();
+			for (Payment_Order_Info Orders : AllOrders) {
+				Date orders_date = Orders.getSystem_date_and_time();
+				// Calculate the difference in days between the login date and current date
+				long diffInMillis = currentDate.getTime() - orders_date.getTime();
+				long diffInDays = TimeUnit.DAYS.convert(diffInMillis, TimeUnit.MILLISECONDS);
+
+				int count = archiveOldOrdersDao.getArchiveOrdersCount();
+				// If the login date is older than 30 days
+				if (diffInDays > 30) {
+					if (count > 0) {
+						int last_sno = archiveOldOrdersDao.getLastId();
+						archiveOldOrders.setSno(++last_sno);
+						archiveOldOrders.setAmount(Orders.getAmount());
+						archiveOldOrders.setAmount_without_gst(Orders.getAmount_without_gst());
+						archiveOldOrders.setCompany(Orders.getCompany());
+						archiveOldOrders.setCompany_id(Orders.getCompany_id());
+						archiveOldOrders.setDiscount(Orders.getDiscount());
+						archiveOldOrders.setEmail(Orders.getEmail());
+						archiveOldOrders.setGst_amount(Orders.getGst_amount());
+						archiveOldOrders.setLicense_number(Orders.getLicense_number());
+						archiveOldOrders.setLicense_status(Orders.getLicense_status());
+						archiveOldOrders.setSystem_date_and_time(Orders.getSystem_date_and_time());
+						archiveOldOrders.setSubscription_expiry_date(Orders.getSubscription_expiry_date());
+						archiveOldOrders.setSubscription_start_date(Orders.getSubscription_start_date());
+						archiveOldOrders.setReceipt(Orders.getReceipt());
+						archiveOldOrders.setPaymentId(Orders.getPaymentId());
+						archiveOldOrders.setOrderId(Orders.getOrderId());
+						archiveOldOrders.setTax(Orders.getTax());
+						archiveOldOrders.setInvoice_sent_or_not(Orders.isInvoice_sent_or_not());
+						archiveOldOrders.setGst_no(Orders.getGst_no());
+						archiveOldOrders.setStatus(Orders.getStatus());
+						archiveOldOrders.setPhone(Orders.getPhone());
+						archiveOldOrdersDao.save(archiveOldOrders);
+						orderDao.delete(Orders);
+					} else {
+						archiveOldOrders.setSno(1);
+						archiveOldOrders.setAmount(Orders.getAmount());
+						archiveOldOrders.setAmount_without_gst(Orders.getAmount_without_gst());
+						archiveOldOrders.setCompany(Orders.getCompany());
+						archiveOldOrders.setCompany_id(Orders.getCompany_id());
+						archiveOldOrders.setDiscount(Orders.getDiscount());
+						archiveOldOrders.setEmail(Orders.getEmail());
+						archiveOldOrders.setGst_amount(Orders.getGst_amount());
+						archiveOldOrders.setLicense_number(Orders.getLicense_number());
+						archiveOldOrders.setLicense_status(Orders.getLicense_status());
+						archiveOldOrders.setSystem_date_and_time(Orders.getSystem_date_and_time());
+						archiveOldOrders.setSubscription_expiry_date(Orders.getSubscription_expiry_date());
+						archiveOldOrders.setSubscription_start_date(Orders.getSubscription_start_date());
+						archiveOldOrders.setReceipt(Orders.getReceipt());
+						archiveOldOrders.setPaymentId(Orders.getPaymentId());
+						archiveOldOrders.setOrderId(Orders.getOrderId());
+						archiveOldOrders.setTax(Orders.getTax());
+						archiveOldOrders.setInvoice_sent_or_not(Orders.isInvoice_sent_or_not());
+						archiveOldOrders.setGst_no(Orders.getGst_no());
+						archiveOldOrders.setStatus(Orders.getStatus());
+						archiveOldOrders.setPhone(Orders.getPhone());
+						archiveOldOrdersDao.save(archiveOldOrders);
+						orderDao.delete(Orders);
+					}
+				}
+			}
+			jobDao.getJobRunningTime("Login_Old_Orders_Job");
+		} catch (Exception e) {
+			String exceptionAsString = e.toString();
+			// Get the current class
+			Class<?> currentClass = servicelayer.class;
+			jobDao.getJobRunningTimeInterrupted("Login_Old_Orders_Job");
+			// Get the name of the class
+			String className = currentClass.getName();
+			String errorMessage = e.getMessage();
+			StackTraceElement[] stackTrace = e.getStackTrace();
+			String methodName = stackTrace[0].getMethodName();
+			int lineNumber = stackTrace[0].getLineNumber();
+			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+		}
+	}
+
+	
 //	public void getAllEmployees()
 //	{
 //		List<UserDetail> all_users=new ArrayList<>();
@@ -2138,7 +2266,8 @@ public class servicelayer {
 					userDetail.setDesignation(user.getDesignation());
 					userDetailDao.save(userDetail); // Save the updated UserDetail
 				}
-				if (userDetail != null && !user.getBank_account_holder_name().equals(userDetail.getBank_account_holder_name())) {
+				if (userDetail != null
+						&& !user.getBank_account_holder_name().equals(userDetail.getBank_account_holder_name())) {
 					// Update only if the usernames are different
 					userDetail.setDesignation(user.getBank_account_holder_name());
 					userDetailDao.save(userDetail); // Save the updated UserDetail
@@ -2706,26 +2835,27 @@ public class servicelayer {
 //	        sendInvoiceEmail("customer@example.com", "Your Invoice", "Please find attached your invoice.", invoicePath);
 		String subject = "Payment Successful";
 		String message = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<p>" + "Dear "
-				+ user.getUsername() + "<br>" + "<br>" + "Payment Success" + "<br>" + "<br>" + "Username : "
-				+ "<b>" + user.getEmail() + "</b>" + "<br>" + "Payment Time : " + "<b>" + payment.getSystem_date_and_time() + "</b>" + "<br>"
-				+ "License Number : " + "<b>" + payment.getLicense_number() + "</b>" + "</b>" + "<br>" + "License Status : "
-				+ "<b style='color:green'>" + payment.getLicense_number() + "</b>" + "<br>" + "Payment Status : "
-				+ "<b style='text-transform: uppercase; color: green'>" + payment.getLicense_status() + "</b>" + "<br>" + "<br>"
-				+ "Payment Team " + "</p>" + "</div>";
-		CompletableFuture<Boolean>  flagFuture =paymentSucessEmailService.sendEmail(invoicePath, message, subject, user.getEmail());
-		 try {
-		        Boolean flag = flagFuture.get(); // Blocking call to get the result
-		        if (flag) {
-		        	payment.setInvoice_sent_or_not(true);
-		           System.out.println(true);
-		        } else {
-		        	payment.setInvoice_sent_or_not(false);
-		            System.out.println(false);
-		        }
-		    } catch (Exception e) {
-		        e.printStackTrace();
-		        user.setDefaultPasswordSent(false);
-		    }
+				+ user.getUsername() + "<br>" + "<br>" + "Payment Success" + "<br>" + "<br>" + "Username : " + "<b>"
+				+ user.getEmail() + "</b>" + "<br>" + "Payment Time : " + "<b>" + payment.getSystem_date_and_time()
+				+ "</b>" + "<br>" + "License Number : " + "<b>" + payment.getLicense_number() + "</b>" + "</b>" + "<br>"
+				+ "License Status : " + "<b style='color:green'>" + payment.getLicense_number() + "</b>" + "<br>"
+				+ "Payment Status : " + "<b style='text-transform: uppercase; color: green'>"
+				+ payment.getLicense_status() + "</b>" + "<br>" + "<br>" + "Payment Team " + "</p>" + "</div>";
+		CompletableFuture<Boolean> flagFuture = paymentSucessEmailService.sendEmail(invoicePath, message, subject,
+				user.getEmail());
+		try {
+			Boolean flag = flagFuture.get(); // Blocking call to get the result
+			if (flag) {
+				payment.setInvoice_sent_or_not(true);
+				System.out.println(true);
+			} else {
+				payment.setInvoice_sent_or_not(false);
+				System.out.println(false);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			user.setDefaultPasswordSent(false);
+		}
 //		try {
 //			EMSMAIN.payment_success_email_alert.put(user.getEmail(), user.getUsername());
 //			EMSMAIN.license_number.put(user.getEmail(), formattedLicenseNumber);
@@ -3040,6 +3170,3 @@ public class servicelayer {
 		return userDetailDao.findByNameContainingOrEmailContainingOrIdContaining(term);
 	}
 }
-
-
-

@@ -11,12 +11,10 @@ import org.springframework.data.repository.query.Param;
 import com.example.demo.entities.UserLoginDateTime;
 
 public interface UserLoginDao extends JpaRepository<UserLoginDateTime, Integer> {
-	@Query("select u.LoginDateAndTime from UserLoginDateTime u")
-	public List<Date> findBySystemAddate();
 
-	@Query(value = "delete from employee_login_record   where login_date_and_time <= (NOW() - INTERVAL 30 DAY)", nativeQuery = true)
-	@Modifying
-	public void deleteOldLoginRecord(Date system_lock_date_time);
+//	@Query(value = "delete from employee_login_record   where login_date_and_time <= (NOW() - INTERVAL 30 DAY)", nativeQuery = true)
+//	@Modifying
+//	public void deleteOldLoginRecord(Date system_lock_date_time);
 
 	@Query(value = "update employee_login_record u set u.logout_date_and_time = CURRENT_TIMESTAMP,u.user_status='0' where u.email = ?1 ORDER BY u.login_date_and_time DESC LIMIT 1 ", nativeQuery = true)
 	@Modifying

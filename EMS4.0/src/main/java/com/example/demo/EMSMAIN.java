@@ -1,6 +1,5 @@
 package com.example.demo;
 
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +34,6 @@ public class EMSMAIN {
 	@Autowired
 	private TeamEmailService teamEmailService;
 
-
 	public static void main(String[] args) {
 		SpringApplication.run(EMSMAIN.class, args);
 	}
@@ -61,13 +59,13 @@ public class EMSMAIN {
 	public static HashMap<Integer, Date> id_with_last_working_day_date = new HashMap<>();
 	public static HashMap<Integer, String> id_with_team_id = new HashMap<>();
 	public static HashMap<Integer, String> id_with_team_desc = new HashMap<>();
-	public static HashMap<String, Integer> forgot_password_email_sent =new HashMap<>();
-	public static HashMap<String, String> payment_success_email_alert =new HashMap<>();
-	public static HashMap<String, String> license_number =new HashMap<>();
-	public static HashMap<String, Date> payment_time =new HashMap<>();
-	public static HashMap<String, String> license_status =new HashMap<>();
-	public static HashMap<String, String> license_payment_status =new HashMap<>();
-	public static HashMap<String, String> payment_invoice_email =new HashMap<>();
+	public static HashMap<String, Integer> forgot_password_email_sent = new HashMap<>();
+	public static HashMap<String, String> payment_success_email_alert = new HashMap<>();
+	public static HashMap<String, String> license_number = new HashMap<>();
+	public static HashMap<String, Date> payment_time = new HashMap<>();
+	public static HashMap<String, String> license_status = new HashMap<>();
+	public static HashMap<String, String> license_payment_status = new HashMap<>();
+	public static HashMap<String, String> payment_invoice_email = new HashMap<>();
 	/*
 	 * This Method ADDED By Ayush Gupta on 10th February 2024 Purpose : This
 	 * Scheduler Is Used For Unlock Account After 24 Hrs
@@ -98,17 +96,32 @@ public class EMSMAIN {
 
 	@Scheduled(cron = "0 0/1 * * * *")
 
-	public void Login_Delete_Job() {
+	public void Old_Orders_Archive_Job() {
 		try {
-			String Status = servicelayer.getjob_active_or_not("Login_Delete_Job");
+			String Status = servicelayer.getjob_active_or_not("Login_Old_Orders_Job");
+			if (Status.equalsIgnoreCase("Y")) {
+				servicelayer.getAllOrdersAdddate();
+			} else {
+				servicelayer.jobnotrunning("Login_Old_Orders_Job");
+			}
+		} catch (Exception e) {
+			servicelayer.jobtime("Login_Old_Orders_Job");
+		}
+	}
+
+	@Scheduled(cron = "0 0/1 * * * *")
+
+	public void Login_Old_Data_Archive_Job() {
+		try {
+			String Status = servicelayer.getjob_active_or_not("Login_Archive_Job");
 			if (Status.equalsIgnoreCase("Y")) {
 				servicelayer.getAllLoginAdddate();
 			} else {
-				servicelayer.jobnotrunning("Login_Delete_Job");
+				servicelayer.jobnotrunning("Login_Archive_Job");
 			}
 			;
 		} catch (Exception e) {
-			servicelayer.jobtime("Login_Delete_Job");
+			servicelayer.jobtime("Login_Archive_Job");
 		}
 	}
 
@@ -808,7 +821,7 @@ public class EMSMAIN {
 			String status = servicelayer.getjob_active_or_not("expired_license_status");
 			System.out.println("expired_license_status " + status);
 			if (status.equalsIgnoreCase("Y")) {
-				
+
 				servicelayer.expired_license_status();
 			} else {
 				servicelayer.jobnotrunning("expired_license_status");
@@ -833,65 +846,63 @@ public class EMSMAIN {
 
 		}
 	}
-	
-	
+
 	@Scheduled(cron = "0 0/1 * * * *")
 	public void LoginRetryEmails() {
-        System.out.println("Attempting to retry failed emails...");
-        emailService.retryFailedEmails();
+		System.out.println("Attempting to retry failed emails...");
+		emailService.retryFailedEmails();
 //        forgotOTPEmailService.retryFailedEmails();
 //        loginHistoryExportEmail.retryFailedEmails();
 //        paymentSucessEmailService.retryFailedEmails();
 //        teamEmailService.retryFailedEmails();
-    }
-	
+	}
+
 	@Scheduled(cron = "0 0/1 * * * *")
 	public void ForgotOTPRetryEmails() {
-        System.out.println("Attempting to retry failed emails...");
+		System.out.println("Attempting to retry failed emails...");
 //        emailService.retryFailedEmails();
-        forgotOTPEmailService.retryFailedEmails();
+		forgotOTPEmailService.retryFailedEmails();
 //        loginHistoryExportEmail.retryFailedEmails();
 //        paymentSucessEmailService.retryFailedEmails();
 //        teamEmailService.retryFailedEmails();
-    }
-	
+	}
+
 	@Scheduled(cron = "0 0/1 * * * *")
 	public void LoginHistoryExportExcelRetryEmails() {
-        System.out.println("Attempting to retry failed emails...");
+		System.out.println("Attempting to retry failed emails...");
 //        emailService.retryFailedEmails();
 //        forgotOTPEmailService.retryFailedEmails();
-        loginHistoryExportEmail.retryFailedEmails();
+		loginHistoryExportEmail.retryFailedEmails();
 //        paymentSucessEmailService.retryFailedEmails();
 //        teamEmailService.retryFailedEmails();
-    }
-	
+	}
+
 	@Scheduled(cron = "0 0/1 * * * *")
 	public void PaymentSuccessEmailServiceRetryEmails() {
-        System.out.println("Attempting to retry failed emails...");
+		System.out.println("Attempting to retry failed emails...");
 //        emailService.retryFailedEmails();
 //        forgotOTPEmailService.retryFailedEmails();
 //        loginHistoryExportEmail.retryFailedEmails();
-        paymentSucessEmailService.retryFailedEmails();
+		paymentSucessEmailService.retryFailedEmails();
 //        teamEmailService.retryFailedEmails();
-    }
-	
+	}
+
 	@Scheduled(cron = "0 0/1 * * * *")
 	public void TeamEmailServiceRetryEmails() {
-        System.out.println("Attempting to retry failed emails...");
+		System.out.println("Attempting to retry failed emails...");
 //        emailService.retryFailedEmails();
 //        forgotOTPEmailService.retryFailedEmails();
 //        loginHistoryExportEmail.retryFailedEmails();
 //        paymentSucessEmailService.retryFailedEmails();
-        teamEmailService.retryFailedEmails();
-    }
-	
+		teamEmailService.retryFailedEmails();
+	}
+
 //	@Scheduled(cron = "0 0/1 * * * *")
 //	public void LoginFailRetryEmails() {
 //        System.out.println("Attempting to retry failed emails...");
 //        emailService.retryFailedEmails();
 //    }
-	
-	
+
 //	
 //	
 //	@Scheduled(cron = "* * * * * *")
@@ -1041,7 +1052,7 @@ public class EMSMAIN {
 //		}
 //
 //	}
-	
+
 //	@Override
 //	public void run(String... args) throws Exception {
 //		
