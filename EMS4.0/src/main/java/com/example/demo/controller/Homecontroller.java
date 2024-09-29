@@ -102,6 +102,10 @@ public class Homecontroller {
 			} else {
 				Optional<Admin> adminn = adminDao.findByUserName(email);
 				admin = adminn.get();
+				Optional<User> userFindByEmail = userdao.findByUserName(email);
+				User GetUser = userFindByEmail.get();
+				if(GetUser.isEnabled())
+				{
 				System.out.println("aaid " + admin.getAid());
 				System.out.println("admin " + admin);
 				System.out.println("hi " + Captcha);
@@ -157,6 +161,12 @@ public class Homecontroller {
 					session.setAttribute("message",
 							new Message("Please Enter Correct Admin Credentials", "alert-danger"));
 
+					return "redirect:/verify_admin_get";
+				}
+				}
+				else
+				{
+					session.setAttribute("message", new Message("Account Blocked/Disabled, For more information, Please contact administrator !!", "alert-danger"));
 					return "redirect:/verify_admin_get";
 				}
 			}
