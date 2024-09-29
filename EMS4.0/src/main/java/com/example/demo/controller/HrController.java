@@ -471,10 +471,10 @@ public class HrController {
 
 	List<UserDetail> all_users = new ArrayList<>();
 
-	@GetMapping("/ViewMembers")
+	@GetMapping("/viewMembers")
 	public String Employee(Model model, User user) {
 		try {
-			all_users = userDetailDao.findAll();
+			all_users = userDetailDao.findAllEnabledUser();
 			if (all_users != null && user.getUsername() != null) {
 				System.out.println("find all " + all_users);
 				model.addAttribute("all_users", all_users);
@@ -969,9 +969,12 @@ public class HrController {
 		try {
 			if (principal != null) {
 				System.out.println("IN");
+				Optional<User> get_user=this.userdao.findByUserName(principal.getName());
+				 User get_user1=get_user.get();
 				Optional<UserDetail> userOptional = this.userDetailDao.findById(id);
 				UserDetail userDetail = userOptional.get();
 				model.addAttribute("userdetail", userDetail);
+				model.addAttribute("get_user",get_user1);
 				model.addAttribute("title", "update form - " + userDetail.getUsername());
 //		if(userDetail.getRole().equals("ROLE_hr"))
 //		{

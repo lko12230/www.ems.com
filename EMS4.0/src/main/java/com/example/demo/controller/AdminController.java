@@ -272,7 +272,7 @@ public class AdminController {
 	@GetMapping("/viewMembers")
 	public String viewTeamMembers(Model model, User user, Principal principal) {
 		try {
-			all_users = userDetailDao.findAll();
+			all_users = userDetailDao.findAllEnabledUser();
 			if (all_users != null && user.getUsername() != null) {
 				System.out.println("find all " + all_users);
 				model.addAttribute("all_users", all_users);
@@ -1327,11 +1327,14 @@ public class AdminController {
 	}
 
 	@RequestMapping("/teamprofile/{id}")
-	public String teamprofile(@PathVariable("id") Integer id, Model model) {
+	public String teamprofile(@PathVariable("id") Integer id, Model model,Principal principal) {
 		System.out.println("IN");
+		Optional<User> get_user=this.userdao.findByUserName(principal.getName());
+		 User get_user1=get_user.get();
 		Optional<UserDetail> userOptional = this.userDetailDao.findById(id);
 		UserDetail userDetail = userOptional.get();
 		model.addAttribute("userdetail", userDetail);
+		model.addAttribute("get_user",get_user1);
 		model.addAttribute("title", "update form - " + userDetail.getUsername());
 		return "AdminTeamViewProfile";
 

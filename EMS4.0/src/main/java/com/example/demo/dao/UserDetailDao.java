@@ -19,4 +19,7 @@ public interface UserDetailDao extends JpaRepository<UserDetail, Integer> {
 	
 	 @Query("SELECT u FROM UserDetail u WHERE u.username = :input OR u.email = :input OR u.id = :input")
 	  public List<UserDetail> findByNameContainingOrEmailContainingOrIdContaining(@Param("input") String input);
+	 
+	 @Query("select u from UserDetail u where u.enabled=1")
+	 public List<UserDetail> findAllEnabledUser();
 }

@@ -5,8 +5,6 @@
 	<!-- Required meta tags -->
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<!-- Chart.js -->
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
 
 	<!-- Bootstrap CSS -->
 	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
@@ -27,53 +25,29 @@
 	<link rel="stylesheet" th:href="@{/css/style2.css}" />
 	<link rel="icon" type="image/x-icon"
 		href="https://www.freepnglogos.com/uploads/google-logo-png/google-logo-png-webinar-optimizing-for-success-google-business-webinar-13.png">
-	<style>
-		/* Define custom classes for character colors */
-		.char-blue {
-			color: blue;
-		}
 
-		.char-green {
-			color: limegreen;
-		}
-
-		.char-red {
-			color: red;
-		}
-
-		.char-yellow {
-			color: yellow;
-		}
-	</style>
-	<title>
-		ems
-	</title>
+	<title>ems</title>
 </head>
 
 <body onload="renderTime();">
-	<form id="logoutForm" th:action="@{/logout}" method="post">
-		<!--  <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.toke	<nav class="fixed-top navbar navbar-expand-lg navbar-dark" style="background-color: black;"><nav class="fixed-top navbar navbar-expand-lg navbar-dark bg-dark">
-			<a class="navbar-brand" href="/">
-				<!-- <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAclBMVEXz8/PzUyWBvAYFpvD/ugjz9PX19PXz+fr39fr69vPy9fp5uAAAofD/tgDz3Nji6tfzRADzTBfzmYew0oB/xfH70IDX5/P16tfz5eLo7eHzPADzlICs0Hfh6/N3wvH7znj07eEAnvDzvbPL3q6u1/L43q6vy/leAAABd0lEQVR4nO3cR1IDQRREwcb0SEgj770B7n9FNmhEBL1g8zUs8l2gIi9QKUmSpHs5vPtWFV4uANMwunUD3IyiS7+Jebgdx7bddb63uvt+dKOqIBw/xTaZNsLZc3CEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEjxVuJ7GNfwj7LQjTejcN7noTVu+z4PabgjB1wmumqm50JaAkSX/oLbxmKveiK/zqp8NxHtvx40bMn6dFbKdzgbi81MEdb8LeaRDdqiSsX2Kr541wMXiNjZCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkPCxwuj/0kvb/6V5Gd2hmTqvokulm90HluNrFyhJ0j/rC6N0RI28dGy3AAAAAElFTkSuQmCC"; style="width: 40px; height: 40px">-->
-			<!--  <img src="https://www.freepnglogos.com/uploads/new-google-logo-png-0.png"
-					style="width: 110px; height: 35px"> -->
-					<img th:src="@{/img/EMS.png}" style="width: 200px; height: 35px" alt="EMS Logo">
-			</a>
-			<div class="collapse navbar-collapse" id="navbarSupportedContent">
+		<nav class="fixed-top navbar navbar-expand-lg navbar-dark" style="background-color: black;">
+		<a class="navbar-brand" href="/">
+			<!-- <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAclBMVEXz8/PzUyWBvAYFpvD/ugjz9PX19PXz+fr39fr69vPy9fp5uAAAofD/tgDz3Nji6tfzRADzTBfzmYew0oB/xfH70IDX5/P16tfz5eLo7eHzPADzlICs0Hfh6/N3wvH7znj07eEAnvDzvbPL3q6u1/L43q6vy/leAAABd0lEQVR4nO3cR1IDQRREwcb0SEgj770B7n9FNmhEBL1g8zUs8l2gIi9QKUmSpHs5vPtWFV4uANMwunUD3IyiS7+Jebgdx7bddb63uvt+dKOqIBw/xTaZNsLZc3CEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEjxVuJ7GNfwj7LQjTejcN7noTVu+z4PabgjB1wmumqm50JaAkSX/oLbxmKveiK/zqp8NxHtvx40bMn6dFbKdzgbi81MEdb8LeaRDdqiSsX2Kr541wMXiNjZCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkPCxwuj/0kvb/6V5Gd2hmTqvokulm90HluNrFyhJ0j/rC6N0RI28dGy3AAAAAElFTkSuQmCC"; style="width: 40px; height: 40px">-->
+			<img th:src="@{/img/EMS.png}" style="width: 200px; height: 35px" alt="EMS Logo">
+		</a>
+		<div class="collapse navbar-collapse" id="navbarSupportedContent">
 
-				<ul class="navbar-nav ml-auto text-uppercase">
+			<ul class="navbar-nav ml-auto text-uppercase">
 
 
-					<!--	<li class="nav-item active">
+				<!--	<li class="nav-item active">
 					<a class="nav-link" th:href="@{/about/}" href="#">About</a>
 				</li> -->
 
-					<li class="nav-item active"><a class="nav-link" href="#">WELCOME
-							(<span th:text="${user.username}" class="text-warning"></span>)
-						</a></li>
-				
-
-<li class="nav-item active bg-light" style="border-radius: 50%; height: 50px;">
+				<li class="nav-item active"><a class="nav-link" href="#">WELCOME
+						(<span th:text="${user.username}" class="text-warning"></span>)
+					</a></li>
+				<li class="nav-item active bg-light" style="border-radius: 50%; height: 50px;">
 						<div th:if="${user.Image_Url.equals('default.jpg')}">
 				<img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar"
              style="height: 50px; width: 50px; border-radius: 50%;"
@@ -86,27 +60,24 @@
 					</div>
  </li>
 
-					<li class="nav-item active">
-						<a class="nav-link" th:href="@{/hr/careers}" href="#">Careers</a>
-					</li>
+				<li class="nav-item active">
+					<a class="nav-link" th:href="@{/signin/}" href="#">Careers</a>
+				</li>
 
-						<li class="nav-item active">
-						<input type="text" class="form-control" id="liveDateTime" readonly>
-					</li>
+				<li class="nav-item active">
+					<input type="text" class="form-control" id="liveDateTime" readonly>
+				</li>
+				<li class="nav-item active"><a class="nav-link" th:href="@{/logout}" href="#"><i
+							class="fa-solid fa-right-from-bracket"></i>logout</a></li>
+			</ul>
 
-					<li class="nav-item active"><a class="nav-link" onclick="submitLogoutForm()" href="#"><i
-								class="fa-solid fa-right-from-bracket"></i>logout</a></li>
-				</ul>
-
-
-			</div>
-		</nav>
-	</form>
+		</div>
+	</nav>
 
 	<div class="sidebar">
 		<span onclick="toggleSidebar()" class="crossBtn">&times;</span>
 		<a href="" th:href="@{/hr/new}" class="item"><i class="fa-solid fa-house"></i>Dashboard</a>
-		<a href="" th:href="@{/hr/ViewMembers}" class="item"><i class="fa-solid fa-id-card-clip"></i> View ALL
+		<a href="" th:href="@{/hr/viewMembers}" class="item"><i class="fa-solid fa-id-card-clip"></i> View ALL
 			Employees</a>
 		<a href="" th:href="@{/hr/viewTeamMembersOnly}" class="item"><i class="fa-solid fa-pen"></i>View Team
 			Members</a>
@@ -194,14 +165,7 @@
 		}
 		renderTime();
 	</script>
-
-
 	<script>
-		function submitLogoutForm() {
-			document.getElementById("logoutForm").submit();
-		}
-	</script>
-		<script>
 		$(document).ready(function () {
 			// Function to update live date and time every second
 			function updateLiveDateTime() {
@@ -217,13 +181,13 @@
 			setInterval(updateLiveDateTime, 1000);
 		});
 	</script>
-	<script>
+	<!--<script>
 		// JavaScript code to disable right-click and show an alert
 		document.addEventListener('contextmenu', function (event) {
 			event.preventDefault(); // Prevent default right-click behavior
 			alert("Right-clicking is disabled on this page.");
 		});
-	</script>
+	</script>-->
 </body>
 
 </html>

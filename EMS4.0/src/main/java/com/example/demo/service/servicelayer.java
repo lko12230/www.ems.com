@@ -190,7 +190,14 @@ public class servicelayer {
 			user.setLaptop_serial_number("NA");
 			user.setEditwho("NA");
 			user.setResume_file_url("NA");
-			user.setManager_or_not("NA");
+			if(user.getDesignation().equals("ROLE_MANAGER"))
+			{
+			user.setManager_or_not(true);
+			}
+			else
+			{
+				user.setManager_or_not(false);
+			}
 			user.setStatus("ACTIVE");
 			user.setSystemDateAndTime(new Date());
 			// This Logic Added By AYush Gupta 21 June 2024 For Split -> in Designation
@@ -295,7 +302,7 @@ public class servicelayer {
 					userdetail.setEditwho("NA");
 					userdetail.setWho_assign_laptop("NA");
 					userdetail.setReview_rating("NA");
-					userdetail.setUser(user3);
+					userdetail.setManager_or_not(false);					userdetail.setUser(user3);
 					Performance performance = new Performance();
 					performance.setId(user.getId());
 					performance.setJanuary(0);
@@ -384,6 +391,14 @@ public class servicelayer {
 					userdetail.setLaptop_status("NA");
 					userdetail.setWho_assign_laptop("NA");
 					userdetail.setReview_rating("NA");
+					if(user.getDesignation().equals("ROLE_MANAGER"))
+					{
+					userdetail.setManager_or_not(true);
+					}
+					else
+					{
+						userdetail.setManager_or_not(false);
+					}
 					userdetail.setSystemDateAndTime(result.getSystemDateAndTime());
 					userdetail.setUser(user3);
 					Performance performance = new Performance();

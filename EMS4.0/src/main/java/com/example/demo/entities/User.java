@@ -124,7 +124,7 @@ public class User implements Serializable{
 	private String resume_file_url;
 	private String Designation;
 	private String base_location;
-	private String manager_or_not;
+	private boolean manager_or_not;
 	private String team;
 	private String company;
 	private String company_id;

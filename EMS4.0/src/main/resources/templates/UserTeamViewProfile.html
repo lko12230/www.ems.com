@@ -18,8 +18,15 @@
         <nav aria-label="breadcrumb" class="bg-body-tertiary rounded-3 p-3 mb-4">
           <ol class="breadcrumb mb-0">
             <li class="breadcrumb-item"><a href="#">Home</a></li>
-            <li class="breadcrumb-item"><a href="#">User</a></li>
+            <li class="breadcrumb-item"><a href="#">Team</a></li>
             <li class="breadcrumb-item active" aria-current="page">User Profile</li>
+              <li class="ml-auto">
+                        <b>
+                            <a href="" th:href="@{/user/viewTeamMembersOnly}" class="item">
+                                List View <i class="fa-solid fa-list"></i>
+                            </a>
+                        </b>
+                    </li>
           </ol>
         </nav>
       </div>
@@ -42,7 +49,7 @@
               class="rounded-circle img-fluid" style="width: 150px;">  
 			  </div>
 			  <div th:if="${!userdetail.Image_Url.equals('default.jpg')}">
-                <img  th:src="@{'/uploads/img/' + ${user.image_Url}}" alt="avatar"
+                <img  th:src="@{'/uploads/img/' + ${userdetail.image_Url}}" alt="avatar"
               class="rounded-circle img-fluid" style="width: 150px;">
 			  </div>
             <h5 class="my-3"><span th:text="${userdetail.username}"></span></h5>
@@ -89,13 +96,21 @@
       <div class="col-lg-8">
         <div class="card mb-4">
           <div class="card-body">
-			  <h3>Personal Info</h3>
-		<!--	  <div class="text-right">
-				<b> <a href="" th:href="@{'/IT/emp_profile_edit_2/'+${userdetail.id}}" class="item">
-						<p>EDIT <i class="fas fa-edit"></i></p>
-					</a>
-				</b>
-			</div>  -->
+			   <div class="row">
+            <div class="col-sm-6">
+                <h3>Personal Info</h3>
+                <!-- Asset Info Content Goes Here -->
+            </div>
+         <!--   <div class="col-sm-6">
+                <div class="text-right">
+                    <b>
+                        <a href="" th:href="@{/user/viewTeamMembersOnly}" class="item">
+                            <p>Back <i class="fas fa-edit"></i></p>
+                        </a>
+                    </b>
+                </div>
+            </div>   -->
+        </div>
 			<br>
             <div class="row">
               <div class="col-sm-3">
@@ -121,6 +136,15 @@
               </div>
               <div class="col-sm-9">
                 <p class="text-muted mb-0"><span th:text="${userdetail.email}"></span></p>
+              </div>
+            </div>
+            <hr>
+             <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Team ID</p>
+              </div>
+              <div class="col-sm-9">
+                <p class="text-muted mb-0"><span th:text="${userdetail.team}"></span></p>
               </div>
             </div>
             <hr>
@@ -154,55 +178,113 @@
         </div>
         
         
-        
+        	<div th:if="${get_user.manager_or_not==true}">
                  <div class="card mb-4">
           <div class="card-body">
 			   <div class="row">
             <div class="col-sm-6">
-                <h3>Professional Info</h3>
+                <h3>Banking Info</h3>
                 <!-- Asset Info Content Goes Here -->
             </div>
-         <!--   <div class="col-sm-6">
+       <!--     <div class="col-sm-6">
                 <div class="text-right">
                     <b>
-                        <a href="" th:href="@{'/IT/emp_profile_edit_2/'+${userdetail.id}}" class="item">
+                        <a href="" th:href="@{'/admin/emp_profile_edit_2/'+${userdetail.id}}" class="item">
                             <p>EDIT <i class="fas fa-edit"></i></p>
                         </a>
                     </b>
                 </div>
-            </div> -->
+            </div>-->
         </div>
 			<br>
-            <div class="row">
+			  <div class="row">
               <div class="col-sm-3">
-                <p class="mb-0">Occupation</p>
+                <p class="mb-0">Bank Holder Name</p>
               </div>
               <div class="col-sm-9">
-                <p class="text-muted mb-0"><span th:text="${userdetail.Designation}"></span></p>
+                <p class="text-muted mb-0"><span th:text="${userdetail.bank_account_holder_name}"></span></p>
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Bank Name</p>
+              </div>
+              <div class="col-sm-9">
+                <p class="text-muted mb-0"><span th:text="${userdetail.bank_name}"></span></p>
               </div>
             </div>
             <hr>
                   <div class="row">
               <div class="col-sm-3">
-                <p class="mb-0">Base Location</p>
+                <p class="mb-0">Account Number</p>
               </div>
               <div class="col-sm-9">
-                   <p class="text-muted mb-0"><span th:text="${userdetail.base_location}"></span></p>
+                   <p class="text-muted mb-0"><span th:text="${userdetail.bank_account_number}"></span></p>
               </div>
             </div>
             <hr>
             <div class="row">
               <div class="col-sm-3">
-                <p class="mb-0">Team</p>
+                <p class="mb-0">Ifsc Code</p>
               </div>
               <div class="col-sm-9">
-                <p class="text-muted mb-0"><span th:text="${userdetail.team}"></span></p>
+                <p class="text-muted mb-0"><span th:text="${userdetail.ifsc_code}"></span></p>
               </div>
             </div>
             
           </div>
         </div>
-                
+        
+         <div class="card mb-4">
+          <div class="card-body">
+			   <div class="row">
+            <div class="col-sm-6">
+                <h3>Asset Info</h3>
+                <!-- Asset Info Content Goes Here -->
+            </div>
+     <!--       <div class="col-sm-6">
+                <div class="text-right">
+                    <b>
+                        <a href="" th:href="@{'/admin/emp_profile_edit_21/'+${userdetail.id}}" class="item">
+                            <p>EDIT <i class="fas fa-edit"></i></p>
+                        </a>
+                    </b>
+                </div>
+            </div>-->
+        </div>
+			<br>
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Laptop Brand</p>
+              </div>
+              <div class="col-sm-9">
+                <p class="text-muted mb-0"><span th:text="${userdetail.laptop_brand}"></span></p>
+              </div>
+            </div>
+            <hr>
+                  <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Serial Number</p>
+              </div>
+              <div class="col-sm-9">
+                   <p class="text-muted mb-0"><span th:text="${userdetail.laptop_serial_number}"></span></p>
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Product Id</p>
+              </div>
+              <div class="col-sm-9">
+                <p class="text-muted mb-0"><span th:text="${userdetail.laptop_id}"></span></p>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+        </div>
+            </div>    
     </div>
   </div>
 			</form>
