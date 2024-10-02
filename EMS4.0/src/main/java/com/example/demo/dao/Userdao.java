@@ -93,5 +93,14 @@ public interface Userdao extends JpaRepository<User, Integer> {
 //	@Query("Update User u set u.AccountNonLocked = 1 ,u.failedAttempt = 0 ,u.lockDateAndTime=null")
 //	@Modifying
 //	public void getAllAccount_LockedAndFailedAttempt();
+	
+	@Query(value = "select * from database_ems.employee u where u.enabled='0' and u.last_working_day <= (NOW() - INTERVAL 30 DAY)",nativeQuery = true )
+	public List<User>  Get_ALL_Disabled_Old_User_Job();
+	
+	@Query(value = "select count(1) from database_ems.employee", nativeQuery = true)
+	public int getUserCount();
+
+	@Query(value = "select u.sno from database_ems.employee u order by u.sno desc limit 1", nativeQuery = true)
+	public int getLastSno();
 
 }

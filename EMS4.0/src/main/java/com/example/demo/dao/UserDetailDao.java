@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
 import com.example.demo.entities.UserDetail;
 
 public interface UserDetailDao extends JpaRepository<UserDetail, Integer> {
@@ -22,4 +21,13 @@ public interface UserDetailDao extends JpaRepository<UserDetail, Integer> {
 	 
 	 @Query("select u from UserDetail u where u.enabled=1")
 	 public List<UserDetail> findAllEnabledUser();
+	 
+		@Query(value = "select * from database_ems.employeedetail u where u.enabled='0' and u.last_working_day <= (NOW() - INTERVAL 30 DAY)",nativeQuery = true )
+		public List<UserDetail>  Get_ALL_Disabled_Old_UserDetail_Job();
+		
+		@Query(value = "select count(1) from database_ems.employeedetail", nativeQuery = true)
+		public int getUserDetailCount();
+
+		@Query(value = "select u.sno from database_ems.employeedetail u order by u.sno desc limit 1", nativeQuery = true)
+		public int getLastSno();
 }

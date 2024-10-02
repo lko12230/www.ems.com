@@ -31,6 +31,7 @@ public class UserDetail implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private int sno;
 	@Id
 	private int id;
 	private String username;

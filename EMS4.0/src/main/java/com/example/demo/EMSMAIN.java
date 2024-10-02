@@ -110,7 +110,6 @@ public class EMSMAIN {
 	}
 
 	@Scheduled(cron = "0 0/1 * * * *")
-
 	public void Login_Old_Data_Archive_Job() {
 		try {
 			String Status = servicelayer.getjob_active_or_not("Login_Archive_Job");
@@ -124,7 +123,42 @@ public class EMSMAIN {
 			servicelayer.jobtime("Login_Archive_Job");
 		}
 	}
+	
+	
+	@Scheduled(cron = "0 0/1 * * * *")
 
+	public void Archive_Disabled_Old_User_Job() {
+		try {
+			String Status = servicelayer.getjob_active_or_not("Archive_Disabled_Old_User_Job");
+			if (Status.equalsIgnoreCase("Y")) {
+				servicelayer.Archive_Disabled_Old_UserDetail_Job();
+				servicelayer.Archive_Disabled_Old_User_Job();
+			} else {
+				servicelayer.jobnotrunning("Archive_Disabled_Old_User_Job");
+			}
+			;
+		} catch (Exception e) {
+			servicelayer.jobtime("Archive_Disabled_Old_User_Job");
+		}
+	}
+
+	
+//	@Scheduled(cron = "0 0/1 * * * *")
+//	public void Archive_Disabled_Old_UserDetail_Job() {
+//		try {
+//			String Status = servicelayer.getjob_active_or_not("Archive_Disabled_Old_UserDetail_Job");
+//			if (Status.equalsIgnoreCase("Y")) {
+//				servicelayer.Archive_Disabled_Old_UserDetail_Job();
+//			} else {
+//				servicelayer.jobnotrunning("Archive_Disabled_Old_UserDetail_Job");
+//			}
+//			;
+//		} catch (Exception e) {
+//			servicelayer.jobtime("Archive_Disabled_Old_UserDetail_Job");
+//		}
+//	}
+
+	
 	/*----------------------------------*/
 
 	/*
