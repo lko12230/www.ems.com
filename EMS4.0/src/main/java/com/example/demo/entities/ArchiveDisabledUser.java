@@ -16,7 +16,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ArchiveDiabledUser implements Serializable{
+public class ArchiveDisabledUser implements Serializable{
 	/**
 	 * 
 	 */
