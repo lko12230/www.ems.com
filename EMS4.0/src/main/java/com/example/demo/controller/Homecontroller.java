@@ -63,7 +63,7 @@ public class Homecontroller {
 //		int otp = (int) (Math.random() * 900000000) + 100000000;
 //		System.out.println("MATH RANDOM  "+otp);
 		model.addAttribute(user);
-		return "index";
+		return "abc";
 	}
 
 	@GetMapping("/signup/{id}")
@@ -134,9 +134,53 @@ public class Homecontroller {
 						EMSMAIN.OTP_validate_map.put(otp, new Date());
 						EMSMAIN.admin_send_otp.put(email, otp);
 						System.out.println("OTP " + otp);
-						String subject = "Google : Admin Verification";
-						String message = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<h1>" + "OTP :"
-								+ "<b>" + otp + "</n>" + "</h1>" + "</div>";
+						String subject = "Admin Verification";
+						String message = "" +
+							    "<!DOCTYPE html>" +
+							    "<html lang='en'>" +
+							    "<head>" +
+							    "    <meta charset='UTF-8'>" +
+							    "    <meta name='viewport' content='width=device-width, initial-scale=1.0'>" +
+							    "    <meta http-equiv='X-UA-Compatible' content='IE=edge'>" +
+							    "    <style>" +
+							    "        body { font-family: 'Arial', sans-serif; margin: 0; padding: 0; background-color: #f9f9f9; }" +
+							    "        .wrapper { width: 100%; background-color: #f9f9f9; padding: 40px 0; }" +
+							    "        .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); }" +
+							    "        .header { background-color: #4CAF50; padding: 20px; text-align: center; color: #ffffff; }" +
+							    "        .header h1 { margin: 0; font-size: 24px; }" +
+							    "        .content { padding: 30px; text-align: center; }" +
+							    "        .content h2 { font-size: 20px; color: #333; margin-bottom: 10px; }" +
+							    "        .otp { font-size: 36px; font-weight: bold; letter-spacing: 10px; color: #4CAF50; margin: 20px 0; }" +
+							    "        .info { font-size: 16px; color: #666; }" +
+							    "        .footer { padding: 20px; text-align: center; font-size: 12px; color: #888; background-color: #f1f1f1; }" +
+							    "        .footer a { color: #4CAF50; text-decoration: none; }" +
+							    "    </style>" +
+							    "</head>" +
+							    "<body>" +
+							    "    <div class='wrapper'>" +
+							    "        <table class='container' align='center'>" +
+							    "            <tr>" +
+							    "                <td class='header'>" +
+							    "                    <h1>Your OTP Code</h1>" +
+							    "                </td>" +
+							    "            </tr>" +
+							    "            <tr>" +
+							    "                <td class='content'>" +
+							    "                    <h2>Use the following OTP to complete your action:</h2>" +
+							    "                    <div class='otp'>" + otp + "</div>" +  // Dynamic OTP inserted here
+							    "                    <p class='info'>This OTP is valid for the next 05 minutes. Please do not share it with anyone.</p>" +
+							    "                </td>" +
+							    "            </tr>" +
+							    "            <tr>" +
+							    "                <td class='footer'>" +
+							    "                    <p>If you didn’t request this, please ignore this email. Need help? <a href='#'>Contact Support</a>.</p>" +
+							    "                </td>" +
+							    "            </tr>" +
+							    "        </table>" +
+							    "    </div>" +
+							    "</body>" +
+							    "</html>";
+
 						String to = email;
 						 CompletableFuture<Boolean> flagFuture = this.forgotOTPEmailService.sendEmail(message, subject, to);
 						   Boolean flag = flagFuture.get(); // Blocking call to get the result
@@ -503,8 +547,53 @@ public class Homecontroller {
 				EMSMAIN.forgot_password_email_sent.put(email, otp);
 				EMSMAIN.OTP_validate_map.put(otp, new Date());
 				String subject = "Forgot Email OTP Verification";
-				String message = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<h1>" + "OTP :" + "<b>"
-						+ otp + "</n>" + "</h1>" + "</div>";
+				String message = "" +
+					    "<!DOCTYPE html>" +
+					    "<html lang='en'>" +
+					    "<head>" +
+					    "    <meta charset='UTF-8'>" +
+					    "    <meta name='viewport' content='width=device-width, initial-scale=1.0'>" +
+					    "    <meta http-equiv='X-UA-Compatible' content='IE=edge'>" +
+					    "    <style>" +
+					    "        body { font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; margin: 0; padding: 0; background-color: #f9f9f9; }" +
+					    "        .wrapper { width: 100%; background-color: #f9f9f9; padding: 40px 0; }" +
+					    "        .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); overflow: hidden; }" +
+					    "        .header { background-color: #4CAF50; padding: 20px; text-align: center; color: #ffffff; border-top-left-radius: 12px; border-top-right-radius: 12px; }" +
+					    "        .header h1 { margin: 0; font-size: 26px; }" +
+					    "        .content { padding: 30px; text-align: center; }" +
+					    "        .content h2 { font-size: 22px; color: #333; margin-bottom: 10px; }" +
+					    "        .otp { font-size: 40px; font-weight: bold; letter-spacing: 8px; color: #4CAF50; background-color: #f0f8f0; padding: 15px; border-radius: 8px; margin: 20px 0; display: inline-block; }" +
+					    "        .info { font-size: 16px; color: #666; margin-top: 10px; }" +
+					    "        .footer { padding: 20px; text-align: center; font-size: 12px; color: #888; background-color: #f1f1f1; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; }" +
+					    "        .footer a { color: #4CAF50; text-decoration: none; }" +
+					    "    </style>" +
+					    "</head>" +
+					    "<body>" +
+					    "    <div class='wrapper'>" +
+					    "        <table class='container' align='center'>" +
+					    "            <tr>" +
+					    "                <td class='header'>" +
+					    "                    <h1>Your OTP Code For Forgot Password</h1>" +
+					    "                </td>" +
+					    "            </tr>" +
+					    "            <tr>" +
+					    "                <td class='content'>" +
+					    "                    <h2>Use the following OTP to complete your action:</h2>" +
+					    "                    <div class='otp'>" + otp + "</div>" +  // Dynamic OTP inserted here
+					    "                    <p class='info'>This OTP is valid for the next <strong>10 minutes</strong>. Please do not share it with anyone.</p>" +
+					    "                </td>" +
+					    "            </tr>" +
+					    "            <tr>" +
+					    "                <td class='footer'>" +
+					    "                    <p>If you didn’t request this, please ignore this email. Need help? <a href='[Support Link]'>Contact Support</a>.</p>" +
+					    "                </td>" +
+					    "            </tr>" +
+					    "        </table>" +
+					    "    </div>" +
+					    "</body>" +
+					    "</html>";
+
+
 				 CompletableFuture<Boolean> flagFuture = this.emailService.sendEmail(message, subject, email);
 				// This will block until the result is available
 				    try {

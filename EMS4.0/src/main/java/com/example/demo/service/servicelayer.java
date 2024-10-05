@@ -152,434 +152,261 @@ public class servicelayer {
 		System.out.println(user.getUsername());
 		Calendar calendar = Calendar.getInstance();
 		int currentYear = calendar.get(Calendar.YEAR);
-		int count= userdao.getUserCount();
-		if(count>0)
-		{
-		Optional<User> option = userdao.findByUserNameAndPhone(user.getEmail(), user.getPhone());
-		Optional<Admin> option1 = adminDao.findByUserName(user.getEmail());
-		if (option.isPresent()) {
-			throw new Exception("Email And Phone Number is  Already Exist");
-		} else if (option1.isPresent()) {
-			throw new Exception(user.getUsername() + " Something Went Wrong Please Contact Adninistrator");
-		} else {
-			System.out.println("<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>> " + user.getImage_Url());
-			System.out.println(user.getAaid());
-			System.out.println(user.getGender());
-			int generateRandomPassword = (int) (Math.random() * 900000) + 100000;
+		int count = userdao.getUserCount();
+		if (count > 0) {
+			Optional<User> option = userdao.findByUserNameAndPhone(user.getEmail(), user.getPhone());
+			Optional<Admin> option1 = adminDao.findByUserName(user.getEmail());
+			if (option.isPresent()) {
+				throw new Exception("Email And Phone Number is  Already Exist");
+			} else if (option1.isPresent()) {
+				throw new Exception(user.getUsername() + " Something Went Wrong Please Contact Adninistrator");
+			} else {
+				System.out.println("<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>> " + user.getImage_Url());
+				System.out.println(user.getAaid());
+				System.out.println(user.getGender());
+				int generateRandomPassword = (int) (Math.random() * 900000) + 100000;
 //			InetAddress localHost = InetAddress.getLocalHost();
 //			String str1 = localHost.toString();
-			user.setSno(++count);
-			user.setAccountNonLocked(true);
-			user.setPhone(user.getPhone().trim().replaceAll("\\s", ""));
-			user.setPassword(passwordEncoder.encode(Integer.toString(generateRandomPassword)));
-			user.setRepassword(passwordEncoder.encode(Integer.toString(generateRandomPassword)));
-			user.setRole(user.getRole());
-			user.setGender(user.getGender());
-			user.setAccountNonLocked(true);
-			user.setUsername(user.getUsername().toUpperCase());
-			user.setEnabled(true);
-			user.setBank_account_holder_name("NA");
-			user.setBank_account_number(0);
-			user.setBank_name("NA");
-			user.setBase_location("NA");
-			user.setIfsc_code("NA");
-			user.setLaptop_brand("NA");
-			user.setLaptop_id("NA");
-			user.setLaptop_serial_number("NA");
-			user.setEditwho("NA");
-			user.setResume_file_url("NA");
-			if(user.getDesignation().equals("ROLE_MANAGER"))
-			{
-			user.setManager_or_not(true);
-			}
-			else
-			{
-				user.setManager_or_not(false);
-			}
-			user.setStatus("ACTIVE");
-			user.setSystemDateAndTime(new Date());
-			// This Logic Added By AYush Gupta 21 June 2024 For Split -> in Designation
-			String designarionArrowSplit = user.getDesignation();
-
-			// Split the input string by " -> " to get parts
-			String[] parts = designarionArrowSplit.split(" -> ");
-
-			// Check if split produced exactly two parts
-			if (parts.length == 2) {
-				// Single name scenario
-				System.out.println("Extracted Name: " + parts[1]);
-			} else if (parts.length > 2) {
-				// Full name scenario
-				StringBuilder fullName = new StringBuilder();
-				for (int i = 1; i < parts.length; i++) {
-					fullName.append(parts[i]);
-					if (i < parts.length - 1) {
-						fullName.append(" ");
-					}
+				user.setSno(++count);
+				user.setAccountNonLocked(true);
+				user.setPhone(user.getPhone().trim().replaceAll("\\s", ""));
+				user.setPassword(passwordEncoder.encode(Integer.toString(generateRandomPassword)));
+				user.setRepassword(passwordEncoder.encode(Integer.toString(generateRandomPassword)));
+				user.setRole(user.getRole());
+				user.setGender(user.getGender());
+				user.setAccountNonLocked(true);
+				user.setUsername(user.getUsername().toUpperCase());
+				user.setEnabled(true);
+				user.setBank_account_holder_name("NA");
+				user.setBank_account_number(0);
+				user.setBank_name("NA");
+				user.setBase_location("NA");
+				user.setIfsc_code("NA");
+				user.setLaptop_brand("NA");
+				user.setLaptop_id("NA");
+				user.setLaptop_serial_number("NA");
+				user.setEditwho("NA");
+				user.setResume_file_url("NA");
+				if (user.getDesignation().equals("ROLE_MANAGER")) {
+					user.setManager_or_not(true);
+				} else {
+					user.setManager_or_not(false);
 				}
-				user.setDesignation(designarionArrowSplit);
-				System.out.println("Extracted Full Name: " + fullName.toString());
-			} else {
-				// Invalid input format scenario
-				System.out.println("Invalid input format");
-			}
-			String subject = "www.ems.com : Your Crendential Created";
-			String message = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<p>" + "Dear "
-					+ user.getUsername() + "<br>" + "<br>" + "Your Default Password: " + "<b>" + generateRandomPassword
-					+ "</b>" + ",Kindly we request you to please reset this password ." + "</p>" + "</div>";
-			boolean flag = false;
-			if (user.getRole() != null) {
-				if (user.getRole().equals("ROLE_ADMIN")) {
-					Admin admin = new Admin();
-					int admin_last_id = adminDao.getLastId();
-					admin.setAid(++admin_last_id);
-					admin.setEmail(user.getEmail());
-					admin.setSystemDateAndTime(new Date());
-					admin.setPassword(passwordEncoder.encode("admin"));
-					admin.setRole(user.getRole());
+				user.setStatus("ACTIVE");
+				user.setSystemDateAndTime(new Date());
+				// This Logic Added By AYush Gupta 21 June 2024 For Split -> in Designation
+				String designarionArrowSplit = user.getDesignation();
+
+				// Split the input string by " -> " to get parts
+				String[] parts = designarionArrowSplit.split(" -> ");
+
+				// Check if split produced exactly two parts
+				if (parts.length == 2) {
+					// Single name scenario
+					System.out.println("Extracted Name: " + parts[1]);
+				} else if (parts.length > 2) {
+					// Full name scenario
+					StringBuilder fullName = new StringBuilder();
+					for (int i = 1; i < parts.length; i++) {
+						fullName.append(parts[i]);
+						if (i < parts.length - 1) {
+							fullName.append(" ");
+						}
+					}
+					user.setDesignation(designarionArrowSplit);
+					System.out.println("Extracted Full Name: " + fullName.toString());
+				} else {
+					// Invalid input format scenario
+					System.out.println("Invalid input format");
+				}
+				String subject = "www.ems.com : Your Crendential Created";
+				String message = "" + "<!DOCTYPE html>" + "<html lang='en'>" + "<head>" + "    <meta charset='UTF-8'>"
+						+ "    <meta name='viewport' content='width=device-width, initial-scale=1.0'>"
+						+ "    <meta http-equiv='X-UA-Compatible' content='IE=edge'>" + "    <style>"
+						+ "        body { font-family: 'Arial', sans-serif; margin: 0; padding: 0; background-color: #f9f9f9; }"
+						+ "        .wrapper { width: 100%; padding: 40px 0; background-color: #f9f9f9; }"
+						+ "        .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); }"
+						+ "        .header { background-color: #007BFF; padding: 20px; text-align: center; color: #ffffff; border-top-left-radius: 8px; border-top-right-radius: 8px; }"
+						+ "        .header h1 { margin: 0; font-size: 24px; font-weight: normal; }"
+						+ "        .content { padding: 30px; text-align: left; color: #333333; }"
+						+ "        .content p { font-size: 16px; line-height: 1.6; }"
+						+ "        .content .password { font-weight: bold; color: #007BFF; }"
+						+ "        .footer { padding: 20px; text-align: center; font-size: 12px; color: #888; background-color: #f1f1f1; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; }"
+						+ "        .footer a { color: #007BFF; text-decoration: none; }" + "    </style>" + "</head>"
+						+ "<body>" + "    <div class='wrapper'>" + "        <table class='container' align='center'>"
+						+ "            <tr>" + "                <td class='header'>"
+						+ "                    <h1>Password Reset Request</h1>" + "                </td>"
+						+ "            </tr>" + "            <tr>" + "                <td class='content'>"
+						+ "                    <p>Dear " + user.getUsername() + ",</p>"
+						+ "                    <p>Your default password is: <span class='password'>"
+						+ generateRandomPassword + "</span>.</p>"
+						+ "                    <p>We kindly request that you reset this password at your earliest convenience to ensure the security of your account.</p>"
+						+ "                    <p>If you need any help, feel free to contact our support team.</p>"
+						+ "                </td>" + "            </tr>" + "            <tr>"
+						+ "                <td class='footer'>"
+						+ "                    <p>If you didn’t request this password reset, please ignore this email. Need help? <a href='#'>Contact Support</a>.</p>"
+						+ "                </td>" + "            </tr>" + "        </table>" + "    </div>" + "</body>"
+						+ "</html>";
+
+				boolean flag = false;
+				if (user.getRole() != null) {
+					if (user.getRole().equals("ROLE_ADMIN")) {
+						Admin admin = new Admin();
+						int admin_last_id = adminDao.getLastId();
+						admin.setAid(++admin_last_id);
+						admin.setEmail(user.getEmail());
+						admin.setSystemDateAndTime(new Date());
+						admin.setPassword(passwordEncoder.encode("admin"));
+						admin.setRole(user.getRole());
 //					adminDao.save(admin);
-					String to = user.getEmail();
+						String to = user.getEmail();
 //					if (flag) {
 //
 //						user.setDefaultPasswordSent(1);
 //					} else {
 //						user.setDefaultPasswordSent(0);
 //					}
-					int getA = user.getAaid();
-					Optional<Admin> getAdmin = adminDao.findById(getA);
-					Admin adminn = getAdmin.get();
-					user.setAdmin(adminn);
-					admin.getUserList().add(user);
-					User result = userdao.save(user);
-					boolean sentornot = false;
-					System.out.println(result + "---------------");
-					if (result.getEmail() != null) {
-						sentornot = true;
-					}
-					Optional<User> result3 = userdao.findById(result.getId());
-					User user3 = result3.get();
-					System.out.println("___+++++   " + result.getUsername());
-					System.out.println("////////////////" + result);
-					int user_detail_count=userDetailDao.getUserDetailCount();
-					if(user_detail_count>0)
-					{	
-					UserDetail userdetail = new UserDetail();
-					userdetail.setSno(++user_detail_count);
-					userdetail.setId(result.getId());
-					userdetail.setAaid(result.getAaid());
-					userdetail.setAccountNonLocked(true);
-					userdetail.setBank_account_holder_name("NA");
-					userdetail.setBank_account_number(0);
-					userdetail.setBank_name("NA");
-					userdetail.setBase_location("NA");
-					userdetail.setStatus("ACTIVE");
-					userdetail.setDesignation(designarionArrowSplit);
-					userdetail.setAddress(result.getAddress());
-					userdetail.setAlert_message_sent(result.getAlert_message_sent());
-					userdetail.setCountry(result.getCountry());
-					userdetail.setImage_Url(result.getImage_Url());
-					userdetail.setDob(result.getDob());
-					userdetail.setUsername(result.getUsername().toUpperCase());
-					userdetail.setEmail(result.getEmail());
-					userdetail.setTeam("0");
-					userdetail.setEmployeeOnBench(true);
-					userdetail.setImage_Url(result.getImage_Url());
-					userdetail.setDesignation(user.getDesignation());
-					userdetail.setEnabled(result.isEnabled());
-					userdetail.setGender(result.getGender());
-					userdetail.setIpAddress(result.getIpAddress());
-					userdetail.setPhone(result.getPhone());
-					userdetail.setRole(result.getRole());
-					userdetail.setSystemDateAndTime(result.getSystemDateAndTime());
-					userdetail.setAdmin(adminn.getAid());
-					userdetail.setImage_Url(user.getImage_Url());
-					userdetail.setUsername(result.getUsername());
-					userdetail.setPassword(result.getPassword());
-					userdetail.setRepassword(result.getRepassword());
-					userdetail.setIfsc_code("NA");
-					userdetail.setLaptop_serial_number("NA");
-					userdetail.setLaptop_brand("NA");
-					userdetail.setLaptop_id("NA");
-					userdetail.setLaptop_status("NA");
-					userdetail.setEditwho("NA");
-					userdetail.setWho_assign_laptop("NA");
-					userdetail.setReview_rating("NA");
-					userdetail.setManager_or_not(false);		
-					userdetail.setUser(user3);
-					Performance performance = new Performance();
-					performance.setId(user.getId());
-					performance.setJanuary(0);
-					performance.setFebruary(0);
-					performance.setMarch(0);
-					performance.setApril(0);
-					performance.setMay(0);
-					performance.setJune(0);
-					performance.setJuly(0);
-					performance.setAugust(0);
-					performance.setSeptember(0);
-					performance.setOctober(0);
-					performance.setNovember(0);
-					performance.setDecember(0);
-					performance.setYear(currentYear);
-					performancedao.save(performance);
-					userDetailDao.save(userdetail);
-					adminDao.save(admin);
-					}
-					else
-					{
-						UserDetail userdetail = new UserDetail();
-						userdetail.setSno(1);
-						userdetail.setId(result.getId());
-						userdetail.setAaid(result.getAaid());
-						userdetail.setAccountNonLocked(true);
-						userdetail.setBank_account_holder_name("NA");
-						userdetail.setBank_account_number(0);
-						userdetail.setBank_name("NA");
-						userdetail.setBase_location("NA");
-						userdetail.setStatus("ACTIVE");
-						userdetail.setDesignation(designarionArrowSplit);
-						userdetail.setAddress(result.getAddress());
-						userdetail.setAlert_message_sent(result.getAlert_message_sent());
-						userdetail.setCountry(result.getCountry());
-						userdetail.setImage_Url(result.getImage_Url());
-						userdetail.setDob(result.getDob());
-						userdetail.setUsername(result.getUsername().toUpperCase());
-						userdetail.setEmail(result.getEmail());
-						userdetail.setTeam("0");
-						userdetail.setEmployeeOnBench(true);
-						userdetail.setImage_Url(result.getImage_Url());
-						userdetail.setDesignation(user.getDesignation());
-						userdetail.setEnabled(result.isEnabled());
-						userdetail.setGender(result.getGender());
-						userdetail.setIpAddress(result.getIpAddress());
-						userdetail.setPhone(result.getPhone());
-						userdetail.setRole(result.getRole());
-						userdetail.setSystemDateAndTime(result.getSystemDateAndTime());
-						userdetail.setAdmin(adminn.getAid());
-						userdetail.setImage_Url(user.getImage_Url());
-						userdetail.setUsername(result.getUsername());
-						userdetail.setPassword(result.getPassword());
-						userdetail.setRepassword(result.getRepassword());
-						userdetail.setIfsc_code("NA");
-						userdetail.setLaptop_serial_number("NA");
-						userdetail.setLaptop_brand("NA");
-						userdetail.setLaptop_id("NA");
-						userdetail.setLaptop_status("NA");
-						userdetail.setEditwho("NA");
-						userdetail.setWho_assign_laptop("NA");
-						userdetail.setReview_rating("NA");
-						userdetail.setManager_or_not(false);					userdetail.setUser(user3);
-						Performance performance = new Performance();
-						performance.setId(user.getId());
-						performance.setJanuary(0);
-						performance.setFebruary(0);
-						performance.setMarch(0);
-						performance.setApril(0);
-						performance.setMay(0);
-						performance.setJune(0);
-						performance.setJuly(0);
-						performance.setAugust(0);
-						performance.setSeptember(0);
-						performance.setOctober(0);
-						performance.setNovember(0);
-						performance.setDecember(0);
-						performance.setYear(currentYear);
-						performancedao.save(performance);
-						userDetailDao.save(userdetail);
-						adminDao.save(admin);
-					}
-					if (sentornot) {
-						CompletableFuture<Boolean> flagFuture = this.emailService.sendEmail(message, subject, to);
-						flag = flagFuture.get(); // Blocking call to get the result
-						if (flag) {
-							user.setDefaultPasswordSent(true);
-						} else {
-							user.setDefaultPasswordSent(false);
-						}
-						userdao.save(user);
-					}
-					return result;
-				} else if (user.getRole().equals("ROLE_USER") || user.getRole().equals("ROLE_MANAGER")
-						|| user.getRole().equals("ROLE_HR") || user.getRole().equals("ROLE_IT")) {
-					String to = user.getEmail();
-//					System.out.println(flag);
-//					if (flag) {
-//
-//						user.setDefaultPasswordSent(1);
-//					} else {
-//						user.setDefaultPasswordSent(0);
-//					}
-					int user_detail_count=userDetailDao.getUserDetailCount();
-					if(user_detail_count>0)
-					{
-					int getA = user.getAaid();
-					Optional<Admin> getAdmin = adminDao.findById(getA);
-					Admin admin = getAdmin.get();
-					user.setAdmin(admin);
-					admin.getUserList().add(user);
-					User result = userdao.save(user);
-					System.out.println("////////////////" + result);
-					Optional<User> result3 = userdao.findById(result.getId());
-					User user3 = result3.get();
-					boolean sentornot = false;
-					System.out.println(result + "---------------");
-					if (result.getEmail() != null) {
-						sentornot = true;
-					}
-					UserDetail userdetail = new UserDetail();
-					userdetail.setSno(++user_detail_count);
-					userdetail.setId(result.getId());
-					userdetail.setAaid(result.getAaid());
-					userdetail.setAccountNonLocked(true);
-					userdetail.setAddress(result.getAddress());
-					userdetail.setAlert_message_sent(result.getAlert_message_sent());
-					userdetail.setCountry(result.getCountry());
-					userdetail.setDob(result.getDob());
-					userdetail.setDesignation(designarionArrowSplit);
-					userdetail.setEmail(result.getEmail());
-					userdetail.setImage_Url(result.getImage_Url());
-					userdetail.setUsername(result.getUsername());
-					userdetail.setTeam("0");
-					userdetail.setImage_Url(result.getImage_Url());
-					userdetail.setBank_account_holder_name("NA");
-					userdetail.setBank_account_number(0);
-					userdetail.setBank_name("NA");
-					userdetail.setBase_location("NA");
-					userdetail.setEmployeeOnBench(true);
-					userdetail.setDesignation(user.getDesignation());
-					userdetail.setEnabled(result.isEnabled());
-					userdetail.setGender(result.getGender());
-					userdetail.setIpAddress(result.getIpAddress());
-					userdetail.setPhone(result.getPhone());
-					userdetail.setStatus("ACTIVE");
-					userdetail.setRole(result.getRole());
-					userdetail.setAdmin(admin.getAid());
-					userdetail.setPassword(result.getPassword());
-					userdetail.setRepassword(result.getRepassword());
-					userdetail.setLaptop_brand("NA");
-					userdetail.setLaptop_id("NA");
-					userdetail.setLaptop_serial_number("NA");
-					userdetail.setLaptop_status("NA");
-					userdetail.setWho_assign_laptop("NA");
-					userdetail.setReview_rating("NA");
-					if(user.getDesignation().equals("ROLE_MANAGER"))
-					{
-					userdetail.setManager_or_not(true);
-					}
-					else
-					{
-						userdetail.setManager_or_not(false);
-					}
-					userdetail.setSystemDateAndTime(result.getSystemDateAndTime());
-					userdetail.setUser(user3);
-					Performance performance = new Performance();
-					performance.setId(user.getId());
-					performance.setJanuary(0);
-					performance.setFebruary(0);
-					performance.setMarch(0);
-					performance.setApril(0);
-					performance.setMay(0);
-					performance.setJune(0);
-					performance.setJuly(0);
-					performance.setAugust(0);
-					performance.setSeptember(0);
-					performance.setOctober(0);
-					performance.setNovember(0);
-					performance.setDecember(0);
-					performance.setYear(currentYear);
-					performancedao.save(performance);
-					userDetailDao.save(userdetail);
-					if (sentornot) {
-						CompletableFuture<Boolean> flagFuture = this.emailService.sendEmail(message, subject, to);
-						flag = flagFuture.get(); // Blocking call to get the result
-						if (flag) {
-							user.setDefaultPasswordSent(true);
-						} else {
-							user.setDefaultPasswordSent(false);
-						}
-						userdao.save(user);
-					}
-
-					return result;
-				}
-					else
-					{
 						int getA = user.getAaid();
 						Optional<Admin> getAdmin = adminDao.findById(getA);
-						Admin admin = getAdmin.get();
-						user.setAdmin(admin);
+						Admin adminn = getAdmin.get();
+						user.setAdmin(adminn);
 						admin.getUserList().add(user);
 						User result = userdao.save(user);
-						System.out.println("////////////////" + result);
-						Optional<User> result3 = userdao.findById(result.getId());
-						User user3 = result3.get();
 						boolean sentornot = false;
 						System.out.println(result + "---------------");
 						if (result.getEmail() != null) {
 							sentornot = true;
 						}
-						UserDetail userdetail = new UserDetail();
-						userdetail.setSno(1);						userdetail.setId(result.getId());
-						userdetail.setAaid(result.getAaid());
-						userdetail.setAccountNonLocked(true);
-						userdetail.setAddress(result.getAddress());
-						userdetail.setAlert_message_sent(result.getAlert_message_sent());
-						userdetail.setCountry(result.getCountry());
-						userdetail.setDob(result.getDob());
-						userdetail.setDesignation(designarionArrowSplit);
-						userdetail.setEmail(result.getEmail());
-						userdetail.setImage_Url(result.getImage_Url());
-						userdetail.setUsername(result.getUsername());
-						userdetail.setTeam("0");
-						userdetail.setImage_Url(result.getImage_Url());
-						userdetail.setBank_account_holder_name("NA");
-						userdetail.setBank_account_number(0);
-						userdetail.setBank_name("NA");
-						userdetail.setBase_location("NA");
-						userdetail.setEmployeeOnBench(true);
-						userdetail.setDesignation(user.getDesignation());
-						userdetail.setEnabled(result.isEnabled());
-						userdetail.setGender(result.getGender());
-						userdetail.setIpAddress(result.getIpAddress());
-						userdetail.setPhone(result.getPhone());
-						userdetail.setStatus("ACTIVE");
-						userdetail.setRole(result.getRole());
-						userdetail.setAdmin(admin.getAid());
-						userdetail.setPassword(result.getPassword());
-						userdetail.setRepassword(result.getRepassword());
-						userdetail.setLaptop_brand("NA");
-						userdetail.setLaptop_id("NA");
-						userdetail.setLaptop_serial_number("NA");
-						userdetail.setLaptop_status("NA");
-						userdetail.setWho_assign_laptop("NA");
-						userdetail.setReview_rating("NA");
-						if(user.getDesignation().equals("ROLE_MANAGER"))
-						{
-						userdetail.setManager_or_not(true);
-						}
-						else
-						{
+						Optional<User> result3 = userdao.findById(result.getId());
+						User user3 = result3.get();
+						System.out.println("___+++++   " + result.getUsername());
+						System.out.println("////////////////" + result);
+						int user_detail_count = userDetailDao.getUserDetailCount();
+						if (user_detail_count > 0) {
+							UserDetail userdetail = new UserDetail();
+							userdetail.setSno(++user_detail_count);
+							userdetail.setId(result.getId());
+							userdetail.setAaid(result.getAaid());
+							userdetail.setAccountNonLocked(true);
+							userdetail.setBank_account_holder_name("NA");
+							userdetail.setBank_account_number(0);
+							userdetail.setBank_name("NA");
+							userdetail.setBase_location("NA");
+							userdetail.setStatus("ACTIVE");
+							userdetail.setDesignation(designarionArrowSplit);
+							userdetail.setAddress(result.getAddress());
+							userdetail.setAlert_message_sent(result.getAlert_message_sent());
+							userdetail.setCountry(result.getCountry());
+							userdetail.setImage_Url(result.getImage_Url());
+							userdetail.setDob(result.getDob());
+							userdetail.setUsername(result.getUsername().toUpperCase());
+							userdetail.setEmail(result.getEmail());
+							userdetail.setTeam("0");
+							userdetail.setEmployeeOnBench(true);
+							userdetail.setImage_Url(result.getImage_Url());
+							userdetail.setDesignation(user.getDesignation());
+							userdetail.setEnabled(result.isEnabled());
+							userdetail.setGender(result.getGender());
+							userdetail.setIpAddress(result.getIpAddress());
+							userdetail.setPhone(result.getPhone());
+							userdetail.setRole(result.getRole());
+							userdetail.setSystemDateAndTime(result.getSystemDateAndTime());
+							userdetail.setAdmin(adminn.getAid());
+							userdetail.setImage_Url(user.getImage_Url());
+							userdetail.setUsername(result.getUsername());
+							userdetail.setPassword(result.getPassword());
+							userdetail.setRepassword(result.getRepassword());
+							userdetail.setIfsc_code("NA");
+							userdetail.setLaptop_serial_number("NA");
+							userdetail.setLaptop_brand("NA");
+							userdetail.setLaptop_id("NA");
+							userdetail.setLaptop_status("NA");
+							userdetail.setEditwho("NA");
+							userdetail.setWho_assign_laptop("NA");
+							userdetail.setReview_rating("NA");
 							userdetail.setManager_or_not(false);
+							userdetail.setUser(user3);
+							Performance performance = new Performance();
+							performance.setId(user.getId());
+							performance.setJanuary(0);
+							performance.setFebruary(0);
+							performance.setMarch(0);
+							performance.setApril(0);
+							performance.setMay(0);
+							performance.setJune(0);
+							performance.setJuly(0);
+							performance.setAugust(0);
+							performance.setSeptember(0);
+							performance.setOctober(0);
+							performance.setNovember(0);
+							performance.setDecember(0);
+							performance.setYear(currentYear);
+							performancedao.save(performance);
+							userDetailDao.save(userdetail);
+							adminDao.save(admin);
+						} else {
+							UserDetail userdetail = new UserDetail();
+							userdetail.setSno(1);
+							userdetail.setId(result.getId());
+							userdetail.setAaid(result.getAaid());
+							userdetail.setAccountNonLocked(true);
+							userdetail.setBank_account_holder_name("NA");
+							userdetail.setBank_account_number(0);
+							userdetail.setBank_name("NA");
+							userdetail.setBase_location("NA");
+							userdetail.setStatus("ACTIVE");
+							userdetail.setDesignation(designarionArrowSplit);
+							userdetail.setAddress(result.getAddress());
+							userdetail.setAlert_message_sent(result.getAlert_message_sent());
+							userdetail.setCountry(result.getCountry());
+							userdetail.setImage_Url(result.getImage_Url());
+							userdetail.setDob(result.getDob());
+							userdetail.setUsername(result.getUsername().toUpperCase());
+							userdetail.setEmail(result.getEmail());
+							userdetail.setTeam("0");
+							userdetail.setEmployeeOnBench(true);
+							userdetail.setImage_Url(result.getImage_Url());
+							userdetail.setDesignation(user.getDesignation());
+							userdetail.setEnabled(result.isEnabled());
+							userdetail.setGender(result.getGender());
+							userdetail.setIpAddress(result.getIpAddress());
+							userdetail.setPhone(result.getPhone());
+							userdetail.setRole(result.getRole());
+							userdetail.setSystemDateAndTime(result.getSystemDateAndTime());
+							userdetail.setAdmin(adminn.getAid());
+							userdetail.setImage_Url(user.getImage_Url());
+							userdetail.setUsername(result.getUsername());
+							userdetail.setPassword(result.getPassword());
+							userdetail.setRepassword(result.getRepassword());
+							userdetail.setIfsc_code("NA");
+							userdetail.setLaptop_serial_number("NA");
+							userdetail.setLaptop_brand("NA");
+							userdetail.setLaptop_id("NA");
+							userdetail.setLaptop_status("NA");
+							userdetail.setEditwho("NA");
+							userdetail.setWho_assign_laptop("NA");
+							userdetail.setReview_rating("NA");
+							userdetail.setManager_or_not(false);
+							userdetail.setUser(user3);
+							Performance performance = new Performance();
+							performance.setId(user.getId());
+							performance.setJanuary(0);
+							performance.setFebruary(0);
+							performance.setMarch(0);
+							performance.setApril(0);
+							performance.setMay(0);
+							performance.setJune(0);
+							performance.setJuly(0);
+							performance.setAugust(0);
+							performance.setSeptember(0);
+							performance.setOctober(0);
+							performance.setNovember(0);
+							performance.setDecember(0);
+							performance.setYear(currentYear);
+							performancedao.save(performance);
+							userDetailDao.save(userdetail);
+							adminDao.save(admin);
 						}
-						userdetail.setSystemDateAndTime(result.getSystemDateAndTime());
-						userdetail.setUser(user3);
-						Performance performance = new Performance();
-						performance.setId(user.getId());
-						performance.setJanuary(0);
-						performance.setFebruary(0);
-						performance.setMarch(0);
-						performance.setApril(0);
-						performance.setMay(0);
-						performance.setJune(0);
-						performance.setJuly(0);
-						performance.setAugust(0);
-						performance.setSeptember(0);
-						performance.setOctober(0);
-						performance.setNovember(0);
-						performance.setDecember(0);
-						performance.setYear(currentYear);
-						performancedao.save(performance);
-						userDetailDao.save(userdetail);
 						if (sentornot) {
 							CompletableFuture<Boolean> flagFuture = this.emailService.sendEmail(message, subject, to);
 							flag = flagFuture.get(); // Blocking call to get the result
@@ -590,26 +417,210 @@ public class servicelayer {
 							}
 							userdao.save(user);
 						}
-
 						return result;
+					} else if (user.getRole().equals("ROLE_USER") || user.getRole().equals("ROLE_MANAGER")
+							|| user.getRole().equals("ROLE_HR") || user.getRole().equals("ROLE_IT")) {
+						String to = user.getEmail();
+//					System.out.println(flag);
+//					if (flag) {
+//
+//						user.setDefaultPasswordSent(1);
+//					} else {
+//						user.setDefaultPasswordSent(0);
+//					}
+						int user_detail_count = userDetailDao.getUserDetailCount();
+						if (user_detail_count > 0) {
+							int getA = user.getAaid();
+							Optional<Admin> getAdmin = adminDao.findById(getA);
+							Admin admin = getAdmin.get();
+							user.setAdmin(admin);
+							admin.getUserList().add(user);
+							User result = userdao.save(user);
+							System.out.println("////////////////" + result);
+							Optional<User> result3 = userdao.findById(result.getId());
+							User user3 = result3.get();
+							boolean sentornot = false;
+							System.out.println(result + "---------------");
+							if (result.getEmail() != null) {
+								sentornot = true;
+							}
+							UserDetail userdetail = new UserDetail();
+							userdetail.setSno(++user_detail_count);
+							userdetail.setId(result.getId());
+							userdetail.setAaid(result.getAaid());
+							userdetail.setAccountNonLocked(true);
+							userdetail.setAddress(result.getAddress());
+							userdetail.setAlert_message_sent(result.getAlert_message_sent());
+							userdetail.setCountry(result.getCountry());
+							userdetail.setDob(result.getDob());
+							userdetail.setDesignation(designarionArrowSplit);
+							userdetail.setEmail(result.getEmail());
+							userdetail.setImage_Url(result.getImage_Url());
+							userdetail.setUsername(result.getUsername());
+							userdetail.setTeam("0");
+							userdetail.setImage_Url(result.getImage_Url());
+							userdetail.setBank_account_holder_name("NA");
+							userdetail.setBank_account_number(0);
+							userdetail.setBank_name("NA");
+							userdetail.setBase_location("NA");
+							userdetail.setEmployeeOnBench(true);
+							userdetail.setDesignation(user.getDesignation());
+							userdetail.setEnabled(result.isEnabled());
+							userdetail.setGender(result.getGender());
+							userdetail.setIpAddress(result.getIpAddress());
+							userdetail.setPhone(result.getPhone());
+							userdetail.setStatus("ACTIVE");
+							userdetail.setRole(result.getRole());
+							userdetail.setAdmin(admin.getAid());
+							userdetail.setPassword(result.getPassword());
+							userdetail.setRepassword(result.getRepassword());
+							userdetail.setLaptop_brand("NA");
+							userdetail.setLaptop_id("NA");
+							userdetail.setLaptop_serial_number("NA");
+							userdetail.setLaptop_status("NA");
+							userdetail.setWho_assign_laptop("NA");
+							userdetail.setReview_rating("NA");
+							if (user.getDesignation().equals("ROLE_MANAGER")) {
+								userdetail.setManager_or_not(true);
+							} else {
+								userdetail.setManager_or_not(false);
+							}
+							userdetail.setSystemDateAndTime(result.getSystemDateAndTime());
+							userdetail.setUser(user3);
+							Performance performance = new Performance();
+							performance.setId(user.getId());
+							performance.setJanuary(0);
+							performance.setFebruary(0);
+							performance.setMarch(0);
+							performance.setApril(0);
+							performance.setMay(0);
+							performance.setJune(0);
+							performance.setJuly(0);
+							performance.setAugust(0);
+							performance.setSeptember(0);
+							performance.setOctober(0);
+							performance.setNovember(0);
+							performance.setDecember(0);
+							performance.setYear(currentYear);
+							performancedao.save(performance);
+							userDetailDao.save(userdetail);
+							if (sentornot) {
+								CompletableFuture<Boolean> flagFuture = this.emailService.sendEmail(message, subject,
+										to);
+								flag = flagFuture.get(); // Blocking call to get the result
+								if (flag) {
+									user.setDefaultPasswordSent(true);
+								} else {
+									user.setDefaultPasswordSent(false);
+								}
+								userdao.save(user);
+							}
+
+							return result;
+						} else {
+							int getA = user.getAaid();
+							Optional<Admin> getAdmin = adminDao.findById(getA);
+							Admin admin = getAdmin.get();
+							user.setAdmin(admin);
+							admin.getUserList().add(user);
+							User result = userdao.save(user);
+							System.out.println("////////////////" + result);
+							Optional<User> result3 = userdao.findById(result.getId());
+							User user3 = result3.get();
+							boolean sentornot = false;
+							System.out.println(result + "---------------");
+							if (result.getEmail() != null) {
+								sentornot = true;
+							}
+							UserDetail userdetail = new UserDetail();
+							userdetail.setSno(1);
+							userdetail.setId(result.getId());
+							userdetail.setAaid(result.getAaid());
+							userdetail.setAccountNonLocked(true);
+							userdetail.setAddress(result.getAddress());
+							userdetail.setAlert_message_sent(result.getAlert_message_sent());
+							userdetail.setCountry(result.getCountry());
+							userdetail.setDob(result.getDob());
+							userdetail.setDesignation(designarionArrowSplit);
+							userdetail.setEmail(result.getEmail());
+							userdetail.setImage_Url(result.getImage_Url());
+							userdetail.setUsername(result.getUsername());
+							userdetail.setTeam("0");
+							userdetail.setImage_Url(result.getImage_Url());
+							userdetail.setBank_account_holder_name("NA");
+							userdetail.setBank_account_number(0);
+							userdetail.setBank_name("NA");
+							userdetail.setBase_location("NA");
+							userdetail.setEmployeeOnBench(true);
+							userdetail.setDesignation(user.getDesignation());
+							userdetail.setEnabled(result.isEnabled());
+							userdetail.setGender(result.getGender());
+							userdetail.setIpAddress(result.getIpAddress());
+							userdetail.setPhone(result.getPhone());
+							userdetail.setStatus("ACTIVE");
+							userdetail.setRole(result.getRole());
+							userdetail.setAdmin(admin.getAid());
+							userdetail.setPassword(result.getPassword());
+							userdetail.setRepassword(result.getRepassword());
+							userdetail.setLaptop_brand("NA");
+							userdetail.setLaptop_id("NA");
+							userdetail.setLaptop_serial_number("NA");
+							userdetail.setLaptop_status("NA");
+							userdetail.setWho_assign_laptop("NA");
+							userdetail.setReview_rating("NA");
+							if (user.getDesignation().equals("ROLE_MANAGER")) {
+								userdetail.setManager_or_not(true);
+							} else {
+								userdetail.setManager_or_not(false);
+							}
+							userdetail.setSystemDateAndTime(result.getSystemDateAndTime());
+							userdetail.setUser(user3);
+							Performance performance = new Performance();
+							performance.setId(user.getId());
+							performance.setJanuary(0);
+							performance.setFebruary(0);
+							performance.setMarch(0);
+							performance.setApril(0);
+							performance.setMay(0);
+							performance.setJune(0);
+							performance.setJuly(0);
+							performance.setAugust(0);
+							performance.setSeptember(0);
+							performance.setOctober(0);
+							performance.setNovember(0);
+							performance.setDecember(0);
+							performance.setYear(currentYear);
+							performancedao.save(performance);
+							userDetailDao.save(userdetail);
+							if (sentornot) {
+								CompletableFuture<Boolean> flagFuture = this.emailService.sendEmail(message, subject,
+										to);
+								flag = flagFuture.get(); // Blocking call to get the result
+								if (flag) {
+									user.setDefaultPasswordSent(true);
+								} else {
+									user.setDefaultPasswordSent(false);
+								}
+								userdao.save(user);
+							}
+
+							return result;
+						}
+					} else {
+						throw new Exception("User Not Registered in ADMIN");
 					}
-				} else {
-					throw new Exception("User Not Registered in ADMIN");
-				}
 //				String to = user.getEmail();
 //				flag = this.emailService.sendEmail(message, subject, to);
-			} else {
-				throw new Exception("User Role Cannot Be Empty");
-			}
+				} else {
+					throw new Exception("User Role Cannot Be Empty");
+				}
 //		}
 //		else
 //		{
 //			throw new Exception("Team Id Not Valid");	
 //		}
-		}
-		}
-		else
-		{
+			}
+		} else {
 			Optional<User> option = userdao.findByUserNameAndPhone(user.getEmail(), user.getPhone());
 			Optional<Admin> option1 = adminDao.findByUserName(user.getEmail());
 			if (option.isPresent()) {
@@ -643,12 +654,9 @@ public class servicelayer {
 				user.setLaptop_serial_number("NA");
 				user.setEditwho("NA");
 				user.setResume_file_url("NA");
-				if(user.getDesignation().equals("ROLE_MANAGER"))
-				{
-				user.setManager_or_not(true);
-				}
-				else
-				{
+				if (user.getDesignation().equals("ROLE_MANAGER")) {
+					user.setManager_or_not(true);
+				} else {
 					user.setManager_or_not(false);
 				}
 				user.setStatus("ACTIVE");
@@ -679,9 +687,34 @@ public class servicelayer {
 					System.out.println("Invalid input format");
 				}
 				String subject = "www.ems.com : Your Crendential Created";
-				String message = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<p>" + "Dear "
-						+ user.getUsername() + "<br>" + "<br>" + "Your Default Password: " + "<b>" + generateRandomPassword
-						+ "</b>" + ",Kindly we request you to please reset this password ." + "</p>" + "</div>";
+				String message = "" + "<!DOCTYPE html>" + "<html lang='en'>" + "<head>" + "    <meta charset='UTF-8'>"
+						+ "    <meta name='viewport' content='width=device-width, initial-scale=1.0'>"
+						+ "    <meta http-equiv='X-UA-Compatible' content='IE=edge'>" + "    <style>"
+						+ "        body { font-family: 'Arial', sans-serif; margin: 0; padding: 0; background-color: #f9f9f9; }"
+						+ "        .wrapper { width: 100%; padding: 40px 0; background-color: #f9f9f9; }"
+						+ "        .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); }"
+						+ "        .header { background-color: #007BFF; padding: 20px; text-align: center; color: #ffffff; border-top-left-radius: 8px; border-top-right-radius: 8px; }"
+						+ "        .header h1 { margin: 0; font-size: 24px; font-weight: normal; }"
+						+ "        .content { padding: 30px; text-align: left; color: #333333; }"
+						+ "        .content p { font-size: 16px; line-height: 1.6; }"
+						+ "        .content .password { font-weight: bold; color: #007BFF; }"
+						+ "        .footer { padding: 20px; text-align: center; font-size: 12px; color: #888; background-color: #f1f1f1; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; }"
+						+ "        .footer a { color: #007BFF; text-decoration: none; }" + "    </style>" + "</head>"
+						+ "<body>" + "    <div class='wrapper'>" + "        <table class='container' align='center'>"
+						+ "            <tr>" + "                <td class='header'>"
+						+ "                    <h1>Password Reset Request</h1>" + "                </td>"
+						+ "            </tr>" + "            <tr>" + "                <td class='content'>"
+						+ "                    <p>Dear " + user.getUsername() + ",</p>"
+						+ "                    <p>Your default password is: <span class='password'>"
+						+ generateRandomPassword + "</span>.</p>"
+						+ "                    <p>We kindly request that you reset this password at your earliest convenience to ensure the security of your account.</p>"
+						+ "                    <p>If you need any help, feel free to contact our support team.</p>"
+						+ "                </td>" + "            </tr>" + "            <tr>"
+						+ "                <td class='footer'>"
+						+ "                    <p>If you didn’t request this password reset, please ignore this email. Need help? <a href='#'>Contact Support</a>.</p>"
+						+ "                </td>" + "            </tr>" + "        </table>" + "    </div>" + "</body>"
+						+ "</html>";
+
 				boolean flag = false;
 				if (user.getRole() != null) {
 					if (user.getRole().equals("ROLE_ADMIN")) {
@@ -695,7 +728,7 @@ public class servicelayer {
 //						adminDao.save(admin);
 						String to = user.getEmail();
 //						if (flag) {
-	//
+						//
 //							user.setDefaultPasswordSent(1);
 //						} else {
 //							user.setDefaultPasswordSent(0);
@@ -755,7 +788,8 @@ public class servicelayer {
 						userdetail.setEditwho("NA");
 						userdetail.setWho_assign_laptop("NA");
 						userdetail.setReview_rating("NA");
-						userdetail.setManager_or_not(false);					userdetail.setUser(user3);
+						userdetail.setManager_or_not(false);
+						userdetail.setUser(user3);
 						Performance performance = new Performance();
 						performance.setId(user.getId());
 						performance.setJanuary(0);
@@ -790,7 +824,7 @@ public class servicelayer {
 						String to = user.getEmail();
 //						System.out.println(flag);
 //						if (flag) {
-	//
+						//
 //							user.setDefaultPasswordSent(1);
 //						} else {
 //							user.setDefaultPasswordSent(0);
@@ -844,12 +878,9 @@ public class servicelayer {
 						userdetail.setLaptop_status("NA");
 						userdetail.setWho_assign_laptop("NA");
 						userdetail.setReview_rating("NA");
-						if(user.getDesignation().equals("ROLE_MANAGER"))
-						{
-						userdetail.setManager_or_not(true);
-						}
-						else
-						{
+						if (user.getDesignation().equals("ROLE_MANAGER")) {
+							userdetail.setManager_or_not(true);
+						} else {
 							userdetail.setManager_or_not(false);
 						}
 						userdetail.setSystemDateAndTime(result.getSystemDateAndTime());
@@ -2944,7 +2975,7 @@ public class servicelayer {
 			} else {
 				order_Info.setSno(1);
 			}
-			System.out.println("ORDER SNO "+last_id);
+			System.out.println("ORDER SNO " + last_id);
 			User user1 = user.get();
 			amt = order.get("amount");
 			int paise_to_rupee = amt / 100;
@@ -3304,19 +3335,44 @@ public class servicelayer {
 		generatePdfInvoice(invoicePath, payment, subscriptionPlans, companyInfo, user);
 //	        sendInvoiceEmail("customer@example.com", "Your Invoice", "Please find attached your invoice.", invoicePath);
 		String subject = "Subscription Confirmation: Welcome to [Pro Plus]!";
-		String message = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<p>" + "Dear "
-				+ user.getUsername() + "<br>" + "<br>"
-				+ "Thank you for subscribing to [Pro Plus]! We are excited to have you on board." + "<br>" + "<br>"
-				+ "Payment Success" + "<br>" + "<br>" + "Username : " + "<b>" + user.getUsername() + "</b>" + "<br>"
-				+ "Email : " + "<b>" + payment.getEmail() + "</b>" + "<br>" + "Payment Time : " + "<b>"
-				+ payment.getSystem_date_and_time() + "</b>" + "<br>" + "License Number : " + "<b>"
-				+ payment.getLicense_number() + "</b>" + "</b>" + "<br>" + "License Status : "
-				+ "<b style='color:green'>" + payment.getLicense_status() + "</b>" + "<br>" + "Payment Status : "
-				+ "<b style='text-transform: uppercase; color: green'>" + payment.getStatus() + "</b>" + "<br>"
-				+ "<br>" + "For your convenience, we have attached the invoice for your subscription." + "<br>" + "<br>"
-				+ "If you have any questions or need assistance, please do not hesitate to reach out to our support team at [Support Contact Info]."
-				+ "<br>" + "<br>" + "Thank you for choosing [WWW EMS COM]. We look forward to serving you!" + "<br>"
-				+ "<br>" + "Best regards," + "<br>" + "Payment Team " + "</p>" + "</div>";
+		String message = "" + "<!DOCTYPE html>" + "<html lang='en'>" + "<head>" + "    <meta charset='UTF-8'>"
+				+ "    <meta name='viewport' content='width=device-width, initial-scale=1.0'>"
+				+ "    <meta http-equiv='X-UA-Compatible' content='IE=edge'>" + "    <style>"
+				+ "        body { font-family: Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 0; }"
+				+ "        .email-wrapper { width: 100%; padding: 40px 0; display: flex; justify-content: center; align-items: center; background-color: #f4f6f9; }"
+				+ "        .email-container { max-width: 600px; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1); text-align: center; margin: 0 auto; }"
+				+ "        .email-header { background-color: #007bff; color: white; text-align: center; padding: 20px; font-size: 24px; font-weight: bold; }"
+				+ "        .email-body { padding: 30px; text-align: left; }"
+				+ "        .email-body p { margin: 0 0 20px 0; line-height: 1.6; font-size: 16px; }"
+				+ "        .email-body .success-box { background-color: #e8f4f8; border-left: 4px solid #28a745; padding: 20px; margin-bottom: 30px; border-radius: 5px; }"
+				+ "        .email-body .success-box h2 { margin: 0; color: #28a745; font-size: 22px; }"
+				+ "        .email-body .details-box { padding: 20px; border-radius: 5px; border: 1px solid #ddd; background-color: #fafafa; margin-bottom: 30px; }"
+				+ "        .email-body .details-box p { font-size: 15px; margin: 8px 0; }"
+				+ "        .email-footer { background-color: #f7f9fc; padding: 20px; text-align: center; font-size: 14px; color: #555555; }"
+				+ "        .email-footer a { color: #007bff; text-decoration: none; font-weight: bold; }"
+				+ "        .email-footer img { max-width: 100px; margin-top: 10px; }" + "    </style>" + "</head>"
+				+ "<body>" + "    <div class='email-wrapper'>" + "        <div class='email-container'>"
+				+ "            <div class='email-header'>Subscription Confirmation</div>"
+				+ "            <div class='email-body'>" + "                <div class='success-box'>"
+				+ "                    <h2>Payment Successful!</h2>" + "                </div>"
+				+ "                <p>Dear " + user.getUsername() + ",</p>"
+				+ "                <p>Thank you for subscribing to <strong>[Pro Plus]</strong>! We're thrilled to have you on board.</p>"
+				+ "                <div class='details-box'>" + "                    <p><strong>Username:</strong> "
+				+ user.getUsername() + "</p>" + "                    <p><strong>Email:</strong> " + payment.getEmail()
+				+ "</p>" + "                    <p><strong>Payment Time:</strong> " + payment.getSystem_date_and_time()
+				+ "</p>" + "                    <p><strong>License Number:</strong> " + payment.getLicense_number()
+				+ "</p>" + "                    <p><strong>License Status:</strong> <span style='color: green;'>"
+				+ payment.getLicense_status() + "</span></p>"
+				+ "                    <p><strong>Payment Status:</strong> <span style='color: green; text-transform: uppercase;'>"
+				+ payment.getStatus() + "</span></p>" + "                </div>"
+				+ "                <p>We have attached the invoice for your subscription. If you have any questions, feel free to contact our support team at [Support Contact Info].</p>"
+				+ "                <p>Thank you for choosing <strong>[WWW EMS COM]</strong>. We look forward to serving you!</p>"
+				+ "                <p>Best regards,<br>Payment Team</p>" + "            </div>"
+				+ "            <div class='email-footer'>"
+				+ "                <p>Need help? <a href='#'>Contact Support</a> or visit our <a href='#'>Help Center</a>.</p>"
+				+ "                <img src='https://via.placeholder.com/100x50.png?text=Logo' alt='Company Logo'>"
+				+ "            </div>" + "        </div>" + "    </div>" + "</body>" + "</html>";
+
 		CompletableFuture<Boolean> flagFuture = paymentSucessEmailService.sendEmail(invoicePath, message, subject,
 				user.getEmail());
 		try {
@@ -3645,302 +3701,288 @@ public class servicelayer {
 	public List<UserDetail> searchEmployees(String term) {
 		return userDetailDao.findByNameContainingOrEmailContainingOrIdContaining(term);
 	}
-	
-@Transactional
-public void Archive_Disabled_Old_User_Job()
-{
-	try
-	{
-	List<User> get_user=userdao.Get_ALL_Disabled_Old_User_Job();
-	ListIterator<User> Get_ALL_Disabled_Old_User_Iterate=get_user.listIterator();
-	while(Get_ALL_Disabled_Old_User_Iterate.hasNext())
-	{
-		ArchiveDisabledUser archiveDisabledUser=new ArchiveDisabledUser();
-		int count=archiveDisabledUserDao.getArchiveUserCount();
-		if(count>0)
-		{
-			User user_info_get=Get_ALL_Disabled_Old_User_Iterate.next();
-			int getLastSno=archiveDisabledUserDao.getLastSno();
-			archiveDisabledUser.setSno(++getLastSno);
-			archiveDisabledUser.setId(user_info_get.getId());
-			archiveDisabledUser.setUsername(user_info_get.getUsername());
-			archiveDisabledUser.setState(user_info_get.getState());
-			archiveDisabledUser.setEmail(user_info_get.getEmail());
-			archiveDisabledUser.setPassword(user_info_get.getPassword());
-			archiveDisabledUser.setRepassword(user_info_get.getRepassword());
-			archiveDisabledUser.setPhone(user_info_get.getPhone());
-			archiveDisabledUser.setUser_status(user_info_get.isUser_status());
-			archiveDisabledUser.setGender(user_info_get.getGender());
-			archiveDisabledUser.setDob(user_info_get.getDob());
-			archiveDisabledUser.setEnabled(user_info_get.isEnabled());
-			archiveDisabledUser.setAddress(user_info_get.getAddress());
-			archiveDisabledUser.setCountry(user_info_get.getCountry());
-			archiveDisabledUser.setImage_Url(user_info_get.getImage_Url());
-			archiveDisabledUser.setExperience(user_info_get.getExperience());
-			archiveDisabledUser.setSkills(user_info_get.getSkills());
-		    archiveDisabledUser.setSperationDate(user_info_get.getSperationDate());
-		    archiveDisabledUser.setLastWorkingDay(user_info_get.getLastWorkingDay());
-		    archiveDisabledUser.setEditdate(user_info_get.getEditdate());
-		    archiveDisabledUser.setEditwho(user_info_get.getEditwho());
-			archiveDisabledUser.setNewUserActiveOrInactive(user_info_get.isNewUserActiveOrInactive());
-			archiveDisabledUser.setStatus(user_info_get.getStatus());
-			archiveDisabledUser.setLast_failed_attempt(user_info_get.getLast_failed_attempt());
-			archiveDisabledUser.setAlert_message_sent(user_info_get.getAlert_message_sent());
-			archiveDisabledUser.setSystemDateAndTime(user_info_get.getSystemDateAndTime());
-			archiveDisabledUser.setAaid(user_info_get.getAaid());
-			archiveDisabledUser.setRole(user_info_get.getRole());
-			archiveDisabledUser.setIpAddress(user_info_get.getIpAddress());
-			archiveDisabledUser.setAccountNonLocked(user_info_get.isAccountNonLocked());
-			archiveDisabledUser.setFailedAttempt(user_info_get.getFailedAttempt());
-			archiveDisabledUser.setLockDateAndTime(user_info_get.getLockDateAndTime());
-			archiveDisabledUser.setExpirelockDateAndTime(user_info_get.getExpirelockDateAndTime());
-			archiveDisabledUser.setDefaultPasswordSent(user_info_get.isDefaultPasswordSent());
-			archiveDisabledUser.setSession_Id(user_info_get.getSession_Id());
-			archiveDisabledUser.setExcel_Download(user_info_get.isExcel_Download());
-			archiveDisabledUser.setDownload_count(user_info_get.getDownload_count());
-			archiveDisabledUser.setLaptop_id(user_info_get.getLaptop_id());
-			archiveDisabledUser.setLaptop_brand(user_info_get.getLaptop_brand());
-			archiveDisabledUser.setLaptop_assign_date(user_info_get.getLaptop_assign_date());
-			archiveDisabledUser.setLaptop_serial_number(user_info_get.getLaptop_serial_number());
-			archiveDisabledUser.setBank_account_holder_name(user_info_get.getBank_account_holder_name());
-			archiveDisabledUser.setBank_account_number(user_info_get.getBank_account_number());
-			archiveDisabledUser.setIfsc_code(user_info_get.getIfsc_code());
-			archiveDisabledUser.setBank_name(user_info_get.getBank_name());
-			archiveDisabledUser.setResume_file_url(user_info_get.getResume_file_url());
-			archiveDisabledUser.setDesignation(user_info_get.getDesignation());
-			archiveDisabledUser.setBase_location(user_info_get.getBase_location());
-			archiveDisabledUser.setManager_or_not(user_info_get.isManager_or_not());
-			archiveDisabledUser.setTeam(user_info_get.getTeam());
-			archiveDisabledUser.setCompany(user_info_get.getCompany());
-			archiveDisabledUser.setCompany_id(user_info_get.getCompany_id());
-			archiveDisabledUserDao.save(archiveDisabledUser);
-			userdao.deleteById(user_info_get.getId());
+
+	@Transactional
+	public void Archive_Disabled_Old_User_Job() {
+		try {
+			List<User> get_user = userdao.Get_ALL_Disabled_Old_User_Job();
+			ListIterator<User> Get_ALL_Disabled_Old_User_Iterate = get_user.listIterator();
+			while (Get_ALL_Disabled_Old_User_Iterate.hasNext()) {
+				ArchiveDisabledUser archiveDisabledUser = new ArchiveDisabledUser();
+				int count = archiveDisabledUserDao.getArchiveUserCount();
+				if (count > 0) {
+					User user_info_get = Get_ALL_Disabled_Old_User_Iterate.next();
+					int getLastSno = archiveDisabledUserDao.getLastSno();
+					archiveDisabledUser.setSno(++getLastSno);
+					archiveDisabledUser.setId(user_info_get.getId());
+					archiveDisabledUser.setUsername(user_info_get.getUsername());
+					archiveDisabledUser.setState(user_info_get.getState());
+					archiveDisabledUser.setEmail(user_info_get.getEmail());
+					archiveDisabledUser.setPassword(user_info_get.getPassword());
+					archiveDisabledUser.setRepassword(user_info_get.getRepassword());
+					archiveDisabledUser.setPhone(user_info_get.getPhone());
+					archiveDisabledUser.setUser_status(user_info_get.isUser_status());
+					archiveDisabledUser.setGender(user_info_get.getGender());
+					archiveDisabledUser.setDob(user_info_get.getDob());
+					archiveDisabledUser.setEnabled(user_info_get.isEnabled());
+					archiveDisabledUser.setAddress(user_info_get.getAddress());
+					archiveDisabledUser.setCountry(user_info_get.getCountry());
+					archiveDisabledUser.setImage_Url(user_info_get.getImage_Url());
+					archiveDisabledUser.setExperience(user_info_get.getExperience());
+					archiveDisabledUser.setSkills(user_info_get.getSkills());
+					archiveDisabledUser.setSperationDate(user_info_get.getSperationDate());
+					archiveDisabledUser.setLastWorkingDay(user_info_get.getLastWorkingDay());
+					archiveDisabledUser.setEditdate(user_info_get.getEditdate());
+					archiveDisabledUser.setEditwho(user_info_get.getEditwho());
+					archiveDisabledUser.setNewUserActiveOrInactive(user_info_get.isNewUserActiveOrInactive());
+					archiveDisabledUser.setStatus(user_info_get.getStatus());
+					archiveDisabledUser.setLast_failed_attempt(user_info_get.getLast_failed_attempt());
+					archiveDisabledUser.setAlert_message_sent(user_info_get.getAlert_message_sent());
+					archiveDisabledUser.setSystemDateAndTime(user_info_get.getSystemDateAndTime());
+					archiveDisabledUser.setAaid(user_info_get.getAaid());
+					archiveDisabledUser.setRole(user_info_get.getRole());
+					archiveDisabledUser.setIpAddress(user_info_get.getIpAddress());
+					archiveDisabledUser.setAccountNonLocked(user_info_get.isAccountNonLocked());
+					archiveDisabledUser.setFailedAttempt(user_info_get.getFailedAttempt());
+					archiveDisabledUser.setLockDateAndTime(user_info_get.getLockDateAndTime());
+					archiveDisabledUser.setExpirelockDateAndTime(user_info_get.getExpirelockDateAndTime());
+					archiveDisabledUser.setDefaultPasswordSent(user_info_get.isDefaultPasswordSent());
+					archiveDisabledUser.setSession_Id(user_info_get.getSession_Id());
+					archiveDisabledUser.setExcel_Download(user_info_get.isExcel_Download());
+					archiveDisabledUser.setDownload_count(user_info_get.getDownload_count());
+					archiveDisabledUser.setLaptop_id(user_info_get.getLaptop_id());
+					archiveDisabledUser.setLaptop_brand(user_info_get.getLaptop_brand());
+					archiveDisabledUser.setLaptop_assign_date(user_info_get.getLaptop_assign_date());
+					archiveDisabledUser.setLaptop_serial_number(user_info_get.getLaptop_serial_number());
+					archiveDisabledUser.setBank_account_holder_name(user_info_get.getBank_account_holder_name());
+					archiveDisabledUser.setBank_account_number(user_info_get.getBank_account_number());
+					archiveDisabledUser.setIfsc_code(user_info_get.getIfsc_code());
+					archiveDisabledUser.setBank_name(user_info_get.getBank_name());
+					archiveDisabledUser.setResume_file_url(user_info_get.getResume_file_url());
+					archiveDisabledUser.setDesignation(user_info_get.getDesignation());
+					archiveDisabledUser.setBase_location(user_info_get.getBase_location());
+					archiveDisabledUser.setManager_or_not(user_info_get.isManager_or_not());
+					archiveDisabledUser.setTeam(user_info_get.getTeam());
+					archiveDisabledUser.setCompany(user_info_get.getCompany());
+					archiveDisabledUser.setCompany_id(user_info_get.getCompany_id());
+					archiveDisabledUserDao.save(archiveDisabledUser);
+					userdao.deleteById(user_info_get.getId());
+				} else {
+					User user_info_get = Get_ALL_Disabled_Old_User_Iterate.next();
+					archiveDisabledUser.setSno(1);
+					archiveDisabledUser.setId(user_info_get.getId());
+					archiveDisabledUser.setUsername(user_info_get.getUsername());
+					archiveDisabledUser.setState(user_info_get.getState());
+					archiveDisabledUser.setEmail(user_info_get.getEmail());
+					archiveDisabledUser.setPassword(user_info_get.getPassword());
+					archiveDisabledUser.setRepassword(user_info_get.getRepassword());
+					archiveDisabledUser.setPhone(user_info_get.getPhone());
+					archiveDisabledUser.setUser_status(user_info_get.isUser_status());
+					archiveDisabledUser.setGender(user_info_get.getGender());
+					archiveDisabledUser.setDob(user_info_get.getDob());
+					archiveDisabledUser.setEnabled(user_info_get.isEnabled());
+					archiveDisabledUser.setAddress(user_info_get.getAddress());
+					archiveDisabledUser.setCountry(user_info_get.getCountry());
+					archiveDisabledUser.setImage_Url(user_info_get.getImage_Url());
+					archiveDisabledUser.setExperience(user_info_get.getExperience());
+					archiveDisabledUser.setSkills(user_info_get.getSkills());
+					archiveDisabledUser.setSperationDate(user_info_get.getSperationDate());
+					archiveDisabledUser.setLastWorkingDay(user_info_get.getLastWorkingDay());
+					archiveDisabledUser.setEditdate(user_info_get.getEditdate());
+					archiveDisabledUser.setEditwho(user_info_get.getEditwho());
+					archiveDisabledUser.setNewUserActiveOrInactive(user_info_get.isNewUserActiveOrInactive());
+					archiveDisabledUser.setStatus(user_info_get.getStatus());
+					archiveDisabledUser.setLast_failed_attempt(user_info_get.getLast_failed_attempt());
+					archiveDisabledUser.setAlert_message_sent(user_info_get.getAlert_message_sent());
+					archiveDisabledUser.setSystemDateAndTime(user_info_get.getSystemDateAndTime());
+					archiveDisabledUser.setAaid(user_info_get.getAaid());
+					archiveDisabledUser.setRole(user_info_get.getRole());
+					archiveDisabledUser.setIpAddress(user_info_get.getIpAddress());
+					archiveDisabledUser.setAccountNonLocked(user_info_get.isAccountNonLocked());
+					archiveDisabledUser.setFailedAttempt(user_info_get.getFailedAttempt());
+					archiveDisabledUser.setLockDateAndTime(user_info_get.getLockDateAndTime());
+					archiveDisabledUser.setExpirelockDateAndTime(user_info_get.getExpirelockDateAndTime());
+					archiveDisabledUser.setDefaultPasswordSent(user_info_get.isDefaultPasswordSent());
+					archiveDisabledUser.setSession_Id(user_info_get.getSession_Id());
+					archiveDisabledUser.setExcel_Download(user_info_get.isExcel_Download());
+					archiveDisabledUser.setDownload_count(user_info_get.getDownload_count());
+					archiveDisabledUser.setLaptop_id(user_info_get.getLaptop_id());
+					archiveDisabledUser.setLaptop_brand(user_info_get.getLaptop_brand());
+					archiveDisabledUser.setLaptop_assign_date(user_info_get.getLaptop_assign_date());
+					archiveDisabledUser.setLaptop_serial_number(user_info_get.getLaptop_serial_number());
+					archiveDisabledUser.setBank_account_holder_name(user_info_get.getBank_account_holder_name());
+					archiveDisabledUser.setBank_account_number(user_info_get.getBank_account_number());
+					archiveDisabledUser.setIfsc_code(user_info_get.getIfsc_code());
+					archiveDisabledUser.setBank_name(user_info_get.getBank_name());
+					archiveDisabledUser.setResume_file_url(user_info_get.getResume_file_url());
+					archiveDisabledUser.setDesignation(user_info_get.getDesignation());
+					archiveDisabledUser.setBase_location(user_info_get.getBase_location());
+					archiveDisabledUser.setManager_or_not(user_info_get.isManager_or_not());
+					archiveDisabledUser.setTeam(user_info_get.getTeam());
+					archiveDisabledUser.setCompany(user_info_get.getCompany());
+					archiveDisabledUser.setCompany_id(user_info_get.getCompany_id());
+					archiveDisabledUserDao.save(archiveDisabledUser);
+					userdao.deleteById(user_info_get.getId());
+				}
 			}
-		else
-		{
-			User user_info_get=Get_ALL_Disabled_Old_User_Iterate.next();
-			archiveDisabledUser.setSno(1);
-			archiveDisabledUser.setId(user_info_get.getId());
-			archiveDisabledUser.setUsername(user_info_get.getUsername());
-			archiveDisabledUser.setState(user_info_get.getState());
-			archiveDisabledUser.setEmail(user_info_get.getEmail());
-			archiveDisabledUser.setPassword(user_info_get.getPassword());
-			archiveDisabledUser.setRepassword(user_info_get.getRepassword());
-			archiveDisabledUser.setPhone(user_info_get.getPhone());
-			archiveDisabledUser.setUser_status(user_info_get.isUser_status());
-			archiveDisabledUser.setGender(user_info_get.getGender());
-			archiveDisabledUser.setDob(user_info_get.getDob());
-			archiveDisabledUser.setEnabled(user_info_get.isEnabled());
-			archiveDisabledUser.setAddress(user_info_get.getAddress());
-			archiveDisabledUser.setCountry(user_info_get.getCountry());
-			archiveDisabledUser.setImage_Url(user_info_get.getImage_Url());
-			archiveDisabledUser.setExperience(user_info_get.getExperience());
-			archiveDisabledUser.setSkills(user_info_get.getSkills());
-		    archiveDisabledUser.setSperationDate(user_info_get.getSperationDate());
-		    archiveDisabledUser.setLastWorkingDay(user_info_get.getLastWorkingDay());
-		    archiveDisabledUser.setEditdate(user_info_get.getEditdate());
-		    archiveDisabledUser.setEditwho(user_info_get.getEditwho());
-			archiveDisabledUser.setNewUserActiveOrInactive(user_info_get.isNewUserActiveOrInactive());
-			archiveDisabledUser.setStatus(user_info_get.getStatus());
-			archiveDisabledUser.setLast_failed_attempt(user_info_get.getLast_failed_attempt());
-			archiveDisabledUser.setAlert_message_sent(user_info_get.getAlert_message_sent());
-			archiveDisabledUser.setSystemDateAndTime(user_info_get.getSystemDateAndTime());
-			archiveDisabledUser.setAaid(user_info_get.getAaid());
-			archiveDisabledUser.setRole(user_info_get.getRole());
-			archiveDisabledUser.setIpAddress(user_info_get.getIpAddress());
-			archiveDisabledUser.setAccountNonLocked(user_info_get.isAccountNonLocked());
-			archiveDisabledUser.setFailedAttempt(user_info_get.getFailedAttempt());
-			archiveDisabledUser.setLockDateAndTime(user_info_get.getLockDateAndTime());
-			archiveDisabledUser.setExpirelockDateAndTime(user_info_get.getExpirelockDateAndTime());
-			archiveDisabledUser.setDefaultPasswordSent(user_info_get.isDefaultPasswordSent());
-			archiveDisabledUser.setSession_Id(user_info_get.getSession_Id());
-			archiveDisabledUser.setExcel_Download(user_info_get.isExcel_Download());
-			archiveDisabledUser.setDownload_count(user_info_get.getDownload_count());
-			archiveDisabledUser.setLaptop_id(user_info_get.getLaptop_id());
-			archiveDisabledUser.setLaptop_brand(user_info_get.getLaptop_brand());
-			archiveDisabledUser.setLaptop_assign_date(user_info_get.getLaptop_assign_date());
-			archiveDisabledUser.setLaptop_serial_number(user_info_get.getLaptop_serial_number());
-			archiveDisabledUser.setBank_account_holder_name(user_info_get.getBank_account_holder_name());
-			archiveDisabledUser.setBank_account_number(user_info_get.getBank_account_number());
-			archiveDisabledUser.setIfsc_code(user_info_get.getIfsc_code());
-			archiveDisabledUser.setBank_name(user_info_get.getBank_name());
-			archiveDisabledUser.setResume_file_url(user_info_get.getResume_file_url());
-			archiveDisabledUser.setDesignation(user_info_get.getDesignation());
-			archiveDisabledUser.setBase_location(user_info_get.getBase_location());
-			archiveDisabledUser.setManager_or_not(user_info_get.isManager_or_not());
-			archiveDisabledUser.setTeam(user_info_get.getTeam());
-			archiveDisabledUser.setCompany(user_info_get.getCompany());
-			archiveDisabledUser.setCompany_id(user_info_get.getCompany_id());
-			archiveDisabledUserDao.save(archiveDisabledUser);
-			userdao.deleteById(user_info_get.getId());
+			jobrunning("Archive_Disabled_Old_User_Job");
+		} catch (Exception e) {
+			jobDao.getJobRunningTimeInterrupted("Archive_Disabled_Old_User_Job");
+			String exceptionAsString = e.toString();
+			// Get the current class
+			Class<?> currentClass = servicelayer.class;
+
+			// Get the name of the class
+			String className = currentClass.getName();
+			String errorMessage = e.getMessage();
+			StackTraceElement[] stackTrace = e.getStackTrace();
+			String methodName = stackTrace[0].getMethodName();
+			int lineNumber = stackTrace[0].getLineNumber();
+			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+
 		}
 	}
-	jobrunning("Archive_Disabled_Old_User_Job");
-}
-	catch (Exception e) {
-		jobDao.getJobRunningTimeInterrupted("Archive_Disabled_Old_User_Job");
-		String exceptionAsString = e.toString();
-		// Get the current class
-		Class<?> currentClass = servicelayer.class;
 
-		// Get the name of the class
-		String className = currentClass.getName();
-		String errorMessage = e.getMessage();
-		StackTraceElement[] stackTrace = e.getStackTrace();
-		String methodName = stackTrace[0].getMethodName();
-		int lineNumber = stackTrace[0].getLineNumber();
-		System.out.println("METHOD NAME " + methodName + " " + lineNumber);
-		insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
-
-	}
-}
-
-@Transactional
-public void Archive_Disabled_Old_UserDetail_Job()
-{
-	try
-	{
-	List<UserDetail> get_user=userDetailDao.Get_ALL_Disabled_Old_UserDetail_Job();
-	ListIterator<UserDetail> Get_ALL_Disabled_Old_User_Iterate=get_user.listIterator();
-	while(Get_ALL_Disabled_Old_User_Iterate.hasNext())
-	{
-		int count=archiveDisabledUserDetailDao.getArchiveUserCount();
-		ArchiveDisabledUserDetail archiveDisabledUserDetail=new ArchiveDisabledUserDetail();
-		if(count>0)
-		{
-			UserDetail user_info_get=Get_ALL_Disabled_Old_User_Iterate.next();
-			int getLastSno=archiveDisabledUserDetailDao.getLastSno();
-			archiveDisabledUserDetail.setSno(++getLastSno);
-			archiveDisabledUserDetail.setId(user_info_get.getId());
-			archiveDisabledUserDetail.setUsername(user_info_get.getUsername());
+	@Transactional
+	public void Archive_Disabled_Old_UserDetail_Job() {
+		try {
+			List<UserDetail> get_user = userDetailDao.Get_ALL_Disabled_Old_UserDetail_Job();
+			ListIterator<UserDetail> Get_ALL_Disabled_Old_User_Iterate = get_user.listIterator();
+			while (Get_ALL_Disabled_Old_User_Iterate.hasNext()) {
+				int count = archiveDisabledUserDetailDao.getArchiveUserCount();
+				ArchiveDisabledUserDetail archiveDisabledUserDetail = new ArchiveDisabledUserDetail();
+				if (count > 0) {
+					UserDetail user_info_get = Get_ALL_Disabled_Old_User_Iterate.next();
+					int getLastSno = archiveDisabledUserDetailDao.getLastSno();
+					archiveDisabledUserDetail.setSno(++getLastSno);
+					archiveDisabledUserDetail.setId(user_info_get.getId());
+					archiveDisabledUserDetail.setUsername(user_info_get.getUsername());
 //			archiveDisabledUserDetail.setState(user_info_get.getState());
-			archiveDisabledUserDetail.setEmail(user_info_get.getEmail());
-			archiveDisabledUserDetail.setPassword(user_info_get.getPassword());
-			archiveDisabledUserDetail.setRepassword(user_info_get.getRepassword());
-			archiveDisabledUserDetail.setPhone(user_info_get.getPhone());
-			archiveDisabledUserDetail.setUser_status(user_info_get.isUser_status());
-			archiveDisabledUserDetail.setGender(user_info_get.getGender());
-			archiveDisabledUserDetail.setDob(user_info_get.getDob());
-			archiveDisabledUserDetail.setEnabled(user_info_get.isEnabled());
-			archiveDisabledUserDetail.setAddress(user_info_get.getAddress());
-			archiveDisabledUserDetail.setCountry(user_info_get.getCountry());
-			archiveDisabledUserDetail.setImage_Url(user_info_get.getImage_Url());
-			archiveDisabledUserDetail.setExperience(user_info_get.getExperience());
-			archiveDisabledUserDetail.setSkills(user_info_get.getSkills());
+					archiveDisabledUserDetail.setEmail(user_info_get.getEmail());
+					archiveDisabledUserDetail.setPassword(user_info_get.getPassword());
+					archiveDisabledUserDetail.setRepassword(user_info_get.getRepassword());
+					archiveDisabledUserDetail.setPhone(user_info_get.getPhone());
+					archiveDisabledUserDetail.setUser_status(user_info_get.isUser_status());
+					archiveDisabledUserDetail.setGender(user_info_get.getGender());
+					archiveDisabledUserDetail.setDob(user_info_get.getDob());
+					archiveDisabledUserDetail.setEnabled(user_info_get.isEnabled());
+					archiveDisabledUserDetail.setAddress(user_info_get.getAddress());
+					archiveDisabledUserDetail.setCountry(user_info_get.getCountry());
+					archiveDisabledUserDetail.setImage_Url(user_info_get.getImage_Url());
+					archiveDisabledUserDetail.setExperience(user_info_get.getExperience());
+					archiveDisabledUserDetail.setSkills(user_info_get.getSkills());
 //		    archiveDisabledUserDetail.setSperationDate(user_info_get.getSperationDate());
-		    archiveDisabledUserDetail.setLastWorkingDay(user_info_get.getLastWorkingDay());
-		    archiveDisabledUserDetail.setEditdate(user_info_get.getEditdate());
-		    archiveDisabledUserDetail.setEditwho(user_info_get.getEditwho());
+					archiveDisabledUserDetail.setLastWorkingDay(user_info_get.getLastWorkingDay());
+					archiveDisabledUserDetail.setEditdate(user_info_get.getEditdate());
+					archiveDisabledUserDetail.setEditwho(user_info_get.getEditwho());
 //			archiveDisabledUserDetail.setNewUserActiveOrInactive(user_info_get.isNewUserActiveOrInactive());
-			archiveDisabledUserDetail.setStatus(user_info_get.getStatus());
+					archiveDisabledUserDetail.setStatus(user_info_get.getStatus());
 //			archiveDisabledUserDetail.setLast_failed_attempt(user_info_get.getLast_failed_attempt());
-			archiveDisabledUserDetail.setAlert_message_sent(user_info_get.getAlert_message_sent());
-			archiveDisabledUserDetail.setSystemDateAndTime(user_info_get.getSystemDateAndTime());
-			archiveDisabledUserDetail.setAaid(user_info_get.getAaid());
-			archiveDisabledUserDetail.setRole(user_info_get.getRole());
-			archiveDisabledUserDetail.setIpAddress(user_info_get.getIpAddress());
-			archiveDisabledUserDetail.setAccountNonLocked(user_info_get.isAccountNonLocked());
-			archiveDisabledUserDetail.setFailedAttempt(user_info_get.getFailedAttempt());
-			archiveDisabledUserDetail.setLockDateAndTime(user_info_get.getLockDateAndTime());
-			archiveDisabledUserDetail.setExpirelockDateAndTime(user_info_get.getExpirelockDateAndTime());
+					archiveDisabledUserDetail.setAlert_message_sent(user_info_get.getAlert_message_sent());
+					archiveDisabledUserDetail.setSystemDateAndTime(user_info_get.getSystemDateAndTime());
+					archiveDisabledUserDetail.setAaid(user_info_get.getAaid());
+					archiveDisabledUserDetail.setRole(user_info_get.getRole());
+					archiveDisabledUserDetail.setIpAddress(user_info_get.getIpAddress());
+					archiveDisabledUserDetail.setAccountNonLocked(user_info_get.isAccountNonLocked());
+					archiveDisabledUserDetail.setFailedAttempt(user_info_get.getFailedAttempt());
+					archiveDisabledUserDetail.setLockDateAndTime(user_info_get.getLockDateAndTime());
+					archiveDisabledUserDetail.setExpirelockDateAndTime(user_info_get.getExpirelockDateAndTime());
 //			archiveDisabledUserDetail.setDefaultPasswordSent(user_info_get.isDefaultPasswordSent());
 //			archiveDisabledUserDetail.setSession_Id(user_info_get.getSession_Id());
 //			archiveDisabledUserDetail.setExcel_Download(user_info_get.isExcel_Download());
 //			archiveDisabledUserDetail.setDownload_count(user_info_get.getDownload_count());
-			archiveDisabledUserDetail.setLaptop_id(user_info_get.getLaptop_id());
-			archiveDisabledUserDetail.setLaptop_brand(user_info_get.getLaptop_brand());
-			archiveDisabledUserDetail.setLaptop_assign_date(user_info_get.getLaptop_assign_date());
-			archiveDisabledUserDetail.setLaptop_serial_number(user_info_get.getLaptop_serial_number());
-			archiveDisabledUserDetail.setBank_account_holder_name(user_info_get.getBank_account_holder_name());
-			archiveDisabledUserDetail.setBank_account_number(user_info_get.getBank_account_number());
-			archiveDisabledUserDetail.setIfsc_code(user_info_get.getIfsc_code());
-			archiveDisabledUserDetail.setBank_name(user_info_get.getBank_name());
-			archiveDisabledUserDetail.setResume_file_url(user_info_get.getResume_file_url());
-			archiveDisabledUserDetail.setDesignation(user_info_get.getDesignation());
-			archiveDisabledUserDetail.setBase_location(user_info_get.getBase_location());
-			archiveDisabledUserDetail.setManager_or_not(user_info_get.isManager_or_not());
-			archiveDisabledUserDetail.setTeam(user_info_get.getTeam());
+					archiveDisabledUserDetail.setLaptop_id(user_info_get.getLaptop_id());
+					archiveDisabledUserDetail.setLaptop_brand(user_info_get.getLaptop_brand());
+					archiveDisabledUserDetail.setLaptop_assign_date(user_info_get.getLaptop_assign_date());
+					archiveDisabledUserDetail.setLaptop_serial_number(user_info_get.getLaptop_serial_number());
+					archiveDisabledUserDetail.setBank_account_holder_name(user_info_get.getBank_account_holder_name());
+					archiveDisabledUserDetail.setBank_account_number(user_info_get.getBank_account_number());
+					archiveDisabledUserDetail.setIfsc_code(user_info_get.getIfsc_code());
+					archiveDisabledUserDetail.setBank_name(user_info_get.getBank_name());
+					archiveDisabledUserDetail.setResume_file_url(user_info_get.getResume_file_url());
+					archiveDisabledUserDetail.setDesignation(user_info_get.getDesignation());
+					archiveDisabledUserDetail.setBase_location(user_info_get.getBase_location());
+					archiveDisabledUserDetail.setManager_or_not(user_info_get.isManager_or_not());
+					archiveDisabledUserDetail.setTeam(user_info_get.getTeam());
 //			archiveDisabledUserDetail.setCompany(user_info_get.getCompany());
 //			archiveDisabledUserDetail.setCompany_id(user_info_get.getCompany_id());
-			archiveDisabledUserDetailDao.save(archiveDisabledUserDetail);
-			userDetailDao.deleteById(user_info_get.getId());
-			}
-		else
-		{
-			UserDetail user_info_get=Get_ALL_Disabled_Old_User_Iterate.next();
-			archiveDisabledUserDetail.setSno(1);
-			archiveDisabledUserDetail.setId(user_info_get.getId());
-			archiveDisabledUserDetail.setUsername(user_info_get.getUsername());
+					archiveDisabledUserDetailDao.save(archiveDisabledUserDetail);
+					userDetailDao.deleteById(user_info_get.getId());
+				} else {
+					UserDetail user_info_get = Get_ALL_Disabled_Old_User_Iterate.next();
+					archiveDisabledUserDetail.setSno(1);
+					archiveDisabledUserDetail.setId(user_info_get.getId());
+					archiveDisabledUserDetail.setUsername(user_info_get.getUsername());
 //			archiveDisabledUserDetail.setState(user_info_get.getState());
-			archiveDisabledUserDetail.setEmail(user_info_get.getEmail());
-			archiveDisabledUserDetail.setPassword(user_info_get.getPassword());
-			archiveDisabledUserDetail.setRepassword(user_info_get.getRepassword());
-			archiveDisabledUserDetail.setPhone(user_info_get.getPhone());
-			archiveDisabledUserDetail.setUser_status(user_info_get.isUser_status());
-			archiveDisabledUserDetail.setGender(user_info_get.getGender());
-			archiveDisabledUserDetail.setDob(user_info_get.getDob());
-			archiveDisabledUserDetail.setEnabled(user_info_get.isEnabled());
-			archiveDisabledUserDetail.setAddress(user_info_get.getAddress());
-			archiveDisabledUserDetail.setCountry(user_info_get.getCountry());
-			archiveDisabledUserDetail.setImage_Url(user_info_get.getImage_Url());
-			archiveDisabledUserDetail.setExperience(user_info_get.getExperience());
-			archiveDisabledUserDetail.setSkills(user_info_get.getSkills());
+					archiveDisabledUserDetail.setEmail(user_info_get.getEmail());
+					archiveDisabledUserDetail.setPassword(user_info_get.getPassword());
+					archiveDisabledUserDetail.setRepassword(user_info_get.getRepassword());
+					archiveDisabledUserDetail.setPhone(user_info_get.getPhone());
+					archiveDisabledUserDetail.setUser_status(user_info_get.isUser_status());
+					archiveDisabledUserDetail.setGender(user_info_get.getGender());
+					archiveDisabledUserDetail.setDob(user_info_get.getDob());
+					archiveDisabledUserDetail.setEnabled(user_info_get.isEnabled());
+					archiveDisabledUserDetail.setAddress(user_info_get.getAddress());
+					archiveDisabledUserDetail.setCountry(user_info_get.getCountry());
+					archiveDisabledUserDetail.setImage_Url(user_info_get.getImage_Url());
+					archiveDisabledUserDetail.setExperience(user_info_get.getExperience());
+					archiveDisabledUserDetail.setSkills(user_info_get.getSkills());
 //		    archiveDisabledUserDetail.setSperationDate(user_info_get.getSperationDate());
-		    archiveDisabledUserDetail.setLastWorkingDay(user_info_get.getLastWorkingDay());
-		    archiveDisabledUserDetail.setEditdate(user_info_get.getEditdate());
-		    archiveDisabledUserDetail.setEditwho(user_info_get.getEditwho());
+					archiveDisabledUserDetail.setLastWorkingDay(user_info_get.getLastWorkingDay());
+					archiveDisabledUserDetail.setEditdate(user_info_get.getEditdate());
+					archiveDisabledUserDetail.setEditwho(user_info_get.getEditwho());
 //			archiveDisabledUserDetail.setNewUserActiveOrInactive(user_info_get.isNewUserActiveOrInactive());
-			archiveDisabledUserDetail.setStatus(user_info_get.getStatus());
+					archiveDisabledUserDetail.setStatus(user_info_get.getStatus());
 //			archiveDisabledUserDetail.setLast_failed_attempt(user_info_get.getLast_failed_attempt());
-			archiveDisabledUserDetail.setAlert_message_sent(user_info_get.getAlert_message_sent());
-			archiveDisabledUserDetail.setSystemDateAndTime(user_info_get.getSystemDateAndTime());
-			archiveDisabledUserDetail.setAaid(user_info_get.getAaid());
-			archiveDisabledUserDetail.setRole(user_info_get.getRole());
-			archiveDisabledUserDetail.setIpAddress(user_info_get.getIpAddress());
-			archiveDisabledUserDetail.setAccountNonLocked(user_info_get.isAccountNonLocked());
-			archiveDisabledUserDetail.setFailedAttempt(user_info_get.getFailedAttempt());
-			archiveDisabledUserDetail.setLockDateAndTime(user_info_get.getLockDateAndTime());
-			archiveDisabledUserDetail.setExpirelockDateAndTime(user_info_get.getExpirelockDateAndTime());
+					archiveDisabledUserDetail.setAlert_message_sent(user_info_get.getAlert_message_sent());
+					archiveDisabledUserDetail.setSystemDateAndTime(user_info_get.getSystemDateAndTime());
+					archiveDisabledUserDetail.setAaid(user_info_get.getAaid());
+					archiveDisabledUserDetail.setRole(user_info_get.getRole());
+					archiveDisabledUserDetail.setIpAddress(user_info_get.getIpAddress());
+					archiveDisabledUserDetail.setAccountNonLocked(user_info_get.isAccountNonLocked());
+					archiveDisabledUserDetail.setFailedAttempt(user_info_get.getFailedAttempt());
+					archiveDisabledUserDetail.setLockDateAndTime(user_info_get.getLockDateAndTime());
+					archiveDisabledUserDetail.setExpirelockDateAndTime(user_info_get.getExpirelockDateAndTime());
 //			archiveDisabledUserDetail.setDefaultPasswordSent(user_info_get.isDefaultPasswordSent());
 //			archiveDisabledUserDetail.setSession_Id(user_info_get.getSession_Id());
 //			archiveDisabledUserDetail.setExcel_Download(user_info_get.isExcel_Download());
 //			archiveDisabledUserDetail.setDownload_count(user_info_get.getDownload_count());
-			archiveDisabledUserDetail.setLaptop_id(user_info_get.getLaptop_id());
-			archiveDisabledUserDetail.setLaptop_brand(user_info_get.getLaptop_brand());
-			archiveDisabledUserDetail.setLaptop_assign_date(user_info_get.getLaptop_assign_date());
-			archiveDisabledUserDetail.setLaptop_serial_number(user_info_get.getLaptop_serial_number());
-			archiveDisabledUserDetail.setBank_account_holder_name(user_info_get.getBank_account_holder_name());
-			archiveDisabledUserDetail.setBank_account_number(user_info_get.getBank_account_number());
-			archiveDisabledUserDetail.setIfsc_code(user_info_get.getIfsc_code());
-			archiveDisabledUserDetail.setBank_name(user_info_get.getBank_name());
-			archiveDisabledUserDetail.setResume_file_url(user_info_get.getResume_file_url());
-			archiveDisabledUserDetail.setDesignation(user_info_get.getDesignation());
-			archiveDisabledUserDetail.setBase_location(user_info_get.getBase_location());
-			archiveDisabledUserDetail.setManager_or_not(user_info_get.isManager_or_not());
-			archiveDisabledUserDetail.setTeam(user_info_get.getTeam());
+					archiveDisabledUserDetail.setLaptop_id(user_info_get.getLaptop_id());
+					archiveDisabledUserDetail.setLaptop_brand(user_info_get.getLaptop_brand());
+					archiveDisabledUserDetail.setLaptop_assign_date(user_info_get.getLaptop_assign_date());
+					archiveDisabledUserDetail.setLaptop_serial_number(user_info_get.getLaptop_serial_number());
+					archiveDisabledUserDetail.setBank_account_holder_name(user_info_get.getBank_account_holder_name());
+					archiveDisabledUserDetail.setBank_account_number(user_info_get.getBank_account_number());
+					archiveDisabledUserDetail.setIfsc_code(user_info_get.getIfsc_code());
+					archiveDisabledUserDetail.setBank_name(user_info_get.getBank_name());
+					archiveDisabledUserDetail.setResume_file_url(user_info_get.getResume_file_url());
+					archiveDisabledUserDetail.setDesignation(user_info_get.getDesignation());
+					archiveDisabledUserDetail.setBase_location(user_info_get.getBase_location());
+					archiveDisabledUserDetail.setManager_or_not(user_info_get.isManager_or_not());
+					archiveDisabledUserDetail.setTeam(user_info_get.getTeam());
 //			archiveDisabledUserDetail.setCompany(user_info_get.getCompany());
 //			archiveDisabledUserDetail.setCompany_id(user_info_get.getCompany_id());
-			archiveDisabledUserDetailDao.save(archiveDisabledUserDetail);
-			userDetailDao.deleteById(user_info_get.getId());
+					archiveDisabledUserDetailDao.save(archiveDisabledUserDetail);
+					userDetailDao.deleteById(user_info_get.getId());
+				}
+			}
+			jobrunning("Archive_Disabled_Old_UserDetail_Job");
+		} catch (Exception e) {
+			jobDao.getJobRunningTimeInterrupted("Archive_Disabled_Old_UserDetail_Job");
+			String exceptionAsString = e.toString();
+			// Get the current class
+			Class<?> currentClass = servicelayer.class;
+
+			// Get the name of the class
+			String className = currentClass.getName();
+			String errorMessage = e.getMessage();
+			StackTraceElement[] stackTrace = e.getStackTrace();
+			String methodName = stackTrace[0].getMethodName();
+			int lineNumber = stackTrace[0].getLineNumber();
+			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+
 		}
-	}
-	jobrunning("Archive_Disabled_Old_UserDetail_Job");
-	}
-	catch (Exception e) {
-		jobDao.getJobRunningTimeInterrupted("Archive_Disabled_Old_UserDetail_Job");
-		String exceptionAsString = e.toString();
-		// Get the current class
-		Class<?> currentClass = servicelayer.class;
-
-		// Get the name of the class
-		String className = currentClass.getName();
-		String errorMessage = e.getMessage();
-		StackTraceElement[] stackTrace = e.getStackTrace();
-		String methodName = stackTrace[0].getMethodName();
-		int lineNumber = stackTrace[0].getLineNumber();
-		System.out.println("METHOD NAME " + methodName + " " + lineNumber);
-		insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
-
-	}
 	}
 }

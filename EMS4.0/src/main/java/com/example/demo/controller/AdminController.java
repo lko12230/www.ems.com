@@ -1215,10 +1215,43 @@ public class AdminController {
 //			EMSMAIN.id_with_username.put(user1.getId(), username);
 //			servicelayer.sentMessage2(to, subject, username, lastdate, cc);
 			String subject = "Seperation Request EMPID: EMPID" + user1.getId();
-			String message = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<p>" + "Dear " + user1.getUsername()
-					+ "<br>" + "<br>" + "Your Resignation Request Accepted and your last working day is " + "<b>"
-					+ lastdate + "</b>" + "<br><br>" + "All the best for your future endavours" + "<br>"
-					+ "HR Team " + "</p>" + "</div>";
+			String message = "" +
+				    "<!DOCTYPE html>" +
+				    "<html lang='en'>" +
+				    "<head>" +
+				    "    <meta charset='UTF-8'>" +
+				    "    <meta name='viewport' content='width=device-width, initial-scale=1.0'>" +
+				    "    <meta http-equiv='X-UA-Compatible' content='IE=edge'>" +
+				    "    <style>" +
+				    "        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; }" +
+				    "        .email-container { max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); }" +
+				    "        .header { background-color: #007BFF; padding: 20px; text-align: center; color: #ffffff; border-top-left-radius: 8px; border-top-right-radius: 8px; }" +
+				    "        .header h1 { margin: 0; font-size: 24px; }" +
+				    "        .content { padding: 30px; color: #333333; line-height: 1.6; }" +
+				    "        .content p { font-size: 16px; margin: 0 0 20px 0; }" +
+				    "        .content .highlight { font-weight: bold; color: #007BFF; }" +
+				    "        .footer { padding: 20px; text-align: center; font-size: 12px; color: #888888; background-color: #f1f1f1; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; }" +
+				    "    </style>" +
+				    "</head>" +
+				    "<body>" +
+				    "    <div class='email-container'>" +
+				    "        <div class='header'>" +
+				    "            <h1>Resignation Accepted</h1>" +
+				    "        </div>" +
+				    "        <div class='content'>" +
+				    "            <p>Dear " + user1.getUsername() + ",</p>" +
+				    "            <p>Your resignation request has been accepted, and your last working day is <span class='highlight'>" + lastdate + "</span>.</p>" +
+				    "            <p>We want to take this opportunity to thank you for your contributions and wish you all the best for your future endeavors.</p>" +
+				    "            <p>Sincerely,</p>" +
+				    "            <p><strong>HR Team</strong></p>" +
+				    "        </div>" +
+				    "        <div class='footer'>" +
+				    "            <p>If you have any questions, feel free to reach out to us at any time.</p>" +
+				    "        </div>" +
+				    "    </div>" +
+				    "</body>" +
+				    "</html>";
+
 			CompletableFuture<Boolean> flagFuture = this.emailService1.sendEmail(message, subject, to, cc);
 		    
 		    // This will block until the result is available
