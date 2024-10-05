@@ -1101,7 +1101,7 @@ public class ITcontroller {
 			lastdate = user1.getLastWorkingDay();
 			System.out.println("}}}}}}}}}}}}}}} " + lastdate);
 			session.setAttribute("message", new Message("Your last working day is " + lastdate, "alert-success"));
-			String username = user1.getUsername();
+//			String username = user1.getUsername();
 			String to = user1.getEmail();
 			int find = user1.getAaid();
 			Optional<Admin> admin = adminDao.findById(find);

@@ -1601,13 +1601,56 @@ public class AdminController {
 	            Optional<User> findUserByEmail=userdao.findByUserName(to);
 	            User getUserByEmail = findUserByEmail.get();
 	            String username = getUserByEmail.getUsername();
-	            String message = "<div style='border:1px solid #e2e2e2;padding:20px'>" +
-	                    "<p>Dear " + username +
-	                    "<br><br>Please find attached the login history report." +
-	                    "<br><br>EMS<br><b>For more information visit our website</b>" +
-	                    "<br>https://wwwemscom-production.up.railway.app/" +
-	                    "</p>" +
-	                    "</div>";
+	            String message = "" +
+	            	    "<!DOCTYPE html>" +
+	            	    "<html lang='en'>" +
+	            	    "<head>" +
+	            	    "    <meta charset='UTF-8'>" +
+	            	    "    <meta name='viewport' content='width=device-width, initial-scale=1.0'>" +
+	            	    "    <style>" +
+	            	    "        body { font-family: Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 0; }" +
+	            	    "        .email-wrapper { width: 100%; height: 100vh; display: flex; justify-content: center; align-items: center; }" +
+	            	    "        .email-container { max-width: 600px; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1); text-align: center; padding: 20px; }" +
+	            	    "        .email-header { background-color: #007bff; color: white; text-align: center; padding: 20px; font-size: 24px; font-weight: bold; border-radius: 8px 8px 0 0; }" +
+	            	    "        .email-body { padding: 20px; text-align: left; }" +
+	            	    "        .email-body p { margin: 0 0 20px; line-height: 1.6; font-size: 16px; color: #333; }" +
+	            	    "        .highlight { background-color: #e8f4f8; border-left: 4px solid #007bff; padding: 15px; margin-bottom: 30px; border-radius: 5px; }" +
+	            	    "        .footer { margin-top: 20px; text-align: center; font-size: 14px; color: #555555; }" +
+	            	    "        .footer a { color: #007bff; text-decoration: none; font-weight: bold; }" +
+	            	    "        .colored-logo { font-size: 16px; }" +
+	            	    "    </style>" +
+	            	    "</head>" +
+	            	    "<body>" +
+	            	    "    <div class='email-wrapper'>" +
+	            	    "        <div class='email-container'>" +
+	            	    "            <div class='email-header'>" +
+	            	    "                <strong>Login History Report</strong>" +
+	            	    "            </div>" +
+	            	    "            <div class='email-body'>" +
+	            	    "                <div class='highlight'>" +
+	            	    "                    <p>Dear " + username + ",</p>" +
+	            	    "                    <p>Please find attached the login history report.</p>" +
+	            	    "                </div>" +
+	            	    "                <p>We appreciate your engagement with our platform. Your security and activity are important to us.</p>" +
+	            	    "                <p>In this report, you will find detailed information about your login attempts, including dates, times, and IP addresses.</p>" +
+	            	    "                <p>If you notice any unusual activity, please contact us immediately.</p>" +
+	            	    "                <p>For more information, visit our website:</p>" +
+	            	    "                <p><a href='https://wwwemscom-production.up.railway.app/' style='color: #007bff;'>https://wwwemscom-production.up.railway.app/</a></p>" +
+	            	    "            </div>" +
+	            	    "            <div class='footer'>" +
+	            	    "                <p>Thank you for being a valued member of our community!</p>" +
+	            	    "                <p class='colored-logo'>" +
+	            	    "                    <span class='colored-char' style='color: rgb(66, 133, 244);'>w</span><span class='colored-char' style='color: rgb(255, 0, 0);'>w</span><span class='colored-char' style='color: rgb(255, 165, 0);'>w</span><span class='colored-char' style='color: rgb(0, 0, 255);'>.</span><span class='colored-char' style='color: rgb(60, 179, 113);'>e</span><span class='colored-char' style='color: rgb(255, 0, 0);'>m</span><span class='colored-char' style='color: rgb(0, 0, 255);'>s</span><span class='colored-char' style='color: rgb(255, 0, 0);'>.</span><span class='colored-char' style='color: rgb(255, 165, 0);'>c</span><span class='colored-char' style='color: rgb(0, 0, 255);'>o</span><span class='colored-char' style='color: rgb(255, 0, 0);'>m</span>" +
+	            	    "                </p>" +
+	            	    "                <p>Need assistance? <a href='#'>Contact Support</a></p>" +
+	            	    "            </div>" +
+	            	    "        </div>" +
+	            	    "    </div>" +
+	            	    "</body>" +
+	            	    "</html>";
+
+
+
 
 	            CompletableFuture<Boolean> flagFuture = loginHistoryExportEmail.sendEmail(generatedExcelPath, message, subject, to);
 	            Boolean isSent = flagFuture.get(); // Blocking call to get the result
