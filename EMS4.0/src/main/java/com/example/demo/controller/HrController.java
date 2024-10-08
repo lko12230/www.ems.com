@@ -35,8 +35,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.dao.UserDetailDao;
-import com.example.demo.dao.Userdao;
-import com.example.demo.dao.adminDao;
+import com.example.demo.dao.UserDao;
+import com.example.demo.dao.AdminDao;
 import com.example.demo.entities.Admin;
 import com.example.demo.entities.Error_Log;
 import com.example.demo.entities.Performance;
@@ -44,7 +44,7 @@ import com.example.demo.entities.User;
 import com.example.demo.entities.UserDetail;
 import com.example.demo.helper.Message;
 import com.example.demo.service.SeperationEmailService;
-import com.example.demo.service.servicelayer;
+import com.example.demo.service.Servicelayer;
 
 @Controller
 @RequestMapping("/hr")
@@ -53,15 +53,15 @@ import com.example.demo.service.servicelayer;
 public class HrController {
 
 	@Autowired
-	private Userdao userdao;
+	private UserDao userdao;
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 	@Autowired
-	private servicelayer servicelayer;
+	private Servicelayer servicelayer;
 	@Autowired
 	private UserDetailDao userDetailDao;
 	@Autowired
-	private adminDao adminDao;
+	private AdminDao adminDao;
 	@Autowired
 	private SeperationEmailService emailService1;
 

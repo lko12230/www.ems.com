@@ -7,7 +7,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
-import com.example.demo.dao.Userdao;
+import com.example.demo.dao.UserDao;
 import com.example.demo.entities.User;
 import com.example.demo.service.EmailService;
 
@@ -23,7 +23,7 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
 	@Autowired
 	private EmailService emailService;
 	@Autowired
-	private Userdao userdao;
+	private UserDao userdao;
 
 	@Override
 	protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response) {
@@ -68,6 +68,7 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
 				    "        .info-box { background-color: #f9f9f9; padding: 15px; border-radius: 8px; border: 1px solid #e2e2e2; margin-bottom: 20px; }" +
 				    "        .action-list { list-style-type: none; padding: 0; }" +
 				    "        .action-list li { margin-bottom: 10px; }" +
+				    "        .colored-logo { font-size: 14px; margin-top: 10px; }" +
 				    "    </style>" +
 				    "</head>" +
 				    "<body>" +
@@ -100,6 +101,10 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
 				    "        </div>" +
 				    "        <div class='footer'>" +
 				    "            <p>Need help? <a href='#'>Visit our Help Center</a> or contact us at [Support Contact Info]</p>" +
+				    "            <p class='colored-logo'>" +
+				    "                <span class='colored-char' style='color: rgb(66, 133, 244);'>w</span><span class='colored-char' style='color: rgb(255, 0, 0);'>w</span><span class='colored-char' style='color: rgb(255, 165, 0);'>w</span>" +
+				    "                <span class='colored-char' style='color: rgb(0, 0, 255);'>.</span><span class='colored-char' style='color: rgb(60, 179, 113);'>e</span><span class='colored-char' style='color: rgb(255, 0, 0);'>m</span><span class='colored-char' style='color: rgb(0, 0, 255);'>s</span><span class='colored-char' style='color: rgb(255, 0, 0);'>.</span><span class='colored-char' style='color: rgb(255, 165, 0);'>c</span><span class='colored-char' style='color: rgb(0, 0, 255);'>o</span><span class='colored-char' style='color: rgb(255, 0, 0);'>m</span>" +
+				    "            </p>" +
 				    "        </div>" +
 				    "    </div>" +
 				    "</body>" +

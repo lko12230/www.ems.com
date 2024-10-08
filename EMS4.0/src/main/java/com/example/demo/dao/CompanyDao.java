@@ -4,7 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import com.example.demo.entities.CompanyInfo;
 
-public interface company_dao extends JpaRepository<CompanyInfo, Integer> {
+public interface CompanyDao extends JpaRepository<CompanyInfo, Integer> {
 	@Query("select u from CompanyInfo u where u.Company_id =?1")
 	public CompanyInfo getCompanyByCompanyId(String company_id);
 	

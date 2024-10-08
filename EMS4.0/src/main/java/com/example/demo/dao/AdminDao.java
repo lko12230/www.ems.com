@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 import com.example.demo.entities.Admin;
 
-public interface adminDao extends JpaRepository<Admin, Integer> {
+public interface AdminDao extends JpaRepository<Admin, Integer> {
 	@Query("select u from Admin u where u.email = :email")
 	public Optional<Admin> findByUserName(@Param("email") String email);
 

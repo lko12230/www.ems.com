@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.example.demo.entities.Error_Log;
 
-public interface error_log_dao extends JpaRepository<Error_Log, Integer> {
+public interface ErrorLogDao extends JpaRepository<Error_Log, Integer> {
 	@Query(value = "delete from error_log where error_date <= (NOW() - INTERVAL 7 DAY)", nativeQuery = true)
 	@Modifying
 	public void deleteOldErrorLog();

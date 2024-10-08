@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.example.demo.entities.Team;
 
-public interface Teamdao extends JpaRepository<Team, Integer> {
+public interface TeamDao extends JpaRepository<Team, Integer> {
 //	@Query("select u.team_id from Team u")
 //	public List<String> getAllDataFromTeam();
 

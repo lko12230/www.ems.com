@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.example.demo.entities.Downtime_Maintaince;
 
-public interface Downtime_Maintaince_Dao extends JpaRepository<Downtime_Maintaince, Integer>{
+public interface DowntimeMaintaince_Dao extends JpaRepository<Downtime_Maintaince, Integer>{
 	@Query("select u.status from Downtime_Maintaince u where u.downtime_description=?1")
 	public String server_status_check(String downtime_description);
 

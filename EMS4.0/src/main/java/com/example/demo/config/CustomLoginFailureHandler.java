@@ -16,8 +16,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
 
-import com.example.demo.dao.Downtime_Maintaince_Dao;
-import com.example.demo.dao.Userdao;
+import com.example.demo.dao.DowntimeMaintaince_Dao;
+import com.example.demo.dao.UserDao;
 import com.example.demo.entities.User;
 import com.example.demo.service.EmailService;
 import com.example.demo.service.UserServices;
@@ -27,11 +27,11 @@ import com.example.demo.service.UserServices;
 public class CustomLoginFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
 	@Autowired
-	private Userdao userdao;
+	private UserDao userdao;
 	@Autowired
 	private UserServices userServices;
 	@Autowired
-	private Downtime_Maintaince_Dao downtime_Maintaince_Dao;
+	private DowntimeMaintaince_Dao downtime_Maintaince_Dao;
 //	@Autowired
 //	private UserDetailDao userDetailDao;
 	@Autowired

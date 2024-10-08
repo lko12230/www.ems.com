@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class SeperationEmailService {
 	@Autowired
-	private servicelayer servicelayer;
+	private Servicelayer servicelayer;
 	@Async
 	public CompletableFuture<Boolean> sendEmail(String message, String subject, String to, String cc) {
 		boolean success = false;

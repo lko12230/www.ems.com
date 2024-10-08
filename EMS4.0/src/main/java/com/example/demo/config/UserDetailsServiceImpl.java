@@ -10,13 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import com.example.demo.dao.Userdao;
+import com.example.demo.dao.UserDao;
 import com.example.demo.entities.User;
 
 @Transactional
 public class UserDetailsServiceImpl implements UserDetailsService {
 	@Autowired
-	private Userdao userdao;
+	private UserDao userdao;
 	@Autowired
 	private HttpServletResponse response;
 

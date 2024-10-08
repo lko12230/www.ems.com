@@ -25,28 +25,28 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.EMSMAIN;
-import com.example.demo.dao.Userdao;
-import com.example.demo.dao.adminDao;
+import com.example.demo.dao.UserDao;
+import com.example.demo.dao.AdminDao;
 import com.example.demo.entities.Admin;
 import com.example.demo.entities.User;
 import com.example.demo.entities.UserLoginDateTime;
 import com.example.demo.helper.Message;
 import com.example.demo.service.EmailService;
 import com.example.demo.service.ForgotOTPEmailService;
-import com.example.demo.service.servicelayer;
+import com.example.demo.service.Servicelayer;
 
 import cn.apiclub.captcha.Captcha;
 
 @Controller
 public class Homecontroller {
 	@Autowired
-	private servicelayer servicelayer;
+	private Servicelayer servicelayer;
 	@Autowired
-	private adminDao adminDao;
+	private AdminDao adminDao;
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 	@Autowired
-	private Userdao userdao;
+	private UserDao userdao;
 	@Autowired
 	private EmailService emailService;
 	@Autowired
@@ -63,7 +63,7 @@ public class Homecontroller {
 //		int otp = (int) (Math.random() * 900000000) + 100000000;
 //		System.out.println("MATH RANDOM  "+otp);
 		model.addAttribute(user);
-		return "abc";
+		return "index";
 	}
 
 	@GetMapping("/signup/{id}")
@@ -261,18 +261,18 @@ public class Homecontroller {
 	}
 
 	private void getCaptcha(User user) {
-		Captcha captcha = com.example.demo.service.servicelayer.createCaptcha(250, 80);
+		Captcha captcha = com.example.demo.service.Servicelayer.createCaptcha(250, 80);
 		user.setHidden(captcha.getAnswer());
 		user.setCaptcha("");
-		user.setImageCaptcha(com.example.demo.service.servicelayer.encodeCaptcha(captcha));
+		user.setImageCaptcha(com.example.demo.service.Servicelayer.encodeCaptcha(captcha));
 		System.out.println("impoted" + user.getImageCaptcha());
 	}
 
 	private String getCaptchaa(Admin admin) {
-		Captcha captcha = com.example.demo.service.servicelayer.createCaptcha(250, 80);
+		Captcha captcha = com.example.demo.service.Servicelayer.createCaptcha(250, 80);
 		admin.setHidden(captcha.getAnswer());
 		admin.setCaptcha("");
-		admin.setImageCaptcha(com.example.demo.service.servicelayer.encodeCaptcha(captcha));
+		admin.setImageCaptcha(com.example.demo.service.Servicelayer.encodeCaptcha(captcha));
 		String result = admin.getImageCaptcha();
 		System.out.println("impoted" + admin.getImageCaptcha());
 		return result;

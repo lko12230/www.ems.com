@@ -10,14 +10,14 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.dao.Userdao;
+import com.example.demo.dao.UserDao;
 import com.example.demo.entities.User;
 
 @Service
 @Transactional
 public class UserServices {
 	@Autowired
-	private Userdao userdao;
+	private UserDao userdao;
 
 	public User getByEmail(String email) {
 		Optional<User> user = userdao.findByUserName(email);

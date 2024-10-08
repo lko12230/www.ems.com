@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.example.demo.entities.Payment_Order_Info;
 
-public interface orderDao extends JpaRepository<Payment_Order_Info, Integer> {
+public interface OrderDao extends JpaRepository<Payment_Order_Info, Integer> {
 	
 public Payment_Order_Info findByOrderId(String orderId);
 

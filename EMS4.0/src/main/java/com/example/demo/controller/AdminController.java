@@ -46,9 +46,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.dao.UserDetailDao;
 import com.example.demo.dao.UserLoginDao;
-import com.example.demo.dao.Userdao;
-import com.example.demo.dao.adminDao;
-import com.example.demo.dao.orderDao;
+import com.example.demo.dao.UserDao;
+import com.example.demo.dao.AdminDao;
+import com.example.demo.dao.OrderDao;
 import com.example.demo.entities.Admin;
 import com.example.demo.entities.CompanyInfo;
 import com.example.demo.entities.EmployeeSuggestion;
@@ -62,7 +62,7 @@ import com.example.demo.entities.UserLoginDateTime;
 import com.example.demo.helper.Message;
 import com.example.demo.service.SeperationEmailService;
 import com.example.demo.service.LoginHistoryExportEmail;
-import com.example.demo.service.servicelayer;
+import com.example.demo.service.Servicelayer;
 import com.razorpay.Order;
 import com.razorpay.RazorpayClient;
 
@@ -73,19 +73,19 @@ import cn.apiclub.captcha.Captcha;
 @SessionScope
 public class AdminController {
 	@Autowired
-	private Userdao userdao;
+	private UserDao userdao;
 	@Autowired
 	private UserLoginDao userLoginDao;
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 	@Autowired
-	private servicelayer servicelayer;
+	private Servicelayer servicelayer;
 	@Autowired
 	private UserDetailDao userDetailDao;
 	@Autowired
-	private adminDao adminDao;
+	private AdminDao adminDao;
 	@Autowired
-	private orderDao orderDao;
+	private OrderDao orderDao;
 	@Autowired
 	private SeperationEmailService emailService1;
 	@Autowired
@@ -907,10 +907,10 @@ public class AdminController {
 	}
 
 	private void getCaptcha(User user) {
-		Captcha captcha = com.example.demo.service.servicelayer.createCaptcha(250, 80);
+		Captcha captcha = com.example.demo.service.Servicelayer.createCaptcha(250, 80);
 		user.setHidden(captcha.getAnswer());
 		user.setCaptcha("");
-		user.setImageCaptcha(com.example.demo.service.servicelayer.encodeCaptcha(captcha));
+		user.setImageCaptcha(com.example.demo.service.Servicelayer.encodeCaptcha(captcha));
 		System.out.println("impoted " + user.getImageCaptcha());
 	}
 

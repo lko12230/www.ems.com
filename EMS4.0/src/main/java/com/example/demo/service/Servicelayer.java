@@ -53,18 +53,18 @@ import com.example.demo.dao.ArchiveDisabledUserDao;
 import com.example.demo.dao.ArchiveDisabledUserDetailDao;
 import com.example.demo.dao.ArchiveLoginDao;
 import com.example.demo.dao.ArchiveOldOrdersDao;
-import com.example.demo.dao.Downtime_Maintaince_Dao;
+import com.example.demo.dao.DowntimeMaintaince_Dao;
 import com.example.demo.dao.JobDao;
 import com.example.demo.dao.SubscriptionPlanDao;
 import com.example.demo.dao.UserDetailDao;
 import com.example.demo.dao.UserLoginDao;
-import com.example.demo.dao.Userdao;
-import com.example.demo.dao.adminDao;
-import com.example.demo.dao.company_dao;
-import com.example.demo.dao.error_log_dao;
-import com.example.demo.dao.orderDao;
-import com.example.demo.dao.performancedao;
-import com.example.demo.dao.record_activity_dao;
+import com.example.demo.dao.UserDao;
+import com.example.demo.dao.AdminDao;
+import com.example.demo.dao.CompanyDao;
+import com.example.demo.dao.ErrorLogDao;
+import com.example.demo.dao.OrderDao;
+import com.example.demo.dao.PerformanceDao;
+import com.example.demo.dao.RecordActivityDao;
 import com.example.demo.entities.Admin;
 import com.example.demo.entities.ArchiveDisabledUser;
 import com.example.demo.entities.ArchiveDisabledUserDetail;
@@ -103,7 +103,7 @@ import cn.apiclub.captcha.noise.StraightLineNoiseProducer;
 import cn.apiclub.captcha.text.producer.DefaultTextProducer;
 
 @Service
-public class servicelayer {
+public class Servicelayer {
 
 	@Autowired
 	private UserLoginDao userLoginDao;
@@ -113,25 +113,25 @@ public class servicelayer {
 	private EmailService emailService;
 	// for register
 	@Autowired
-	private adminDao adminDao;
+	private AdminDao adminDao;
 	@Autowired
 	private UserDetailDao userDetailDao;
 	@Autowired
-	private Userdao userdao;
+	private UserDao userdao;
 	@Autowired
 	private JobDao jobDao;
 	@Autowired
-	private error_log_dao error_log_dao;
+	private ErrorLogDao error_log_dao;
 	@Autowired
-	private performancedao performancedao;
+	private PerformanceDao performancedao;
 	@Autowired
-	private record_activity_dao record_activity_dao;
+	private RecordActivityDao record_activity_dao;
 	@Autowired
-	private Downtime_Maintaince_Dao downtime_Maintaince_Dao;
+	private DowntimeMaintaince_Dao downtime_Maintaince_Dao;
 	@Autowired
-	private orderDao orderDao;
+	private OrderDao orderDao;
 	@Autowired
-	private company_dao company_dao;
+	private CompanyDao company_dao;
 	@Autowired
 	private SubscriptionPlanDao subscriptionPlansDao;
 	@Autowired
@@ -959,7 +959,7 @@ public class servicelayer {
 		} catch (Exception e) {
 			String exceptionAsString = e.toString();
 			// Get the current class
-			Class<?> currentClass = servicelayer.class;
+			Class<?> currentClass = Servicelayer.class;
 
 			// Get the name of the class
 			String className = currentClass.getName();
@@ -989,7 +989,7 @@ public class servicelayer {
 		} catch (Exception e) {
 			String exceptionAsString = e.toString();
 			// Get the current class
-			Class<?> currentClass = servicelayer.class;
+			Class<?> currentClass = Servicelayer.class;
 
 			// Get the name of the class
 			String className = currentClass.getName();
@@ -1041,7 +1041,7 @@ public class servicelayer {
 		} catch (Exception e) {
 			String exceptionAsString = e.toString();
 			// Get the current class
-			Class<?> currentClass = servicelayer.class;
+			Class<?> currentClass = Servicelayer.class;
 			jobDao.getJobRunningTimeInterrupted("Account_Locked_job");
 			// Get the name of the class
 			String className = currentClass.getName();
@@ -1111,7 +1111,7 @@ public class servicelayer {
 		} catch (Exception e) {
 			String exceptionAsString = e.toString();
 			// Get the current class
-			Class<?> currentClass = servicelayer.class;
+			Class<?> currentClass = Servicelayer.class;
 			jobDao.getJobRunningTimeInterrupted("Login_Archive_Job");
 			// Get the name of the class
 			String className = currentClass.getName();
@@ -1195,7 +1195,7 @@ public class servicelayer {
 		} catch (Exception e) {
 			String exceptionAsString = e.toString();
 			// Get the current class
-			Class<?> currentClass = servicelayer.class;
+			Class<?> currentClass = Servicelayer.class;
 			jobDao.getJobRunningTimeInterrupted("Login_Old_Orders_Job");
 			// Get the name of the class
 			String className = currentClass.getName();
@@ -1564,7 +1564,7 @@ public class servicelayer {
 		} catch (Exception e) {
 			String exceptionAsString = e.toString();
 			// Get the current class
-			Class<?> currentClass = servicelayer.class;
+			Class<?> currentClass = Servicelayer.class;
 
 			// Get the name of the class
 			String className = currentClass.getName();
@@ -1604,7 +1604,7 @@ public class servicelayer {
 			jobDao.getJobRunningTimeInterrupted("Is_Enabled_Job");
 			String exceptionAsString = e.toString();
 			// Get the current class
-			Class<?> currentClass = servicelayer.class;
+			Class<?> currentClass = Servicelayer.class;
 
 			// Get the name of the class
 			String className = currentClass.getName();
@@ -1643,7 +1643,7 @@ public class servicelayer {
 		} catch (Exception e) {
 			String exceptionAsString = e.toString();
 			// Get the current class
-			Class<?> currentClass = servicelayer.class;
+			Class<?> currentClass = Servicelayer.class;
 
 			// Get the name of the class
 			String className = currentClass.getName();
@@ -1664,7 +1664,7 @@ public class servicelayer {
 		} catch (Exception e) {
 			String exceptionAsString = e.toString();
 			// Get the current class
-			Class<?> currentClass = servicelayer.class;
+			Class<?> currentClass = Servicelayer.class;
 
 			// Get the name of the class
 			String className = currentClass.getName();
@@ -1685,7 +1685,7 @@ public class servicelayer {
 		} catch (Exception e) {
 			String exceptionAsString = e.toString();
 			// Get the current class
-			Class<?> currentClass = servicelayer.class;
+			Class<?> currentClass = Servicelayer.class;
 
 			// Get the name of the class
 			String className = currentClass.getName();
@@ -1707,7 +1707,7 @@ public class servicelayer {
 		} catch (Exception e) {
 			String exceptionAsString = e.toString();
 			// Get the current class
-			Class<?> currentClass = servicelayer.class;
+			Class<?> currentClass = Servicelayer.class;
 
 			// Get the name of the class
 			String className = currentClass.getName();
@@ -1728,7 +1728,7 @@ public class servicelayer {
 		} catch (Exception e) {
 			String exceptionAsString = e.toString();
 			// Get the current class
-			Class<?> currentClass = servicelayer.class;
+			Class<?> currentClass = Servicelayer.class;
 
 			// Get the name of the class
 			String className = currentClass.getName();
@@ -1776,7 +1776,7 @@ public class servicelayer {
 		} catch (Exception e) {
 			String exceptionAsString = e.toString();
 			// Get the current class
-			Class<?> currentClass = servicelayer.class;
+			Class<?> currentClass = Servicelayer.class;
 			jobDao.getJobRunningTimeInterrupted("get_user_status");
 			// Get the name of the class
 			String className = currentClass.getName();
@@ -1797,7 +1797,7 @@ public class servicelayer {
 		} catch (Exception e) {
 			String exceptionAsString = e.toString();
 			// Get the current class
-			Class<?> currentClass = servicelayer.class;
+			Class<?> currentClass = Servicelayer.class;
 			jobDao.getJobRunningTimeInterrupted("delete_old_error_log");
 			// Get the name of the class
 			String className = currentClass.getName();
@@ -1839,7 +1839,7 @@ public class servicelayer {
 		} catch (Exception e) {
 			String exceptionAsString = e.toString();
 			// Get the current class
-			Class<?> currentClass = servicelayer.class;
+			Class<?> currentClass = Servicelayer.class;
 			// Get the name of the class
 			String className = currentClass.getName();
 			String errorMessage = e.getMessage();
@@ -2353,7 +2353,7 @@ public class servicelayer {
 		} catch (Exception e) {
 			String exceptionAsString = e.toString();
 			// Get the current class
-			Class<?> currentClass = servicelayer.class;
+			Class<?> currentClass = Servicelayer.class;
 			// Get the name of the class
 			String className = currentClass.getName();
 			String errorMessage = e.getMessage();
@@ -2482,7 +2482,7 @@ public class servicelayer {
 		} catch (Exception e) {
 			String exceptionAsString = e.toString();
 			// Get the current class
-			Class<?> currentClass = servicelayer.class;
+			Class<?> currentClass = Servicelayer.class;
 			// Get the name of the class
 			String className = currentClass.getName();
 			String errorMessage = e.getMessage();
@@ -2518,7 +2518,7 @@ public class servicelayer {
 		} catch (Exception e) {
 			String exceptionAsString = e.toString();
 			// Get the current class
-			Class<?> currentClass = servicelayer.class;
+			Class<?> currentClass = Servicelayer.class;
 			// Get the name of the class
 			String className = currentClass.getName();
 			String errorMessage = e.getMessage();
@@ -2609,7 +2609,7 @@ public class servicelayer {
 		} catch (Exception e) {
 			String exceptionAsString = e.toString();
 			// Get the current class
-			Class<?> currentClass = servicelayer.class;
+			Class<?> currentClass = Servicelayer.class;
 
 			// Get the name of the class
 			String className = currentClass.getName();
@@ -2636,7 +2636,7 @@ public class servicelayer {
 		} catch (Exception e) {
 			String exceptionAsString = e.toString();
 			// Get the current class
-			Class<?> currentClass = servicelayer.class;
+			Class<?> currentClass = Servicelayer.class;
 
 			// Get the name of the class
 			String className = currentClass.getName();
@@ -2657,7 +2657,7 @@ public class servicelayer {
 		} catch (Exception e) {
 			String exceptionAsString = e.toString();
 			// Get the current class
-			Class<?> currentClass = servicelayer.class;
+			Class<?> currentClass = Servicelayer.class;
 
 			// Get the name of the class
 			String className = currentClass.getName();
@@ -2678,7 +2678,7 @@ public class servicelayer {
 		} catch (Exception e) {
 			String exceptionAsString = e.toString();
 			// Get the current class
-			Class<?> currentClass = servicelayer.class;
+			Class<?> currentClass = Servicelayer.class;
 
 			// Get the name of the class
 			String className = currentClass.getName();
@@ -2699,7 +2699,7 @@ public class servicelayer {
 		} catch (Exception e) {
 			String exceptionAsString = e.toString();
 			// Get the current class
-			Class<?> currentClass = servicelayer.class;
+			Class<?> currentClass = Servicelayer.class;
 
 			// Get the name of the class
 			String className = currentClass.getName();
@@ -2720,7 +2720,7 @@ public class servicelayer {
 		} catch (Exception e) {
 			String exceptionAsString = e.toString();
 			// Get the current class
-			Class<?> currentClass = servicelayer.class;
+			Class<?> currentClass = Servicelayer.class;
 
 			// Get the name of the class
 			String className = currentClass.getName();
@@ -2779,7 +2779,7 @@ public class servicelayer {
 			jobDao.getJobRunningTimeInterrupted("sync_employee_and_employeedetail_table");
 			// Capture and log the error
 			String exceptionAsString = e.toString();
-			String className = servicelayer.class.getName();
+			String className = Servicelayer.class.getName();
 			String errorMessage = e.getMessage();
 			StackTraceElement[] stackTrace = e.getStackTrace();
 			String methodName = stackTrace[0].getMethodName();
@@ -2821,7 +2821,7 @@ public class servicelayer {
 			jobDao.getJobRunningTimeInterrupted("remove_garbage_data_session_id");
 			String exceptionAsString = e.toString();
 			// Get the current class
-			Class<?> currentClass = servicelayer.class;
+			Class<?> currentClass = Servicelayer.class;
 
 			// Get the name of the class
 			String className = currentClass.getName();
@@ -2867,7 +2867,7 @@ public class servicelayer {
 			jobDao.getJobRunningTimeInterrupted("Captcha Validate");
 			String exceptionAsString = e.toString();
 			// Get the current class
-			Class<?> currentClass = servicelayer.class;
+			Class<?> currentClass = Servicelayer.class;
 
 			// Get the name of the class
 			String className = currentClass.getName();
@@ -2902,7 +2902,7 @@ public class servicelayer {
 			jobDao.getJobRunningTimeInterrupted("OTP Validate");
 			String exceptionAsString = e.toString();
 			// Get the current class
-			Class<?> currentClass = servicelayer.class;
+			Class<?> currentClass = Servicelayer.class;
 
 			// Get the name of the class
 			String className = currentClass.getName();
@@ -2923,7 +2923,7 @@ public class servicelayer {
 		} catch (Exception e) {
 			String exceptionAsString = e.toString();
 			// Get the current class
-			Class<?> currentClass = servicelayer.class;
+			Class<?> currentClass = Servicelayer.class;
 
 			// Get the name of the class
 			String className = currentClass.getName();
@@ -2948,7 +2948,7 @@ public class servicelayer {
 		} catch (Exception e) {
 			String exceptionAsString = e.toString();
 			// Get the current class
-			Class<?> currentClass = servicelayer.class;
+			Class<?> currentClass = Servicelayer.class;
 
 			// Get the name of the class
 			String className = currentClass.getName();
@@ -2994,7 +2994,7 @@ public class servicelayer {
 		} catch (Exception e) {
 			String exceptionAsString = e.toString();
 			// Get the current class
-			Class<?> currentClass = servicelayer.class;
+			Class<?> currentClass = Servicelayer.class;
 
 			// Get the name of the class
 			String className = currentClass.getName();
@@ -3049,7 +3049,7 @@ public class servicelayer {
 			jobDao.getJobRunningTimeInterrupted("disbaled_expired_plan_users");
 			String exceptionAsString = e.toString();
 			// Get the current class
-			Class<?> currentClass = servicelayer.class;
+			Class<?> currentClass = Servicelayer.class;
 			// Get the name of the class
 			String className = currentClass.getName();
 			String errorMessage = e.getMessage();
@@ -3063,7 +3063,7 @@ public class servicelayer {
 			jobDao.getJobRunningTimeInterrupted("disbaled_expired_plan_users");
 			String exceptionAsString = e.toString();
 			// Get the current class
-			Class<?> currentClass = servicelayer.class;
+			Class<?> currentClass = Servicelayer.class;
 			// Get the name of the class
 			String className = currentClass.getName();
 			String errorMessage = e.getMessage();
@@ -3087,7 +3087,7 @@ public class servicelayer {
 			jobDao.getJobRunningTimeInterrupted("disbaled_expired_plan_users");
 			String exceptionAsString = e.toString();
 			// Get the current class
-			Class<?> currentClass = servicelayer.class;
+			Class<?> currentClass = Servicelayer.class;
 			// Get the name of the class
 			String className = currentClass.getName();
 			String errorMessage = e.getMessage();
@@ -3107,7 +3107,7 @@ public class servicelayer {
 		} catch (Exception e) {
 			String exceptionAsString = e.toString();
 			// Get the current class
-			Class<?> currentClass = servicelayer.class;
+			Class<?> currentClass = Servicelayer.class;
 
 			// Get the name of the class
 			String className = currentClass.getName();
@@ -3149,7 +3149,7 @@ public class servicelayer {
 			jobDao.getJobRunningTimeInterrupted("disbaled_expired_plan_users");
 			String exceptionAsString = e.toString();
 			// Get the current class
-			Class<?> currentClass = servicelayer.class;
+			Class<?> currentClass = Servicelayer.class;
 
 			// Get the name of the class
 			String className = currentClass.getName();
@@ -3171,7 +3171,7 @@ public class servicelayer {
 		} catch (Exception e) {
 			String exceptionAsString = e.toString();
 			// Get the current class
-			Class<?> currentClass = servicelayer.class;
+			Class<?> currentClass = Servicelayer.class;
 
 			// Get the name of the class
 			String className = currentClass.getName();
@@ -3193,7 +3193,7 @@ public class servicelayer {
 		} catch (Exception e) {
 			String exceptionAsString = e.toString();
 			// Get the current class
-			Class<?> currentClass = servicelayer.class;
+			Class<?> currentClass = Servicelayer.class;
 
 			// Get the name of the class
 			String className = currentClass.getName();
@@ -3214,7 +3214,7 @@ public class servicelayer {
 		} catch (Exception e) {
 			String exceptionAsString = e.toString();
 			// Get the current class
-			Class<?> currentClass = servicelayer.class;
+			Class<?> currentClass = Servicelayer.class;
 
 			// Get the name of the class
 			String className = currentClass.getName();
@@ -3236,7 +3236,7 @@ public class servicelayer {
 		} catch (Exception e) {
 			String exceptionAsString = e.toString();
 			// Get the current class
-			Class<?> currentClass = servicelayer.class;
+			Class<?> currentClass = Servicelayer.class;
 
 			// Get the name of the class
 			String className = currentClass.getName();
@@ -3257,7 +3257,7 @@ public class servicelayer {
 		} catch (Exception e) {
 			String exceptionAsString = e.toString();
 			// Get the current class
-			Class<?> currentClass = servicelayer.class;
+			Class<?> currentClass = Servicelayer.class;
 
 			// Get the name of the class
 			String className = currentClass.getName();
@@ -3280,7 +3280,7 @@ public class servicelayer {
 			jobDao.getJobRunningTimeInterrupted("expired_license_status");
 			String exceptionAsString = e.toString();
 			// Get the current class
-			Class<?> currentClass = servicelayer.class;
+			Class<?> currentClass = Servicelayer.class;
 
 			// Get the name of the class
 			String className = currentClass.getName();
@@ -3314,7 +3314,7 @@ public class servicelayer {
 			jobDao.getJobRunningTimeInterrupted("expired_license_status");
 			String exceptionAsString = e.toString();
 			// Get the current class
-			Class<?> currentClass = servicelayer.class;
+			Class<?> currentClass = Servicelayer.class;
 
 			// Get the name of the class
 			String className = currentClass.getName();
@@ -3845,7 +3845,7 @@ public class servicelayer {
 			jobDao.getJobRunningTimeInterrupted("Archive_Disabled_Old_User_Job");
 			String exceptionAsString = e.toString();
 			// Get the current class
-			Class<?> currentClass = servicelayer.class;
+			Class<?> currentClass = Servicelayer.class;
 
 			// Get the name of the class
 			String className = currentClass.getName();
@@ -3987,7 +3987,7 @@ public class servicelayer {
 			jobDao.getJobRunningTimeInterrupted("Archive_Disabled_Old_UserDetail_Job");
 			String exceptionAsString = e.toString();
 			// Get the current class
-			Class<?> currentClass = servicelayer.class;
+			Class<?> currentClass = Servicelayer.class;
 
 			// Get the name of the class
 			String className = currentClass.getName();

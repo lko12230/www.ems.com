@@ -16,13 +16,13 @@ import com.example.demo.service.ForgotOTPEmailService;
 import com.example.demo.service.LoginHistoryExportEmail;
 import com.example.demo.service.PaymentSucessEmailService;
 import com.example.demo.service.TeamEmailService;
-import com.example.demo.service.servicelayer;
+import com.example.demo.service.Servicelayer;
 
 @SpringBootApplication
 @EnableScheduling
 public class EMSMAIN {
 	@Autowired
-	private servicelayer servicelayer;
+	private Servicelayer servicelayer;
 	@Autowired
 	private EmailService emailService;
 	@Autowired
@@ -301,7 +301,7 @@ public class EMSMAIN {
 //			{
 			String exceptionAsString = e.toString();
 			// Get the current class
-			Class<?> currentClass = servicelayer.class;
+			Class<?> currentClass = Servicelayer.class;
 
 			// Get the name of the class
 			String className = currentClass.getName();

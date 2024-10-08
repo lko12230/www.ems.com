@@ -34,10 +34,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.annotation.SessionScope;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.example.demo.dao.Teamdao;
+import com.example.demo.dao.TeamDao;
 import com.example.demo.dao.UserDetailDao;
-import com.example.demo.dao.Userdao;
-import com.example.demo.dao.adminDao;
+import com.example.demo.dao.UserDao;
+import com.example.demo.dao.AdminDao;
 import com.example.demo.entities.Admin;
 import com.example.demo.entities.Error_Log;
 import com.example.demo.entities.Performance;
@@ -48,7 +48,7 @@ import com.example.demo.helper.Message;
 import com.example.demo.service.EmailService;
 import com.example.demo.service.SeperationEmailService;
 import com.example.demo.service.TeamEmailService;
-import com.example.demo.service.servicelayer;
+import com.example.demo.service.Servicelayer;
 
 @Controller
 @RequestMapping("/manager")
@@ -56,17 +56,17 @@ import com.example.demo.service.servicelayer;
 @SessionScope
 public class ManagerController {
 	@Autowired
-	private Userdao userdao;
+	private UserDao userdao;
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 	@Autowired
-	private servicelayer servicelayer;
+	private Servicelayer servicelayer;
 	@Autowired
 	private UserDetailDao userDetailDao;
 	@Autowired
-	private Teamdao teamdao;
+	private TeamDao teamdao;
 	@Autowired
-	private adminDao adminDao;
+	private AdminDao adminDao;
 	@Autowired
 	private EmailService emailService;
 	@Autowired
