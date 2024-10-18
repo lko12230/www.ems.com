@@ -29,6 +29,9 @@
 						</nav>
 					</div>
 				</div>
+				<div th:if="${message}" class="alert alert-danger">
+    <p th:text="${message}"></p>
+</div>
 				<div th:if="${session.message}"
 					th:classappend="${session.message.type}" class="alert"
 					role="alert text-center">

@@ -778,6 +778,8 @@ public class AdminController {
 	        if (file.isEmpty()) {
 	            user.setImage_Url("default.jpg");
 	        } else {
+	        	 if (file1.getSize() < 1000000) 
+	        	 {
 	            String contentType1 = file.getContentType();
 	            System.out.println(file.getOriginalFilename());
 	            if (contentType1.equals("image/jpeg") || contentType1.equals("image/jpg") || contentType1.equals("image/png")) {
@@ -798,6 +800,14 @@ public class AdminController {
 	                                "alert-danger"));
 	                return "redirect:/admin/admin_profile_edit_1/" + user.getId();
 	            }
+	        }
+	        	 else
+	 	        {
+	        		 session.setAttribute("message",
+		                        new Message("Alert !! Profile Not Updated Because Image size Should Be Less Than 3MB",
+		                                "alert-danger"));
+		                return "redirect:/admin/admin_profile_edit_1/" + user.getId();
+	 	        }
 	        }
 
 	        // Handle resume upload

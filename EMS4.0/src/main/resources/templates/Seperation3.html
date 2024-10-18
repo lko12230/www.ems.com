@@ -246,7 +246,7 @@
 </div>
  <div th:if="${user.seperation_manager_approved==false and user.resignationRequestApplied==true}">
   <span style="color: red;">
-    Note :- Your Account will be disabled after 
+    Note :- Your account will be disabled after 
     <th:block>
         <b th:text="${user.lastWorkingDay}"></b>
     </th:block>
@@ -261,7 +261,7 @@
         
       <div th:if="${user.seperation_manager_approved==false and user.resignationRequestApplied==true}">
                 <div class="mt-5 text-center"><button class="btn btn-success profile-button"
-									type="button" onclick="WithDrawnRequest()">Withdrawn</button></div>
+									type="button" onclick="WithDrawnRequest()">Withdraw</button></div>
     </div>
     
   </div>

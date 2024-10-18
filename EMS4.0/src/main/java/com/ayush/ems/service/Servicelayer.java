@@ -188,7 +188,7 @@ public class Servicelayer {
 				user.setEditwho("NA");
 				user.setResume_file_url("NA");
 				user.setTeam("0");
-				if (user.getDesignation().equals("ROLE_MANAGER")) {
+				if (user.isManager_or_not()) {
 					user.setManager_or_not(true);
 				} else {
 					user.setManager_or_not(false);
@@ -325,7 +325,11 @@ public class Servicelayer {
 							userdetail.setEditwho("NA");
 							userdetail.setWho_assign_laptop("NA");
 							userdetail.setReview_rating("NA");
-							userdetail.setManager_or_not(false);
+							if (result.isManager_or_not()) {
+								userdetail.setManager_or_not(result.isManager_or_not());
+							} else {
+								userdetail.setManager_or_not(result.isManager_or_not());
+							}
 							userdetail.setUser(user3);
 							Performance performance = new Performance();
 							performance.setId(user.getId());
@@ -387,7 +391,11 @@ public class Servicelayer {
 							userdetail.setEditwho("NA");
 							userdetail.setWho_assign_laptop("NA");
 							userdetail.setReview_rating("NA");
-							userdetail.setManager_or_not(false);
+							if (result.isManager_or_not()) {
+								userdetail.setManager_or_not(result.isManager_or_not());
+							} else {
+								userdetail.setManager_or_not(result.isManager_or_not());
+							}
 							userdetail.setUser(user3);
 							Performance performance = new Performance();
 							performance.setId(user.getId());
