@@ -856,7 +856,7 @@ public class EMSMAIN {
 			System.out.println("expired_license_status " + status);
 			if (status.equalsIgnoreCase("Y")) {
 
-				servicelayer.expired_license_status();
+//				servicelayer.expired_license_status();
 			} else {
 				servicelayer.jobnotrunning("expired_license_status");
 			}

@@ -11,6 +11,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -3041,10 +3042,10 @@ public class Servicelayer {
 		String formattedLicenseNumber = "LICNO" + licenseNumber;
 		payment_Order_Info.setLicense_number(formattedLicenseNumber);
 		payment_Order_Info.setSubscription_start_date(new Date());
-		Instant i = Instant.now();
-		Instant i1 = i.plus(Duration.ofDays(1));
-		Date subscriptionExpiryDate = Date.from(i1);
-		payment_Order_Info.setSubscription_expiry_date(subscriptionExpiryDate);
+//		Instant i = Instant.now();
+//		Instant i1 = i.plus(Duration.ofDays(1));
+//		Date subscriptionExpiryDate = Date.from(i1);
+//		payment_Order_Info.setSubscription_expiry_date(subscriptionExpiryDate);
 		payment_Order_Info.setLicense_status("ACTIVE");
 		System.out.println("USER COMPANY ID" + user.getCompany_id());
 		update_enable_user_after_success_payment(user.getCompany_id());
@@ -3056,6 +3057,14 @@ public class Servicelayer {
 		Optional<SubscriptionPlans> subscriptionPlansOptional = subscriptionPlansDao.getAllPlans();
 		SubscriptionPlans subscriptionPlans2 = subscriptionPlansOptional.get();
 		payment_Order_Info.setGst_amount(payment_Order_Info.getAmount() * subscriptionPlans2.getGst());
+		String validity = subscriptionPlans2.getPlan_description();
+		String[] extractvalidity = validity.trim().split("\\s+");
+		int validtyDays = Integer.parseInt(extractvalidity[1]);
+		Instant i = Instant.now();
+		Instant i1 = i.plus(Duration.ofDays(validtyDays));
+		Date subscriptionExpiryDate = Date.from(i1);
+		payment_Order_Info.setSubscription_expiry_date(subscriptionExpiryDate);
+		payment_Order_Info.setValidity(validtyDays);
 		float without_gst_amount = payment_Order_Info.getAmount() - payment_Order_Info.getGst_amount();
 		payment_Order_Info.setAmount_without_gst(without_gst_amount);
 		CompanyInfo companyInfo = findCompanyInfo();
@@ -3139,48 +3148,102 @@ public class Servicelayer {
 		}
 	}
 
+//	@Transactional
+//	public void disbaled_expired_plan_users(String jobname) {
+//		try {
+//			List<Payment_Order_Info> order = orderDao.findAll();
+//			ListIterator<Payment_Order_Info> orders_iterate = order.listIterator();
+//			while (orders_iterate.hasNext()) {
+//				Payment_Order_Info payment_Order_Info = orders_iterate.next();
+//				if (payment_Order_Info.getStatus().equalsIgnoreCase("paid")) {
+//					int get_output = orderDao.check_users_subscription_plan(payment_Order_Info.getCompany_id());
+//					System.out.println("BEFORE WHILE LOOP " + get_output + " " + payment_Order_Info.getCompany_id());
+//					if (get_output > 0) {
+//						System.out.println("AFTER WHILE LOOP " + get_output + " " + payment_Order_Info.getCompany_id());
+//						userdao.disbaled_expired_plan_users(payment_Order_Info.getCompany_id());
+//						orderDao.expired_license_status(payment_Order_Info.getCompany_id());
+//					} else {
+//						continue;
+//					}
+//				} else {
+//					continue;
+//				}
+//			}
+//			jobrunning("disbaled_expired_plan_users");
+//		}
+//
+//		catch (Exception e) {
+//			jobDao.getJobRunningTimeInterrupted("disbaled_expired_plan_users");
+//			String exceptionAsString = e.toString();
+//			// Get the current class
+//			Class<?> currentClass = Servicelayer.class;
+//
+//			// Get the name of the class
+//			String className = currentClass.getName();
+//			String errorMessage = e.getMessage();
+//			StackTraceElement[] stackTrace = e.getStackTrace();
+//			String methodName = stackTrace[0].getMethodName();
+//			int lineNumber = stackTrace[0].getLineNumber();
+//			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+//			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+//
+//		}
+//	}
+
 	@Transactional
 	public void disbaled_expired_plan_users(String jobname) {
-		try {
-			List<Payment_Order_Info> order = orderDao.findAll();
-			ListIterator<Payment_Order_Info> orders_iterate = order.listIterator();
-			while (orders_iterate.hasNext()) {
-				Payment_Order_Info payment_Order_Info = orders_iterate.next();
-				if (payment_Order_Info.getStatus().equalsIgnoreCase("paid")) {
-					int get_output = orderDao.check_users_subscription_plan(payment_Order_Info.getCompany_id());
-					System.out.println("BEFORE WHILE LOOP " + get_output + " " + payment_Order_Info.getCompany_id());
-					if (get_output > 0) {
-						System.out.println("AFTER WHILE LOOP " + get_output + " " + payment_Order_Info.getCompany_id());
-						userdao.disbaled_expired_plan_users(payment_Order_Info.getCompany_id());
-						orderDao.expired_license_status(payment_Order_Info.getCompany_id());
-					} else {
-						continue;
-					}
-				} else {
-					continue;
-				}
-			}
-			jobrunning("disbaled_expired_plan_users");
-		}
+	    try {
+	        List<Payment_Order_Info> order = orderDao.findAllByActive();
+	        ListIterator<Payment_Order_Info> orders_iterate = order.listIterator();
+	        while (orders_iterate.hasNext()) {
+	            Payment_Order_Info payment_Order_Info = orders_iterate.next();
 
-		catch (Exception e) {
-			jobDao.getJobRunningTimeInterrupted("disbaled_expired_plan_users");
-			String exceptionAsString = e.toString();
-			// Get the current class
-			Class<?> currentClass = Servicelayer.class;
+	            // Check if the payment status is "paid"
+	            if (payment_Order_Info.getStatus().equalsIgnoreCase("paid")) {
+	                
+	                int validityDays = payment_Order_Info.getValidity(); // e.g., 30 days
+	                Date expiryDate = payment_Order_Info.getSubscription_expiry_date();
+	                String company_id = payment_Order_Info.getCompany_id();
 
-			// Get the name of the class
-			String className = currentClass.getName();
-			String errorMessage = e.getMessage();
-			StackTraceElement[] stackTrace = e.getStackTrace();
-			String methodName = stackTrace[0].getMethodName();
-			int lineNumber = stackTrace[0].getLineNumber();
-			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
-			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+	                // Get the current date
+	                LocalDate currentDate = LocalDate.now();
 
-		}
+	                // Convert expiryDate to LocalDate
+	                LocalDate expiryLocalDate = expiryDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+	                // Calculate the remaining days between the current date and the expiry date
+	                long remainingDays = Duration.between(currentDate.atStartOfDay(), expiryLocalDate.atStartOfDay()).toDays();
+	                System.out.println("REMAINING DAYS: " + remainingDays + " | VALIDITY DAYS: " + validityDays);
+
+	                // Trigger the expiry process only if remaining days are less than or equal to 0
+	                if (remainingDays < 0 && payment_Order_Info.getLicense_status().equals("ACTIVE")) {
+	                    System.out.println("Expiring license for company: " + company_id);
+	                    
+	                    // Call your methods to handle expired licenses and disable users with expired plans
+	                    orderDao.expired_license_status(company_id);
+	                    userdao.disbaled_expired_plan_users(company_id);
+	                }
+	            }
+	        }
+	        jobrunning("disbaled_expired_plan_users");
+	    } catch (Exception e) {
+	        jobDao.getJobRunningTimeInterrupted("disbaled_expired_plan_users");
+	        String exceptionAsString = e.toString();
+
+	        // Get the current class
+	        Class<?> currentClass = Servicelayer.class;
+
+	        // Get the name of the class
+	        String className = currentClass.getName();
+	        String errorMessage = e.getMessage();
+	        StackTraceElement[] stackTrace = e.getStackTrace();
+	        String methodName = stackTrace[0].getMethodName();
+	        int lineNumber = stackTrace[0].getLineNumber();
+	        System.out.println("METHOD NAME: " + methodName + " at line " + lineNumber);
+	        insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+	    }
 	}
-
+	
 	public User findByUsername(String email) {
 		try {
 			Optional<User> user = userdao.findByUserName(email);
@@ -3312,40 +3375,92 @@ public class Servicelayer {
 		}
 	}
 
-	@Transactional
-	public void expired_license_status() {
-		try {
-			int order_count = orderDao.countt();
-			if (order_count > 0) {
-				List<Payment_Order_Info> info = orderDao.findAll();
-				for (Payment_Order_Info order_Info : info) {
-					String company_id = order_Info.getCompany_id();
-					int expire_order_count = orderDao.check_users_subscription_plan(company_id);
-					if (expire_order_count > 0) {
-						orderDao.expired_license_status(company_id);
-						userdao.disbaled_expired_plan_users(company_id);
-					}
-				}
-				jobrunning("expired_license_status");
-			}
-		} catch (Exception e) {
-			jobDao.getJobRunningTimeInterrupted("expired_license_status");
-			String exceptionAsString = e.toString();
-			// Get the current class
-			Class<?> currentClass = Servicelayer.class;
+//	@Transactional
+//	public void expired_license_status() {
+//		try {
+//			int order_count = orderDao.countt();
+//			if (order_count > 0) {
+//				List<Payment_Order_Info> info = orderDao.findAll();
+//				for (Payment_Order_Info order_Info : info) {
+//					int validityDays = order_Info.getValidity();
+//					Date startDate = order_Info.getSubscription_start_date();
+//					Date ExpiryDate = order_Info.getSubscription_expiry_date();
+//					String company_id = order_Info.getCompany_id();
+//					int expire_order_count = orderDao.check_users_subscription_plan(company_id);
+//					if (expire_order_count > 0) {
+//						orderDao.expired_license_status(company_id);
+//						userdao.disbaled_expired_plan_users(company_id);
+//					}
+//				}
+//				jobrunning("expired_license_status");
+//			}
+//		} catch (Exception e) {
+//			jobDao.getJobRunningTimeInterrupted("expired_license_status");
+//			String exceptionAsString = e.toString();
+//			// Get the current class
+//			Class<?> currentClass = Servicelayer.class;
+//
+//			// Get the name of the class
+//			String className = currentClass.getName();
+//			String errorMessage = e.getMessage();
+//			StackTraceElement[] stackTrace = e.getStackTrace();
+//			String methodName = stackTrace[0].getMethodName();
+//			int lineNumber = stackTrace[0].getLineNumber();
+//			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+//			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+//
+//		}
+//	}
 
-			// Get the name of the class
-			String className = currentClass.getName();
-			String errorMessage = e.getMessage();
-			StackTraceElement[] stackTrace = e.getStackTrace();
-			String methodName = stackTrace[0].getMethodName();
-			int lineNumber = stackTrace[0].getLineNumber();
-			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
-			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
-
-		}
-	}
-
+	
+//	@Transactional
+//	public void expired_license_status() {
+//	    try {
+//	        int order_count = orderDao.countt();
+//	        if (order_count > 0) {
+//	            List<Payment_Order_Info> info = orderDao.findAll();
+//	            for (Payment_Order_Info order_Info : info) {
+//	                int validityDays = order_Info.getValidity();
+//	                Date startDate = order_Info.getSubscription_start_date();
+//	                Date expiryDate = order_Info.getSubscription_expiry_date();
+//	                String company_id = order_Info.getCompany_id();
+//
+//	                // Convert Date to LocalDate
+//	                LocalDate startLocalDate = startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+//	                LocalDate expiryLocalDate = expiryDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+//
+//	                // Calculate the number of days between startDate and expiryDate
+//	                long subscriptionDays = Duration.between(startLocalDate.atStartOfDay(), expiryLocalDate.atStartOfDay()).toDays();
+//
+//	                // If validityDays is greater than subscriptionDays, enter the if condition
+//	                if (validityDays > subscriptionDays) {
+////	                    int expire_order_count = orderDao.check_users_subscription_plan(company_id);
+////	                    if (expire_order_count > 0) {
+//	                        orderDao.expired_license_status(company_id);
+//	                        userdao.disbaled_expired_plan_users(company_id);
+////	                    }
+//	                }
+//	            }
+//	            jobrunning("expired_license_status");
+//	        }
+//	    } catch (Exception e) {
+//	        jobDao.getJobRunningTimeInterrupted("expired_license_status");
+//	        String exceptionAsString = e.toString();
+//
+//	        // Get the current class
+//	        Class<?> currentClass = Servicelayer.class;
+//
+//	        // Get the name of the class
+//	        String className = currentClass.getName();
+//	        String errorMessage = e.getMessage();
+//	        StackTraceElement[] stackTrace = e.getStackTrace();
+//	        String methodName = stackTrace[0].getMethodName();
+//	        int lineNumber = stackTrace[0].getLineNumber();
+//	        System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+//	        insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+//	    }
+//	}
+	
 	public void generateAndSendInvoice(Payment_Order_Info payment, SubscriptionPlans subscriptionPlans,
 			CompanyInfo companyInfo, User user, String formattedLicenseNumber) throws IOException, MessagingException {
 		String invoicePath = "C:\\Users\\ayush.gupta\\Documents\\Invoice Records\\invoice_" + payment.getPaymentId()
