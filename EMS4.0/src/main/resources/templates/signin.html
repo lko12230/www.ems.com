@@ -2,321 +2,57 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="base::layout(~{::section})">
 
 <head>
-	<meta charset="UTF-8">
-
-	<meta http-equiv="X-UA-Compatible" content="ie=edge">
-	<title> Google</title>
-	<link rel="icon" type="image/x-icon"
-		href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAclBMVEXz8/PzUyWBvAYFpvD/ugjz9PX19PXz+fr39fr69vPy9fp5uAAAofD/tgDz3Nji6tfzRADzTBfzmYew0oB/xfH70IDX5/P16tfz5eLo7eHzPADzlICs0Hfh6/N3wvH7znj07eEAnvDzvbPL3q6u1/L43q6vy/leAAABd0lEQVR4nO3cR1IDQRREwcb0SEgj770B7n9FNmhEBL1g8zUs8l2gIi9QKUmSpHs5vPtWFV4uANMwunUD3IyiS7+Jebgdx7bddb63uvt+dKOqIBw/xTaZNsLZc3CEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEhISEjxVuJ7GNfwj7LQjTejcN7noTVu+z4PabgjB1wmumqm50JaAkSX/oLbxmKveiK/zqp8NxHtvx40bMn6dFbKdzgbi81MEdb8LeaRDdqiSsX2Kr541wMXiNjZCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkPCxwuj/0kvb/6V5Gd2hmTqvokulm90HluNrFyhJ0j/rC6N0RI28dGy3AAAAAElFTkSuQmCC">
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-<link rel="stylesheet" href="https://unpkg.com/sweetalert/dist/sweetalert.css">
-
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Login</title>
+    <link rel="icon" type="image/x-icon" href="https://bootdey.com/img/Content/avatar/avatar7.png">
 </head>
 
 <body>
-	
-	<section>
-		<style type="text/css">
-			/* Importing fonts from Google */
-			@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
-
-			/* Reseting */
-			* {
-				margin: 0;
-				padding: 0;
-				box-sizing: border-box;
-				font-family: 'Poppins', sans-serif;
-			}
-
-			body {
-				background: #ecf0f3;
-			}
-
-			.wrapper {
-				max-width: 455px;
-				min-height: 500px;
-				margin: 80px auto;
-				padding: 40px 30px 30px 30px;
-				background-color: #ecf0f3;
-				border-radius: 15px;
-				box-shadow: 13px 13px 20px #cbced1, -13px -13px 20px #fff;
-			}
-
-			.logo {
-				width: 80px;
-				margin: auto;
-				
-			}
-
-			.logo img {
-				width: 100%;
-				height: 80px;
-				object-fit: cover;
-				 border-radius: 50%;
-				box-shadow: 0px 0px 3px #5f5f5f,
-					0px 0px 0px 5px #ecf0f3,
-					8px 8px 15px #a7aaa7,
-					-8px -8px 15px #fff;
-			}
-
-			.wrapper .name {
-				font-weight: 600;
-				font-size: 1.4rem;
-				letter-spacing: 1.3px;
-				padding-left: 10px;
-				color: #555;
-			}
-
-			.wrapper .form-field input {
-				width: 100%;
-				display: block;
-				border: none;
-				outline: none;
-				background: none;
-				font-size: 1.2rem;
-				color: #666;
-				padding: 10px 15px 10px 10px;
-				/* border: 1px solid red; */
-			}
-
-			.wrapper .form-field {
-				padding-left: 10px;
-				margin-bottom: 20px;
-				border-radius: 20px;
-				box-shadow: inset 8px 8px 8px #cbced1, inset -8px -8px 8px #fff;
-			}
-
-			.wrapper .form-field .fas {
-				color: #555;
-			}
-
-			.wrapper .btn {
-				box-shadow: none;
-				width: 100%;
-				height: 40px;
-				background-color: black;
-				color: #fff;
-				border-radius: 25px;
-				box-shadow: 3px 3px 3px #b1b1b1,
-					-3px -3px 3px #fff;
-				letter-spacing: 1.3px;
-			}
-
-			.wrapper .btn:hover {
-				background-color: #039BE5;
-			}
-
-			.wrapper a {
-				text-decoration: none;
-				font-size: 0.8rem;
-				color: #03A9F4;
-
-			}
-
-			.wrapper a:hover {
-				color: #039BE5;
-			}
-
-			@media(max-width: 380px) {
-				.wrapper {
-					margin: 30px 20px;
-					padding: 40px 15px 15px 15px;
-				}
-			}
-			
-			
-*, *::after, *::before {
-  box-sizing: border-box;
-}
-
-.spinner {
-  width: 300px;
-  height: 300px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 2rem;
-  overflow: hidden;
-  position: relative;
-  animation: text-color 2s ease-in-out infinite alternate;
-}
-
-.spinner-sector {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  border: 15px solid transparent;
-  mix-blend-mode: overlay;
-  animation: rotate var(--duration) var(--timing) infinite;
-  pointer-events: none;
-}
-
-.spinner-sector-red {
-  border-top-color: lightcoral;
-  --duration: 1.5s;
-  --timing: ease-in-out;
-}
-
-.spinner-sector-blue {
-  border-left-color: lightblue;
-  --duration: 2s;
-  --timing: ease-in;
-}
-
-.spinner-sector-green {
-  border-right-color: lightgreen;
-  --duration: 2.5s;
-  --timing: ease-out;
-}
-
-@keyframes rotate {
-  0% {
-    transform: rotate(0);
-  }
-
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes text-color {
-  0% {
-    color: rgba(0, 0, 0, 1);
-  }
-
-  50% {
-    color: rgba(0, 0, 0, .5);
-  }
-
-  100% {
-    color: rgba(0, 0, 0, .1);
-  }
-}
-
-.spinner-2 {
-  width: 300px;
-  height: 300px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 2rem;
-  overflow: hidden;
-  position: relative;
-  animation: text-color 2s ease-in-out infinite alternate;
-}
-
-.spinner-2::before,
-.spinner-2::after {
-  content: "";
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  border: 15px solid transparent;
-  mix-blend-mode: overlay;
-  animation: rotate var(--duration) var(--timing) infinite;
-  pointer-events: none;
-}
-
-.spinner-2::before {
-  border-left-color: lightblue;
-  --duration: 2s;
-  --timing: ease-in;
-}
-
-.spinner-2::after {
-  border-right-color: lightgreen;
-  --duration: 2.5s;
-  --timing: ease-out;
-}
-
-		</style>
-		<div class="wrapper">
-			<div class="logo">
-				<img src="https://bootdey.com/img/Content/avatar/avatar7.png">
-			</div>
-
-
-
-			<div class="text-center mt-4 name">
-	 <span style="color: royalblue;">w</span><span style="color: red;">w</span><span style="color: #F7B529;">w</span><span style="color: royalblue;">.</span><span style="color: limegreen;">e</span><span style="color: red;">m</span><span style="color: royalblue;">s</span><span style="color: red;">.</span><span style="color: #F7B529;">c</span><span style="color: royalblue;">o</span><span style="color: limegreen;">m</span>
-			</div>
-			
-			
-			
-			<div th:if="${session.message}" th:classappend="${session.message.type}" class="alert text-center"
-				role="alert text-center">
-				<p th:text="${session.message.content}"></p>
-				<th:block th:text="${#session.removeAttribute('message')}"></th:block>
-			</div>
-
-<div th:if="${param.error} "  class="alert alert-danger text-center">
-				
-			<span >[[${session.SPRING_SECURITY_LAST_EXCEPTION.message}]]</span>
-			
-			</div>
-       
-			<div th:if="${param.logout}" class="alert alert-success text-center">
-				You have been logged out
-			</div>
-		<!--	<div th:if="${param.change}" class="alert alert-success text-center">
-				<p th:text="${param.change}"></p>
-			</div> -->
-			<form id="login-form" class="form p-3 mt-3" th:action="@{/dologin}" action="#" method="post"
-				th:object="${user}">
-				<div class="form-field d-flex align-items-center">
-					<i class="fa-solid fa-user"></i>
-					<input type="text" name="username" id="username" placeholder="Username" required>
-				</div>
-				<div class="form-field d-flex align-items-center">
-					<span class="fas fa-key"></span>
-					<input type="password" name="password" id="password" placeholder="Password" required>
-				</div>
-
-				<input type="checkbox" onclick="myFunction()">Show Password
-
-				<!--      <div class="form-field d-flex align-items-center">
-                <div class="g-recaptcha" data-sitekey="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" data-callback="verifyRecaptchaCallback" data-expired-callback="expiredRecaptchaCallback"></div>
-                            <input class="form-control d-none" data-recaptcha="true" required data-error="Please complete the Captcha">
-                            <div class="help-block with-errors"></div>
+    <section>
+        <div class="wrapper">
+            <div class="logo">
+                <img src="https://bootdey.com/img/Content/avatar/avatar7.png">
             </div>
-            -->
-				<!--    <img th:src="*{'data:imageCaptcha/jpg;base64,'+ imageCaptcha}" class="mt-2"/>
-          
-             <div class="form-field d-flex align-items-center">
-                <img src="https://cdn-icons-png.flaticon.com/512/6119/6119848.png"; style="width:30px;height:30px;"/>
-                
-               <input type="text" name="Captcha" id="Captcha" placeholder="Enter captcha Here"
-                 class="form-control"
-                th:value="${user.Captcha}"
-              aria-describedby="emailHelp" >  
-              
-            </div>    -->
-				<button type="submit" class="btn mt-3">Login</button>
-				<!--     <h5 class="text-center">OR</h5>
-           <button class="btn btn-lg btn-block btn-primary" style="background-color: #dd4b39;"
-              type="submit"><i class="fab fa-google me-2"></i> Sign in with google</button>   -->
-			</form>
-			<div class="text-center fs-6">
-				<a href="/forgot">Forget password?</a> or <a href="/verify_admin_get">Sign up</a>
 
-			</div>
-		</div>
-		
-		<script>
-			function myFunction() {
-				var x = document.getElementById("password");
-				if (x.type === "password") {
-					x.type = "text";
-				} else {
-					x.type = "password";
-				}
-			}
+            <div class="text-center mt-4 name">
+                   <div class="text-center mt-4 name">
+                <span style="color: royalblue;">w</span><span style="color: red;">w</span><span style="color: #F7B529;">w</span><span style="color: royalblue;">.</span><span style="color: limegreen;">e</span><span style="color: red;">m</span><span style="color: royalblue;">s</span><span style="color: red;">.</span><span style="color: #F7B529;">c</span><span style="color: royalblue;">o</span><span style="color: limegreen;">m</span>
+            </div>
+            </div>
 
-		</script>
-	</section>
- <div class="spinner-2">Loading</div>
+            <div th:if="${session.message}" class="alert text-center" role="alert">
+                <p th:text="${session.message.content}"></p>
+            </div>
+
+            <div th:if="${param.error}" class="alert alert-danger text-center">
+                <span>[[${session.SPRING_SECURITY_LAST_EXCEPTION.message}]]</span>
+            </div>
+
+            <div th:if="${param.logout}" class="alert alert-success text-center">
+                You have been logged out
+            </div>
+
+            <form id="login-form" class="form p-3 mt-3" th:action="@{/dologin}" action="#" method="post">
+                <div class="form-field d-flex align-items-center">
+                    <i class="fa-solid fa-user"></i>
+                    <input type="text" name="username" id="username" placeholder="Username" class="form-control" required />
+                </div>
+
+                <div class="form-field d-flex align-items-center">
+                    <i class="fa-solid fa-key"></i>
+                    <input type="password" name="password" id="password" placeholder="Password" class="form-control" required />
+                </div>
+
+                <button class="btn mt-3" id="signinform" type="submit">Sign In</button>
+            </form>
+
+            <div class="text-center fs-6">
+                <a th:href="@{/forgot/}" id="forgotPasswordLink" href="#">Forgot Password?</a> or 
+                <a th:href="@{/verify_admin_get/}" id="SignupLink" href="#">Sign up</a>
+            </div>
+        </div>
+    </section>
 </body>
 
 </html>

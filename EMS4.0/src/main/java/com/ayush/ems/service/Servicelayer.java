@@ -18,6 +18,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.ListIterator;
@@ -44,6 +45,10 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+//import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -253,8 +258,8 @@ public class Servicelayer {
 				if (user.getRole() != null) {
 					if (user.getRole().equals("ROLE_ADMIN")) {
 						Admin admin = new Admin();
-						int admin_last_id = adminDao.getLastId();
-						admin.setAid(++admin_last_id);
+//						int admin_last_sno = adminDao.getLastId();
+//						admin.setAid(++admin_last_sno);
 						admin.setEmail(user.getEmail());
 						admin.setSystemDateAndTime(new Date());
 						admin.setPassword(passwordEncoder.encode("admin"));
@@ -267,33 +272,34 @@ public class Servicelayer {
 //					} else {
 //						user.setDefaultPasswordSent(0);
 //					}
-						int getA = user.getAaid();
-						Optional<Admin> getAdmin = adminDao.findById(getA);
-						Admin adminn = getAdmin.get();
-						user.setAdmin(adminn);
-						admin.getUserList().add(user);
+//						int getA = user.getAaid();
+//						Optional<Admin> getAdmin = adminDao.findById(getA);
+//						Admin adminn = getAdmin.get();
+//						user.setAdmin(adminn);
+//						admin.getUserList().add(user);
 						User result = userdao.save(user);
 						boolean sentornot = false;
 						System.out.println(result + "---------------");
 						if (result.getEmail() != null) {
 							sentornot = true;
 						}
-						Optional<User> result3 = userdao.findById(result.getId());
+						Optional<User> result3 = userdao.findByUserName(result.getEmail());
 						User user3 = result3.get();
 						System.out.println("___+++++   " + result.getUsername());
-						System.out.println("////////////////" + result);
+						System.out.println("////////////////" + user3.getId());
 						int user_detail_count = userDetailDao.getUserDetailCount();
 						if (user_detail_count > 0) {
+							admin.setAid(user3.getId());		
 							UserDetail userdetail = new UserDetail();
 							userdetail.setSno(++user_detail_count);
-							userdetail.setId(result.getId());
+							userdetail.setId(user3.getId());
 							userdetail.setAaid(result.getAaid());
 							userdetail.setAccountNonLocked(true);
 							userdetail.setBank_account_holder_name("NA");
 							userdetail.setBank_account_number(0);
 							userdetail.setBank_name("NA");
 							userdetail.setBase_location("NA");
-							userdetail.setStatus("ACTIVE");
+							userdetail.setStatus("Active");
 							userdetail.setDesignation(designarionArrowSplit);
 							userdetail.setAddress(result.getAddress());
 							userdetail.setAlert_message_sent(result.getAlert_message_sent());
@@ -312,7 +318,7 @@ public class Servicelayer {
 							userdetail.setPhone(result.getPhone());
 							userdetail.setRole(result.getRole());
 							userdetail.setSystemDateAndTime(result.getSystemDateAndTime());
-							userdetail.setAdmin(adminn.getAid());
+//							userdetail.setAdmin(adminn.getAid());
 							userdetail.setImage_Url(user.getImage_Url());
 							userdetail.setUsername(result.getUsername());
 							userdetail.setPassword(result.getPassword());
@@ -330,9 +336,9 @@ public class Servicelayer {
 							} else {
 								userdetail.setManager_or_not(result.isManager_or_not());
 							}
-							userdetail.setUser(user3);
+							userdetail.setAaid(result.getId());
 							Performance performance = new Performance();
-							performance.setId(user.getId());
+							performance.setId(user3.getId());
 							performance.setJanuary(0);
 							performance.setFebruary(0);
 							performance.setMarch(0);
@@ -350,6 +356,7 @@ public class Servicelayer {
 							userDetailDao.save(userdetail);
 							adminDao.save(admin);
 						} else {
+							admin.setAid(result.getId());		
 							UserDetail userdetail = new UserDetail();
 							userdetail.setSno(1);
 							userdetail.setId(result.getId());
@@ -359,7 +366,7 @@ public class Servicelayer {
 							userdetail.setBank_account_number(0);
 							userdetail.setBank_name("NA");
 							userdetail.setBase_location("NA");
-							userdetail.setStatus("ACTIVE");
+							userdetail.setStatus("Active");
 							userdetail.setDesignation(designarionArrowSplit);
 							userdetail.setAddress(result.getAddress());
 							userdetail.setAlert_message_sent(result.getAlert_message_sent());
@@ -378,7 +385,7 @@ public class Servicelayer {
 							userdetail.setPhone(result.getPhone());
 							userdetail.setRole(result.getRole());
 							userdetail.setSystemDateAndTime(result.getSystemDateAndTime());
-							userdetail.setAdmin(adminn.getAid());
+//							userdetail.setAdmin(adminn.getAid());
 							userdetail.setImage_Url(user.getImage_Url());
 							userdetail.setUsername(result.getUsername());
 							userdetail.setPassword(result.getPassword());
@@ -396,7 +403,7 @@ public class Servicelayer {
 							} else {
 								userdetail.setManager_or_not(result.isManager_or_not());
 							}
-							userdetail.setUser(user3);
+							userdetail.setAaid(user3.getId());
 							Performance performance = new Performance();
 							performance.setId(user.getId());
 							performance.setJanuary(0);
@@ -439,15 +446,15 @@ public class Servicelayer {
 //					}
 						int user_detail_count = userDetailDao.getUserDetailCount();
 						if (user_detail_count > 0) {
-							int getA = user.getAaid();
-							Optional<Admin> getAdmin = adminDao.findById(getA);
-							Admin admin = getAdmin.get();
-							user.setAdmin(admin);
-							admin.getUserList().add(user);
+//							int getA = user.getAaid();
+//							Optional<Admin> getAdmin = adminDao.findById(getA);
+//							Admin admin = getAdmin.get();
+//							user.setAdmin(admin);
+//							admin.getUserList().add(user);
 							User result = userdao.save(user);
 							System.out.println("////////////////" + result);
-							Optional<User> result3 = userdao.findById(result.getId());
-							User user3 = result3.get();
+//							Optional<User> result3 = userdao.findById(result.getId());
+//							User user3 = result3.get();
 							boolean sentornot = false;
 							System.out.println(result + "---------------");
 							if (result.getEmail() != null) {
@@ -478,9 +485,9 @@ public class Servicelayer {
 							userdetail.setGender(result.getGender());
 							userdetail.setIpAddress(result.getIpAddress());
 							userdetail.setPhone(result.getPhone());
-							userdetail.setStatus("ACTIVE");
+							userdetail.setStatus("Active");
 							userdetail.setRole(result.getRole());
-							userdetail.setAdmin(admin.getAid());
+//							userdetail.setAdmin(admin.getAid());
 							userdetail.setPassword(result.getPassword());
 							userdetail.setRepassword(result.getRepassword());
 							userdetail.setLaptop_brand("NA");
@@ -495,7 +502,7 @@ public class Servicelayer {
 								userdetail.setManager_or_not(false);
 							}
 							userdetail.setSystemDateAndTime(result.getSystemDateAndTime());
-							userdetail.setUser(user3);
+//							userdetail.setUser(user3);
 							Performance performance = new Performance();
 							performance.setId(user.getId());
 							performance.setJanuary(0);
@@ -527,15 +534,15 @@ public class Servicelayer {
 
 							return result;
 						} else {
-							int getA = user.getAaid();
-							Optional<Admin> getAdmin = adminDao.findById(getA);
-							Admin admin = getAdmin.get();
-							user.setAdmin(admin);
-							admin.getUserList().add(user);
+//							int getA = user.getAaid();
+//							Optional<Admin> getAdmin = adminDao.findById(getA);
+//							Admin admin = getAdmin.get();
+//							user.setAdmin(admin);
+//							admin.getUserList().add(user);
 							User result = userdao.save(user);
 							System.out.println("////////////////" + result);
-							Optional<User> result3 = userdao.findById(result.getId());
-							User user3 = result3.get();
+//							Optional<User> result3 = userdao.findById(result.getId());
+//							User user3 = result3.get();
 							boolean sentornot = false;
 							System.out.println(result + "---------------");
 							if (result.getEmail() != null) {
@@ -566,9 +573,9 @@ public class Servicelayer {
 							userdetail.setGender(result.getGender());
 							userdetail.setIpAddress(result.getIpAddress());
 							userdetail.setPhone(result.getPhone());
-							userdetail.setStatus("ACTIVE");
+							userdetail.setStatus("Active");
 							userdetail.setRole(result.getRole());
-							userdetail.setAdmin(admin.getAid());
+//							userdetail.setAdmin(admin.getAid());
 							userdetail.setPassword(result.getPassword());
 							userdetail.setRepassword(result.getRepassword());
 							userdetail.setLaptop_brand("NA");
@@ -583,7 +590,7 @@ public class Servicelayer {
 								userdetail.setManager_or_not(false);
 							}
 							userdetail.setSystemDateAndTime(result.getSystemDateAndTime());
-							userdetail.setUser(user3);
+//							userdetail.setUser(user3);
 							Performance performance = new Performance();
 							performance.setId(user.getId());
 							performance.setJanuary(0);
@@ -742,19 +749,19 @@ public class Servicelayer {
 //						} else {
 //							user.setDefaultPasswordSent(0);
 //						}
-						int getA = user.getAaid();
-						Optional<Admin> getAdmin = adminDao.findById(getA);
-						Admin adminn = getAdmin.get();
-						user.setAdmin(adminn);
-						admin.getUserList().add(user);
+//						int getA = user.getAaid();
+//						Optional<Admin> getAdmin = adminDao.findById(getA);
+//						Admin adminn = getAdmin.get();
+//						user.setAdmin(adminn);
+//						admin.getUserList().add(user);
 						User result = userdao.save(user);
 						boolean sentornot = false;
 						System.out.println(result + "---------------");
 						if (result.getEmail() != null) {
 							sentornot = true;
 						}
-						Optional<User> result3 = userdao.findById(result.getId());
-						User user3 = result3.get();
+//						Optional<User> result3 = userdao.findById(result.getId());
+//						User user3 = result3.get();
 						System.out.println("___+++++   " + result.getUsername());
 						System.out.println("////////////////" + result);
 						UserDetail userdetail = new UserDetail();
@@ -784,7 +791,7 @@ public class Servicelayer {
 						userdetail.setPhone(result.getPhone());
 						userdetail.setRole(result.getRole());
 						userdetail.setSystemDateAndTime(result.getSystemDateAndTime());
-						userdetail.setAdmin(adminn.getAid());
+//						userdetail.setAdmin(adminn.getAid());
 						userdetail.setImage_Url(user.getImage_Url());
 						userdetail.setUsername(result.getUsername());
 						userdetail.setPassword(result.getPassword());
@@ -798,7 +805,7 @@ public class Servicelayer {
 						userdetail.setWho_assign_laptop("NA");
 						userdetail.setReview_rating("NA");
 						userdetail.setManager_or_not(false);
-						userdetail.setUser(user3);
+//						userdetail.setUser(user3);
 						Performance performance = new Performance();
 						performance.setId(user.getId());
 						performance.setJanuary(0);
@@ -838,15 +845,15 @@ public class Servicelayer {
 //						} else {
 //							user.setDefaultPasswordSent(0);
 //						}
-						int getA = user.getAaid();
-						Optional<Admin> getAdmin = adminDao.findById(getA);
-						Admin admin = getAdmin.get();
-						user.setAdmin(admin);
-						admin.getUserList().add(user);
+//						int getA = user.getAaid();
+//						Optional<Admin> getAdmin = adminDao.findById(getA);
+//						Admin admin = getAdmin.get();
+//						user.setAdmin(admin);
+//						admin.getUserList().add(user);
 						User result = userdao.save(user);
 						System.out.println("////////////////" + result);
-						Optional<User> result3 = userdao.findById(result.getId());
-						User user3 = result3.get();
+//						Optional<User> result3 = userdao.findById(result.getId());
+//						User user3 = result3.get();
 						boolean sentornot = false;
 						System.out.println(result + "---------------");
 						if (result.getEmail() != null) {
@@ -878,7 +885,7 @@ public class Servicelayer {
 						userdetail.setPhone(result.getPhone());
 						userdetail.setStatus("ACTIVE");
 						userdetail.setRole(result.getRole());
-						userdetail.setAdmin(admin.getAid());
+//						userdetail.setAdmin(admin.getAid());
 						userdetail.setPassword(result.getPassword());
 						userdetail.setRepassword(result.getRepassword());
 						userdetail.setLaptop_brand("NA");
@@ -893,7 +900,7 @@ public class Servicelayer {
 							userdetail.setManager_or_not(false);
 						}
 						userdetail.setSystemDateAndTime(result.getSystemDateAndTime());
-						userdetail.setUser(user3);
+//						userdetail.setUser(user3);
 						Performance performance = new Performance();
 						performance.setId(user.getId());
 						performance.setJanuary(0);
@@ -1603,7 +1610,7 @@ public class Servicelayer {
 					if (user1.isEnabled() == false) {
 						Optional<UserDetail> userDetail = userDetailDao.findById(user1.getId());
 						UserDetail userDetail2 = userDetail.get();
-						userDetail2.setStatus("INACTIVE");
+						userDetail2.setStatus("Inactive");
 						userDetail2.setEnabled(false);
 						userDetailDao.save(userDetail2);
 					}
@@ -1626,6 +1633,7 @@ public class Servicelayer {
 			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
 
 		}
+	
 //		Map<Integer,Date> map=daolayer.getLastWorkingDay_Records();
 //		Iterator<Entry<Integer, Date>> itr=map.entrySet().iterator();
 //		while(itr.hasNext())
@@ -1633,7 +1641,7 @@ public class Servicelayer {
 //			Map.Entry<Integer, Date> GetMap=(Map.Entry<Integer,Date>)itr.next();
 //			Date getDateRes=GetMap.getValue();
 //			if(getDateRes!=null)
-
+//
 //			daolayer.getEnableFalse(getDateRes);
 //			Optional<UserDetail> userDetail=  userDetailDao.findById(GetMap.getKey());
 //			UserDetail userdetail1=userDetail.get();
@@ -1752,19 +1760,19 @@ public class Servicelayer {
 		}
 	}
 
-	@Transactional
-	public void InactiveUserDisabled() {
-		List<User> list = userdao.findAll();
-		ListIterator<User> listIterator = list.listIterator();
-		while (listIterator.hasNext()) {
-			User user = listIterator.next();
-			if (user.isNewUserActiveOrInactive() == false) {
-				System.out.println("USER ID IS DISABLED " + user);
-				userdao.disableuserbyid(user.getId());
-			}
-		}
-		jobrunning("Is_Disabled_Inactive_User_Job");
-	}
+//	@Transactional
+//	public void InactiveUserDisabled() {
+//		List<User> list = userdao.findAll();
+//		ListIterator<User> listIterator = list.listIterator();
+//		while (listIterator.hasNext()) {
+//			User user = listIterator.next();
+//			if (user.isNewUserActiveOrInactive() == false) {
+//				System.out.println("USER ID IS DISABLED " + user);
+//				userdao.disableuserbyid(user.getId());
+//			}
+//		}
+//		jobrunning("Is_Disabled_Inactive_User_Job");
+//	}
 
 	@Transactional
 	public void reset_failed_attempts_password() {
@@ -4010,4 +4018,26 @@ public class Servicelayer {
 
 		}
 	}
+	
+//	public Page<UserDetail> findPaginated(int page, int size) {
+//	    Pageable pageable = PageRequest.of(page, size);
+//	    Page<UserDetail> page2= userDetailDao.findAllEnabledUser(pageable);
+//	    return page2;
+//	}
+	
+	public Page<UserDetail> findPaginated(List<UserDetail> sortedList, int page, int pageSize) {
+	    int startItem = page * pageSize;
+	    List<UserDetail> paginatedList;
+
+	    if (sortedList.size() < startItem) {
+	        paginatedList = Collections.emptyList();
+	    } else {
+	        int toIndex = Math.min(startItem + pageSize, sortedList.size());
+	        paginatedList = sortedList.subList(startItem, toIndex);
+	    }
+
+	    return new PageImpl<>(paginatedList, PageRequest.of(page, pageSize), sortedList.size());
+	}
+
+
 }

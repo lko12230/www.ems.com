@@ -45,21 +45,21 @@ public interface UserDao extends JpaRepository<User, Integer> {
 	@Modifying
 	public void getAllAccount_LockedAndUnlokedDetails(Date lock_date_and_time);
 
-	@Query(value = "update employee u set u.enabled ='0',u.status='INACTIVE' where u.speration_date <= (NOW() - INTERVAL 2 DAY)", nativeQuery = true)
+	@Query(value = "update employee u set u.enabled ='0',u.status='Inactive' where u.speration_date <= (NOW() - INTERVAL 2 DAY)", nativeQuery = true)
 	@Modifying
 	public void getEnableFalse(Date lastWorkingDay);
 
 	@Query("select u.lockDateAndTime from User u")
 	public List<Date> getAllLock_Date_And_Time_Records();
 
-	@Query("select u.id from User u")
+	@Query(value="select u.id from employee u where u.enabled='0' and  u.last_working_day <= (NOW() - INTERVAL 2 DAY)", nativeQuery = true)
 	public List<Integer> getLastWorkingDay_Records();
 
 //	@Query(value="update database_ems.employee u set u.failed_attempts=0 ,u.last_failed_attempt_job=CURRENT_TIMESTAMP where u.id=?1",nativeQuery=true)
 //	@Modifying
 //	public void getAllFailedAttemptUserRecords(int id);
 
-	@Query("select u.experience from User u")
+	@Query("select u.experience from User u ")
 	public List<Integer> getAllExp();
 
 	@Query(value = "update database_ems.employee u set u.experience  where u.system_date_and_time <= (NOW() - INTERVAL 365 DAY)", nativeQuery = true)

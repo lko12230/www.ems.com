@@ -2,94 +2,169 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org" th:fragment="layout(content)">
 
 <head>
-	<!-- Required meta tags -->
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<link rel="icon" type="image/x-icon"
-		href="https://www.freepnglogos.com/uploads/google-logo-png/google-logo-png-webinar-optimizing-for-success-google-business-webinar-13.png">
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="icon" type="image/x-icon" href="https://www.freepnglogos.com/uploads/google-logo-png/google-logo-png-webinar-optimizing-for-success-google-business-webinar-13.png">
 
-	<!-- Bootstrap CSS -->
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
-		integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
-		integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
-		crossorigin="anonymous" referrerpolicy="no-referrer" />
-	<script src='https://www.google.com/recaptcha/api.js'></script>
-	<link rel="stylesheet" th:href="@{/css/style1.css}" />
-	<script src="https://code.jquery.com/jquery-3.6.1.min.js"
-		integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
-	<title>ems</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src='https://www.google.com/recaptcha/api.js'></script>
+    <link rel="stylesheet" th:href="@{/css/style1.css}" />
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+    <title>EMS</title>
 
+    <style>
+        /* Spinner Styles */
+        .spinner-2 {
+            width: 150px;
+            height: 150px;
+            display: none; /* Initially hidden */
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            overflow: hidden;
+            position: fixed;
+            top: 50%; /* Center vertically */
+            left: 50%; /* Center horizontally */
+            transform: translate(-50%, -50%);
+            animation: text-color 2s ease-in-out infinite alternate;
+            z-index: 1000; /* Ensure it's above other elements */
+        }
+
+        .spinner-2::before,
+        .spinner-2::after {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 10px solid transparent;
+            mix-blend-mode: overlay;
+            animation: rotate var(--duration) var(--timing) infinite;
+            pointer-events: none;
+        }
+
+        .spinner-2::before {
+            border-left-color: lightblue;
+            --duration: 2s;
+            --timing: ease-in;
+        }
+
+        .spinner-2::after {
+            border-right-color: lightgreen;
+            --duration: 2.5s;
+            --timing: ease-out;
+        }
+
+        @keyframes rotate {
+            0% {
+                transform: rotate(0);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes text-color {
+            0% {
+                color: rgba(0, 0, 0, 1);
+            }
+
+            50% {
+                color: rgba(0, 0, 0, .5);
+            }
+
+            100% {
+                color: rgba(0, 0, 0, .1);
+            }
+        }
+    </style>
 </head>
 
 <body>
-		<nav class="fixed-top navbar navbar-expand-lg navbar-dark" style="background-color: black;">
-		<a class="navbar-brand" href="/">
-			<img th:src="@{/img/EMS.png}" style="width: 200px; height: 35px" alt="EMS Logo">
+    <nav class="fixed-top navbar navbar-expand-lg navbar-dark" style="background-color: black;">
+        <a class="navbar-brand" href="/">
+            <img th:src="@{/img/EMS.png}" style="width: 200px; height: 35px" alt="EMS Logo">
+        </a>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ml-auto text-uppercase">
+                <li class="nav-item active"></li>
+                <li class="nav-item active">
+                    <a class="nav-link" th:href="@{/}" href="#"><i class="fa-sharp fa-solid fa-house"></i>Home <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" th:href="@{/swr/}" href="#">About</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" th:href="@{/signin/}" href="#">Login</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" th:href="@{/verify_admin_get}" href="#"><i class="fa-solid fa-user-plus"></i>ADMIN</a>
+                </li>
+                <li class="nav-item active">
+                    <input type="text" class="form-control" id="liveDateTime" readonly>
+                </li>
+            </ul>
+        </div>
+    </nav>
 
-		</a>
-		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <div th:replace="${content}"></div>
 
-			<ul class="navbar-nav ml-auto text-uppercase">
-				<li class="nav-item active">
-				</li>
-				<li class="nav-item active">
-					<a class="nav-link" th:href="@{/}" href="#"><i class="fa-sharp fa-solid fa-house"></i>Home <span
-							class="sr-only">(current)</span></a>
-				</li>
-				<li class="nav-item active">
-					<a class="nav-link" th:href="@{/swr/}" href="#">About</a>
-				</li>
-			<!--	<li class="nav-item active">
-					<a class="nav-link" th:href="@{/payment}" href="#">Payment</a>
-				</li>  -->
+    <!-- Loading Spinner -->
+    <div class="spinner-2" id="signinformSpinner">Verifying</div>
+    <div class="spinner-2" id="genericSpinner">Loading</div>
 
-				<li class="nav-item active">
-					<a class="nav-link" th:href="@{/signin/}" href="#">Login</a>
-				</li>
+    <!-- Optional JavaScript -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script th:src="@{/js/script.js}"></script>
 
-				<li class="nav-item active">
-					<a class="nav-link" th:href="@{/verify_admin_get}" href="#"><i
-							class="fa-solid fa-user-plus"></i>ADMIN</a>
-				</li>
-				
-				<li class="nav-item active">
-					<input type="text" class="form-control" id="liveDateTime" readonly>
-				</li>
-			</ul>
+    <script>
+    $(document).ready(function () {
+        // Function to update live date and time every second
+        function updateLiveDateTime() {
+            var now = new Date();
+            var formattedDateTime = now.toLocaleString(); // Adjust as per your required format
+            $("#liveDateTime").val(formattedDateTime);
+        }
 
-		</div>
-	</nav>
+        // Initial call to update live date and time
+        updateLiveDateTime();
 
+        // Update live date and time every second
+        setInterval(updateLiveDateTime, 1000);
 
+        // Show spinner only on form submission for sign-in
+        $(document).on('submit', '#login-form', function () {
+            $('#signinformSpinner').css('display', 'flex'); // Show verifying spinner
+        });
 
-	<div th:replace="${content}"></div>
-	<!-- Optional JavaScript -->
-	<!-- jQuery first, then Popper.js, then Bootstrap JS -->
-	<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-	<!--   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>  -->
-	<script src="https://code.jquery.com/jquery-3.7.1.min.js"
-		integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"
-		integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-		crossorigin="anonymous"></script>
-	<script th:src="@{/js/script.js}"></script>
-	 <script>
-    $(document).ready(function() {
-      // Function to update live date and time every second
-      function updateLiveDateTime() {
-        var now = new Date();
-        var formattedDateTime = now.toLocaleString(); // Adjust as per your required format
-        $("#liveDateTime").val(formattedDateTime);
-      }
+        // Hide spinner on page load
+        $(window).on('load', function () {
+            $('#genericSpinner').css('display', 'none');
+        });
 
-      // Initial call to update live date and time
-      updateLiveDateTime();
-
-      // Update live date and time every second
-      setInterval(updateLiveDateTime, 1000);
+        // For navigation links
+        $('.navbar-nav a').on('click', function (e) {
+            // If the link has a valid href, proceed with the default behavior and show spinner
+            const href = $(this).attr('href');
+            if (href && href !== '#') {
+                $('#genericSpinner').css('display', 'flex'); // Show loading spinner
+                // Let the default action proceed for normal navigation
+            }
+        });
     });
-  </script>
+
+    // Separate handling for forgot password and sign-up links
+    $('#forgotPasswordLink, #SignupLink').on('click', function () {
+        $('#genericSpinner').css('display', 'flex'); // Show spinner for forgot password or sign-up
+    });
+
+    </script>
+
 </body>
 
 </html>

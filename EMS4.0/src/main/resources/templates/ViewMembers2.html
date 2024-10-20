@@ -17,31 +17,89 @@
 <body>
     <section>
         <div class="container">
-            <div class="row bootstrap snippets bootdeys">
-                <div class="col-md-9 col-sm-7">
-                    <div class="row">
-                        <h2>Employees</h2>
-                        <select class="form-control border-0 col-md-2 ml-2"
-                            id="exampleOption" onchange="location = this.value;">
-                            <option value="/admin/employees?sort=">Sort By</option>
-                            <option value="/admin/employees?sort=az">Names (A-Z)</option>
-                            <option value="/admin/employees?sort=za">Names (Z-A)</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-3 col-sm-5">
-                    <form method="get" role="form" class="search-form-full">
-                        <div class="form-group">
-                            <input type="text" class="form-control" name="s"
-                                id="search-input" placeholder="Search..."> <i
-                                class="entypo-search"></i>
-                        </div>
-                    </form>
-                </div>
+         <!-- Employees Title -->
+    <div class="col-md-3 col-sm-6">
+        <h2>Employees</h2>
+    </div>
+           <div class="row bootstrap snippets bootdeys align-items-center">
+
+    <!-- Sort By Dropdown -->
+    <div class="col-md-3 col-sm-6">
+     <select class="form-control border-0" id="exampleOption" onchange="sortData(this.value)">
+    <option value="" disabled selected>Sort By</option>
+    <option value="az" th:selected="${sort == 'az'}">Names (A-Z)</option>
+    <option value="za" th:selected="${sort == 'za'}">Names (Z-A)</option>
+</select>
+
+
+    </div>
+
+    <!-- Search Form -->
+     <!-- Search Form (modernized) -->
+    <div class="col-md-4 col-sm-8">
+        <form method="get" role="form" class="search-form-full">
+            <div class="form-group mb-0">
+                <input type="text" class="form-control modern-search" name="s" id="search-input" placeholder="Search...">
+                <i class="entypo-search"></i>
             </div>
+        </form>
+    </div>
+
+    <!-- Pagination Dropdown -->
+    <div class="col-md-3 col-sm-6">
+        <div class="form-group mb-0">
+           <!-- <label for="pageSize" class="form-label">Items per page:</label>-->
+            <select id="pageSize" class="form-control" onchange="updatePageSize()">
+                <option th:each="size : ${pageSizes}" th:value="${size}" th:text="${size}" th:selected="${size == selectedPageSize}"></option>
+            </select>
+        </div>
+    </div>
+</div>
+<br>
+       <!-- Pagination -->
+     <div th:if="${all_inbound_records != null and #lists.size(all_inbound_records.content) > 0}">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                <!-- Previous Button -->
+                <li th:if="${currentPage > 0}" class="page-item">
+                    <a th:href="@{'/admin/viewMembers/'+${currentPage-1}+'?pageSize='+${selectedPageSize}}" class="page-link">Previous</a>
+                </li>
+
+                <!-- First Page -->
+                <li th:classappend="${currentPage == 0} ? 'active'" class="page-item">
+                    <a th:href="@{'/admin/viewMembers/'+0+'?pageSize='+${selectedPageSize}}" class="page-link">1</a>
+                </li>
+
+                <!-- Middle Pages -->
+                <li th:if="${totalPages > 5 and currentPage > 2}" class="page-item">
+                    <span class="page-link">...</span>
+                </li>
+
+                <li th:each="i : ${#numbers.sequence(1, totalPages)}"
+                    th:if="${i >= currentPage and i <= currentPage + 2 and i != 1 and i != totalPages}"
+                    th:classappend="${currentPage == i-1} ? 'active'" class="page-item">
+                    <a th:href="@{'/admin/viewMembers/'+${i-1}+'?pageSize='+${selectedPageSize}}" class="page-link" th:text="${i}"></a>
+                </li>
+
+                <li th:if="${totalPages > 5 and currentPage < totalPages - 3}" class="page-item">
+                    <span class="page-link">...</span>
+                </li>
+
+                <!-- Last Page -->
+                <li th:if="${totalPages > 1}" th:classappend="${currentPage == totalPages - 1} ? 'active'" class="page-item">
+                    <a th:href="@{'/admin/viewMembers/'+${totalPages-1}+'?pageSize='+${selectedPageSize}}" class="page-link" th:text="${totalPages}"></a>
+                </li>
+
+                <!-- Next Button -->
+                <li th:if="${currentPage < totalPages-1}" class="page-item">
+                    <a th:href="@{'/admin/viewMembers/'+${currentPage + 1}+'?pageSize='+${selectedPageSize}}" class="page-link">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
             <table>
                 <tbody>
-                    <tr th:each="c : ${all_users}">
+                    <tr th:each="c : ${all_inbound_records}">
                         <td>
                             <div class="member-entry">
                                 <div th:if="${c.gender.equals('Male') and c.Image_Url.equals('default.jpg')}">
@@ -118,8 +176,48 @@
                     </tr>
                 </tbody>
             </table>
+            <!-- Pagination -->
+     <div th:if="${all_inbound_records != null and #lists.size(all_inbound_records.content) > 0}">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                <!-- Previous Button -->
+                <li th:if="${currentPage > 0}" class="page-item">
+                    <a th:href="@{'/admin/viewMembers/'+${currentPage-1}+'?pageSize='+${selectedPageSize}}" class="page-link">Previous</a>
+                </li>
+
+                <!-- First Page -->
+                <li th:classappend="${currentPage == 0} ? 'active'" class="page-item">
+                    <a th:href="@{'/admin/viewMembers/'+0+'?pageSize='+${selectedPageSize}}" class="page-link">1</a>
+                </li>
+
+                <!-- Middle Pages -->
+                <li th:if="${totalPages > 5 and currentPage > 2}" class="page-item">
+                    <span class="page-link">...</span>
+                </li>
+
+                <li th:each="i : ${#numbers.sequence(1, totalPages)}"
+                    th:if="${i >= currentPage and i <= currentPage + 2 and i != 1 and i != totalPages}"
+                    th:classappend="${currentPage == i-1} ? 'active'" class="page-item">
+                    <a th:href="@{'/admin/viewMembers/'+${i-1}+'?pageSize='+${selectedPageSize}}" class="page-link" th:text="${i}"></a>
+                </li>
+
+                <li th:if="${totalPages > 5 and currentPage < totalPages - 3}" class="page-item">
+                    <span class="page-link">...</span>
+                </li>
+
+                <!-- Last Page -->
+                <li th:if="${totalPages > 1}" th:classappend="${currentPage == totalPages - 1} ? 'active'" class="page-item">
+                    <a th:href="@{'/admin/viewMembers/'+${totalPages-1}+'?pageSize='+${selectedPageSize}}" class="page-link" th:text="${totalPages}"></a>
+                </li>
+
+                <!-- Next Button -->
+                <li th:if="${currentPage < totalPages-1}" class="page-item">
+                    <a th:href="@{'/admin/viewMembers/'+${currentPage + 1}+'?pageSize='+${selectedPageSize}}" class="page-link">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
         </div>
-    </section>
 
     <script>
         $(function() {
@@ -151,6 +249,26 @@
                 }
             });
         });
+        
+        function updatePageSize() {
+            try {
+                console.log("Page size selected: " + document.getElementById('pageSize').value);
+                const pageSize = document.getElementById('pageSize').value;
+                const currentPage = window.location.pathname.split('/').pop();
+                window.location.href = `/admin/viewMembers/${currentPage}?pageSize=${pageSize}`;
+            } catch (error) {
+                console.error('An error occurred while updating page size:', error);
+            }
+        }
+
+        
+        function sortData(sortValue) {
+            const pageSize = document.getElementById('pageSize').value || 10;  // Default to 10 if not selected
+            window.location.href = `/admin/viewMembers/0?pageSize=${pageSize}&sort=${sortValue}`;
+        }
+
+
     </script>
+    </section>
 </body>
 </html>

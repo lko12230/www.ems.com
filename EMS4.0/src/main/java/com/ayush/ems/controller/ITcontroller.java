@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -182,64 +183,128 @@ public class ITcontroller {
 	    }
 	}
 
+//	List<UserDetail> all_users = new ArrayList<>();
+//
+//	@GetMapping("/viewMembers")
+//	public String viewTeamMembers(Model model, User user, Principal principal) {
+//		try {
+//			all_users = userDetailDao.findAllEnabledUser();
+//			if (all_users != null && user.getUsername() != null) {
+//				System.out.println("find all " + all_users);
+//				model.addAttribute("all_users", all_users);
+//				System.out.println("IN");
+//				return "ViewMembers5";
+//			} else {
+//				throw new Exception();
+//			}
+//		} catch (Exception e) {
+////			return "SomethingWentWrong";
+////			String error=" java.lang.NullPointerException: Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null";
+//			System.out.println("ERRRRRRRRRRRRR " + e + " " + count);
+////			String exString=e.toString();
+////			if(exString.equals("Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null") && count==1 || count==0)
+////			{
+//			String exceptionAsString = e.toString();
+//			// Get the current class
+//			Class<?> currentClass = ITcontroller.class;
+//
+//			// Get the name of the class
+//			String className = currentClass.getName();
+//			String errorMessage = e.getMessage();
+//			StackTraceElement[] stackTrace = e.getStackTrace();
+//			String methodName = stackTrace[0].getMethodName();
+//			int lineNumber = stackTrace[0].getLineNumber();
+//			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+//			servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+////			return "SomethingWentWrong";)
+////				return "redirect:/swr";
+////			}
+////			else
+////			{
+//			return "redirect:/logout";
+////			}
+//
+//		}
+//	}
+//
+//	
+//	@GetMapping("/employees")
+//    public String getAllEmployees(@RequestParam(name = "sort", required = false) String sort, Model model) {
+//        
+//		all_users = userDetailDao.findAll();
+//        if ("az".equals(sort)) {
+//        	all_users.sort((a, b) -> a.getUsername().compareToIgnoreCase(b.getUsername()));
+//        } else if ("za".equals(sort)) {
+//        	all_users.sort((a, b) -> b.getUsername().compareToIgnoreCase(a.getUsername()));
+//        }
+//
+//        model.addAttribute("all_users", all_users);
+//        return "ViewMembers5";
+//    }
+	
 	List<UserDetail> all_users = new ArrayList<>();
 
-	@GetMapping("/viewMembers")
-	public String viewTeamMembers(Model model, User user, Principal principal) {
-		try {
-			all_users = userDetailDao.findAllEnabledUser();
-			if (all_users != null && user.getUsername() != null) {
-				System.out.println("find all " + all_users);
-				model.addAttribute("all_users", all_users);
-				System.out.println("IN");
-				return "ViewMembers5";
-			} else {
-				throw new Exception();
-			}
-		} catch (Exception e) {
-//			return "SomethingWentWrong";
-//			String error=" java.lang.NullPointerException: Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null";
-			System.out.println("ERRRRRRRRRRRRR " + e + " " + count);
-//			String exString=e.toString();
-//			if(exString.equals("Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null") && count==1 || count==0)
-//			{
-			String exceptionAsString = e.toString();
-			// Get the current class
-			Class<?> currentClass = ITcontroller.class;
+	@GetMapping("/viewMembers/{page}")
+	public String viewTeamMembers(
+	        Model model, 
+	        User user, 
+	        Principal principal,
+	        @RequestParam(name = "pageSize", defaultValue = "10") int pageSize,
+	        @RequestParam(name = "sort", required = false) String sort, // Get sorting param here
+	        @PathVariable("page") int page) {
+	    
+	    try {
+	        System.out.println(" all_users_size " + all_users.size());
 
-			// Get the name of the class
-			String className = currentClass.getName();
-			String errorMessage = e.getMessage();
-			StackTraceElement[] stackTrace = e.getStackTrace();
-			String methodName = stackTrace[0].getMethodName();
-			int lineNumber = stackTrace[0].getLineNumber();
-			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
-			servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
-//			return "SomethingWentWrong";)
-//				return "redirect:/swr";
-//			}
-//			else
-//			{
-			return "redirect:/logout";
-//			}
+	        // Assuming all_users gets populated here by fetching enabled users
+	        all_users = userDetailDao.findAllEnabledUser();
+	        
+	        System.out.println(" all_users_size " + all_users.size());
 
-		}
+	        if (all_users != null && user.getUsername() != null) {
+	            
+	            // Sort the list based on user input
+	        	if ("az".equals(sort)) {
+	        	    all_users.sort((a, b) -> a.getUsername().compareToIgnoreCase(b.getUsername()));
+	        	} else if ("za".equals(sort)) {
+	        	    all_users.sort((a, b) -> b.getUsername().compareToIgnoreCase(a.getUsername()));
+	        	}
+
+
+	            // Create a paginated version of the sorted list
+	            Page<UserDetail> user_page = servicelayer.findPaginated(all_users, page, pageSize);
+
+	            // Add the sorted and paginated data to the model
+	            model.addAttribute("all_inbound_records", user_page);
+	            model.addAttribute("currentPage", page);
+	            model.addAttribute("totalPages", user_page.getTotalPages());
+	            model.addAttribute("selectedPageSize", pageSize); // For Thymeleaf page size selection
+	            model.addAttribute("pageSizes", List.of(10, 20, 50, 100, 500)); // Possible page sizes
+	            model.addAttribute("sort", sort); // Pass sorting parameter to maintain state on frontend
+
+	            System.out.println("IN");
+	            return "ViewMembers5";
+	        } else {
+	            throw new Exception();
+	        }
+	    } catch (Exception e) {
+	        System.out.println("ERRRRRRRRRRRRR " + e);
+	        
+	        // Exception handling and logging
+	        String exceptionAsString = e.toString();
+	        Class<?> currentClass = AdminController.class;
+	        String className = currentClass.getName();
+	        String errorMessage = e.getMessage();
+	        StackTraceElement[] stackTrace = e.getStackTrace();
+	        String methodName = stackTrace[0].getMethodName();
+	        int lineNumber = stackTrace[0].getLineNumber();
+	        System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+	        servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+
+	        return "redirect:/logout";
+	    }
 	}
 
-	
-	@GetMapping("/employees")
-    public String getAllEmployees(@RequestParam(name = "sort", required = false) String sort, Model model) {
-        
-		all_users = userDetailDao.findAll();
-        if ("az".equals(sort)) {
-        	all_users.sort((a, b) -> a.getUsername().compareToIgnoreCase(b.getUsername()));
-        } else if ("za".equals(sort)) {
-        	all_users.sort((a, b) -> b.getUsername().compareToIgnoreCase(a.getUsername()));
-        }
-
-        model.addAttribute("all_users", all_users);
-        return "ViewMembers5";
-    }
 	
 //	@GetMapping("/swrr")
 //	public String swr() {

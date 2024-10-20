@@ -6,8 +6,8 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+//import javax.persistence.JoinColumn;
+//import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
@@ -92,9 +92,9 @@ public class UserDetail implements Serializable {
 //	@ManyToOne
 //	@JsonIgnore
 //	private User user;
-	@OneToOne
-	@JoinColumn(name = "User_Id")
-	private User user;
+//	@OneToOne
+//	@JoinColumn(name = "User_Id")
+//	private User user;
 	private String Status;
 	private String bank_account_holder_name;
 	private boolean laptop_assign_or_not;

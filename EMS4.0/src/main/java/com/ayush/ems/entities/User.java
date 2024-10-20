@@ -3,21 +3,21 @@ package com.ayush.ems.entities;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.CascadeType;
+//import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
+//import javax.persistence.GeneratedValue;
+//import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
+//import javax.persistence.ManyToOne;
+//import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+//import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -37,7 +37,7 @@ public class User implements Serializable{
 	private static final long serialVersionUID = 1L;
 	private int sno;
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+//	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
 //	private int a_id;
 //	@NotBlank(message="username field is required")
@@ -103,13 +103,13 @@ public class User implements Serializable{
 	@Column(name = "Expire_lock_date_and_time")
 	private Date expirelockDateAndTime;
 	private boolean defaultPasswordSent;
-	@ManyToOne
-	@JsonIgnore
-	private Admin admin;
+//	@ManyToOne
+//	@JsonIgnore
+//	private Admin admin;
 //	@OneToMany(cascade = CascadeType.ALL,mappedBy = "user",orphanRemoval = true )
 //	private List<UserDetail> AllUsersList=new ArrayList<>();
-	@OneToOne(cascade = CascadeType.ALL,mappedBy = "user",orphanRemoval = true)
-	private UserDetail userDetail;
+//	@OneToOne(cascade = CascadeType.ALL,mappedBy = "user",orphanRemoval = true)
+//	private UserDetail userDetail;
 	private String Session_Id;
 	private boolean Excel_Download;
 	private Date Excel_Download_Date;

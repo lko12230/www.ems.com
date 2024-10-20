@@ -44,6 +44,70 @@
 		.char-yellow {
 			color: yellow;
 		}
+		 /* Spinner Styles */
+        .spinner-2 {
+            width: 150px;
+            height: 150px;
+            display: none; /* Initially hidden */
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            overflow: hidden;
+            position: fixed; /* Fixed position */
+            top: 50%; /* Center vertically */
+            left: 50%; /* Center horizontally */
+            transform: translate(-50%, -50%); /* Center the spinner */
+            animation: text-color 2s ease-in-out infinite alternate;
+        }
+
+        .spinner-2::before,
+        .spinner-2::after {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 10px solid transparent;
+            mix-blend-mode: overlay;
+            animation: rotate var(--duration) var(--timing) infinite;
+            pointer-events: none;
+        }
+
+        .spinner-2::before {
+            border-left-color: lightblue;
+            --duration: 2s;
+            --timing: ease-in;
+        }
+
+        .spinner-2::after {
+            border-right-color: lightgreen;
+            --duration: 2.5s;
+            --timing: ease-out;
+        }
+
+        @keyframes rotate {
+            0% {
+                transform: rotate(0);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes text-color {
+            0% {
+                color: rgba(0, 0, 0, 1);
+            }
+
+            50% {
+                color: rgba(0, 0, 0, .5);
+            }
+
+            100% {
+                color: rgba(0, 0, 0, .1);
+            }
+        }
 	</style>
 	<title>
 		ems
@@ -94,7 +158,7 @@
 	<div class="sidebar" id="sidebar">
 		<span onclick="toggleSidebar()" class="crossBtn" id="crossBtn">&times;</span>
 		<a href="" th:href="@{/admin/new}" class="item"><i class="fa-solid fa-house"></i>Dashboard</a>
-		<a href="" th:href="@{/admin/viewMembers}" class="item"><i class="fa-solid fa-id-card-clip"></i> View ALL
+		<a href="" th:href="@{/admin/viewMembers/0}" class="item"><i class="fa-solid fa-id-card-clip"></i> View ALL
 			Employees</a>
 		<a href="" th:href="@{/admin/viewTeamMembersOnly}" class="item"><i class="fa-solid fa-pen"></i>View Team
 			Members</a>

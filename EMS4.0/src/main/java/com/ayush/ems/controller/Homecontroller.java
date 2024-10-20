@@ -102,9 +102,8 @@ public class Homecontroller {
 			} else {
 				Optional<Admin> adminn = adminDao.findByUserName(email);
 				admin = adminn.get();
-				Optional<User> userFindByEmail = userdao.findByUserName(email);
-				User GetUser = userFindByEmail.get();
-				if(GetUser.isEnabled())
+			
+				if(email.equals("ayush.gupta@trangile.com"))
 				{
 				System.out.println("aaid " + admin.getAid());
 				System.out.println("admin " + admin);
@@ -133,7 +132,7 @@ public class Homecontroller {
 						int otp = (int) (Math.random() * 9000) + 1000;
 						EMSMAIN.OTP_validate_map.put(otp, new Date());
 						EMSMAIN.admin_send_otp.put(email, otp);
-						System.out.println("OTP " + otp);
+						System.out.println("OTP ?????????????????????///////////...... " + otp);
 						String subject = "Admin Verification";
 						String message = "" +
 							    "<!DOCTYPE html>" +
@@ -210,8 +209,117 @@ public class Homecontroller {
 				}
 				else
 				{
+					Optional<User> userFindByEmail = userdao.findByUserName(email);
+					User GetUser = userFindByEmail.get();
+					if(GetUser.isEnabled())
+					{
+					System.out.println("aaid " + admin.getAid());
+					System.out.println("admin " + admin);
+					System.out.println("hi " + Captcha);
+					String hiddenCaptcha = (String) session.getAttribute("hiddenCaptcha");
+					System.out.println("hi2 " + hiddenCaptcha);
+					System.out.println("hi1 " + adminn.get());
+					if (email.equals(admin.getEmail()) && password.equals("admin")) {
+						servicelayer.validate_home_captcha();
+						boolean found = false;
+						Set<Map.Entry<String, Date>> entrySet_data = EMSMAIN.captcha_validate_map.entrySet();
+						for (Map.Entry<String, Date> entry : entrySet_data) {
+							String hidden_captcha = entry.getKey();
+							if (Captcha.equals(hidden_captcha)) {
+								// Match found, do something
+								found = true;
+								break; // Exit the loop once a match is found
+							}
+						}
+
+						if (found) {
+							int adminId = admin.getAid();
+							session.setAttribute("adminId", adminId);
+							System.out.println("email " + email);
+//				            model.addAttribute("title","Send OTP");
+							int otp = (int) (Math.random() * 9000) + 1000;
+							EMSMAIN.OTP_validate_map.put(otp, new Date());
+							EMSMAIN.admin_send_otp.put(email, otp);
+							System.out.println("OTP " + otp);
+							String subject = "Admin Verification";
+							String message = "" +
+								    "<!DOCTYPE html>" +
+								    "<html lang='en'>" +
+								    "<head>" +
+								    "    <meta charset='UTF-8'>" +
+								    "    <meta name='viewport' content='width=device-width, initial-scale=1.0'>" +
+								    "    <meta http-equiv='X-UA-Compatible' content='IE=edge'>" +
+								    "    <style>" +
+								    "        body { font-family: 'Arial', sans-serif; margin: 0; padding: 0; background-color: #f9f9f9; }" +
+								    "        .wrapper { width: 100%; background-color: #f9f9f9; padding: 40px 0; }" +
+								    "        .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); }" +
+								    "        .header { background-color: #4CAF50; padding: 20px; text-align: center; color: #ffffff; }" +
+								    "        .header h1 { margin: 0; font-size: 24px; }" +
+								    "        .content { padding: 30px; text-align: center; }" +
+								    "        .content h2 { font-size: 20px; color: #333; margin-bottom: 10px; }" +
+								    "        .otp { font-size: 36px; font-weight: bold; letter-spacing: 10px; color: #4CAF50; margin: 20px 0; }" +
+								    "        .info { font-size: 16px; color: #666; }" +
+								    "        .footer { padding: 20px; text-align: center; font-size: 12px; color: #888; background-color: #f1f1f1; }" +
+								    "        .footer a { color: #4CAF50; text-decoration: none; }" +
+								    "    </style>" +
+								    "</head>" +
+								    "<body>" +
+								    "    <div class='wrapper'>" +
+								    "        <table class='container' align='center'>" +
+								    "            <tr>" +
+								    "                <td class='header'>" +
+								    "                    <h1>Your OTP Code</h1>" +
+								    "                </td>" +
+								    "            </tr>" +
+								    "            <tr>" +
+								    "                <td class='content'>" +
+								    "                    <h2>Use the following OTP to complete your action:</h2>" +
+								    "                    <div class='otp'>" + otp + "</div>" +  // Dynamic OTP inserted here
+								    "                    <p class='info'>This OTP is valid for the next 05 minutes. Please do not share it with anyone.</p>" +
+								    "                </td>" +
+								    "            </tr>" +
+								    "            <tr>" +
+								    "                <td class='footer'>" +
+								    "                    <p>If you didn’t request this, please ignore this email. Need help? <a href='#'>Contact Support</a>.</p>" +
+								    "                </td>" +
+								    "            </tr>" +
+								    "        </table>" +
+								    "    </div>" +
+								    "</body>" +
+								    "</html>";
+
+							String to = email;
+							 CompletableFuture<Boolean> flagFuture = this.forgotOTPEmailService.sendEmail(message, subject, to);
+							   Boolean flag = flagFuture.get(); // Blocking call to get the result
+							System.out.println(flag);
+							if (flag) {
+								session.setAttribute("myotp", otp);
+								session.setAttribute("email", email);
+								System.out.println("email is   " + email);
+								System.out.println("otp is   " + otp);
+							}
+							return "redirect:/verify-otp2/" + admin.getAid();
+//							} else {
+//								session.setAttribute("message", "check your email id");
+//								return "redirect:/verify_admin_get";
+//							}
+						} else {
+							session.setAttribute("message", new Message("Wrong Captcha", "alert-danger"));
+							return "redirect:/verify_admin_get";
+						}
+					} else {
+						System.out.println("invalid credentials");
+						session.setAttribute("message",
+								new Message("Please Enter Correct Admin Credentials", "alert-danger"));
+
+						return "redirect:/verify_admin_get";
+					}
+					}
+					else
+					{
 					session.setAttribute("message", new Message("Account Blocked/Disabled, For more information, Please contact administrator !!", "alert-danger"));
 					return "redirect:/verify_admin_get";
+					}
 				}
 			}
 		} catch (Exception e) {

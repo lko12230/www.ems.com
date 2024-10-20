@@ -191,20 +191,20 @@ public class EMSMAIN {
 	 * 
 	 */
 
-	@Scheduled(cron = "0 0/1 * * * *")
-	public void Is_Disabled_Inactive_User_Job() {
-		try {
-			String status = servicelayer.getjob_active_or_not("Is_Disabled_Inactive_User_Job");
-			if (status.equalsIgnoreCase("Y")) {
-//			throw new Exception();
-				servicelayer.InactiveUserDisabled();
-			} else {
-				servicelayer.jobnotrunning("Is_Disabled_Inactive_User_Job");
-			}
-		} catch (Exception e) {
-			servicelayer.jobtime("Is_Disabled_Inactive_User_Job");
-		}
-	}
+//	@Scheduled(cron = "0 0/1 * * * *")
+//	public void Is_Disabled_Inactive_User_Job() {
+//		try {
+//			String status = servicelayer.getjob_active_or_not("Is_Disabled_Inactive_User_Job");
+//			if (status.equalsIgnoreCase("Y")) {
+////			throw new Exception();
+//				servicelayer.InactiveUserDisabled();
+//			} else {
+//				servicelayer.jobnotrunning("Is_Disabled_Inactive_User_Job");
+//			}
+//		} catch (Exception e) {
+//			servicelayer.jobtime("Is_Disabled_Inactive_User_Job");
+//		}
+//	}
 
 	@Scheduled(cron = "0 0 0 * * *")
 

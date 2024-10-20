@@ -1,158 +1,274 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
-	th:replace="base6::layout(~{::section})">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="base6::layout(~{::section})">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="X-UA-Compatible" content="ie=edge">
-<title>Sign Up Form</title>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Employee Directory</title>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <style>
+        .ui-autocomplete {
+            z-index: 1050;
+        }
+    </style>
 </head>
 <body>
-	<section>
-		<div class="container">
-			<div class="row bootstrap snippets bootdeys">
-				<div class="col-md-9 col-sm-7">
-					<div class="row">
-						<h2>Employees</h2>
-						  <select class="form-control border-0 col-md-2 ml-2"
-                            id="exampleOption" onchange="location = this.value;">
-                            <option value="/hr/employees?sort=">Sort By</option>
-                            <option value="/hr/employees?sort=az">Names (A-Z)</option>
-                            <option value="/hr/employees?sort=za">Names (Z-A)</option>
-                        </select>
-						
-					</div>
-				</div>
-				<div class="col-md-3 col-sm-5">
-					<form method="get" role="form" class="search-form-full">
-						<div class="form-group">
-							<input type="text" class="form-control" name="s"
-								id="search-input" placeholder="Search..."> <i
-								class="entypo-search"></i>
-						</div>
+    <section>
+        <div class="container">
+         <!-- Employees Title -->
+    <div class="col-md-3 col-sm-6">
+        <h2>Employees</h2>
+    </div>
+           <div class="row bootstrap snippets bootdeys align-items-center">
 
-					</form>
-				</div>
-			</div>
-			<tbody>
-				<tr th:each="c : ${all_users}">
-
-					<div class="member-entry">
-						<div
-							th:if="${c.gender.equals('Male') and c.Image_Url.equals('default.jpg')}">
-							<a th:href="@{'/hr/emp_profile_edit_1/'+${c.id}}"
-								class="member-img"> <img
-								src="https://bootdey.com/img/Content/avatar/avatar7.png"
-								alt="avatar" class="rounded-circle img-fluid"> <i
-								class="fa fa-forward"></i>
-							</a>
-						</div>
-
-						<div
-							th:if="${c.gender.equals('Female') and c.Image_Url.equals('default.jpg')}">
-							<a th:href="@{'/hr/emp_profile_edit_1/'+${c.id}}"
-								class="member-img"> <img
-								src="https://img.freepik.com/premium-vector/portrait-beautiful-lady-with-sunglasses_684058-1186.jpg?size=626&ext=jpg&ga=GA1.1.1331334970.1715351181&semt=ais_user"
-								alt="avatar" class="rounded-circle img-fluid"> <i
-								class="fa fa-forward"></i>
-							</a>
-						</div>
+    <!-- Sort By Dropdown -->
+    <div class="col-md-3 col-sm-6">
+     <select class="form-control border-0" id="exampleOption" onchange="sortData(this.value)">
+    <option value="" disabled selected>Sort By</option>
+    <option value="az" th:selected="${sort == 'az'}">Names (A-Z)</option>
+    <option value="za" th:selected="${sort == 'za'}">Names (Z-A)</option>
+</select>
 
 
-						<div th:if="${!c.Image_Url.equals('default.jpg')}">
-							<a th:href="@{'/hr/emp_profile_edit_1/'+${c.id}}"
-								class="member-img"> <img th:src="@{'/uploads/img/' + ${c.image_Url}}"
-								class="rounded-circle img-fluid"> <i class="fa fa-forward"></i>
+    </div>
 
-							</a>
-						</div>
-						<div class="member-details">
-							<td>
-								<h4>
-									<a th:href="@{'/hr/emp_profile_edit_1/'+${c.id}}"><span
-										th:text="${c.username}"></span></a> (<span
-										th:text="${'EMPID'+c.id}"></span>)
+    <!-- Search Form -->
+     <!-- Search Form (modernized) -->
+    <div class="col-md-4 col-sm-8">
+        <form method="get" role="form" class="search-form-full">
+            <div class="form-group mb-0">
+                <input type="text" class="form-control modern-search" name="s" id="search-input" placeholder="Search...">
+                <i class="entypo-search"></i>
+            </div>
+        </form>
+    </div>
+
+    <!-- Pagination Dropdown -->
+    <div class="col-md-3 col-sm-6">
+        <div class="form-group mb-0">
+           <!-- <label for="pageSize" class="form-label">Items per page:</label>-->
+            <select id="pageSize" class="form-control" onchange="updatePageSize()">
+                <option th:each="size : ${pageSizes}" th:value="${size}" th:text="${size}" th:selected="${size == selectedPageSize}"></option>
+            </select>
+        </div>
+    </div>
+</div>
+<br>
+       <!-- Pagination -->
+     <div th:if="${all_inbound_records != null and #lists.size(all_inbound_records.content) > 0}">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                <!-- Previous Button -->
+                <li th:if="${currentPage > 0}" class="page-item">
+                    <a th:href="@{'/hr/viewMembers/'+${currentPage-1}+'?pageSize='+${selectedPageSize}}" class="page-link">Previous</a>
+                </li>
+
+                <!-- First Page -->
+                <li th:classappend="${currentPage == 0} ? 'active'" class="page-item">
+                    <a th:href="@{'/hr/viewMembers/'+0+'?pageSize='+${selectedPageSize}}" class="page-link">1</a>
+                </li>
+
+                <!-- Middle Pages -->
+                <li th:if="${totalPages > 5 and currentPage > 2}" class="page-item">
+                    <span class="page-link">...</span>
+                </li>
+
+                <li th:each="i : ${#numbers.sequence(1, totalPages)}"
+                    th:if="${i >= currentPage and i <= currentPage + 2 and i != 1 and i != totalPages}"
+                    th:classappend="${currentPage == i-1} ? 'active'" class="page-item">
+                    <a th:href="@{'/hr/viewMembers/'+${i-1}+'?pageSize='+${selectedPageSize}}" class="page-link" th:text="${i}"></a>
+                </li>
+
+                <li th:if="${totalPages > 5 and currentPage < totalPages - 3}" class="page-item">
+                    <span class="page-link">...</span>
+                </li>
+
+                <!-- Last Page -->
+                <li th:if="${totalPages > 1}" th:classappend="${currentPage == totalPages - 1} ? 'active'" class="page-item">
+                    <a th:href="@{'/hr/viewMembers/'+${totalPages-1}+'?pageSize='+${selectedPageSize}}" class="page-link" th:text="${totalPages}"></a>
+                </li>
+
+                <!-- Next Button -->
+                <li th:if="${currentPage < totalPages-1}" class="page-item">
+                    <a th:href="@{'/hr/viewMembers/'+${currentPage + 1}+'?pageSize='+${selectedPageSize}}" class="page-link">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+            <table>
+                <tbody>
+                    <tr th:each="c : ${all_inbound_records}">
+                        <td>
+                            <div class="member-entry">
+                                <div th:if="${c.gender.equals('Male') and c.Image_Url.equals('default.jpg')}">
+                                    <a th:href="@{'/hr/emp_profile_edit_1/'+${c.id}}" class="member-img">
+                                        <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar" class="rounded-circle img-fluid">
+                                        <i class="fa fa-forward"></i>
+                                    </a>
+                                </div>
+                                <div th:if="${c.gender.equals('Female') and c.Image_Url.equals('default.jpg')}">
+                                    <a th:href="@{'/hr/emp_profile_edit_1/'+${c.id}}" class="member-img">
+                                        <img src="https://img.freepik.com/premium-vector/portrait-beautiful-lady-with-sunglasses_684058-1186.jpg?size=626&ext=jpg&ga=GA1.1.1331334970.1715351181&semt=ais_user" alt="avatar" class="rounded-circle img-fluid">
+                                        <i class="fa fa-forward"></i>
+                                    </a>
+                                </div>
+                                <div th:if="${!c.Image_Url.equals('default.jpg')}">
+                                    <a th:href="@{'/hr/emp_profile_edit_1/'+${c.id}}" class="member-img">
+                                        <img th:src="@{'/uploads/img/' + ${c.image_Url}}" class="rounded-circle img-fluid">
+                                        <i class="fa fa-forward"></i>
+                                    </a>
+                                </div>
+                                <div class="member-details">
+                                    <h4>
+                                        <a th:href="@{'/hr/emp_profile_edit_1/'+${c.id}}"><span th:text="${c.username}"></span></a> (<span th:text="${'EMPID'+c.id}"></span>)
+                                    </h4>
+                                    <div class="row info-list">
+                                        <div class="col-sm-4">
+                                            <div th:if="${c.Designation!=('NA')}">
+                                                <i class="fa fa-briefcase"></i> Designation : <span th:text="${c.Designation}" style="color: blue"></span>
+                                            </div>
+                                            <div th:if="${c.Designation.equals('NA')}">
+                                                <i class="fa fa-briefcase"></i> Designation : <b class="text-muted mb-0"><span style="color: blue;">No Record Found</span></b>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <i class="fa-solid fa-phone"></i> Phone : <span th:text="${c.phone}" style="color: blue"></span>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div th:if="${!c.team.equals('0')}">
+                                                <i class="fa-solid fa-user-group"></i> <b> Team : <span th:text="${c.team}" style="color: blue"></span></b>
+                                            </div>
+                                            <div th:if="${c.team.equals('0')}">
+                                                <i class="fa-solid fa-user-group"></i> <b> Team : <span style="color: red;">No Team Assigned</span></b>
+                                            </div>
+                                        </div>
+                                        <div class="clear"></div>
+                                        <div class="col-sm-4">
+                                            <div th:if="${c.base_location!=('NA')}">
+                                                <i class="fa fa-location"></i> Base Location : <span th:text="${c.base_location}" style="color: blue"></span>
+                                            </div>
+                                            <div th:if="${c.base_location.equals('NA')}">
+                                                <i class="fa fa-location"></i> Base Location : <b class="text-muted mb-0"><span style="color: blue;">No Record Found</span></b>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div th:if="${c.email!=('NA')}">
+                                                <i class="fa fa-envelope"></i> Email : <span th:text="${c.email}" style="color: blue"></span>
+                                            </div>
+                                            <div th:if="${c.email.equals('NA')}">
+                                                <i class="fa fa-envelope"></i> Email : <b class="text-muted mb-0"><span style="color: blue;">No Record Found</span></b>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div th:if="${c.user_status==true}">
+                                                <b><i class="fa-solid fa-user"></i> Status : <span style="color: limegreen;">ACTIVE</span></b>
+                                            </div>
+                                            <div th:if="${c.user_status==false}">
+                                                <b><i class="fa-solid fa-user"></i> Status : <span style="color: red;">INACTIVE</span></b>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <!-- Pagination -->
+     <div th:if="${all_inbound_records != null and #lists.size(all_inbound_records.content) > 0}">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                <!-- Previous Button -->
+                <li th:if="${currentPage > 0}" class="page-item">
+                    <a th:href="@{'/hr/viewMembers/'+${currentPage-1}+'?pageSize='+${selectedPageSize}}" class="page-link">Previous</a>
+                </li>
+
+                <!-- First Page -->
+                <li th:classappend="${currentPage == 0} ? 'active'" class="page-item">
+                    <a th:href="@{'/hr/viewMembers/'+0+'?pageSize='+${selectedPageSize}}" class="page-link">1</a>
+                </li>
+
+                <!-- Middle Pages -->
+                <li th:if="${totalPages > 5 and currentPage > 2}" class="page-item">
+                    <span class="page-link">...</span>
+                </li>
+
+                <li th:each="i : ${#numbers.sequence(1, totalPages)}"
+                    th:if="${i >= currentPage and i <= currentPage + 2 and i != 1 and i != totalPages}"
+                    th:classappend="${currentPage == i-1} ? 'active'" class="page-item">
+                    <a th:href="@{'/hr/viewMembers/'+${i-1}+'?pageSize='+${selectedPageSize}}" class="page-link" th:text="${i}"></a>
+                </li>
+
+                <li th:if="${totalPages > 5 and currentPage < totalPages - 3}" class="page-item">
+                    <span class="page-link">...</span>
+                </li>
+
+                <!-- Last Page -->
+                <li th:if="${totalPages > 1}" th:classappend="${currentPage == totalPages - 1} ? 'active'" class="page-item">
+                    <a th:href="@{'/hr/viewMembers/'+${totalPages-1}+'?pageSize='+${selectedPageSize}}" class="page-link" th:text="${totalPages}"></a>
+                </li>
+
+                <!-- Next Button -->
+                <li th:if="${currentPage < totalPages-1}" class="page-item">
+                    <a th:href="@{'/hr/viewMembers/'+${currentPage + 1}+'?pageSize='+${selectedPageSize}}" class="page-link">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+        </div>
+
+    <script>
+        $(function() {
+            $("#search-input").autocomplete({
+                source: function(request, response) {
+                    console.log("Requesting data for term:", request.term); // Debugging line
+                    $.ajax({
+                        url: "/hr/employeeSuggestions",
+                        data: { term: request.term },
+                        success: function(data) {
+                            console.log("Data received:", data); // Debugging line
+                            response($.map(data, function(item) {
+                                return {
+                                    label: item.name + " (" + item.email + ")",
+                                    value: item.name,
+                                    id: item.id
+                                };
+                            }));
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Error fetching data:", status, error); // Debugging line
+                        }
+                    });
+                },
+                minLength: 2,
+                select: function(event, ui) {
+                    console.log("Selected:", ui.item); // Debugging line
+                    window.location.href = "/hr/emp_profile_edit_1/" + ui.item.id;
+                }
+            });
+        });
+        
+        function updatePageSize() {
+            try {
+                console.log("Page size selected: " + document.getElementById('pageSize').value);
+                const pageSize = document.getElementById('pageSize').value;
+                const currentPage = window.location.pathname.split('/').pop();
+                window.location.href = `/hr/viewMembers/${currentPage}?pageSize=${pageSize}`;
+            } catch (error) {
+                console.error('An error occurred while updating page size:', error);
+            }
+        }
+
+        
+        function sortData(sortValue) {
+            const pageSize = document.getElementById('pageSize').value || 10;  // Default to 10 if not selected
+            window.location.href = `/hr/viewMembers/0?pageSize=${pageSize}&sort=${sortValue}`;
+        }
 
 
-								</h4>
-
-
-							</td>
-							<div class="row info-list">
-								<div class="col-sm-4">
-								<div th:if="${c.Designation!=null}">
-									<i class="fa fa-briefcase"></i> Designation : <span
-										th:text="${c.Designation}" style="color: blue"></span>
-										</div>
-										<div th:if="${c.Designation==null}">
-									<i class="fa fa-briefcase"></i> Designation : 	<b class="text-muted mb-0">
-											<span style="color: blue;">No Record Found</span>
-										</b>
-										</div>
-								</div>
-								<div class="col-sm-4">
-									<i class="fa-solid fa-phone"></i> Phone : <span
-										th:text="${c.phone}" style="color: blue"></span>
-								</div>
-								<div class="col-sm-4">
-                                 <div th:if="${!c.team.equals('0')}">
-									<i class="fa-solid fa-user-group"></i> <b> Team : <span th:text="${c.team}" style="color: blue"></span></b>
-                                  </div>
-                                   <div th:if="${c.team.equals('0')}">
-									<i class="fa-solid fa-user-group"></i> <b> Team :
-											<span style="color: red;">No Team Assigned</span>
-										</b>
-                                  </div>
-								</div>
-								<div class="clear"></div>
-								<div class="col-sm-4">
-								<div th:if="${c.base_location!=null}">
-									<i class="fa fa-location"></i> Base Location : <span
-										th:text="${c.base_location}" style="color: blue"></span>
-										</div>
-										<div th:if="${c.base_location==null}">
-									<i class="fa fa-location"></i> Base Location : 
-									<b class="text-muted mb-0">
-											<span style="color: blue;">No Record Found</span>
-										</b>
-										</div>
-								</div>
-								<div class="col-sm-4">
-								<div th:if="${c.email!=null}">
-									<i class="fa fa-envelope"></i> Email : <span
-										th:text="${c.email}" style="color: blue"></span>
-										</div>
-										<div th:if="${c.email==null}">
-									<i class="fa fa-envelope"></i> Email : <b class="text-muted mb-0">
-											<span style="color: blue;">No Record Found</span>
-										</b>
-										</div>
-								</div>
-								<div class="col-sm-4">
-									<!--   <i class="fa fa-linkedin"></i> -->
-									<div th:if="${c.user_status==true}">
-										<b><p>
-												<i class="fa-solid fa-user"></i> Status : <span
-													style="color: limegreen;">ACTIVE</span>
-											</p></b>
-									</div>
-									<div th:if="${c.user_status==false}">
-										<b><p>
-												<i class="fa-solid fa-user"></i> Status : <span
-													style="color: red;">INACTIVE</span>
-											</p></b>
-									</div>
-									</span>
-								</div>
-							</div>
-						</div>
-
-					</div>
-				</tr>
-			</tbody>
-		</div>
-		</div>
-	</section>
+    </script>
+    </section>
 </body>
 </html>
