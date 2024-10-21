@@ -11,6 +11,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.Principal;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -1930,7 +1933,19 @@ public class AdminController {
 					orders.setLicense_number("NA");
 					orders.setLicense_status("NA");
 				}
-				model.addAttribute("all_plans", subscriptionPlans);
+	                Date expiryDate = orders.getSubscription_expiry_date();
+
+	                // Get the current date
+	                LocalDate currentDate = LocalDate.now();
+
+	                // Convert expiryDate to LocalDate
+	                LocalDate expiryLocalDate = expiryDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+	                // Calculate the remaining days between the current date and the expiry date
+	                long remainingDays = Duration.between(currentDate.atStartOfDay(), expiryLocalDate.atStartOfDay()).toDays();
+	                System.out.println("LICENSE STATUS REMAINING DAYS "+remainingDays);
+	                model.addAttribute("remaingDays", remainingDays);
+	                model.addAttribute("all_plans", subscriptionPlans);
 				model.addAttribute("orders", orders);
 				System.out.println("ORDERS ROW " + orders);
 				return "payment";

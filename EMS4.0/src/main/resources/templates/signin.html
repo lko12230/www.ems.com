@@ -21,17 +21,23 @@
             </div>
             </div>
 
-            <div th:if="${session.message}" class="alert text-center" role="alert">
-                <p th:text="${session.message.content}"></p>
-            </div>
+   
+            <div th:if="${session.message}" th:classappend="${session.message.type}" class="alert text-center"
+				role="alert text-center">
+				<p th:text="${session.message.content}"></p>
+				<th:block th:text="${#session.removeAttribute('message')}"></th:block>
+			</div>
 
-            <div th:if="${param.error}" class="alert alert-danger text-center">
-                <span>[[${session.SPRING_SECURITY_LAST_EXCEPTION.message}]]</span>
-            </div>
-
-            <div th:if="${param.logout}" class="alert alert-success text-center">
-                You have been logged out
-            </div>
+<div th:if="${param.error} "  class="alert alert-danger text-center">
+				
+			<span >[[${session.SPRING_SECURITY_LAST_EXCEPTION.message}]]</span>
+			
+			</div>
+       
+			<div th:if="${param.logout}" class="alert alert-success text-center">
+				You have been logged out
+			</div>
+	
 
             <form id="login-form" class="form p-3 mt-3" th:action="@{/dologin}" action="#" method="post">
                 <div class="form-field d-flex align-items-center">
@@ -43,7 +49,7 @@
                     <i class="fa-solid fa-key"></i>
                     <input type="password" name="password" id="password" placeholder="Password" class="form-control" required />
                 </div>
-
+                <input type="checkbox" onclick="myFunction()"> Show Password
                 <button class="btn mt-3" id="signinform" type="submit">Sign In</button>
             </form>
 

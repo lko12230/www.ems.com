@@ -450,33 +450,46 @@
 											</p>
 										</b>
 									</div>
-									<div
-										th:if="${orders.validity > 0 and orders.license_status.equals('ACTIVE')}">
-										<b>
-											<p class="text-muted mb-0">
-												<span th:text="${orders.validity} + ' days left for plan expire'"></span>
-											</p>
-										</b>
+										<div th:if="${orders.validity > 0 and remaingDays==0 and orders.license_status.equals('ACTIVE')}">
+											 <b> <span  style="color: red;" th:text="${remaingDays} + ' Day left, Plan will expire today'"></span>
+											</b>
+										</div>
+
+										<div
+											th:if="${orders.validity > 0 and remaingDays>1 and orders.license_status.equals('ACTIVE')}">
+											<b> <span  style="color: limegreen;" th:text="${remaingDays} + ' Days left for plan expire'"></span>
+
+											</b>
+										</div>
+										
+										<div
+											th:if="${orders.validity > 0 and remaingDays==1 and orders.license_status.equals('ACTIVE')}">
+											<b> <span  style="color: limegreen;" th:text="${remaingDays} + ' Day left for plan expire'"></span>
+
+											</b>
+										</div>
 									</div>
 								</div>
-							</div>
-							<div class="col-md-12 mt-5">
-								<button class="btn btn-primary profile-button"
-									onclick="paymentStart()">Pay</button>
+								<div class="col-md-12 mt-5">
+									<button class="btn btn-primary profile-button"
+										onclick="paymentStart()">Pay</button>
+								</div>
 							</div>
 						</div>
-					</div>
 
+					</div>
 				</div>
 			</div>
-		</div>
-		<script>
-			document.addEventListener("DOMContentLoaded", function() {
-				let paymentField = document.getElementById("payment_field");
-				let value = parseFloat(paymentField.value).toFixed(2);
-				paymentField.value = value;
-			});
-		</script>
+			<script>
+				document.addEventListener("DOMContentLoaded",
+						function() {
+							let paymentField = document
+									.getElementById("payment_field");
+							let value = parseFloat(paymentField.value).toFixed(
+									2);
+							paymentField.value = value;
+						});
+			</script>
 	</section>
 </body>
 

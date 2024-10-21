@@ -13,7 +13,7 @@
     <script src='https://www.google.com/recaptcha/api.js'></script>
     <link rel="stylesheet" th:href="@{/css/style1.css}" />
     <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
-    <title>EMS</title>
+    <title>www.ems.com</title>
 
     <style>
         /* Spinner Styles */
@@ -163,6 +163,14 @@
         $('#genericSpinner').css('display', 'flex'); // Show spinner for forgot password or sign-up
     });
 
+    function myFunction() {
+		var x = document.getElementById("password");
+		if (x.type === "password") {
+			x.type = "text";
+		} else {
+			x.type = "password";
+		}
+	}
     </script>
 
 </body>
