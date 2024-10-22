@@ -443,13 +443,19 @@
 									<p class="mb-0">Validity</p>
 								</div>
 								<div class="col-sm-9">
-									<div th:if="${orders.validity==0}">
+								<!-- 	<div th:if="${orders.validity==0}">
 										<b>
 											<p>
 												<span style="color: red;">Failed</span>
 											</p>
 										</b>
-									</div>
+									</div>  -->
+									
+									   	<div th:if="${orders.validity > 0 and remaingDays < 0 and orders.license_status.equals('INACTIVE')}">
+											 <b> <span  style="color: red;" th:text="'Plan expired for this company id '+${orders.company_id}"></span>
+											</b>
+										</div>
+										
 										<div th:if="${orders.validity > 0 and remaingDays==0 and orders.license_status.equals('ACTIVE')}">
 											 <b> <span  style="color: red;" th:text="${remaingDays} + ' Day left, Plan will expire today'"></span>
 											</b>

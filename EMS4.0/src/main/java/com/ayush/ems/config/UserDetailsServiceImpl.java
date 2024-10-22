@@ -16,21 +16,25 @@ import com.ayush.ems.entities.User;
 
 @Transactional
 public class UserDetailsServiceImpl implements UserDetailsService {
-	@Autowired
-	private UserDao userdao;
-	@Autowired
-	private HttpServletResponse response;
+    @Autowired
+    private UserDao userdao;
+    @Autowired
+    private HttpServletResponse response;
 
-	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		Optional<User> user = userdao.findByUserName(username);
-		User user1 = user.get();
-		user1.setNewUserActiveOrInactive(true);
-		userdao.save(user1);
-		Cookie cookie = new Cookie("JSSIONID", user1.getEmail()); // ("user_name",username);
-		response.addCookie(cookie);
-		CustomUserDetails customUserDetails = new CustomUserDetails(user.get());
-		return customUserDetails;
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Optional<User> userOpt = userdao.findByUserName(username);
+        if (!userOpt.isPresent()) {
+            throw new UsernameNotFoundException("User not found: " + username);
+        }
+        User user = userOpt.get();
+        user.setNewUserActiveOrInactive(true);  // Enable user if needed
+        userdao.save(user);
 
-	}
+        // Set a cookie with the session ID or any other identifier
+        Cookie cookie = new Cookie("custom_session", user.getEmail());
+        response.addCookie(cookie);
+
+        return new CustomUserDetails(user);
+    }
 }

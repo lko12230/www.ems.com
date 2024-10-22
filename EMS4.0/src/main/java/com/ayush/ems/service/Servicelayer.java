@@ -2643,9 +2643,12 @@ public class Servicelayer {
 	}
 
 	private Date parseDateInIST(String dateString) throws ParseException {
+//		try
+//		{
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 		sdf.setTimeZone(TimeZone.getTimeZone("Asia/Kolkata"));
 		return sdf.parse(dateString);
+//		}
 	}
 
 	public String downtime_satus(String server) {
@@ -3562,6 +3565,8 @@ public class Servicelayer {
 
 	private void generatePdfInvoice(String filePath, Payment_Order_Info payment, SubscriptionPlans subscriptionPlans,
 			CompanyInfo company_Info, User user) throws IOException {
+		try
+		{
 		PdfWriter writer = new PdfWriter(filePath);
 		com.itextpdf.kernel.pdf.PdfDocument pdf = new com.itextpdf.kernel.pdf.PdfDocument(writer);
 		Document document = new Document(pdf);
@@ -3773,6 +3778,21 @@ public class Servicelayer {
 		document.add(termsDiv);
 
 		document.close();
+		}
+		catch (Exception e) {
+			String exceptionAsString = e.toString();
+			// Get the current class
+			Class<?> currentClass = Servicelayer.class;
+
+			// Get the name of the class
+			String className = currentClass.getName();
+			String errorMessage = e.getMessage();
+			StackTraceElement[] stackTrace = e.getStackTrace();
+			String methodName = stackTrace[0].getMethodName();
+			int lineNumber = stackTrace[0].getLineNumber();
+			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+		}
 	}
 
 	public void save_null_value_laptop_assign_by_IT(UserDetail detail) {
@@ -4141,6 +4161,8 @@ public class Servicelayer {
 //	}
 	
 	public Page<UserDetail> findPaginated(List<UserDetail> sortedList, int page, int pageSize) {
+		try
+		{
 	    int startItem = page * pageSize;
 	    List<UserDetail> paginatedList;
 
@@ -4152,6 +4174,22 @@ public class Servicelayer {
 	    }
 
 	    return new PageImpl<>(paginatedList, PageRequest.of(page, pageSize), sortedList.size());
+		}
+		catch (Exception e) {
+			String exceptionAsString = e.toString();
+			// Get the current class
+			Class<?> currentClass = Servicelayer.class;
+
+			// Get the name of the class
+			String className = currentClass.getName();
+			String errorMessage = e.getMessage();
+			StackTraceElement[] stackTrace = e.getStackTrace();
+			String methodName = stackTrace[0].getMethodName();
+			int lineNumber = stackTrace[0].getLineNumber();
+			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+			return null;
+		}
 	}
 
 

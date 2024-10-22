@@ -24,8 +24,11 @@ public class MyConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private CustomLogoutSuccessHandler customLogoutSuccessHandler;
 
+    @Autowired
+    private CustomOAuth2UserService customOAuth2UserService;
+
     @Bean
-    public UserDetailsService getuserDetailsService() {
+    public UserDetailsService getUserDetailsService() {
         return new UserDetailsServiceImpl();
     }
 
@@ -37,7 +40,7 @@ public class MyConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public DaoAuthenticationProvider authenticationProvider() throws Exception {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-        daoAuthenticationProvider.setUserDetailsService(this.getuserDetailsService());
+        daoAuthenticationProvider.setUserDetailsService(this.getUserDetailsService());
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
         return daoAuthenticationProvider;
     }
@@ -64,6 +67,13 @@ public class MyConfig extends WebSecurityConfigurerAdapter {
                 .failureHandler(customLoginFailureHandler)
                 .successHandler(loginSuccessHandler)
             .and()
+            .oauth2Login()
+                .loginPage("/signin")
+                .userInfoEndpoint()
+                    .userService(customOAuth2UserService)  // Use the custom OAuth2UserService
+                .and()
+                .successHandler(loginSuccessHandler)  // Reuse the same success handler
+            .and()
             .logout()
                 .logoutUrl("/logout")
                 .logoutSuccessHandler(customLogoutSuccessHandler)
@@ -73,11 +83,4 @@ public class MyConfig extends WebSecurityConfigurerAdapter {
             .sessionManagement()
                 .invalidSessionUrl("/logout");
     }
-
-    // Uncomment and implement sessionRegistry if session management is needed
-    // @Bean
-    // public SessionRegistry sessionRegistry() {
-    //     return new SessionRegistryImpl();
-    // }
-
 }

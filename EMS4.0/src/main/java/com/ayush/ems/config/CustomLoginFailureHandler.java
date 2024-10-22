@@ -73,6 +73,7 @@ public class CustomLoginFailureHandler extends SimpleUrlAuthenticationFailureHan
 							// Send email for every failed login attempt
 							String subject = "Security Alert: Failed Login Attempt on Your Account";
 
+							@SuppressWarnings("deprecation")
 							String emailContent = "" +
 								    "<!DOCTYPE html>" +
 								    "<html lang='en'>" +

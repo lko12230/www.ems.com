@@ -883,52 +883,162 @@ public class EMSMAIN {
 
 	@Scheduled(cron = "0 0/1 * * * *")
 	public void LoginRetryEmails() {
+		try
+		{
 		System.out.println("Attempting to retry failed emails...");
 		emailService.retryFailedEmails();
 //        forgotOTPEmailService.retryFailedEmails();
 //        loginHistoryExportEmail.retryFailedEmails();
 //        paymentSucessEmailService.retryFailedEmails();
 //        teamEmailService.retryFailedEmails();
+		}
+		 catch (Exception e) {
+//				String error=" java.lang.NullPointerException: Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null";
+//				String exString=e.toString();
+//				if(exString.equals("Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null") && count==1 || count==0)
+//				{
+				String exceptionAsString = e.toString();
+				// Get the current class
+				Class<?> currentClass = EMSMAIN.class;
+
+				// Get the name of the class
+				String className = currentClass.getName();
+				String errorMessage = e.getMessage();
+				StackTraceElement[] stackTrace = e.getStackTrace();
+				String methodName = stackTrace[0].getMethodName();
+				int lineNumber = stackTrace[0].getLineNumber();
+				System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+				servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+
+			}
 	}
 
 	@Scheduled(cron = "0 0/1 * * * *")
 	public void ForgotOTPRetryEmails() {
+		try
+		{
 		System.out.println("Attempting to retry failed emails...");
 //        emailService.retryFailedEmails();
 		forgotOTPEmailService.retryFailedEmails();
 //        loginHistoryExportEmail.retryFailedEmails();
 //        paymentSucessEmailService.retryFailedEmails();
 //        teamEmailService.retryFailedEmails();
+		}
+		 catch (Exception e) {
+//				String error=" java.lang.NullPointerException: Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null";
+//				String exString=e.toString();
+//				if(exString.equals("Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null") && count==1 || count==0)
+//				{
+				String exceptionAsString = e.toString();
+				// Get the current class
+				Class<?> currentClass = EMSMAIN.class;
+
+				// Get the name of the class
+				String className = currentClass.getName();
+				String errorMessage = e.getMessage();
+				StackTraceElement[] stackTrace = e.getStackTrace();
+				String methodName = stackTrace[0].getMethodName();
+				int lineNumber = stackTrace[0].getLineNumber();
+				System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+				servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+
+			}
 	}
 
 	@Scheduled(cron = "0 0/1 * * * *")
 	public void LoginHistoryExportExcelRetryEmails() {
+		try
+		{
 		System.out.println("Attempting to retry failed emails...");
 //        emailService.retryFailedEmails();
 //        forgotOTPEmailService.retryFailedEmails();
 		loginHistoryExportEmail.retryFailedEmails();
 //        paymentSucessEmailService.retryFailedEmails();
 //        teamEmailService.retryFailedEmails();
+		}
+		 catch (Exception e) {
+//				String error=" java.lang.NullPointerException: Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null";
+//				String exString=e.toString();
+//				if(exString.equals("Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null") && count==1 || count==0)
+//				{
+				String exceptionAsString = e.toString();
+				// Get the current class
+				Class<?> currentClass = EMSMAIN.class;
+
+				// Get the name of the class
+				String className = currentClass.getName();
+				String errorMessage = e.getMessage();
+				StackTraceElement[] stackTrace = e.getStackTrace();
+				String methodName = stackTrace[0].getMethodName();
+				int lineNumber = stackTrace[0].getLineNumber();
+				System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+				servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+
+			}
 	}
 
 	@Scheduled(cron = "0 0/1 * * * *")
 	public void PaymentSuccessEmailServiceRetryEmails() {
+		try
+		{
 		System.out.println("Attempting to retry failed emails...");
 //        emailService.retryFailedEmails();
 //        forgotOTPEmailService.retryFailedEmails();
 //        loginHistoryExportEmail.retryFailedEmails();
 		paymentSucessEmailService.retryFailedEmails();
 //        teamEmailService.retryFailedEmails();
+		}
+		 catch (Exception e) {
+//				String error=" java.lang.NullPointerException: Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null";
+//				String exString=e.toString();
+//				if(exString.equals("Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null") && count==1 || count==0)
+//				{
+				String exceptionAsString = e.toString();
+				// Get the current class
+				Class<?> currentClass = EMSMAIN.class;
+
+				// Get the name of the class
+				String className = currentClass.getName();
+				String errorMessage = e.getMessage();
+				StackTraceElement[] stackTrace = e.getStackTrace();
+				String methodName = stackTrace[0].getMethodName();
+				int lineNumber = stackTrace[0].getLineNumber();
+				System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+				servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+
+			}
 	}
 
 	@Scheduled(cron = "0 0/1 * * * *")
 	public void TeamEmailServiceRetryEmails() {
+		try
+		{
 		System.out.println("Attempting to retry failed emails...");
 //        emailService.retryFailedEmails();
 //        forgotOTPEmailService.retryFailedEmails();
 //        loginHistoryExportEmail.retryFailedEmails();
 //        paymentSucessEmailService.retryFailedEmails();
 		teamEmailService.retryFailedEmails();
+		}
+		 catch (Exception e) {
+//				String error=" java.lang.NullPointerException: Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null";
+//				String exString=e.toString();
+//				if(exString.equals("Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null") && count==1 || count==0)
+//				{
+				String exceptionAsString = e.toString();
+				// Get the current class
+				Class<?> currentClass = EMSMAIN.class;
+
+				// Get the name of the class
+				String className = currentClass.getName();
+				String errorMessage = e.getMessage();
+				StackTraceElement[] stackTrace = e.getStackTrace();
+				String methodName = stackTrace[0].getMethodName();
+				int lineNumber = stackTrace[0].getLineNumber();
+				System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+				servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+
+			}
 	}
 
 //	@Scheduled(cron = "0 0/1 * * * *")
