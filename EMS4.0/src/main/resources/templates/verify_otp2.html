@@ -140,7 +140,7 @@
 		<form method="POST" action="" th:action="@{'/verify-otp2/'+${admin.aid}}" th:object="${admin}">
 			<div class="form-field d-flex align-items-center mt-5">
 
-				<input readonly name="admin_id" type="id" placeholder="Admin ID here"  th:value="'GOOGLEIN00'+${admin.aid}" class="form-control">
+				<input readonly name="admin_id" type="id" placeholder="Admin ID here"  th:value="${admin.aid}" class="form-control">
 			</div>
 			<div class="form-field d-flex align-items-center mt-5">
 

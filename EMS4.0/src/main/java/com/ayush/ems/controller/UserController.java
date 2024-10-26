@@ -67,7 +67,7 @@ public class UserController {
 //	public void commonData(Model model, Principal principal) {
 //		String userName = principal.getName();
 //		System.out.println("username " + userName);
-//		User user = userdao.findByUserName(userName);
+//		User user = userdao.findByEmail(userName);
 //		System.out.println("user " + user);
 //		model.addAttribute("user", user);
 //
@@ -102,7 +102,7 @@ public class UserController {
 				System.out.println(">>>>>>>>>>>>> " + principal);
 				String userName = principal.getName();
 				System.out.println("username " + userName);
-				Optional<User> user = userdao.findByUserName(userName);
+				Optional<User> user = userdao.findByEmail(userName);
 				User user1 = user.get();
 				System.out.println("user " + user1);
 				model.addAttribute("user", user1);
@@ -137,7 +137,7 @@ public class UserController {
 
 	            String username = principal.getName();
 	            System.out.println(user.getFailedAttempt() + " USER EMAIL " + user.getEmail());
-	            Optional<User> currentUser = this.userdao.findByUserName(username);
+	            Optional<User> currentUser = this.userdao.findByEmail(username);
 	            User user1 = currentUser.get();
 	            servicelayer.login_record_save(user1, session, clientIp, location);
 	            count++;
@@ -909,7 +909,7 @@ public class UserController {
 	@RequestMapping("/teamprofile/{id}")
 	public String teamprofile(@PathVariable("id") Integer id, Model model,Principal principal) {
 		System.out.println("IN");
-		Optional<User> get_user=this.userdao.findByUserName(principal.getName());
+		Optional<User> get_user=this.userdao.findByEmail(principal.getName());
 		 User get_user1=get_user.get();
 		Optional<UserDetail> userOptional = this.userDetailDao.findById(id);
 		UserDetail userDetail = userOptional.get();

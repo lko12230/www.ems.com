@@ -20,7 +20,8 @@ public class UserServices {
 	private UserDao userdao;
 
 	public User getByEmail(String email) {
-		Optional<User> user = userdao.findByUserName(email);
+		
+		Optional<User> user = userdao.findByEmail(email);
 		User user1 = user.get();
 //		   String res=user.toString();
 		return user1;

@@ -1,11 +1,7 @@
 package com.ayush.ems.controller;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -106,7 +102,7 @@ public class AdminController {
 				System.out.println(">>>>>>>>>>>>> " + principal);
 				String userName = principal.getName();
 				System.out.println("principal username " + userName);
-				Optional<User> user = userdao.findByUserName(userName);
+				Optional<User> user = userdao.findByEmail(userName);
 				User user1 = user.get();
 				System.out.println("user " + user1);
 				model.addAttribute("user", user1);
@@ -148,20 +144,21 @@ public class AdminController {
 	            user.setFailedAttempt(0);
 	        }
 	        if (count == 0) {
-	            // Capture client IP address
-	            String clientIp = getClientIpAddress(request);
-
-	            // Fetch location based on IP address
-	            String location = getLocationFromIp(clientIp);
+//	            // Capture client IP address
+//	            String clientIp = getClientIpAddress(request);
+                String clientIp = "192.168.0.1";
+                String location="Delhi,India";
+//	            // Fetch location based on IP address
+//	            String location = getLocationFromIp(clientIp);
 	            String username = principal.getName();
-	            System.out.println(user.getFailedAttempt() + " USER EMAIL " + user.getEmail());
-	            Optional<User> currentUser = this.userdao.findByUserName(username);
+//	            System.out.println(user.getFailedAttempt() + " USER EMAIL " + user.getEmail());
+	            Optional<User> currentUser = this.userdao.findByEmail(username);
 	            User user1 = currentUser.get();
 	            servicelayer.login_record_save(user1, session, clientIp, location); 
 	            count++;
 	        }
 	        
-	        return "home1";
+	        return "AdminHome";
 	    } catch (Exception e) {
 	        System.out.println("ERRRRRRRRRRRRR " + e + " " + count);
 
@@ -180,44 +177,6 @@ public class AdminController {
 	}
 	
 	
-	/**
-	 * Get the client IP address from the request.
-	 */
-	private String getClientIpAddress(HttpServletRequest request) {
-	    String xfHeader = request.getHeader("X-Forwarded-For");
-	    if (xfHeader == null || xfHeader.isEmpty()) {
-	        return request.getRemoteAddr();
-	    }
-	    return xfHeader.split(",")[0];
-	}
-
-	/**
-	 * Get location information from IP address using a simple API.
-	 * Replace this method with your API call.
-	 */
-	private String getLocationFromIp(String ip) {
-	    try {
-	        // Use a simple public API to get location data
-	        String url = "https://ipapi.co/" + ip + "/city/";
-	        HttpURLConnection urlConnection = (HttpURLConnection) new URL(url).openConnection();
-	        urlConnection.setRequestMethod("GET");
-
-	        BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-	        String inputLine;
-	        StringBuilder response = new StringBuilder();
-	        while ((inputLine = in.readLine()) != null) {
-	            response.append(inputLine);
-	        }
-	        in.close();
-
-	        // Return city name
-	        return response.toString().isEmpty() ? "Unknown Location" : response.toString();
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        return "Unknown Location";
-	    }
-	}
-
 
 	@GetMapping("/employee_leave_policy")
 	public String Employee_Leave_Policy() {
@@ -238,7 +197,7 @@ public class AdminController {
 			model.addAttribute("chartData", chartData);
 			model.addAttribute("chartLabels", chartLabels);
 			model.addAttribute("year", year);
-			return "aperformance";
+			return "AdminPerformance";
 		} catch (Exception e) {
 //			String error=" java.lang.NullPointerException: Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null";
 			System.out.println("ERRRRRRRRRRRRR " + e + " " + count);
@@ -383,7 +342,7 @@ public class AdminController {
 	            model.addAttribute("sort", sort); // Pass sorting parameter to maintain state on frontend
 
 	            System.out.println("IN");
-	            return "ViewMembers2";
+	            return "AdminViewAllEmployees";
 	        } else {
 	            throw new Exception();
 	        }
@@ -429,7 +388,7 @@ public class AdminController {
 				UserDetail userDetail = userOptional.get();
 				model.addAttribute("userdetail", userDetail);
 				model.addAttribute("title", "update form - " + userDetail.getUsername());
-				return "emp_profile2.0";
+				return "AdminViewEmpProfile";
 			} else {
 				throw new Exception();
 			}
@@ -472,7 +431,7 @@ public class AdminController {
 				UserDetail userDetail = userOptional.get();
 				model.addAttribute("userdetail", userDetail);
 				model.addAttribute("title", "update form - " + userDetail.getUsername());
-				return "emp_profile2";
+				return "AdminEmpProfileEdit";
 			} else {
 				throw new Exception();
 			}
@@ -515,7 +474,7 @@ public class AdminController {
 				UserDetail userDetail = userOptional.get();
 				model.addAttribute("userdetail", userDetail);
 				model.addAttribute("title", "update form - " + userDetail.getUsername());
-				return "emp_profile2.1";
+				return "AdminEmpProfileEdit1";
 			} else {
 				throw new Exception();
 			}
@@ -558,7 +517,7 @@ public class AdminController {
 				User userDetail = userOptional.get();
 				model.addAttribute("userdetail", userDetail);
 				model.addAttribute("title", "update form - " + userDetail.getUsername());
-				return "profile2";
+				return "AdminViewProfile";
 			} else {
 				throw new Exception();
 			}
@@ -601,7 +560,7 @@ public class AdminController {
 				User userDetail = userOptional.get();
 				model.addAttribute("userdetail", userDetail);
 				model.addAttribute("title", "update form - " + userDetail.getUsername());
-				return "profile2.0";
+				return "AdminEditProfile";
 			} else {
 				throw new Exception();
 			}
@@ -1092,7 +1051,7 @@ public class AdminController {
 	@GetMapping("/ChangeCurrentPassword")
 	public String changepassword(Principal principal) {
 		try {
-			return "ChangeCurrentPasswordAdmin";
+			return "AdminChangeCurrentPassword";
 		} catch (Exception e) {
 //		return "SomethingWentWrong";
 //		String error=" java.lang.NullPointerException: Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null";
@@ -1249,7 +1208,7 @@ public class AdminController {
 	public String Seperation(Principal principal) {
 		try {
            
-			return "Seperation3";
+			return "AdminSeperation";
 		} catch (Exception e) {
 //	return "SomethingWentWrong";
 //		String error=" java.lang.NullPointerException: Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null";
@@ -1357,7 +1316,7 @@ public class AdminController {
 		        e.printStackTrace();
 		       System.out.println("ERROR");
 		    }
-			return "Seperation3";
+			return "AdminSeperation";
 		}
 		    else {
 			lastdate = user1.getLastWorkingDay();
@@ -1444,12 +1403,12 @@ public class AdminController {
 		    }
 
 		session.setAttribute("message", new Message("Your Resignation Request Has Been Withdrawn Successfully ", "alert-success"));
-		return "Seperation3";
+		return "AdminSeperation";
 		}
 		else
 		{
 			session.setAttribute("message", new Message("Something Went Wrong !! Resignation Cannot Be Withdrawn", "alert-danger"));
-			return "Seperation3";
+			return "AdminSeperation";
 		}
 	}
 
@@ -1457,7 +1416,7 @@ public class AdminController {
 	public String AssetPolicy(Principal principal) {
 		try {
 			if (principal != null) {
-				return "assetpolicy2";
+				return "AdminAssetPolicy";
 			} else {
 				throw new Exception();
 			}
@@ -1537,7 +1496,7 @@ public class AdminController {
 	@RequestMapping("/teamprofile/{id}")
 	public String teamprofile(@PathVariable("id") Integer id, Model model,Principal principal) {
 		System.out.println("IN");
-		Optional<User> get_user=this.userdao.findByUserName(principal.getName());
+		Optional<User> get_user=this.userdao.findByEmail(principal.getName());
 		 User get_user1=get_user.get();
 		Optional<UserDetail> userOptional = this.userDetailDao.findById(id);
 		UserDetail userDetail = userOptional.get();
@@ -1618,7 +1577,7 @@ public class AdminController {
 				System.out.println("find all " + all_users_login_records);
 				model.addAttribute("all_users_login_records", all_users_login_records);
 				System.out.println("IN");
-				return "getloginrecords";
+				return "AdminGetLoginRecords";
 			} else {
 				throw new Exception();
 			}
@@ -1773,7 +1732,7 @@ public class AdminController {
 	            String generatedExcelPath = servicelayer.generateExcel();
 	            String subject = "Login History Report";
 	            String to = principal.getName();
-	            Optional<User> findUserByEmail=userdao.findByUserName(to);
+	            Optional<User> findUserByEmail=userdao.findByEmail(to);
 	            User getUserByEmail = findUserByEmail.get();
 	            String username = getUserByEmail.getUsername();
 	            String message = "" +
@@ -1921,7 +1880,7 @@ public class AdminController {
 	@GetMapping("/payment")
 	public String payment(Principal principal, Model model) {
 		try {
-			Optional<User> user = userdao.findByUserName(principal.getName());
+			Optional<User> user = userdao.findByEmail(principal.getName());
 			User user1 = user.get();
 			Optional<Payment_Order_Info> payment_Order_Info = orderDao.findbycompany(user1.getCompany_id());
 			if (payment_Order_Info.isPresent()) {
@@ -1948,7 +1907,7 @@ public class AdminController {
 	                model.addAttribute("all_plans", subscriptionPlans);
 				model.addAttribute("orders", orders);
 				System.out.println("ORDERS ROW " + orders);
-				return "payment";
+				return "AdminSubscriptionPayment";
 			} else {
 				SubscriptionPlans subscriptionPlans = servicelayer.getAllPlans();
 				System.out.println(" LIST PLANS " + subscriptionPlans);
@@ -1967,7 +1926,7 @@ public class AdminController {
 				model.addAttribute("all_plans", subscriptionPlans);
 				model.addAttribute("orders", order_Info);
 				System.out.println("ORDERS ROW " + order_Info);
-				return "payment";
+				return "AdminSubscriptionPayment";
 			}
 		} catch (Exception e) {
 			String exceptionAsString = e.toString();

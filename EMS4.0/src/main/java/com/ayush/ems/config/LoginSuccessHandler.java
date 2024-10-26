@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @Component
@@ -22,6 +23,7 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
 
     @Autowired
     private EmailService emailService;
+
     @Autowired
     private UserDao userdao;
 
@@ -29,47 +31,115 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
     protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         
-        // Get the username (email) and IP address
+        // Get the IP address
         String ipAddress = request.getRemoteAddr();
-        String username;
+        String username = null;
         String osName = System.getProperty("os.name");
         String osVersion = System.getProperty("os.version");
         String osArchitecture = System.getProperty("os.arch");
 
-        if (auth.getPrincipal() instanceof org.springframework.security.oauth2.core.user.OAuth2User) {
-            // OAuth2 login (e.g., Google)
-            org.springframework.security.oauth2.core.user.OAuth2User oauthUser = (org.springframework.security.oauth2.core.user.OAuth2User) auth.getPrincipal();
-            username = oauthUser.getAttribute("email");  // Assuming you're using Google OAuth2 email as username
+        // Check if it's an OAuth2 login
+        if (auth instanceof org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken) {
+            org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken oauthToken = 
+                (org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken) auth;
+            
+            // Get the provider (registration ID)
+            String registrationId = oauthToken.getAuthorizedClientRegistrationId();
+
+            // Distinguish between Google and GitHub based on provider (registrationId)
+            if ("google".equalsIgnoreCase(registrationId)) {
+                // Google OAuth2 login
+                username = oauthToken.getPrincipal().getAttribute("email");
+                System.out.println("GOOGLE login with email: " + username);
+            } else if ("github".equalsIgnoreCase(registrationId)) {
+                // GitHub OAuth2 login
+                if (oauthToken.getPrincipal().getAttributes().containsKey("email")) {
+                    username = oauthToken.getPrincipal().getAttribute("email");
+                    System.out.println("GITHUB login with email: " + username);
+                } else {
+                    username = oauthToken.getPrincipal().getAttribute("login");
+                    System.out.println("GITHUB login with username: " + username);
+                }
+            } else {
+                // Fallback for other OAuth2 providers
+                username = oauthToken.getPrincipal().getAttribute("sub");
+                System.out.println("Other provider login with sub: " + username);
+            }
         } else {
-            username = auth.getName(); // For form-based login
+            // Form-based login
+            username = auth.getName();
         }
 
-        // Fetch user from the database using the email
-        User user = userdao.getUserByUserName(username);
-        System.out.println(username+ " SIGNIN WITH GOOGLE "+user);
-        if (user == null) {
-            // User not found, send error response
-            try {
-				response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User not registered.");
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-            return null; // Stop further processing
+//        int offset = 0;
+//        int batchSize = 100; // Define the size of each batch
+//        List<User> userBatch;
+//        userBatch = null;
+//        do
+//        {
+//        	 userBatch = userdao.findByUserName(username, batchSize, offset);
+//        	   // If the batch is not empty, process the users
+//             if (!userBatch.isEmpty()) {
+//                 for (User user : userBatch) {
+////                	  Check if the user matches the username and process it
+//                     if (user.getEmail().equals(username)) {
+////                          Send login notification email
+//                         sendLoginNotificationEmail(username, ipAddress, osName, osVersion, osArchitecture);
+//
+//                         // Determine target URL based on role
+//                         return getTargetUrlBasedOnRole(user.getRole());
+//                     }
+//
+//                 }
+//             }
+//             // Update the offset for the next batch
+//             offset += batchSize; 
+//        }
+//        while (!userBatch.isEmpty()); // Exit when no more users are returned
+//            return null; // Stop further processing
+        
+        int offset = 0;
+        int batchSize = 100; // Define the size of each batch
+        List<User> userBatch;
+
+        do {
+            // Fetch a batch of users
+            userBatch = userdao.findByUserName(username, batchSize, offset);
+            
+            // If the batch is not empty, process the users
+            if (userBatch != null && !userBatch.isEmpty()) {
+                for (User user : userBatch) {
+                    // Check if the user matches the username and process it
+                    if (user.getEmail().equals(username)) {
+                        // Send login notification email
+                        sendLoginNotificationEmail(username, ipAddress, osName, osVersion, osArchitecture);
+
+                        // Determine target URL based on role
+                        return getTargetUrlBasedOnRole(user.getRole());
+                    }
+                }
+                // Update the offset for the next batch
+                offset += batchSize; 
+            } else {
+                // If the batch is empty, we will exit the loop
+                break;
+            }
+        } while (true); // Keep looping until we break
+
+        // If we reach here, it means the user was not found
+        try {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User not registered.");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        return null; // Stop further processing
 
-        // Prepare email content and send notification
-        sendLoginNotificationEmail(username, ipAddress, osName, osVersion, osArchitecture);
-
-        // Get role and redirect
-        return getTargetUrlBasedOnRole(user.getRole());
     }
 
     private void sendLoginNotificationEmail(String username, String ipAddress, String osName, String osVersion, String osArchitecture) {
         // Prepare email subject
         String subject = "Security Update: Successful Login Detected";
 
-        // Prepare email content (similar to your existing content)
+        // Prepare email content
         String emailContent = "<!DOCTYPE html>" +
             "<html lang='en'>" +
             "<head>" +
@@ -113,7 +183,7 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
             "</body>" +
             "</html>";
 
-        // Send email asynchronously
+//         Send email asynchronously
         CompletableFuture<Boolean> resultFuture = emailService.sendEmail(emailContent, subject, username);
         resultFuture.thenAccept(result -> {
             if (result) {
@@ -136,7 +206,7 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
         } else if (role.contains("ROLE_MANAGER")) {
             return "/manager/new";
         } else {
-            throw new IllegalStateException();
+            throw new IllegalStateException("Unexpected role: " + role);
         }
     }
 }

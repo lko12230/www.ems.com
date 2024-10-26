@@ -67,6 +67,7 @@ import com.ayush.ems.dao.JobDao;
 import com.ayush.ems.dao.OrderDao;
 import com.ayush.ems.dao.PerformanceDao;
 import com.ayush.ems.dao.RecordActivityDao;
+import com.ayush.ems.dao.StageUserDao;
 import com.ayush.ems.dao.SubscriptionPlanDao;
 import com.ayush.ems.dao.UserDao;
 import com.ayush.ems.dao.UserDetailDao;
@@ -86,6 +87,7 @@ import com.ayush.ems.entities.SubscriptionPlans;
 import com.ayush.ems.entities.User;
 import com.ayush.ems.entities.UserDetail;
 import com.ayush.ems.entities.UserLoginDateTime;
+import com.ayush.ems.entities.stage_user;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.ColorConstants;
@@ -150,17 +152,20 @@ public class Servicelayer {
 	private ArchiveDisabledUserDao archiveDisabledUserDao;
 	@Autowired
 	private ArchiveDisabledUserDetailDao archiveDisabledUserDetailDao;
+	@Autowired
+	private StageUserDao stageUserDao;
 
 //@Autowired
 //private userdao userdao;
-	public User register(User user) throws Exception {
+	@Transactional
+	public stage_user register(stage_user user) throws Exception {
 		System.out.println(user.getDob());
 		System.out.println(user.getUsername());
 		Calendar calendar = Calendar.getInstance();
 		int currentYear = calendar.get(Calendar.YEAR);
 		int count = userdao.getUserCount();
 		if (count > 0) {
-			Optional<User> option = userdao.findByUserNameAndPhone(user.getEmail(), user.getPhone());
+			Optional<stage_user> option = stageUserDao.findByUserNameAndPhone(user.getEmail(), user.getPhone());
 			Optional<Admin> option1 = adminDao.findByUserName(user.getEmail());
 			if (option.isPresent()) {
 				throw new Exception("Email And Phone Number is  Already Exist");
@@ -265,79 +270,19 @@ public class Servicelayer {
 						admin.setSystemDateAndTime(new Date());
 						admin.setPassword(passwordEncoder.encode("admin"));
 						admin.setRole(user.getRole());
-//					adminDao.save(admin);
 						String to = user.getEmail();
-//					if (flag) {
-//
-//						user.setDefaultPasswordSent(1);
-//					} else {
-//						user.setDefaultPasswordSent(0);
-//					}
-//						int getA = user.getAaid();
-//						Optional<Admin> getAdmin = adminDao.findById(getA);
-//						Admin adminn = getAdmin.get();
-//						user.setAdmin(adminn);
-//						admin.getUserList().add(user);
-						User result = userdao.save(user);
-						boolean sentornot = false;
+						stage_user result = stageUserDao.save(user);
+//						boolean sentornot = false;
 						System.out.println(result + "---------------");
 						if (result.getEmail() != null) {
-							sentornot = true;
+//							sentornot = true;
 						}
-						Optional<User> result3 = userdao.findByUserName(result.getEmail());
-						User user3 = result3.get();
-						System.out.println("___+++++   " + result.getUsername());
-						System.out.println("////////////////" + user3.getId());
-						int user_detail_count = userDetailDao.getUserDetailCount();
+						Optional<stage_user> result3 = stageUserDao.findByUserName(result.getEmail());
+						stage_user user3 = result3.get();
+//						System.out.println("___+++++   " + result.getUsername());
+//						System.out.println("////////////////" + user3.getId());
+						int user_detail_count = stageUserDao.getstage_userCount();
 						if (user_detail_count > 0) {
-							admin.setAid(user3.getId());		
-							UserDetail userdetail = new UserDetail();
-							userdetail.setSno(++user_detail_count);
-							userdetail.setId(user3.getId());
-							userdetail.setAaid(result.getAaid());
-							userdetail.setAccountNonLocked(true);
-							userdetail.setBank_account_holder_name("NA");
-							userdetail.setBank_account_number(0);
-							userdetail.setBank_name("NA");
-							userdetail.setBase_location("NA");
-							userdetail.setStatus("Active");
-							userdetail.setDesignation(designarionArrowSplit);
-							userdetail.setAddress(result.getAddress());
-							userdetail.setAlert_message_sent(result.getAlert_message_sent());
-							userdetail.setCountry(result.getCountry());
-							userdetail.setImage_Url(result.getImage_Url());
-							userdetail.setDob(result.getDob());
-							userdetail.setUsername(result.getUsername().toUpperCase());
-							userdetail.setEmail(result.getEmail());
-							userdetail.setTeam("0");
-							userdetail.setEmployeeOnBench(true);
-							userdetail.setImage_Url(result.getImage_Url());
-							userdetail.setDesignation(user.getDesignation());
-							userdetail.setEnabled(result.isEnabled());
-							userdetail.setGender(result.getGender());
-							userdetail.setIpAddress(result.getIpAddress());
-							userdetail.setPhone(result.getPhone());
-							userdetail.setRole(result.getRole());
-							userdetail.setSystemDateAndTime(result.getSystemDateAndTime());
-//							userdetail.setAdmin(adminn.getAid());
-							userdetail.setImage_Url(user.getImage_Url());
-							userdetail.setUsername(result.getUsername());
-							userdetail.setPassword(result.getPassword());
-							userdetail.setRepassword(result.getRepassword());
-							userdetail.setIfsc_code("NA");
-							userdetail.setLaptop_serial_number("NA");
-							userdetail.setLaptop_brand("NA");
-							userdetail.setLaptop_id("NA");
-							userdetail.setLaptop_status("NA");
-							userdetail.setEditwho("NA");
-							userdetail.setWho_assign_laptop("NA");
-							userdetail.setReview_rating("NA");
-							if (result.isManager_or_not()) {
-								userdetail.setManager_or_not(result.isManager_or_not());
-							} else {
-								userdetail.setManager_or_not(result.isManager_or_not());
-							}
-							userdetail.setAaid(result.getId());
 							Performance performance = new Performance();
 							performance.setId(user3.getId());
 							performance.setJanuary(0);
@@ -354,59 +299,10 @@ public class Servicelayer {
 							performance.setDecember(0);
 							performance.setYear(currentYear);
 							performancedao.save(performance);
-							userDetailDao.save(userdetail);
 							adminDao.save(admin);
 						} else {
-							admin.setAid(result.getId());		
-							UserDetail userdetail = new UserDetail();
-							userdetail.setSno(1);
-							userdetail.setId(result.getId());
-							userdetail.setAaid(result.getAaid());
-							userdetail.setAccountNonLocked(true);
-							userdetail.setBank_account_holder_name("NA");
-							userdetail.setBank_account_number(0);
-							userdetail.setBank_name("NA");
-							userdetail.setBase_location("NA");
-							userdetail.setStatus("Active");
-							userdetail.setDesignation(designarionArrowSplit);
-							userdetail.setAddress(result.getAddress());
-							userdetail.setAlert_message_sent(result.getAlert_message_sent());
-							userdetail.setCountry(result.getCountry());
-							userdetail.setImage_Url(result.getImage_Url());
-							userdetail.setDob(result.getDob());
-							userdetail.setUsername(result.getUsername().toUpperCase());
-							userdetail.setEmail(result.getEmail());
-							userdetail.setTeam("0");
-							userdetail.setEmployeeOnBench(true);
-							userdetail.setImage_Url(result.getImage_Url());
-							userdetail.setDesignation(user.getDesignation());
-							userdetail.setEnabled(result.isEnabled());
-							userdetail.setGender(result.getGender());
-							userdetail.setIpAddress(result.getIpAddress());
-							userdetail.setPhone(result.getPhone());
-							userdetail.setRole(result.getRole());
-							userdetail.setSystemDateAndTime(result.getSystemDateAndTime());
-//							userdetail.setAdmin(adminn.getAid());
-							userdetail.setImage_Url(user.getImage_Url());
-							userdetail.setUsername(result.getUsername());
-							userdetail.setPassword(result.getPassword());
-							userdetail.setRepassword(result.getRepassword());
-							userdetail.setIfsc_code("NA");
-							userdetail.setLaptop_serial_number("NA");
-							userdetail.setLaptop_brand("NA");
-							userdetail.setLaptop_id("NA");
-							userdetail.setLaptop_status("NA");
-							userdetail.setEditwho("NA");
-							userdetail.setWho_assign_laptop("NA");
-							userdetail.setReview_rating("NA");
-							if (result.isManager_or_not()) {
-								userdetail.setManager_or_not(result.isManager_or_not());
-							} else {
-								userdetail.setManager_or_not(result.isManager_or_not());
-							}
-							userdetail.setAaid(user3.getId());
 							Performance performance = new Performance();
-							performance.setId(user.getId());
+							performance.setId(user3.getId());
 							performance.setJanuary(0);
 							performance.setFebruary(0);
 							performance.setMarch(0);
@@ -421,208 +317,79 @@ public class Servicelayer {
 							performance.setDecember(0);
 							performance.setYear(currentYear);
 							performancedao.save(performance);
-							userDetailDao.save(userdetail);
+//							stageUserDetailDao.save(userdetail);
 							adminDao.save(admin);
 						}
-						if (sentornot) {
+//						if (sentornot) {
 							CompletableFuture<Boolean> flagFuture = this.emailService.sendEmail(message, subject, to);
 							flag = flagFuture.get(); // Blocking call to get the result
 							if (flag) {
-								user.setDefaultPasswordSent(true);
+//								user.setDefaultPasswordSent(true);
 							} else {
-								user.setDefaultPasswordSent(false);
+//								user.setDefaultPasswordSent(false);
 							}
-							userdao.save(user);
-						}
+//							stageUserDao.save(user);
+//						}
 						return result;
 					} else if (user.getRole().equals("ROLE_USER") || user.getRole().equals("ROLE_MANAGER")
 							|| user.getRole().equals("ROLE_HR") || user.getRole().equals("ROLE_IT")) {
 						String to = user.getEmail();
-//					System.out.println(flag);
-//					if (flag) {
-//
-//						user.setDefaultPasswordSent(1);
-//					} else {
-//						user.setDefaultPasswordSent(0);
-//					}
-						int user_detail_count = userDetailDao.getUserDetailCount();
-						if (user_detail_count > 0) {
-//							int getA = user.getAaid();
-//							Optional<Admin> getAdmin = adminDao.findById(getA);
-//							Admin admin = getAdmin.get();
-//							user.setAdmin(admin);
-//							admin.getUserList().add(user);
-							User result = userdao.save(user);
-							System.out.println("////////////////" + result);
-//							Optional<User> result3 = userdao.findById(result.getId());
-//							User user3 = result3.get();
-							boolean sentornot = false;
-							System.out.println(result + "---------------");
-							if (result.getEmail() != null) {
-								sentornot = true;
-							}
-							UserDetail userdetail = new UserDetail();
-							userdetail.setSno(++user_detail_count);
-							userdetail.setId(result.getId());
-							userdetail.setAaid(result.getAaid());
-							userdetail.setAccountNonLocked(true);
-							userdetail.setAddress(result.getAddress());
-							userdetail.setAlert_message_sent(result.getAlert_message_sent());
-							userdetail.setCountry(result.getCountry());
-							userdetail.setDob(result.getDob());
-							userdetail.setDesignation(designarionArrowSplit);
-							userdetail.setEmail(result.getEmail());
-							userdetail.setImage_Url(result.getImage_Url());
-							userdetail.setUsername(result.getUsername());
-							userdetail.setTeam("0");
-							userdetail.setImage_Url(result.getImage_Url());
-							userdetail.setBank_account_holder_name("NA");
-							userdetail.setBank_account_number(0);
-							userdetail.setBank_name("NA");
-							userdetail.setBase_location("NA");
-							userdetail.setEmployeeOnBench(true);
-							userdetail.setDesignation(user.getDesignation());
-							userdetail.setEnabled(result.isEnabled());
-							userdetail.setGender(result.getGender());
-							userdetail.setIpAddress(result.getIpAddress());
-							userdetail.setPhone(result.getPhone());
-							userdetail.setStatus("Active");
-							userdetail.setRole(result.getRole());
-//							userdetail.setAdmin(admin.getAid());
-							userdetail.setPassword(result.getPassword());
-							userdetail.setRepassword(result.getRepassword());
-							userdetail.setLaptop_brand("NA");
-							userdetail.setLaptop_id("NA");
-							userdetail.setLaptop_serial_number("NA");
-							userdetail.setLaptop_status("NA");
-							userdetail.setWho_assign_laptop("NA");
-							userdetail.setReview_rating("NA");
-							if (user.getDesignation().equals("ROLE_MANAGER")) {
-								userdetail.setManager_or_not(true);
-							} else {
-								userdetail.setManager_or_not(false);
-							}
-							userdetail.setSystemDateAndTime(result.getSystemDateAndTime());
-//							userdetail.setUser(user3);
-							Performance performance = new Performance();
-							performance.setId(user.getId());
-							performance.setJanuary(0);
-							performance.setFebruary(0);
-							performance.setMarch(0);
-							performance.setApril(0);
-							performance.setMay(0);
-							performance.setJune(0);
-							performance.setJuly(0);
-							performance.setAugust(0);
-							performance.setSeptember(0);
-							performance.setOctober(0);
-							performance.setNovember(0);
-							performance.setDecember(0);
-							performance.setYear(currentYear);
-							performancedao.save(performance);
-							userDetailDao.save(userdetail);
-							if (sentornot) {
-								CompletableFuture<Boolean> flagFuture = this.emailService.sendEmail(message, subject,
-										to);
-								flag = flagFuture.get(); // Blocking call to get the result
-								if (flag) {
-									user.setDefaultPasswordSent(true);
-								} else {
-									user.setDefaultPasswordSent(false);
-								}
-								userdao.save(user);
-							}
-
-							return result;
-						} else {
-//							int getA = user.getAaid();
-//							Optional<Admin> getAdmin = adminDao.findById(getA);
-//							Admin admin = getAdmin.get();
-//							user.setAdmin(admin);
-//							admin.getUserList().add(user);
-							User result = userdao.save(user);
-							System.out.println("////////////////" + result);
-//							Optional<User> result3 = userdao.findById(result.getId());
-//							User user3 = result3.get();
-							boolean sentornot = false;
-							System.out.println(result + "---------------");
-							if (result.getEmail() != null) {
-								sentornot = true;
-							}
-							UserDetail userdetail = new UserDetail();
-							userdetail.setSno(1);
-							userdetail.setId(result.getId());
-							userdetail.setAaid(result.getAaid());
-							userdetail.setAccountNonLocked(true);
-							userdetail.setAddress(result.getAddress());
-							userdetail.setAlert_message_sent(result.getAlert_message_sent());
-							userdetail.setCountry(result.getCountry());
-							userdetail.setDob(result.getDob());
-							userdetail.setDesignation(designarionArrowSplit);
-							userdetail.setEmail(result.getEmail());
-							userdetail.setImage_Url(result.getImage_Url());
-							userdetail.setUsername(result.getUsername());
-							userdetail.setTeam("0");
-							userdetail.setImage_Url(result.getImage_Url());
-							userdetail.setBank_account_holder_name("NA");
-							userdetail.setBank_account_number(0);
-							userdetail.setBank_name("NA");
-							userdetail.setBase_location("NA");
-							userdetail.setEmployeeOnBench(true);
-							userdetail.setDesignation(user.getDesignation());
-							userdetail.setEnabled(result.isEnabled());
-							userdetail.setGender(result.getGender());
-							userdetail.setIpAddress(result.getIpAddress());
-							userdetail.setPhone(result.getPhone());
-							userdetail.setStatus("Active");
-							userdetail.setRole(result.getRole());
-//							userdetail.setAdmin(admin.getAid());
-							userdetail.setPassword(result.getPassword());
-							userdetail.setRepassword(result.getRepassword());
-							userdetail.setLaptop_brand("NA");
-							userdetail.setLaptop_id("NA");
-							userdetail.setLaptop_serial_number("NA");
-							userdetail.setLaptop_status("NA");
-							userdetail.setWho_assign_laptop("NA");
-							userdetail.setReview_rating("NA");
-							if (user.getDesignation().equals("ROLE_MANAGER")) {
-								userdetail.setManager_or_not(true);
-							} else {
-								userdetail.setManager_or_not(false);
-							}
-							userdetail.setSystemDateAndTime(result.getSystemDateAndTime());
-//							userdetail.setUser(user3);
-							Performance performance = new Performance();
-							performance.setId(user.getId());
-							performance.setJanuary(0);
-							performance.setFebruary(0);
-							performance.setMarch(0);
-							performance.setApril(0);
-							performance.setMay(0);
-							performance.setJune(0);
-							performance.setJuly(0);
-							performance.setAugust(0);
-							performance.setSeptember(0);
-							performance.setOctober(0);
-							performance.setNovember(0);
-							performance.setDecember(0);
-							performance.setYear(currentYear);
-							performancedao.save(performance);
-							userDetailDao.save(userdetail);
-							if (sentornot) {
-								CompletableFuture<Boolean> flagFuture = this.emailService.sendEmail(message, subject,
-										to);
-								flag = flagFuture.get(); // Blocking call to get the result
-								if (flag) {
-									user.setDefaultPasswordSent(true);
-								} else {
-									user.setDefaultPasswordSent(false);
-								}
-								userdao.save(user);
-							}
-
-							return result;
+						stage_user result = stageUserDao.save(user);
+						boolean sentornot = false;
+						System.out.println(result + "---------------");
+						if (result.getEmail() != null) {
+							sentornot = true;
 						}
+						Optional<stage_user> result3 = stageUserDao.findByUserName(result.getEmail());
+						stage_user user3 = result3.get();
+						System.out.println("___+++++   " + result.getUsername());
+						System.out.println("////////////////" + user3.getId());
+						int user_detail_count = userDetailDao.getUserDetailCount();
+						if (user_detail_count > 0) {	
+							Performance performance = new Performance();
+							performance.setId(user3.getId());
+							performance.setJanuary(0);
+							performance.setFebruary(0);
+							performance.setMarch(0);
+							performance.setApril(0);
+							performance.setMay(0);
+							performance.setJune(0);
+							performance.setJuly(0);
+							performance.setAugust(0);
+							performance.setSeptember(0);
+							performance.setOctober(0);
+							performance.setNovember(0);
+							performance.setDecember(0);
+							performance.setYear(currentYear);
+							performancedao.save(performance);						
+							} else {
+							Performance performance = new Performance();
+							performance.setId(user3.getId());
+							performance.setJanuary(0);
+							performance.setFebruary(0);
+							performance.setMarch(0);
+							performance.setApril(0);
+							performance.setMay(0);
+							performance.setJune(0);
+							performance.setJuly(0);
+							performance.setAugust(0);
+							performance.setSeptember(0);
+							performance.setOctober(0);
+							performance.setNovember(0);
+							performance.setDecember(0);
+							performance.setYear(currentYear);
+							performancedao.save(performance);						}
+						if (sentornot) {
+							CompletableFuture<Boolean> flagFuture = this.emailService.sendEmail(message, subject, to);
+							flag = flagFuture.get(); // Blocking call to get the result
+//							if (flag) {
+//								user.setDefaultPasswordSent(true);
+//							} else {
+//								user.setDefaultPasswordSent(false);
+//							}
+//							stageUserDao.save(user);
+						}
+						return result;
 					} else {
 						throw new Exception("User Not Registered in ADMIN");
 					}
@@ -637,8 +404,8 @@ public class Servicelayer {
 //			throw new Exception("Team Id Not Valid");	
 //		}
 			}
-		} else {
-			Optional<User> option = userdao.findByUserNameAndPhone(user.getEmail(), user.getPhone());
+		} else {  // when table is empty then execute this block
+			Optional<stage_user> option = stageUserDao.findByUserNameAndPhone(user.getEmail(), user.getPhone());
 			Optional<Admin> option1 = adminDao.findByUserName(user.getEmail());
 			if (option.isPresent()) {
 				throw new Exception("Email And Phone Number is  Already Exist");
@@ -755,60 +522,18 @@ public class Servicelayer {
 //						Admin adminn = getAdmin.get();
 //						user.setAdmin(adminn);
 //						admin.getUserList().add(user);
-						User result = userdao.save(user);
+						stage_user result = stageUserDao.save(user);
 						boolean sentornot = false;
 						System.out.println(result + "---------------");
 						if (result.getEmail() != null) {
 							sentornot = true;
 						}
-//						Optional<User> result3 = userdao.findById(result.getId());
-//						User user3 = result3.get();
+						Optional<stage_user> result3 = stageUserDao.findByUserName(result.getEmail());
+						stage_user user3 = result3.get();
 						System.out.println("___+++++   " + result.getUsername());
 						System.out.println("////////////////" + result);
-						UserDetail userdetail = new UserDetail();
-						userdetail.setId(result.getId());
-						userdetail.setAaid(result.getAaid());
-						userdetail.setAccountNonLocked(true);
-						userdetail.setBank_account_holder_name("NA");
-						userdetail.setBank_account_number(0);
-						userdetail.setBank_name("NA");
-						userdetail.setBase_location("NA");
-						userdetail.setStatus("ACTIVE");
-						userdetail.setDesignation(designarionArrowSplit);
-						userdetail.setAddress(result.getAddress());
-						userdetail.setAlert_message_sent(result.getAlert_message_sent());
-						userdetail.setCountry(result.getCountry());
-						userdetail.setImage_Url(result.getImage_Url());
-						userdetail.setDob(result.getDob());
-						userdetail.setUsername(result.getUsername().toUpperCase());
-						userdetail.setEmail(result.getEmail());
-						userdetail.setTeam("0");
-						userdetail.setEmployeeOnBench(true);
-						userdetail.setImage_Url(result.getImage_Url());
-						userdetail.setDesignation(user.getDesignation());
-						userdetail.setEnabled(result.isEnabled());
-						userdetail.setGender(result.getGender());
-						userdetail.setIpAddress(result.getIpAddress());
-						userdetail.setPhone(result.getPhone());
-						userdetail.setRole(result.getRole());
-						userdetail.setSystemDateAndTime(result.getSystemDateAndTime());
-//						userdetail.setAdmin(adminn.getAid());
-						userdetail.setImage_Url(user.getImage_Url());
-						userdetail.setUsername(result.getUsername());
-						userdetail.setPassword(result.getPassword());
-						userdetail.setRepassword(result.getRepassword());
-						userdetail.setIfsc_code("NA");
-						userdetail.setLaptop_serial_number("NA");
-						userdetail.setLaptop_brand("NA");
-						userdetail.setLaptop_id("NA");
-						userdetail.setLaptop_status("NA");
-						userdetail.setEditwho("NA");
-						userdetail.setWho_assign_laptop("NA");
-						userdetail.setReview_rating("NA");
-						userdetail.setManager_or_not(false);
-//						userdetail.setUser(user3);
 						Performance performance = new Performance();
-						performance.setId(user.getId());
+						performance.setId(user3.getId());
 						performance.setJanuary(0);
 						performance.setFebruary(0);
 						performance.setMarch(0);
@@ -823,7 +548,6 @@ public class Servicelayer {
 						performance.setDecember(0);
 						performance.setYear(currentYear);
 						performancedao.save(performance);
-						userDetailDao.save(userdetail);
 						adminDao.save(admin);
 						if (sentornot) {
 							CompletableFuture<Boolean> flagFuture = this.emailService.sendEmail(message, subject, to);
@@ -833,7 +557,7 @@ public class Servicelayer {
 							} else {
 								user.setDefaultPasswordSent(false);
 							}
-							userdao.save(user);
+							stageUserDao.save(user);
 						}
 						return result;
 					} else if (user.getRole().equals("ROLE_USER") || user.getRole().equals("ROLE_MANAGER")
@@ -851,7 +575,7 @@ public class Servicelayer {
 //						Admin admin = getAdmin.get();
 //						user.setAdmin(admin);
 //						admin.getUserList().add(user);
-						User result = userdao.save(user);
+						stage_user result = stageUserDao.save(user);
 						System.out.println("////////////////" + result);
 //						Optional<User> result3 = userdao.findById(result.getId());
 //						User user3 = result3.get();
@@ -860,50 +584,10 @@ public class Servicelayer {
 						if (result.getEmail() != null) {
 							sentornot = true;
 						}
-						UserDetail userdetail = new UserDetail();
-						userdetail.setId(result.getId());
-						userdetail.setAaid(result.getAaid());
-						userdetail.setAccountNonLocked(true);
-						userdetail.setAddress(result.getAddress());
-						userdetail.setAlert_message_sent(result.getAlert_message_sent());
-						userdetail.setCountry(result.getCountry());
-						userdetail.setDob(result.getDob());
-						userdetail.setDesignation(designarionArrowSplit);
-						userdetail.setEmail(result.getEmail());
-						userdetail.setImage_Url(result.getImage_Url());
-						userdetail.setUsername(result.getUsername());
-						userdetail.setTeam("0");
-						userdetail.setImage_Url(result.getImage_Url());
-						userdetail.setBank_account_holder_name("NA");
-						userdetail.setBank_account_number(0);
-						userdetail.setBank_name("NA");
-						userdetail.setBase_location("NA");
-						userdetail.setEmployeeOnBench(true);
-						userdetail.setDesignation(user.getDesignation());
-						userdetail.setEnabled(result.isEnabled());
-						userdetail.setGender(result.getGender());
-						userdetail.setIpAddress(result.getIpAddress());
-						userdetail.setPhone(result.getPhone());
-						userdetail.setStatus("ACTIVE");
-						userdetail.setRole(result.getRole());
-//						userdetail.setAdmin(admin.getAid());
-						userdetail.setPassword(result.getPassword());
-						userdetail.setRepassword(result.getRepassword());
-						userdetail.setLaptop_brand("NA");
-						userdetail.setLaptop_id("NA");
-						userdetail.setLaptop_serial_number("NA");
-						userdetail.setLaptop_status("NA");
-						userdetail.setWho_assign_laptop("NA");
-						userdetail.setReview_rating("NA");
-						if (user.getDesignation().equals("ROLE_MANAGER")) {
-							userdetail.setManager_or_not(true);
-						} else {
-							userdetail.setManager_or_not(false);
-						}
-						userdetail.setSystemDateAndTime(result.getSystemDateAndTime());
-//						userdetail.setUser(user3);
+						Optional<User> result3 = userdao.findByEmail(result.getEmail());
+						User user3 = result3.get();
 						Performance performance = new Performance();
-						performance.setId(user.getId());
+						performance.setId(user3.getId());
 						performance.setJanuary(0);
 						performance.setFebruary(0);
 						performance.setMarch(0);
@@ -918,7 +602,6 @@ public class Servicelayer {
 						performance.setDecember(0);
 						performance.setYear(currentYear);
 						performancedao.save(performance);
-						userDetailDao.save(userdetail);
 						if (sentornot) {
 							CompletableFuture<Boolean> flagFuture = this.emailService.sendEmail(message, subject, to);
 							flag = flagFuture.get(); // Blocking call to get the result
@@ -927,7 +610,7 @@ public class Servicelayer {
 							} else {
 								user.setDefaultPasswordSent(false);
 							}
-							userdao.save(user);
+							stageUserDao.save(user);
 						}
 
 						return result;
@@ -992,7 +675,7 @@ public class Servicelayer {
 
 	public boolean saveNewPassword(String NewPassword, String Email) {
 		try {
-			Optional<User> user = userdao.findByUserName(Email);
+			Optional<User> user = userdao.findByEmail(Email);
 			User user1 = user.get();
 			user1.setPassword(passwordEncoder.encode(NewPassword));
 			user1.setRepassword(passwordEncoder.encode(NewPassword));
@@ -1829,6 +1512,7 @@ public class Servicelayer {
 		}
 	}
 
+	@Transactional
 	public void insert_error_log(String error_description, String java_file_name, String error_message,
 			String method_name, int linenumber) {
 		try {
@@ -2535,20 +2219,21 @@ public class Servicelayer {
 			record_activity_dao.save(recordActivity);
 //		return true;
 		} catch (Exception e) {
-			String exceptionAsString = e.toString();
-			// Get the current class
-			Class<?> currentClass = Servicelayer.class;
-			// Get the name of the class
-			String className = currentClass.getName();
-			String errorMessage = e.getMessage();
-			StackTraceElement[] stackTrace = e.getStackTrace();
-			String methodName = stackTrace[0].getMethodName();
-			int lineNumber = stackTrace[0].getLineNumber();
-			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
-			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
-		}
+//			String exceptionAsString = e.toString();
+//			// Get the current class
+//			Class<?> currentClass = Servicelayer.class;
+//			// Get the name of the class
+//			String className = currentClass.getName();
+//			String errorMessage = e.getMessage();
+//			StackTraceElement[] stackTrace = e.getStackTrace();
+//			String methodName = stackTrace[0].getMethodName();
+//			int lineNumber = stackTrace[0].getLineNumber();
+//			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+//			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+			e.printStackTrace();	}
 	}
 
+	@Transactional
 	public void login_record_save(User user, HttpSession session, String Ip_address, String location)
 			throws InterruptedException {
 		try {
@@ -2586,6 +2271,7 @@ public class Servicelayer {
 				userLoginDateTime.setLoginDateAndTime(loginDate);
 				userLoginDateTime.setUsername(user.getUsername());
 				userLoginDao.save(userLoginDateTime);
+                System.out.println("FAIL ATTEMPT MSC "+user.getFailedAttempt());
 				userdao.save(user);
 //		Thread.sleep(1000);
 				userDetailDao.save(userDetail2);
@@ -2989,7 +2675,7 @@ public class Servicelayer {
 		try {
 			int amt = 0;
 			Payment_Order_Info order_Info = new Payment_Order_Info();
-			Optional<User> user = userdao.findByUserName(principal.getName());
+			Optional<User> user = userdao.findByEmail(principal.getName());
 			int count = orderDao.countt();
 			int last_id = orderDao.getLastId();
 			if (count > 0) {
@@ -3249,7 +2935,7 @@ public class Servicelayer {
 	
 	public User findByUsername(String email) {
 		try {
-			Optional<User> user = userdao.findByUserName(email);
+			Optional<User> user = userdao.findByEmail(email);
 			User user1 = user.get();
 			return user1;
 		} catch (Exception e) {
