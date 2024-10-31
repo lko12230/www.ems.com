@@ -8,8 +8,12 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
+import org.springframework.security.config.http.SessionCreationPolicy;
 
 @Configuration
 @EnableWebSecurity
@@ -25,7 +29,7 @@ public class MyConfig extends WebSecurityConfigurerAdapter {
     private CustomLogoutSuccessHandler customLogoutSuccessHandler;
 
     @Bean
-    public UserDetailsService getuserDetailsService() {
+    public UserDetailsService userDetailsService() {
         return new UserDetailsServiceImpl();
     }
 
@@ -35,9 +39,9 @@ public class MyConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public DaoAuthenticationProvider authenticationProvider() throws Exception {
+    public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-        daoAuthenticationProvider.setUserDetailsService(this.getuserDetailsService());
+        daoAuthenticationProvider.setUserDetailsService(userDetailsService());
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
         return daoAuthenticationProvider;
     }
@@ -49,14 +53,15 @@ public class MyConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable()
+        http
+            .csrf().disable()
             .authorizeRequests()
                 .antMatchers("/user/**").hasRole("USER")
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 .antMatchers("/hr/**").hasRole("HR")
                 .antMatchers("/IT/**").hasRole("IT")
                 .antMatchers("/manager/**").hasRole("MANAGER")
-                .antMatchers("/**").permitAll()
+                .anyRequest().permitAll()
             .and()
             .formLogin()
                 .loginPage("/signin")
@@ -71,13 +76,20 @@ public class MyConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
             .and()
             .sessionManagement()
-                .invalidSessionUrl("/logout");
+                .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+                .sessionFixation().newSession()
+                .invalidSessionUrl("/signin?expired=true")
+                .maximumSessions(1)
+                .sessionRegistry(sessionRegistry());
     }
 
-    // Uncomment and implement sessionRegistry if session management is needed
-    // @Bean
-    // public SessionRegistry sessionRegistry() {
-    //     return new SessionRegistryImpl();
-    // }
+    @Bean
+    public SessionRegistry sessionRegistry() {
+        return new SessionRegistryImpl();
+    }
 
+    @Bean
+    public HttpSessionEventPublisher httpSessionEventPublisher() {
+        return new HttpSessionEventPublisher();
+    }
 }

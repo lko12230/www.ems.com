@@ -53,5 +53,9 @@ private String hidden;
 private Date SystemDateAndTime;
 @Transient
 private String imageCaptcha;
+private Date adddate;
+private String addwho;
+private Date editdate;
+private String editwho;
 
 }

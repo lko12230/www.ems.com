@@ -1,156 +1,175 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="base::layout(~{::section})">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	th:replace="base::layout(~{::section})">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Login</title>
-    <link rel="icon" type="image/x-icon" href="https://bootdey.com/img/Content/avatar/avatar7.png">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.0/css/bootstrap.min.css">
-    <style>
-        body {
-            background-color: #f7f9fc;
-        }
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<title>Login</title>
+<link rel="icon" type="image/x-icon"
+	href="https://bootdey.com/img/Content/avatar/avatar7.png">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.0/css/bootstrap.min.css">
+<style>
+body {
+	background-color: #f7f9fc;
+}
 
-        .wrapper {
-            width: 400px;
-            margin: auto;
-            padding: 20px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin-top: 100px;
-        }
+.wrapper {
+	width: 400px;
+	margin: auto;
+	padding: 20px;
+	background: white;
+	border-radius: 10px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	margin-top: 100px;
+}
 
-        .logo img {
-            width: 80px;
-            height: 80px;
-            margin-bottom: 20px;
-        }
+.logo img {
+	width: 80px;
+	height: 80px;
+	margin-bottom: 20px;
+}
 
-        .form-field {
-            position: relative;
-            margin-bottom: 20px;
-        }
+.form-field {
+	position: relative;
+	margin-bottom: 20px;
+}
 
-        .form-field i {
-            position: absolute;
-            left: 10px;
-            top: 12px;
-            color: #aaa;
-        }
+.form-field i {
+	position: absolute;
+	left: 10px;
+	top: 12px;
+	color: #aaa;
+}
 
-        .form-control {
-            padding-left: 40px;
-        }
+.form-control {
+	padding-left: 40px;
+}
 
-        .btn {
-            width: 100%;
-            background-color: royalblue;
-            color: white;
-        }
+.btn {
+	width: 100%;
+	background-color: royalblue;
+	color: white;
+}
 
-        .btn-google {
-            background-color: #db4437;
-            color: white;
-        }
+.btn-google {
+	background-color: #db4437;
+	color: white;
+}
 
-        .social-buttons {
-            margin-top: 20px;
-        }
+.social-buttons {
+	margin-top: 20px;
+}
 
-        .social-buttons a {
-            margin: 0 10px;
-        }
+.social-buttons a {
+	margin: 0 10px;
+}
 
-        .text-center a {
-            color: royalblue;
-        }
+.text-center a {
+	color: royalblue;
+}
 
-        .social-button img {
-            width: 40px; /* Set width for social media icons */
-            height: 40px; /* Set height for social media icons */
-        }
-    </style>
+.social-button img {
+	width: 40px; /* Set width for social media icons */
+	height: 40px; /* Set height for social media icons */
+}
+</style>
 </head>
 
 <body>
-    <section>
-        <div class="wrapper">
-            <div class="logo text-center">
-                <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Logo">
-            </div>
+	<section>
+		<div class="wrapper">
+			<div class="logo text-center">
+				<img src="https://bootdey.com/img/Content/avatar/avatar7.png"
+					alt="Logo">
+			</div>
 
-            <div class="text-center mt-4 name">
-                <div class="text-center mt-4 name">
-                <span style="color: royalblue;">w</span><span style="color: red;">w</span><span style="color: #F7B529;">w</span><span style="color: royalblue;">.</span><span style="color: limegreen;">e</span><span style="color: red;">m</span><span style="color: royalblue;">s</span><span style="color: red;">.</span><span style="color: #F7B529;">c</span><span style="color: royalblue;">o</span><span style="color: limegreen;">m</span>
-            </div>
-            </div>
+			<div class="text-center mt-4 name">
+				<div class="text-center mt-4 name">
+					<span style="color: royalblue;">w</span><span style="color: red;">w</span><span
+						style="color: #F7B529;">w</span><span style="color: royalblue;">.</span><span
+						style="color: limegreen;">e</span><span style="color: red;">m</span><span
+						style="color: royalblue;">s</span><span style="color: red;">.</span><span
+						style="color: #F7B529;">c</span><span style="color: royalblue;">o</span><span
+						style="color: limegreen;">m</span>
+				</div>
+			</div>
+			
+			<div th:if="${param.expired}" class="alert alert-danger text-center">
+				Your session has expired. Please log in again.</div>
 
-            <div th:if="${session.message}" th:classappend="${session.message.type}" class="alert text-center" role="alert text-center">
-                <p th:text="${session.message.content}"></p>
-                <th:block th:text="${#session.removeAttribute('message')}"></th:block>
-            </div>
+			<div th:if="${session.message}"
+				th:classappend="${session.message.type}" class="alert text-center"
+				role="alert text-center">
+				<p th:text="${session.message.content}"></p>
+				<th:block th:text="${#session.removeAttribute('message')}"></th:block>
+			</div>
 
-            <div th:if="${param.error}" class="alert alert-danger text-center">
-                <span th:text="${session.SPRING_SECURITY_LAST_EXCEPTION.message}"></span>
-            </div>
+			<div th:if="${param.error}" class="alert alert-danger text-center">
+				<span th:text="${session.SPRING_SECURITY_LAST_EXCEPTION.message}"></span>
+			</div>
 
-            <div th:if="${param.logout}" class="alert alert-success text-center">
-                You have been logged out
-            </div>
+			<div th:if="${param.logout}" class="alert alert-success text-center">
+				You have been logged out</div>
 
-            <form id="login-form" class="form p-3 mt-3" th:action="@{/dologin}" method="post">
-                <div class="form-field d-flex align-items-center">
-                    <i class="fa-solid fa-user"></i>
-                    <input type="text" name="username" id="username" placeholder="Username" class="form-control" required />
-                </div>
+			<form id="login-form" class="form p-3 mt-3" th:action="@{/dologin}"
+				method="post">
+				<div class="form-field d-flex align-items-center">
+					<i class="fa-solid fa-user"></i> <input type="text" name="username"
+						id="username" placeholder="Username" class="form-control" required />
+				</div>
 
-                <div class="form-field d-flex align-items-center">
-                    <i class="fa-solid fa-key"></i>
-                    <input type="password" name="password" id="password" placeholder="Password" class="form-control" required />
-                </div>
-                <input type="checkbox" onclick="myFunction()"> Show Password
-                <button class="btn mt-3" id="signinform" type="submit">Sign In</button>
-            </form>
+				<div class="form-field d-flex align-items-center">
+					<i class="fa-solid fa-key"></i> <input type="password"
+						name="password" id="password" placeholder="Password"
+						class="form-control" required />
+				</div>
+				<input type="checkbox" onclick="myFunction()"> Show Password
+				<button class="btn mt-3" id="signinform" type="submit">Sign
+					In</button>
+			</form>
 
-            <div class="text-center fs-6">
-                <a th:href="@{/forgot/}" id="forgotPasswordLink">Forgot Password?</a> or 
-                <a th:href="@{/verify_admin_get/}" id="SignupLink">Sign up</a>
-            </div>
+			<div class="text-center fs-6">
+				<a th:href="@{/forgot/}" id="forgotPasswordLink">Forgot
+					Password?</a> or <a th:href="@{/verify_admin_get/}" id="SignupLink">Sign
+					up</a>
+			</div>
 
-            <div class="text-center mt-4 social-buttons">
-                <p>or sign in with:</p>
-                <div class="social-buttons">
-                    <a href="/oauth2/authorization/facebook" class="social-button">
-                        <img src="https://img.icons8.com/color/48/000000/facebook-new.png" alt="Facebook">
-                    </a>
-                    <a href="/oauth2/authorization/google" class="social-button">
-                        <img src="https://img.icons8.com/color/48/000000/google-logo.png" alt="Google">
-                    </a>
-                    <a href="/oauth2/authorization/twitter" class="social-button">
-                        <img src="https://img.icons8.com/color/48/000000/twitter.png" alt="Twitter">
-                    </a>
-                    <a href="/oauth2/authorization/github" class="social-button">
-                        <img src="https://img.icons8.com/color/48/000000/github.png" alt="GitHub">
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
+			<div class="text-center mt-4 social-buttons">
+				<p>or sign in with:</p>
+				<div class="social-buttons">
+					<a href="/oauth2/authorization/facebook" class="social-button">
+						<img src="https://img.icons8.com/color/48/000000/facebook-new.png"
+						alt="Facebook">
+					</a> <a href="/oauth2/authorization/google" class="social-button">
+						<img src="https://img.icons8.com/color/48/000000/google-logo.png"
+						alt="Google">
+					</a> <a href="/oauth2/authorization/twitter" class="social-button">
+						<img src="https://img.icons8.com/color/48/000000/twitter.png"
+						alt="Twitter">
+					</a> <a href="/oauth2/authorization/github" class="social-button">
+						<img src="https://img.icons8.com/color/48/000000/github.png"
+						alt="GitHub">
+					</a>
+				</div>
+			</div>
+		</div>
+	</section>
 
-    <!-- Optional: JavaScript to show/hide password -->
-    <script>
-        function myFunction() {
-            var x = document.getElementById("password");
-            if (x.type === "password") {
-                x.type = "text";
-            } else {
-                x.type = "password";
-            }
-        }
-    </script>
+	<!-- Optional: JavaScript to show/hide password -->
+	<script>
+		function myFunction() {
+			var x = document.getElementById("password");
+			if (x.type === "password") {
+				x.type = "text";
+			} else {
+				x.type = "password";
+			}
+		}
+	</script>
 
 </body>
 

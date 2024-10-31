@@ -48,7 +48,7 @@ public class EmailService {
             // Create the message
             MimeMessage mimeMessage = new MimeMessage(session);
             mimeMessage.setFrom(from);
-            mimeMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
+            mimeMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(to.trim()));
             mimeMessage.setSubject(subject);
             mimeMessage.setContent(message, "text/html");
 

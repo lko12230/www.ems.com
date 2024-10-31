@@ -17,6 +17,11 @@ public interface UserDetailDao extends JpaRepository<UserDetail, Integer> {
 	@Modifying
 	public void update_user_status(String username);
 	
+	
+	@Query(value = "update employeedetail u set u.user_status='1' where u.email= ?1", nativeQuery = true)
+	@Modifying
+	public void update_user_status_online(String username);
+	
 	 @Query("SELECT u FROM UserDetail u WHERE u.username = :input OR u.email = :input OR u.id = :input")
 	  public List<UserDetail> findByNameContainingOrEmailContainingOrIdContaining(@Param("input") String input);
 	 

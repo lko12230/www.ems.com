@@ -51,12 +51,6 @@ public class UserDetail implements Serializable {
 	@Transient
 	private String Captcha;
 	private int alert_message_sent;
-	@Transient
-	private String hidden;
-	private Date SystemDateAndTime;
-	@Transient
-	private String imageCaptcha;
-	private int aaid;
 	private String role;
 	private String ipAddress;
 	@Column(name = "account_non_locked")
@@ -74,8 +68,6 @@ public class UserDetail implements Serializable {
 	private String department;
 	private String project;
 	private boolean EmployeeOnBench;
-	private Date CheckIn;
-	private Date CheckOut;
 	private boolean user_status;
 	private String laptop_id;
 	private String laptop_brand;
@@ -97,4 +89,8 @@ public class UserDetail implements Serializable {
 	private String team_desc;
 	private String review_rating;
 	private boolean seperation_manager_approved;
+	private String addwho;
+	private  Date adddate;
+	private String edithwo;
+	private String admin_id;
 }

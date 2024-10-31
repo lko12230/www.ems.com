@@ -72,6 +72,7 @@ public class User implements Serializable{
 	@Column(name = "failed_attempts")
 	private int failedAttempt;
 	private Date lockDateAndTime;
+	@Column(name = "Expire_lock_date_and_time")
 	private Date expirelockDateAndTime;
 	private boolean defaultPasswordSent;
 	private String Session_Id;
@@ -95,4 +96,8 @@ public class User implements Serializable{
 	private String company_id;
 	private boolean seperation_manager_approved;
 	private boolean resignationRequestApplied;
+	private String addwho;
+	private  Date adddate;
+	private String edithwo;
+	private String admin_id;
 }

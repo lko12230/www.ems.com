@@ -159,13 +159,13 @@ public class CustomLoginFailureHandler extends SimpleUrlAuthenticationFailureHan
 							exception = new BadCredentialsException(
 									"Bad Credentails " + (3 - (user.getFailedAttempt() + 1)) + " Attempt Left");
 							// Send email when the account is locked
-							String subject = "Account Locked";
-							String content = "Dear " + email
-									+ ",\n\nYour account has been locked due to multiple failed login attempts. "
-									+ "Please contact the administrator if this was not you.\n\nDetails:\nIP Address: "
-									+ "\nOperating System: " + ")\n\nThank you!";
+//							String subject = "Account Locked";
+//							String content = "Dear " + email
+//									+ ",\n\nYour account has been locked due to multiple failed login attempts. "
+//									+ "Please contact the administrator if this was not you.\n\nDetails:\nIP Address: "
+//									+ "\nOperating System: " + ")\n\nThank you!";
 
-							emailService.sendEmail(content, subject, email);
+//							emailService.sendEmail(content, subject, email);
 //						EMSMAIN.failed_lofin_Attempt.add(email);
 //								EMSMAIN.failed_login_Attempt.computeIfAbsent(email,k ->  new ArrayList<>()).add(str1);
 //								EMSMAIN.failed_os_name.computeIfAbsent(email, k -> new ArrayList<>()).add(osName);
@@ -181,7 +181,7 @@ public class CustomLoginFailureHandler extends SimpleUrlAuthenticationFailureHan
 //					else
 //					{
 						exception = new LockedException(
-								"Your Account Is Locked Due to 3 Failed Login Attempt For 24 HOURS , And Your Account Will be Unlock At  :: ("
+								"Account Is Locked Due To 3 Failed Login Attempt For 24 HOURS , And Your Account Will Be Unlock At  :: ("
 										+ user.getExpirelockDateAndTime()
 										+ ") UnLockDate Shown This Formatted (YYYY-MM-DD HH:MM:SS)");
 //					}

@@ -1,9 +1,5 @@
 package com.ayush.ems.controller;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -91,7 +87,6 @@ public class HrController {
 	}
 
 	int count = 0;
-
 	@GetMapping("/new")
 	public String homeee(User user, UserDetail userDetail, Error_Log error_Log, Principal principal,
 	        Model model, HttpSession session, HttpServletResponse response, HttpServletRequest request) {
@@ -106,25 +101,26 @@ public class HrController {
 	            user.setFailedAttempt(0);
 	        }
 	        if (count == 0) {
-	            // Capture client IP address
-	            String clientIp = getClientIpAddress(request);
-
-	            // Fetch location based on IP address
-	            String location = getLocationFromIp(clientIp);
-
+//	            // Capture client IP address
+//	            String clientIp = getClientIpAddress(request);
+                String clientIp = "192.168.0.1";
+                String location="Delhi,India";
+//	            // Fetch location based on IP address
+//	            String location = getLocationFromIp(clientIp);
 	            String username = principal.getName();
-	            System.out.println(user.getFailedAttempt() + " USER EMAIL " + user.getEmail());
+//	            System.out.println(user.getFailedAttempt() + " USER EMAIL " + user.getEmail());
 	            Optional<User> currentUser = this.userdao.findByEmail(username);
 	            User user1 = currentUser.get();
-	            servicelayer.login_record_save(user1, session, clientIp, location);
+	            servicelayer.login_record_save(user1, session, clientIp, location); 
 	            count++;
 	        }
+	        
 	        return "home3";
 	    } catch (Exception e) {
 	        System.out.println("ERRRRRRRRRRRRR " + e + " " + count);
 
 	        String exceptionAsString = e.toString();
-	        Class<?> currentClass = HrController.class;
+	        Class<?> currentClass = AdminController.class;
 	        String className = currentClass.getName();
 	        String errorMessage = e.getMessage();
 	        StackTraceElement[] stackTrace = e.getStackTrace();
@@ -345,43 +341,43 @@ public class HrController {
 	}
 
 	
-	/**
-	 * Get the client IP address from the request.
-	 */
-	private String getClientIpAddress(HttpServletRequest request) {
-	    String xfHeader = request.getHeader("X-Forwarded-For");
-	    if (xfHeader == null || xfHeader.isEmpty()) {
-	        return request.getRemoteAddr();
-	    }
-	    return xfHeader.split(",")[0];
-	}
+//	/**
+//	 * Get the client IP address from the request.
+//	 */
+//	private String getClientIpAddress(HttpServletRequest request) {
+//	    String xfHeader = request.getHeader("X-Forwarded-For");
+//	    if (xfHeader == null || xfHeader.isEmpty()) {
+//	        return request.getRemoteAddr();
+//	    }
+//	    return xfHeader.split(",")[0];
+//	}
 
-	/**
-	 * Get location information from IP address using a simple API.
-	 * Replace this method with your API call.
-	 */
-	private String getLocationFromIp(String ip) {
-	    try {
-	        // Use a simple public API to get location data
-	        String url = "https://ipapi.co/" + ip + "/city/";
-	        HttpURLConnection urlConnection = (HttpURLConnection) new URL(url).openConnection();
-	        urlConnection.setRequestMethod("GET");
-
-	        BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-	        String inputLine;
-	        StringBuilder response = new StringBuilder();
-	        while ((inputLine = in.readLine()) != null) {
-	            response.append(inputLine);
-	        }
-	        in.close();
-
-	        // Return city name
-	        return response.toString().isEmpty() ? "Unknown Location" : response.toString();
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        return "Unknown Location";
-	    }
-	}
+//	/**
+//	 * Get location information from IP address using a simple API.
+//	 * Replace this method with your API call.
+//	 */
+//	private String getLocationFromIp(String ip) {
+//	    try {
+//	        // Use a simple public API to get location data
+//	        String url = "https://ipapi.co/" + ip + "/city/";
+//	        HttpURLConnection urlConnection = (HttpURLConnection) new URL(url).openConnection();
+//	        urlConnection.setRequestMethod("GET");
+//
+//	        BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+//	        String inputLine;
+//	        StringBuilder response = new StringBuilder();
+//	        while ((inputLine = in.readLine()) != null) {
+//	            response.append(inputLine);
+//	        }
+//	        in.close();
+//
+//	        // Return city name
+//	        return response.toString().isEmpty() ? "Unknown Location" : response.toString();
+//	    } catch (Exception e) {
+//	        e.printStackTrace();
+//	        return "Unknown Location";
+//	    }
+//	}
 
 	
 	@GetMapping("/hr_profile_edit_1/{id}")

@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.Principal;
+import java.security.SecureRandom;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
@@ -155,482 +156,218 @@ public class Servicelayer {
 	@Autowired
 	private StageUserDao stageUserDao;
 
-//@Autowired
-//private userdao userdao;
-	@Transactional
-	public stage_user register(stage_user user) throws Exception {
-		System.out.println(user.getDob());
-		System.out.println(user.getUsername());
-		Calendar calendar = Calendar.getInstance();
-		int currentYear = calendar.get(Calendar.YEAR);
-		int count = userdao.getUserCount();
-		if (count > 0) {
-			Optional<stage_user> option = stageUserDao.findByUserNameAndPhone(user.getEmail(), user.getPhone());
-			Optional<Admin> option1 = adminDao.findByUserName(user.getEmail());
-			if (option.isPresent()) {
-				throw new Exception("Email And Phone Number is  Already Exist");
-			} else if (option1.isPresent()) {
-				throw new Exception(user.getUsername() + " Something Went Wrong Please Contact Adninistrator");
-			} else {
-				System.out.println("<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>> " + user.getImage_Url());
-				System.out.println(user.getAaid());
-				System.out.println(user.getGender());
-				int generateRandomPassword = (int) (Math.random() * 900000) + 100000;
-//			InetAddress localHost = InetAddress.getLocalHost();
-//			String str1 = localHost.toString();
-				user.setSno(++count);
-				user.setAccountNonLocked(true);
-				user.setPhone(user.getPhone().trim().replaceAll("\\s", ""));
-				user.setPassword(passwordEncoder.encode(Integer.toString(generateRandomPassword)));
-				user.setRepassword(passwordEncoder.encode(Integer.toString(generateRandomPassword)));
-				user.setRole(user.getRole());
-				user.setGender(user.getGender());
-				user.setAccountNonLocked(true);
-				user.setUsername(user.getUsername().toUpperCase());
-				user.setEnabled(true);
-				user.setBank_account_holder_name("NA");
-				user.setBank_account_number(0);
-				user.setBank_name("NA");
-				user.setBase_location("NA");
-				user.setIfsc_code("NA");
-				user.setLaptop_brand("NA");
-				user.setLaptop_id("NA");
-				user.setLaptop_serial_number("NA");
-				user.setEditwho("NA");
-				user.setResume_file_url("NA");
-				user.setTeam("0");
-				if (user.isManager_or_not()) {
-					user.setManager_or_not(true);
-				} else {
-					user.setManager_or_not(false);
-				}
-				user.setStatus("ACTIVE");
-				user.setSystemDateAndTime(new Date());
-				// This Logic Added By AYush Gupta 21 June 2024 For Split -> in Designation
-				String designarionArrowSplit = user.getDesignation();
+	  @Transactional
+	    public stage_user register(stage_user user) throws Exception {
+		  try
+		  {
+	        System.out.println("User DOB: " + user.getDob());
+	        System.out.println("User Email: " + user.getUsername());
 
-				// Split the input string by " -> " to get parts
-				String[] parts = designarionArrowSplit.split(" -> ");
+	        Calendar calendar = Calendar.getInstance();
+	        int currentYear = calendar.get(Calendar.YEAR);
 
-				// Check if split produced exactly two parts
-				if (parts.length == 2) {
-					// Single name scenario
-					System.out.println("Extracted Name: " + parts[1]);
-				} else if (parts.length > 2) {
-					// Full name scenario
-					StringBuilder fullName = new StringBuilder();
-					for (int i = 1; i < parts.length; i++) {
-						fullName.append(parts[i]);
-						if (i < parts.length - 1) {
-							fullName.append(" ");
-						}
+	        // Check for existing user by email and phone
+	        Optional<stage_user> existingUser = stageUserDao.findByUserNameAndPhone(user.getEmail(), user.getPhone());
+	        Optional<Admin> adminUser = adminDao.findByUserName(user.getEmail());
+
+	        if (existingUser.isPresent()) {
+	            throw new Exception("Email and Phone Number already exist");
+	        } else if (adminUser.isPresent()) {
+	            throw new Exception(user.getUsername() + " - Issue encountered. Contact Administrator.");
+	        }
+
+	        // Generate random password for the user
+	        String generateRandomPassword = generatePassword(15);
+
+	        // Set user properties
+	        user.setAccountNonLocked(true);
+	        user.setPhone(user.getPhone().trim().replaceAll("\\s", ""));
+	        user.setPassword(passwordEncoder.encode(generateRandomPassword));
+	        user.setRepassword(passwordEncoder.encode(generateRandomPassword));
+	        user.setUsername(user.getUsername().toUpperCase());
+	        user.setEnabled(true);
+	        user.setBase_location("NA");
+	        user.setEditwho("NA");
+	        user.setAddwho(user.getAddwho());
+			String subject = "www.ems.com : Your Crendential Created";
+			String message = "" + "<!DOCTYPE html>" + "<html lang='en'>" + "<head>" + "    <meta charset='UTF-8'>"
+					+ "    <meta name='viewport' content='width=device-width, initial-scale=1.0'>"
+					+ "    <meta http-equiv='X-UA-Compatible' content='IE=edge'>" + "    <style>"
+					+ "        body { font-family: 'Arial', sans-serif; margin: 0; padding: 0; background-color: #f9f9f9; }"
+					+ "        .wrapper { width: 100%; padding: 40px 0; background-color: #f9f9f9; }"
+					+ "        .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); }"
+					+ "        .header { background-color: #007BFF; padding: 20px; text-align: center; color: #ffffff; border-top-left-radius: 8px; border-top-right-radius: 8px; }"
+					+ "        .header h1 { margin: 0; font-size: 24px; font-weight: normal; }"
+					+ "        .content { padding: 30px; text-align: left; color: #333333; }"
+					+ "        .content p { font-size: 16px; line-height: 1.6; }"
+					+ "        .content .password { font-weight: bold; color: #007BFF; }"
+					+ "        .footer { padding: 20px; text-align: center; font-size: 12px; color: #888; background-color: #f1f1f1; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; }"
+					+ "        .footer a { color: #007BFF; text-decoration: none; }" + "    </style>" + "</head>"
+					+ "<body>" + "    <div class='wrapper'>" + "        <table class='container' align='center'>"
+					+ "            <tr>" + "                <td class='header'>"
+					+ "                    <h1>Password Reset Request</h1>" + "                </td>"
+					+ "            </tr>" + "            <tr>" + "                <td class='content'>"
+					+ "                    <p>Dear " + user.getUsername() + ",</p>"
+					+ "                    <p>Your default password is: <span class='password'>"
+					+ generateRandomPassword + "</span>.</p>"
+					+ "                    <p>We kindly request that you reset this password at your earliest convenience to ensure the security of your account.</p>"
+					+ "                    <p>If you need any help, feel free to contact our support team.</p>"
+					+ "                </td>" + "            </tr>" + "            <tr>"
+					+ "                <td class='footer'>"
+					+ "                    <p>If you didn’t request this password reset, please ignore this email. Need help? <a href='#'>Contact Support</a>.</p>"
+					+ "                </td>" + "            </tr>" + "        </table>" + "    </div>" + "</body>"
+					+ "</html>";
+
+			boolean flag = false;
+
+			if (user.getRole() != null) {
+				if (user.getRole().equals("ROLE_ADMIN")) {
+				String to = user.getEmail();
+				  Optional<CompanyInfo> companyOptional= company_dao.findByCompanyIdOptional(user.getCompany_id());
+				  if(companyOptional.isPresent())
+				  {
+					  System.out.println("EMAIL "+user.getEmail());
+				Optional<stage_user> result3 = stageUserDao.findByUserNameAndPhone(to, user.getPhone());
+				if(!result3.isPresent())
+				{
+					CompletableFuture<Boolean> flagFuture = this.emailService.sendEmail(message, subject, to);
+					flag = flagFuture.get(); // Blocking call to get the result
+					if (flag) {
+						user.setDefaultPasswordSent(true);
+					} else {
+						user.setDefaultPasswordSent(false);
 					}
-					user.setDesignation(designarionArrowSplit);
-					System.out.println("Extracted Full Name: " + fullName.toString());
-				} else {
-					// Invalid input format scenario
-					System.out.println("Invalid input format");
+					stageUserDao.save(user);
+					Optional<stage_user> OptionalFindUserByEmail = stageUserDao.findByUserName(user.getEmail());
+					stage_user user3=OptionalFindUserByEmail.get();
+					Performance performance = new Performance();
+					Admin admin = new Admin();
+                    admin.setAid(user3.getId());
+					admin.setEmail(user.getEmail());
+					admin.setSystemDateAndTime(new Date());
+					admin.setPassword(passwordEncoder.encode("admin"));
+					admin.setRole(user.getRole());
+					performance.setId(user3.getId());
+					performance.setJanuary(0);
+					performance.setFebruary(0);
+					performance.setMarch(0);
+					performance.setApril(0);
+					performance.setMay(0);
+					performance.setJune(0);
+					performance.setJuly(0);
+					performance.setAugust(0);
+					performance.setSeptember(0);
+					performance.setOctober(0);
+					performance.setNovember(0);
+					performance.setDecember(0);
+					performance.setYear(currentYear);
+					performancedao.save(performance);
+					adminDao.save(admin);
 				}
-				String subject = "www.ems.com : Your Crendential Created";
-				String message = "" + "<!DOCTYPE html>" + "<html lang='en'>" + "<head>" + "    <meta charset='UTF-8'>"
-						+ "    <meta name='viewport' content='width=device-width, initial-scale=1.0'>"
-						+ "    <meta http-equiv='X-UA-Compatible' content='IE=edge'>" + "    <style>"
-						+ "        body { font-family: 'Arial', sans-serif; margin: 0; padding: 0; background-color: #f9f9f9; }"
-						+ "        .wrapper { width: 100%; padding: 40px 0; background-color: #f9f9f9; }"
-						+ "        .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); }"
-						+ "        .header { background-color: #007BFF; padding: 20px; text-align: center; color: #ffffff; border-top-left-radius: 8px; border-top-right-radius: 8px; }"
-						+ "        .header h1 { margin: 0; font-size: 24px; font-weight: normal; }"
-						+ "        .content { padding: 30px; text-align: left; color: #333333; }"
-						+ "        .content p { font-size: 16px; line-height: 1.6; }"
-						+ "        .content .password { font-weight: bold; color: #007BFF; }"
-						+ "        .footer { padding: 20px; text-align: center; font-size: 12px; color: #888; background-color: #f1f1f1; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; }"
-						+ "        .footer a { color: #007BFF; text-decoration: none; }" + "    </style>" + "</head>"
-						+ "<body>" + "    <div class='wrapper'>" + "        <table class='container' align='center'>"
-						+ "            <tr>" + "                <td class='header'>"
-						+ "                    <h1>Password Reset Request</h1>" + "                </td>"
-						+ "            </tr>" + "            <tr>" + "                <td class='content'>"
-						+ "                    <p>Dear " + user.getUsername() + ",</p>"
-						+ "                    <p>Your default password is: <span class='password'>"
-						+ generateRandomPassword + "</span>.</p>"
-						+ "                    <p>We kindly request that you reset this password at your earliest convenience to ensure the security of your account.</p>"
-						+ "                    <p>If you need any help, feel free to contact our support team.</p>"
-						+ "                </td>" + "            </tr>" + "            <tr>"
-						+ "                <td class='footer'>"
-						+ "                    <p>If you didn’t request this password reset, please ignore this email. Need help? <a href='#'>Contact Support</a>.</p>"
-						+ "                </td>" + "            </tr>" + "        </table>" + "    </div>" + "</body>"
-						+ "</html>";
-
-				boolean flag = false;
-				if (user.getRole() != null) {
-					if (user.getRole().equals("ROLE_ADMIN")) {
-						Admin admin = new Admin();
-//						int admin_last_sno = adminDao.getLastId();
-//						admin.setAid(++admin_last_sno);
-						admin.setEmail(user.getEmail());
-						admin.setSystemDateAndTime(new Date());
-						admin.setPassword(passwordEncoder.encode("admin"));
-						admin.setRole(user.getRole());
-						String to = user.getEmail();
-						stage_user result = stageUserDao.save(user);
-//						boolean sentornot = false;
-						System.out.println(result + "---------------");
-						if (result.getEmail() != null) {
-//							sentornot = true;
-						}
-						Optional<stage_user> result3 = stageUserDao.findByUserName(result.getEmail());
-						stage_user user3 = result3.get();
-//						System.out.println("___+++++   " + result.getUsername());
-//						System.out.println("////////////////" + user3.getId());
-						int user_detail_count = stageUserDao.getstage_userCount();
-						if (user_detail_count > 0) {
-							Performance performance = new Performance();
-							performance.setId(user3.getId());
-							performance.setJanuary(0);
-							performance.setFebruary(0);
-							performance.setMarch(0);
-							performance.setApril(0);
-							performance.setMay(0);
-							performance.setJune(0);
-							performance.setJuly(0);
-							performance.setAugust(0);
-							performance.setSeptember(0);
-							performance.setOctober(0);
-							performance.setNovember(0);
-							performance.setDecember(0);
-							performance.setYear(currentYear);
-							performancedao.save(performance);
-							adminDao.save(admin);
+				else
+				{
+					throw new Exception("User Already Present !!");
+				}
+			}
+				  else
+				  {
+					  throw new Exception(user.getCompany_id()+" Company Is Not Registered With EMS INDIA PVT LTD"); 
+				  }
+			}
+			else if (user.getRole().equals("ROLE_USER") || user.getRole().equals("ROLE_MANAGER")
+						|| user.getRole().equals("ROLE_HR") || user.getRole().equals("ROLE_IT"))
+				{
+					Optional<stage_user> result3 = stageUserDao.findByUserName(user.getEmail());
+					stage_user user3 = result3.get();
+					String to = user.getEmail();
+						Performance performance = new Performance();
+						performance.setId(user3.getId());
+						performance.setJanuary(0);
+						performance.setFebruary(0);
+						performance.setMarch(0);
+						performance.setApril(0);
+						performance.setMay(0);
+						performance.setJune(0);
+						performance.setJuly(0);
+						performance.setAugust(0);
+						performance.setSeptember(0);
+						performance.setOctober(0);
+						performance.setNovember(0);
+						performance.setDecember(0);
+						performance.setYear(currentYear);
+						performancedao.save(performance);
+						CompletableFuture<Boolean> flagFuture = this.emailService.sendEmail(message, subject, to);
+						flag = flagFuture.get(); // Blocking call to get the result
+						if (flag) {
+							user.setDefaultPasswordSent(true);
 						} else {
-							Performance performance = new Performance();
-							performance.setId(user3.getId());
-							performance.setJanuary(0);
-							performance.setFebruary(0);
-							performance.setMarch(0);
-							performance.setApril(0);
-							performance.setMay(0);
-							performance.setJune(0);
-							performance.setJuly(0);
-							performance.setAugust(0);
-							performance.setSeptember(0);
-							performance.setOctober(0);
-							performance.setNovember(0);
-							performance.setDecember(0);
-							performance.setYear(currentYear);
-							performancedao.save(performance);
-//							stageUserDetailDao.save(userdetail);
-							adminDao.save(admin);
+							user.setDefaultPasswordSent(false);
 						}
-//						if (sentornot) {
-							CompletableFuture<Boolean> flagFuture = this.emailService.sendEmail(message, subject, to);
-							flag = flagFuture.get(); // Blocking call to get the result
-							if (flag) {
-//								user.setDefaultPasswordSent(true);
-							} else {
-//								user.setDefaultPasswordSent(false);
-							}
-//							stageUserDao.save(user);
-//						}
-						return result;
-					} else if (user.getRole().equals("ROLE_USER") || user.getRole().equals("ROLE_MANAGER")
-							|| user.getRole().equals("ROLE_HR") || user.getRole().equals("ROLE_IT")) {
-						String to = user.getEmail();
-						stage_user result = stageUserDao.save(user);
-						boolean sentornot = false;
-						System.out.println(result + "---------------");
-						if (result.getEmail() != null) {
-							sentornot = true;
-						}
-						Optional<stage_user> result3 = stageUserDao.findByUserName(result.getEmail());
-						stage_user user3 = result3.get();
-						System.out.println("___+++++   " + result.getUsername());
-						System.out.println("////////////////" + user3.getId());
-						int user_detail_count = userDetailDao.getUserDetailCount();
-						if (user_detail_count > 0) {	
-							Performance performance = new Performance();
-							performance.setId(user3.getId());
-							performance.setJanuary(0);
-							performance.setFebruary(0);
-							performance.setMarch(0);
-							performance.setApril(0);
-							performance.setMay(0);
-							performance.setJune(0);
-							performance.setJuly(0);
-							performance.setAugust(0);
-							performance.setSeptember(0);
-							performance.setOctober(0);
-							performance.setNovember(0);
-							performance.setDecember(0);
-							performance.setYear(currentYear);
-							performancedao.save(performance);						
-							} else {
-							Performance performance = new Performance();
-							performance.setId(user3.getId());
-							performance.setJanuary(0);
-							performance.setFebruary(0);
-							performance.setMarch(0);
-							performance.setApril(0);
-							performance.setMay(0);
-							performance.setJune(0);
-							performance.setJuly(0);
-							performance.setAugust(0);
-							performance.setSeptember(0);
-							performance.setOctober(0);
-							performance.setNovember(0);
-							performance.setDecember(0);
-							performance.setYear(currentYear);
-							performancedao.save(performance);						}
-						if (sentornot) {
-							CompletableFuture<Boolean> flagFuture = this.emailService.sendEmail(message, subject, to);
-							flag = flagFuture.get(); // Blocking call to get the result
-//							if (flag) {
-//								user.setDefaultPasswordSent(true);
-//							} else {
-//								user.setDefaultPasswordSent(false);
-//							}
-//							stageUserDao.save(user);
-						}
-						return result;
-					} else {
-						throw new Exception("User Not Registered in ADMIN");
-					}
-//				String to = user.getEmail();
-//				flag = this.emailService.sendEmail(message, subject, to);
-				} else {
-					throw new Exception("User Role Cannot Be Empty");
+						stageUserDao.save(user);
 				}
-//		}
-//		else
-//		{
-//			throw new Exception("Team Id Not Valid");	
-//		}
+			else
+			{
+				throw new Exception("Something Went Wrong !!");
 			}
-		} else {  // when table is empty then execute this block
-			Optional<stage_user> option = stageUserDao.findByUserNameAndPhone(user.getEmail(), user.getPhone());
-			Optional<Admin> option1 = adminDao.findByUserName(user.getEmail());
-			if (option.isPresent()) {
-				throw new Exception("Email And Phone Number is  Already Exist");
-			} else if (option1.isPresent()) {
-				throw new Exception(user.getUsername() + " Something Went Wrong Please Contact Adninistrator");
-			} else {
-				System.out.println("<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>> " + user.getImage_Url());
-				System.out.println(user.getAaid());
-				System.out.println(user.getGender());
-				int generateRandomPassword = (int) (Math.random() * 900000) + 100000;
-//				InetAddress localHost = InetAddress.getLocalHost();
-//				String str1 = localHost.toString();
-				user.setSno(1);
-				user.setAccountNonLocked(true);
-				user.setPhone(user.getPhone().trim().replaceAll("\\s", ""));
-				user.setPassword(passwordEncoder.encode(Integer.toString(generateRandomPassword)));
-				user.setRepassword(passwordEncoder.encode(Integer.toString(generateRandomPassword)));
-				user.setRole(user.getRole());
-				user.setGender(user.getGender());
-				user.setAccountNonLocked(true);
-				user.setUsername(user.getUsername().toUpperCase());
-				user.setEnabled(true);
-				user.setBank_account_holder_name("NA");
-				user.setBank_account_number(0);
-				user.setBank_name("NA");
-				user.setBase_location("NA");
-				user.setIfsc_code("NA");
-				user.setLaptop_brand("NA");
-				user.setLaptop_id("NA");
-				user.setLaptop_serial_number("NA");
-				user.setEditwho("NA");
-				user.setResume_file_url("NA");
-				if (user.getDesignation().equals("ROLE_MANAGER")) {
-					user.setManager_or_not(true);
-				} else {
-					user.setManager_or_not(false);
-				}
-				user.setStatus("ACTIVE");
-				user.setSystemDateAndTime(new Date());
-				// This Logic Added By AYush Gupta 21 June 2024 For Split -> in Designation
-				String designarionArrowSplit = user.getDesignation();
-
-				// Split the input string by " -> " to get parts
-				String[] parts = designarionArrowSplit.split(" -> ");
-
-				// Check if split produced exactly two parts
-				if (parts.length == 2) {
-					// Single name scenario
-					System.out.println("Extracted Name: " + parts[1]);
-				} else if (parts.length > 2) {
-					// Full name scenario
-					StringBuilder fullName = new StringBuilder();
-					for (int i = 1; i < parts.length; i++) {
-						fullName.append(parts[i]);
-						if (i < parts.length - 1) {
-							fullName.append(" ");
-						}
-					}
-					user.setDesignation(designarionArrowSplit);
-					System.out.println("Extracted Full Name: " + fullName.toString());
-				} else {
-					// Invalid input format scenario
-					System.out.println("Invalid input format");
-				}
-				String subject = "www.ems.com : Your Crendential Created";
-				String message = "" + "<!DOCTYPE html>" + "<html lang='en'>" + "<head>" + "    <meta charset='UTF-8'>"
-						+ "    <meta name='viewport' content='width=device-width, initial-scale=1.0'>"
-						+ "    <meta http-equiv='X-UA-Compatible' content='IE=edge'>" + "    <style>"
-						+ "        body { font-family: 'Arial', sans-serif; margin: 0; padding: 0; background-color: #f9f9f9; }"
-						+ "        .wrapper { width: 100%; padding: 40px 0; background-color: #f9f9f9; }"
-						+ "        .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); }"
-						+ "        .header { background-color: #007BFF; padding: 20px; text-align: center; color: #ffffff; border-top-left-radius: 8px; border-top-right-radius: 8px; }"
-						+ "        .header h1 { margin: 0; font-size: 24px; font-weight: normal; }"
-						+ "        .content { padding: 30px; text-align: left; color: #333333; }"
-						+ "        .content p { font-size: 16px; line-height: 1.6; }"
-						+ "        .content .password { font-weight: bold; color: #007BFF; }"
-						+ "        .footer { padding: 20px; text-align: center; font-size: 12px; color: #888; background-color: #f1f1f1; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; }"
-						+ "        .footer a { color: #007BFF; text-decoration: none; }" + "    </style>" + "</head>"
-						+ "<body>" + "    <div class='wrapper'>" + "        <table class='container' align='center'>"
-						+ "            <tr>" + "                <td class='header'>"
-						+ "                    <h1>Password Reset Request</h1>" + "                </td>"
-						+ "            </tr>" + "            <tr>" + "                <td class='content'>"
-						+ "                    <p>Dear " + user.getUsername() + ",</p>"
-						+ "                    <p>Your default password is: <span class='password'>"
-						+ generateRandomPassword + "</span>.</p>"
-						+ "                    <p>We kindly request that you reset this password at your earliest convenience to ensure the security of your account.</p>"
-						+ "                    <p>If you need any help, feel free to contact our support team.</p>"
-						+ "                </td>" + "            </tr>" + "            <tr>"
-						+ "                <td class='footer'>"
-						+ "                    <p>If you didn’t request this password reset, please ignore this email. Need help? <a href='#'>Contact Support</a>.</p>"
-						+ "                </td>" + "            </tr>" + "        </table>" + "    </div>" + "</body>"
-						+ "</html>";
-
-				boolean flag = false;
-				if (user.getRole() != null) {
-					if (user.getRole().equals("ROLE_ADMIN")) {
-						Admin admin = new Admin();
-						int admin_last_id = adminDao.getLastId();
-						admin.setAid(++admin_last_id);
-						admin.setEmail(user.getEmail());
-						admin.setSystemDateAndTime(new Date());
-						admin.setPassword(passwordEncoder.encode("admin"));
-						admin.setRole(user.getRole());
-//						adminDao.save(admin);
-						String to = user.getEmail();
-//						if (flag) {
-						//
-//							user.setDefaultPasswordSent(1);
-//						} else {
-//							user.setDefaultPasswordSent(0);
-//						}
-//						int getA = user.getAaid();
-//						Optional<Admin> getAdmin = adminDao.findById(getA);
-//						Admin adminn = getAdmin.get();
-//						user.setAdmin(adminn);
-//						admin.getUserList().add(user);
-						stage_user result = stageUserDao.save(user);
-						boolean sentornot = false;
-						System.out.println(result + "---------------");
-						if (result.getEmail() != null) {
-							sentornot = true;
-						}
-						Optional<stage_user> result3 = stageUserDao.findByUserName(result.getEmail());
-						stage_user user3 = result3.get();
-						System.out.println("___+++++   " + result.getUsername());
-						System.out.println("////////////////" + result);
-						Performance performance = new Performance();
-						performance.setId(user3.getId());
-						performance.setJanuary(0);
-						performance.setFebruary(0);
-						performance.setMarch(0);
-						performance.setApril(0);
-						performance.setMay(0);
-						performance.setJune(0);
-						performance.setJuly(0);
-						performance.setAugust(0);
-						performance.setSeptember(0);
-						performance.setOctober(0);
-						performance.setNovember(0);
-						performance.setDecember(0);
-						performance.setYear(currentYear);
-						performancedao.save(performance);
-						adminDao.save(admin);
-						if (sentornot) {
-							CompletableFuture<Boolean> flagFuture = this.emailService.sendEmail(message, subject, to);
-							flag = flagFuture.get(); // Blocking call to get the result
-							if (flag) {
-								user.setDefaultPasswordSent(true);
-							} else {
-								user.setDefaultPasswordSent(false);
-							}
-							stageUserDao.save(user);
-						}
-						return result;
-					} else if (user.getRole().equals("ROLE_USER") || user.getRole().equals("ROLE_MANAGER")
-							|| user.getRole().equals("ROLE_HR") || user.getRole().equals("ROLE_IT")) {
-						String to = user.getEmail();
-//						System.out.println(flag);
-//						if (flag) {
-						//
-//							user.setDefaultPasswordSent(1);
-//						} else {
-//							user.setDefaultPasswordSent(0);
-//						}
-//						int getA = user.getAaid();
-//						Optional<Admin> getAdmin = adminDao.findById(getA);
-//						Admin admin = getAdmin.get();
-//						user.setAdmin(admin);
-//						admin.getUserList().add(user);
-						stage_user result = stageUserDao.save(user);
-						System.out.println("////////////////" + result);
-//						Optional<User> result3 = userdao.findById(result.getId());
-//						User user3 = result3.get();
-						boolean sentornot = false;
-						System.out.println(result + "---------------");
-						if (result.getEmail() != null) {
-							sentornot = true;
-						}
-						Optional<User> result3 = userdao.findByEmail(result.getEmail());
-						User user3 = result3.get();
-						Performance performance = new Performance();
-						performance.setId(user3.getId());
-						performance.setJanuary(0);
-						performance.setFebruary(0);
-						performance.setMarch(0);
-						performance.setApril(0);
-						performance.setMay(0);
-						performance.setJune(0);
-						performance.setJuly(0);
-						performance.setAugust(0);
-						performance.setSeptember(0);
-						performance.setOctober(0);
-						performance.setNovember(0);
-						performance.setDecember(0);
-						performance.setYear(currentYear);
-						performancedao.save(performance);
-						if (sentornot) {
-							CompletableFuture<Boolean> flagFuture = this.emailService.sendEmail(message, subject, to);
-							flag = flagFuture.get(); // Blocking call to get the result
-							if (flag) {
-								user.setDefaultPasswordSent(true);
-							} else {
-								user.setDefaultPasswordSent(false);
-							}
-							stageUserDao.save(user);
-						}
-
-						return result;
-					} else {
-						throw new Exception("User Not Registered in ADMIN");
-					}
-//					String to = user.getEmail();
-//					flag = this.emailService.sendEmail(message, subject, to);
-				} else {
-					throw new Exception("User Role Cannot Be Empty");
-				}
-//			}
-//			else
-//			{
-//				throw new Exception("Team Id Not Valid");	
-//			}
 			}
+		  else
+		  {
+			  throw new Exception(user.getCompany_id()+" Company Is Not Registered With EMS INDIA PVT LTD"); 
+		  }
+			}
+		  catch (Exception e) {
+			// TODO: handle exception
+			  e.printStackTrace();
+			 throw e;
 		}
-	}
+		  return user;
+	  }
+	
 
+	  // Characters to include in the password
+	    private static final String UPPERCASE = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	    private static final String LOWERCASE = "abcdefghijklmnopqrstuvwxyz";
+	    private static final String DIGITS = "0123456789";
+	    private static final String SPECIAL_CHARACTERS = "!@#$%^&*()-_+=<>?";
+	    private static final String ALL_CHARACTERS = UPPERCASE + LOWERCASE + DIGITS + SPECIAL_CHARACTERS;
+
+	    // SecureRandom for a more cryptographically secure random generator
+	    private static final SecureRandom random = new SecureRandom();
+	    
+	  public static String generatePassword(int length) {
+	        if (length < 8) {
+	            throw new IllegalArgumentException("Password length should be at least 8 characters.");
+	        }
+
+	        StringBuilder password = new StringBuilder(length);
+
+	        // Ensure the password has at least one of each character type
+	        password.append(UPPERCASE.charAt(random.nextInt(UPPERCASE.length())));
+	        password.append(LOWERCASE.charAt(random.nextInt(LOWERCASE.length())));
+	        password.append(DIGITS.charAt(random.nextInt(DIGITS.length())));
+	        password.append(SPECIAL_CHARACTERS.charAt(random.nextInt(SPECIAL_CHARACTERS.length())));
+
+	        // Fill the remaining characters randomly from all types
+	        for (int i = 4; i < length; i++) {
+	            password.append(ALL_CHARACTERS.charAt(random.nextInt(ALL_CHARACTERS.length())));
+	        }
+
+	        // Shuffle the characters for randomness
+	        return shuffleString(password.toString());
+	    }
+
+	    private static String shuffleString(String input) {
+	        StringBuilder shuffled = new StringBuilder(input.length());
+	        char[] chars = input.toCharArray();
+	        
+	        for (int i = chars.length; i > 0; i--) {
+	            int index = random.nextInt(i);
+	            shuffled.append(chars[index]);
+	            chars[index] = chars[i - 1];
+	        }
+	        return shuffled.toString();
+	    }
+	  
 	public static Captcha createCaptcha(int width, int height) {
 		return new Captcha.Builder(width, height).addBackground(new GradiatedBackgroundProducer())
 				.addText(new DefaultTextProducer()).addNoise(new StraightLineNoiseProducer()).build();
@@ -2497,58 +2234,11 @@ public class Servicelayer {
 	}
 
 	@Transactional
-	public void check_garbage_dat_map_session_id() {
-		try {
-			// Create a java.util.Date object (current date and time)
-			Date date = new Date();
-
-			// Convert java.util.Date to LocalDateTime
-			LocalDateTime localDateTime = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-
-			// Get minutes and seconds from LocalDateTime
-//        int minutes = localDateTime.getMinute();
-//        int seconds = localDateTime.getSecond();
-
-			Set<Map.Entry<String, Date>> entrySet = EMSMAIN.session_map_data.entrySet();
-			entrySet.forEach(entry -> {
-				String key = entry.getKey();
-				Date value = entry.getValue();
-				LocalDateTime localDateTime1 = value.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-				// Calculate the difference between the two LocalDateTime objects
-				Duration duration = Duration.between(localDateTime1, localDateTime);
-				System.out.println("SYSTEM TIME " + localDateTime);
-				System.out.println("RECORD TIME " + localDateTime1);
-				System.out.println("DURATION " + duration.toMinutes());
-				if (duration.toMinutes() >= 5 && EMSMAIN.session_map_data.containsKey(key)) {
-					EMSMAIN.session_map_data.remove(key);
-					System.out.println(EMSMAIN.session_map_data);
-				}
-			});
-			jobrunning("remove_garbage_data_session_id");
-		} catch (Exception e) {
-			jobDao.getJobRunningTimeInterrupted("remove_garbage_data_session_id");
-			String exceptionAsString = e.toString();
-			// Get the current class
-			Class<?> currentClass = Servicelayer.class;
-
-			// Get the name of the class
-			String className = currentClass.getName();
-			String errorMessage = e.getMessage();
-			StackTraceElement[] stackTrace = e.getStackTrace();
-			String methodName = stackTrace[0].getMethodName();
-			int lineNumber = stackTrace[0].getLineNumber();
-			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
-			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
-
-		}
-	}
-
-	@Transactional
 	public void validate_home_captcha() {
 		try {
 			Date date = new Date();
 			LocalDateTime localDateTime = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-			Set<Map.Entry<String, Date>> entrySet = EMSMAIN.captcha_validate_map.entrySet();
+			Set<Map.Entry<String, Date>> entrySet = EMSMAIN.captchaValidateMap.entrySet();
 //		entrySet.forEach(entry -> {
 //		String Captchaa=entry.getKey();
 //		Date captcha_valid_or_not=entry.getValue();
@@ -2567,7 +2257,7 @@ public class Servicelayer {
 						.toLocalDateTime();
 				Duration duration = Duration.between(localDateTime1, localDateTime);
 				if (duration.toMinutes() >= 5) {
-					EMSMAIN.captcha_validate_map.remove(Captchaa);
+					EMSMAIN.captchaValidateMap.remove(Captchaa);
 				}
 			}
 			jobrunning("Captcha Validate");
@@ -2594,7 +2284,7 @@ public class Servicelayer {
 		try {
 			Date date = new Date();
 			LocalDateTime localDateTime = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-			Set<Map.Entry<Integer, Date>> entrySet = EMSMAIN.OTP_validate_map.entrySet();
+			Set<Map.Entry<Integer, Date>> entrySet = EMSMAIN.otpValidateMap.entrySet();
 			for (Map.Entry<Integer, Date> entry : entrySet) {
 				Integer otp = entry.getKey();
 				Date captcha_valid_or_not = entry.getValue();
@@ -2602,7 +2292,7 @@ public class Servicelayer {
 						.toLocalDateTime();
 				Duration duration = Duration.between(localDateTime1, localDateTime);
 				if (duration.toMinutes() >= 5) {
-					EMSMAIN.OTP_validate_map.remove(otp);
+					EMSMAIN.otpValidateMap.remove(otp);
 				}
 			}
 			jobrunning("OTP Validate");
@@ -3734,8 +3424,8 @@ public class Servicelayer {
 					archiveDisabledUserDetail.setStatus(user_info_get.getStatus());
 //			archiveDisabledUserDetail.setLast_failed_attempt(user_info_get.getLast_failed_attempt());
 					archiveDisabledUserDetail.setAlert_message_sent(user_info_get.getAlert_message_sent());
-					archiveDisabledUserDetail.setSystemDateAndTime(user_info_get.getSystemDateAndTime());
-					archiveDisabledUserDetail.setAaid(user_info_get.getAaid());
+					archiveDisabledUserDetail.setSystemDateAndTime(user_info_get.getAdddate());
+					archiveDisabledUserDetail.setAddwho(user_info_get.getAddwho());
 					archiveDisabledUserDetail.setRole(user_info_get.getRole());
 					archiveDisabledUserDetail.setIpAddress(user_info_get.getIpAddress());
 					archiveDisabledUserDetail.setAccountNonLocked(user_info_get.isAccountNonLocked());
@@ -3790,8 +3480,8 @@ public class Servicelayer {
 					archiveDisabledUserDetail.setStatus(user_info_get.getStatus());
 //			archiveDisabledUserDetail.setLast_failed_attempt(user_info_get.getLast_failed_attempt());
 					archiveDisabledUserDetail.setAlert_message_sent(user_info_get.getAlert_message_sent());
-					archiveDisabledUserDetail.setSystemDateAndTime(user_info_get.getSystemDateAndTime());
-					archiveDisabledUserDetail.setAaid(user_info_get.getAaid());
+					archiveDisabledUserDetail.setSystemDateAndTime(user_info_get.getAdddate());
+					archiveDisabledUserDetail.setAddwho(user_info_get.getAddwho());
 					archiveDisabledUserDetail.setRole(user_info_get.getRole());
 					archiveDisabledUserDetail.setIpAddress(user_info_get.getIpAddress());
 					archiveDisabledUserDetail.setAccountNonLocked(user_info_get.isAccountNonLocked());

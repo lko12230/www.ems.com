@@ -60,7 +60,6 @@ public class stage_user implements Serializable {
 	@NotEmpty(message = "Phone Number cannot be empty")
 	@Size(min = 10, max = 10, message = "Phone Number should only 10 numbers")
 	private String phone;
-	private boolean user_status;
 //@NotBlank(message="Gender field is required")
 	private String gender;
 	@NotBlank(message = "Date Of Birth Cannot be Empty")
@@ -71,67 +70,28 @@ public class stage_user implements Serializable {
 	@NotEmpty(message = "Country cannot be empty")
 	private String country;
 	private String Image_Url;
-	private String experience;
-	private String skills;
-	private Date SperationDate;
-	private Date lastWorkingDay;
 	private Date editdate;
 	private String editwho;
-	private boolean NewUserActiveOrInactive;
 	private String Status;
 	@Transient
 	private String Captcha;
-	private Date last_failed_attempt;
 	private int alert_message_sent;
 	@Transient
 	private String hidden;
-	private Date SystemDateAndTime;
+	private Date adddate;
 	@Transient
 	private String imageCaptcha;
-//	@NotEmpty(message = "Team cannot be empty")
-//	@Size(min = 8,max=8, message = "Team ID size must be in 8 characters")
-//	private String team;
-	private int aaid;
+	private int addwho;
 	private String role;
 	private String ipAddress;
 	@Column(name = "account_non_locked")
 	private boolean AccountNonLocked;
-	@Column(name = "failed_attempts")
-	private int failedAttempt;
-	@Column(name = "lock_date_and_time")
-	private Date lockDateAndTime;
-	@Column(name = "Expire_lock_date_and_time")
-	private Date expirelockDateAndTime;
 	private boolean defaultPasswordSent;
-//	@ManyToOne
-//	@JsonIgnore
-//	private Admin admin;
-//	@OneToMany(cascade = CascadeType.ALL,mappedBy = "user",orphanRemoval = true )
-//	private List<UserDetail> AllUsersList=new ArrayList<>();
-//	@OneToOne(cascade = CascadeType.ALL,mappedBy = "user",orphanRemoval = true)
-//	private UserDetail userDetail;
-	private String Session_Id;
-	private boolean Excel_Download;
-	private Date Excel_Download_Date;
-	private int download_count;
-	private String laptop_id;
-	private String laptop_brand;
-	private Date laptop_assign_date;
-	private String laptop_serial_number;
-	private String bank_account_holder_name;
-	private long bank_account_number;
-	private String ifsc_code;
 	private int process_flag;
-	private String bank_name;
-	private String resume_file_url;
 	private String Designation;
 	private String base_location;
 	private boolean manager_or_not;
-	private String team;
 	private String company;
 	private String company_id;
-	private boolean seperation_manager_approved;
-	private boolean resignationRequestApplied;
 	private String error_message;
-	private String laptop_status;
 }

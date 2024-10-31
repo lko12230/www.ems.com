@@ -31,6 +31,9 @@ import com.ayush.ems.entities.Admin;
 import com.ayush.ems.entities.User;
 import com.ayush.ems.entities.UserLoginDateTime;
 import com.ayush.ems.entities.stage_user;
+import com.ayush.ems.globlaexceptionhandler.InvalidCaptchaException;
+import com.ayush.ems.globlaexceptionhandler.TermsNotAgreedException;
+import com.ayush.ems.globlaexceptionhandler.UserAlreadyExistsException;
 import com.ayush.ems.helper.Message;
 import com.ayush.ems.service.EmailService;
 import com.ayush.ems.service.ForgotOTPEmailService;
@@ -60,7 +63,7 @@ public class Homecontroller {
 //		model.addAttribute("title", "Microsoft");
 //		getCaptcha(user);
 //		String Captcha_Created = user.getHidden();
-//		EMSMAIN.captcha_validate_map.put(Captcha_Created, new Date());
+//		EMSMAIN.captchaValidateMap.put(Captcha_Created, new Date());
 //		int otp = (int) (Math.random() * 900000000) + 100000000;
 //		System.out.println("MATH RANDOM  "+otp);
 		model.addAttribute(user);
@@ -76,13 +79,13 @@ public class Homecontroller {
 		Optional<Admin> admin = adminDao.findById(id);
 		if (admin != null) {
 			Admin admin1 = admin.get();
-			user.setAaid(admin1.getAid());
+			user.setAddwho(admin1.getAid());
 		}
 //		int var=user.getAaid();
 		System.out.println("hi");
 		getCaptcha(user);
 		String hiddenCaptcha = user.getHidden();
-		EMSMAIN.captcha_validate_map.put(hiddenCaptcha, new Date());
+		EMSMAIN.captchaValidateMap.put(hiddenCaptcha, new Date());
 		session.setAttribute("hiddenCaptcha", user.getHidden());
 		System.out.println(user.getHidden());
 		return "signup";
@@ -115,7 +118,7 @@ public class Homecontroller {
 				if (email.equals(admin.getEmail()) && password.equals("admin")) {
 					servicelayer.validate_home_captcha();
 					boolean found = false;
-					Set<Map.Entry<String, Date>> entrySet_data = EMSMAIN.captcha_validate_map.entrySet();
+					Set<Map.Entry<String, Date>> entrySet_data = EMSMAIN.captchaValidateMap.entrySet();
 					for (Map.Entry<String, Date> entry : entrySet_data) {
 						String hidden_captcha = entry.getKey();
 						if (Captcha.equals(hidden_captcha)) {
@@ -131,7 +134,7 @@ public class Homecontroller {
 						System.out.println("email " + email);
 //			            model.addAttribute("title","Send OTP");
 						int otp = (int) (Math.random() * 9000) + 1000;
-						EMSMAIN.OTP_validate_map.put(otp, new Date());
+						EMSMAIN.otpValidateMap.put(otp, new Date());
 						EMSMAIN.admin_send_otp.put(email, otp);
 						System.out.println("OTP ?????????????????????///////////...... " + otp);
 						String subject = "Admin Verification";
@@ -223,7 +226,7 @@ public class Homecontroller {
 					if (email.equals(admin.getEmail()) && password.equals("admin")) {
 						servicelayer.validate_home_captcha();
 						boolean found = false;
-						Set<Map.Entry<String, Date>> entrySet_data = EMSMAIN.captcha_validate_map.entrySet();
+						Set<Map.Entry<String, Date>> entrySet_data = EMSMAIN.captchaValidateMap.entrySet();
 						for (Map.Entry<String, Date> entry : entrySet_data) {
 							String hidden_captcha = entry.getKey();
 							if (Captcha.equals(hidden_captcha)) {
@@ -239,7 +242,7 @@ public class Homecontroller {
 							System.out.println("email " + email);
 //				            model.addAttribute("title","Send OTP");
 							int otp = (int) (Math.random() * 9000) + 1000;
-							EMSMAIN.OTP_validate_map.put(otp, new Date());
+							EMSMAIN.otpValidateMap.put(otp, new Date());
 							EMSMAIN.admin_send_otp.put(email, otp);
 							System.out.println("OTP " + otp);
 							String subject = "Admin Verification";
@@ -327,7 +330,7 @@ public class Homecontroller {
 			e.printStackTrace();
 			getCaptchaa(admin);
 //			System.out.println(hiddenCaptcha);
-			EMSMAIN.captcha_validate_map.put(admin.getCaptcha(), new Date());
+			EMSMAIN.captchaValidateMap.put(admin.getCaptcha(), new Date());
 			if (e.getMessage().equals("No value present")) {
 				session.setAttribute("message",
 						new Message("Something went wrong !! : Admin Not Registered", "alert-danger"));
@@ -363,7 +366,7 @@ public class Homecontroller {
 			}
 		}
 		getCaptchaa(admin);
-		EMSMAIN.captcha_validate_map.put(admin.getHidden(), new Date());
+		EMSMAIN.captchaValidateMap.put(admin.getHidden(), new Date());
 		session.setAttribute("hiddenCaptcha", admin.getHidden());
 		System.out.println(admin.getHidden());
 		return "redirect:/verify_admin_get";
@@ -422,7 +425,7 @@ public class Homecontroller {
 			String email = (String) session.getAttribute("email");
 //		System.out.println("emailll " + email);
 			boolean flag = false;
-			Set<Map.Entry<Integer, Date>> myOtp = EMSMAIN.OTP_validate_map.entrySet();
+			Set<Map.Entry<Integer, Date>> myOtp = EMSMAIN.otpValidateMap.entrySet();
 			for (Map.Entry<Integer, Date> entry : myOtp) {
 				Integer myotp1 = entry.getKey();
 				if (myotp1 == otp) {
@@ -448,102 +451,53 @@ public class Homecontroller {
 
 	@PostMapping("/do-register")
 	public String home(@Valid stage_user user, BindingResult result,
-			@RequestParam(value = "agreement", defaultValue = "false") boolean agreement,
-			@RequestParam("profileImage") MultipartFile file, HttpSession session) {
-		System.out.println("account locked/not locked " + user.isAccountNonLocked());
-//		System.out.println("hi " + Captcha);
-//		String hiddenCaptcha = (String) session.getAttribute("hiddenCaptcha");
-//		System.out.println("hi2 " + hiddenCaptcha);
-		System.out.println("hi1 " + user.getHidden());
-//		getCaptcha(user);
-		System.out.println(user.getDob());
-		try {
-			boolean flag = false;
-			if (!agreement) {
-				System.out.println("you have not agreed terms and conditions");
-//				servicelayer.AllIntanceVariableClear(user);
-				System.out.println("---> " + user.getUsername());
-				System.out.println(" -- >" + user.getDob());
-				throw new Exception("you have not agreed terms and conditions");
-			}
+	                   @RequestParam(value = "agreement", defaultValue = "false") boolean agreement,
+	                   @RequestParam("profileImage") MultipartFile file, HttpSession session) {
+	    System.out.println("Account locked/not locked: " + user.isAccountNonLocked());
+	    
+	    try {
+	        if (!agreement) {
+	            throw new TermsNotAgreedException("You have not agreed to the terms and conditions");
+	        }
 
-			if (file.isEmpty()) {
-				System.out.println("File Is Empty And Default Image Is Set");
-				user.setImage_Url("default.jpg");
-			} else {
-				System.out.println("File Is Uploaded And Custom Image Is Uploaded");
-				user.setImage_Url(file.getOriginalFilename());
-//				File savefile = new ClassPathResource("static/img").getFile();
-//				Path path = Paths.get(savefile.getAbsolutePath() + File.separator + file.getOriginalFilename());
-//				Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-//				System.out.println(file.getOriginalFilename());
-			}
-			if (result.hasErrors()) {
+	        // File upload logic
+	        if (file.isEmpty()) {
+	            user.setImage_Url("default.jpg");
+	        } else {
+	            user.setImage_Url(file.getOriginalFilename());
+	            // Implement file save logic here
+	        }
 
-				System.out.println(result);
-			}
-			Set<Map.Entry<String, Date>> captcha = EMSMAIN.captcha_validate_map.entrySet();
-			for (Map.Entry<String, Date> entry : captcha) {
-				String get_captcha = entry.getKey();
-				if (user.getCaptcha().equals(get_captcha)) {
-					flag = true;
-				}
-			}
-			if (flag) {
-				stage_user result1 = servicelayer.register(user);
-				System.out.println(result1);
-				if (result1 == null) {
-					throw new Exception("Due to some unexceptional error occured");
-				} else {
-					session.setAttribute("message", new Message("Successfully Registered", "alert-success"));
-//					servicelayer.AllIntanceVariableClear(user);
-					System.out.println("pass");
-					getCaptcha(user);
-					EMSMAIN.captcha_validate_map.put(user.getHidden(), new Date());
-					session.setAttribute("hiddenCaptcha", user.getHidden());
-					System.out.println(user.getHidden());
-					return "signup";
-				}
-			} else {
-				session.setAttribute("message", new Message("Wrong Captcha", "alert-danger"));
+	        // Validate captcha
+	        boolean isCaptchaValid = EMSMAIN.captchaValidateMap.entrySet().stream()
+	                .anyMatch(entry -> entry.getKey().equals(user.getCaptcha()));
+	        if (!isCaptchaValid) {
+	            throw new InvalidCaptchaException("Invalid Captcha");
+	        }
 
-				getCaptcha(user);
-				String hiddenCaptcha = user.getHidden();
-				EMSMAIN.captcha_validate_map.put(hiddenCaptcha, new Date());
-				session.setAttribute("hiddenCaptcha", user.getHidden());
-				System.out.println(user.getHidden());
-				return "signup";
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			String exceptionAsString = e.toString();
-			// Get the current class
-			Class<?> currentClass = Homecontroller.class;
+	        // Call the register method and handle any thrown exceptions
+	        servicelayer.register(user);
+	        session.setAttribute("message", new Message("Successfully Registered", "alert-success"));
+	        return "signup";
 
-			// Get the name of the class
-			String className = currentClass.getName();
-			String errorMessage = e.getMessage();
-			StackTraceElement[] stackTrace = e.getStackTrace();
-			String methodName = stackTrace[0].getMethodName();
-			int lineNumber = stackTrace[0].getLineNumber();
-			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
-			servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
-
-//			getCaptcha(user);
-//			System.out.println(hiddenCaptcha);
-//			String Captcha_Created=user.getHidden();
-//			EMSMAIN.captcha_validate_map.put(Captcha_Created, new Date());
-//			servicelayer.AllIntanceVariableClear(user);
-			session.setAttribute("message", new Message("Something went wrong !! " + e.getMessage(), "alert-danger"));
-
-		}
-		getCaptcha(user);
-		String Captcha_Created = user.getHidden();
-		EMSMAIN.captcha_validate_map.put(Captcha_Created, new Date());
-		session.setAttribute("hiddenCaptcha", user.getHidden());
-		System.out.println(user.getHidden());
-		return "signup";
+	    } catch (UserAlreadyExistsException e) {
+	        session.setAttribute("message", new Message("Registration failed: " + e.getMessage(), "alert-danger"));
+	    } catch (InvalidCaptchaException e) {
+	        session.setAttribute("message", new Message("Captcha validation failed: " + e.getMessage(), "alert-danger"));
+	    } catch (TermsNotAgreedException e) {
+	        session.setAttribute("message", new Message("Terms not agreed: " + e.getMessage(), "alert-danger"));
+	    } catch (Exception e) {
+	        session.setAttribute("message", new Message("An error occurred: " + e.getMessage(), "alert-danger"));
+	        e.printStackTrace();
+	    }
+	    // Reset the captcha and return to the signup page
+	    getCaptcha(user);
+	    String Captcha_Created = user.getHidden();
+	    EMSMAIN.captchaValidateMap.put(Captcha_Created, new Date());
+	    session.setAttribute("hiddenCaptcha", user.getHidden());
+	    return "signup";
 	}
+
 
 	@GetMapping("/signin")
 	public String homee(@ModelAttribute User user, Model model, HttpSession session,
@@ -553,14 +507,14 @@ public class Homecontroller {
 		try {
 			System.out.println("hi");
 			session = request.getSession();
-			EMSMAIN.session_map_data.put(session.getId(), new Date());
-			if (expiredsession) {
-				System.out.println(new Date() + " Expired Time");
-				session.setAttribute("message", new Message("Session Expired", "alert-danger"));
-			}
+//			EMSMAIN.session_map_data.put(session.getId(), new Date());
+//			if (expiredsession) {
+//				System.out.println(new Date() + " Expired Time");
+//				session.setAttribute("message", new Message("Session Expired", "alert-danger"));
+//			}
 			System.out.println(")))))) " + session.getAttribute("messge"));
 			getCaptcha(user);
-			EMSMAIN.login_captcha.put(user.getHidden(), new Date());
+			EMSMAIN.loginCaptcha.put(user.getHidden(), new Date());
 			return "signin";
 		} catch (Exception e) {
 			String exceptionAsString = e.toString();
@@ -610,7 +564,7 @@ public class Homecontroller {
 			System.out.println("hi");
 			getCaptchaa(admin);
 //			String str1 = httpServletRequest.getSession().getId();
-			EMSMAIN.captcha_validate_map.put(admin.getHidden(), new Date());
+			EMSMAIN.captchaValidateMap.put(admin.getHidden(), new Date());
 			session.setAttribute("hiddenCaptcha", admin.getHidden());
 //			allCaptcha.put(str1, res);
 //			System.out.println(" " + allCaptcha.size());
@@ -618,9 +572,9 @@ public class Homecontroller {
 //			System.out.println(allCaptcha);
 			String res = admin.getHidden();
 			System.out.println(res);
-			EMSMAIN.captcha_validate_map.put(res, new Date());
-			System.out.println("CAPTCHA MAP-> " + EMSMAIN.captcha_validate_map);
-			System.out.println("CAPTCHA MAP SIZE -> " + EMSMAIN.captcha_validate_map.size());
+			EMSMAIN.captchaValidateMap.put(res, new Date());
+			System.out.println("CAPTCHA MAP-> " + EMSMAIN.captchaValidateMap);
+			System.out.println("CAPTCHA MAP SIZE -> " + EMSMAIN.captchaValidateMap.size());
 //			System.out.println(admin.getHidden() + " " + str1 + " " + res);
 			return "AuthenticateAdmin";
 		} catch (Exception e) {
@@ -655,7 +609,7 @@ public class Homecontroller {
 				System.out.println("email " + email);
 				model.addAttribute("title", "Send OTP");
 				int otp = (int) (Math.random() * 9000) + 1000;
-//			EMSMAIN.captcha_validate_map.put(otp, new Date());
+//			EMSMAIN.captchaValidateMap.put(otp, new Date());
 				System.out.println("OTP " + otp);
 //            boolean res= VPNChecker.vpnchecker();
 //            if(res)
@@ -663,7 +617,7 @@ public class Homecontroller {
 //            	throw new Exception();
 //            }
 				EMSMAIN.forgot_password_email_sent.put(email, otp);
-				EMSMAIN.OTP_validate_map.put(otp, new Date());
+				EMSMAIN.otpValidateMap.put(otp, new Date());
 				String subject = "Forgot Email OTP Verification";
 				String message = "" +
 					    "<!DOCTYPE html>" +

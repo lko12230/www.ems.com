@@ -1,5 +1,7 @@
 package com.ayush.ems.dao;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -14,4 +16,7 @@ public interface CompanyDao extends JpaRepository<CompanyInfo, Integer> {
 	
 	@Query(value = "select count(1) from company_info",nativeQuery = true)
 	public int getCompanyCount();
+	
+	@Query("select u from CompanyInfo u where u.Company_id =?1")
+	 Optional<CompanyInfo> findByCompanyIdOptional(String company_id);
 }

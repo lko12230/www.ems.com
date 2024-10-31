@@ -84,4 +84,7 @@ public class ArchiveDisabledUserDetail implements Serializable {
 	private String resume_file_url;
 	private String team_desc;
 	private String review_rating;
-}
+	private String addwho;
+	private  Date adddate;
+	private String edithwo;
+	}
