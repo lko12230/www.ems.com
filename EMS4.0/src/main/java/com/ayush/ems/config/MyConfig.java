@@ -79,7 +79,8 @@ public class MyConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
                 .sessionFixation().newSession()
                 .invalidSessionUrl("/signin?expired=true")
-                .maximumSessions(1)
+                .maximumSessions(1) // Enforce single session per user
+                .expiredUrl("/signin?sessionExpired=true") // Redirect when session expires
                 .sessionRegistry(sessionRegistry());
     }
 
