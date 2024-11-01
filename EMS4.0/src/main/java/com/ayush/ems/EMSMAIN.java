@@ -84,15 +84,15 @@ public class EMSMAIN {
 		executeJob("Password_FailedAttempt_Reset", servicelayer::reset_failed_attempts_password);
 	}
 
-	@Scheduled(cron = "0 0/1 * * * *")
-	public void updateUserInactiveStatus() {
-		executeJob("Update_User_Inactive_Status", servicelayer::user_inactive);
-	}
-
-	@Scheduled(cron = "0 0/1 * * * *")
-	public void getUserStatus() {
-		executeJob("get_user_status", servicelayer::update_interrupt_user_status);
-	}
+//	@Scheduled(cron = "0 0/1 * * * *")
+//	public void updateUserInactiveStatus() {
+//		executeJob("Update_User_Inactive_Status", servicelayer::user_inactive);
+//	}
+//
+//	@Scheduled(cron = "0 0/1 * * * *")
+//	public void getUserStatus() {
+//		executeJob("get_user_status", servicelayer::update_interrupt_user_status);
+//	}
 
 	@Scheduled(cron = "0 0/1 * * * *")
 	public void deleteOldErrorLog() {

@@ -188,6 +188,7 @@ public class Servicelayer {
 	        user.setEnabled(true);
 	        user.setBase_location("NA");
 	        user.setEditwho("NA");
+	        user.setStatus("ACTIVE");
 	        user.setAddwho(user.getAddwho());
 			String subject = "www.ems.com : Your Crendential Created";
 			String message = "" + "<!DOCTYPE html>" + "<html lang='en'>" + "<head>" + "    <meta charset='UTF-8'>"
@@ -1201,32 +1202,32 @@ public class Servicelayer {
 		userdao.reset_failed_attempt_job();
 	}
 
-	@Transactional
-	public void user_inactive() {
-		jobrunning("Update_User_Inactive_Status");
-		userLoginDao.Update_Inactive_user_Status();
-	}
+//	@Transactional
+//	public void user_inactive() {
+//		jobrunning("Update_User_Inactive_Status");
+//		userLoginDao.Update_Inactive_user_Status();
+//	}
 
-	@Transactional
-	public void update_interrupt_user_status() {
-		try {
-			jobrunning("get_user_status");
-			userLoginDao.updateuserstatus();
-		} catch (Exception e) {
-			String exceptionAsString = e.toString();
-			// Get the current class
-			Class<?> currentClass = Servicelayer.class;
-			jobDao.getJobRunningTimeInterrupted("get_user_status");
-			// Get the name of the class
-			String className = currentClass.getName();
-			String errorMessage = e.getMessage();
-			StackTraceElement[] stackTrace = e.getStackTrace();
-			String methodName = stackTrace[0].getMethodName();
-			int lineNumber = stackTrace[0].getLineNumber();
-			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
-			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
-		}
-	}
+//	@Transactional
+//	public void update_interrupt_user_status() {
+//		try {
+//			jobrunning("get_user_status");
+//			userLoginDao.updateuserstatus();
+//		} catch (Exception e) {
+//			String exceptionAsString = e.toString();
+//			// Get the current class
+//			Class<?> currentClass = Servicelayer.class;
+//			jobDao.getJobRunningTimeInterrupted("get_user_status");
+//			// Get the name of the class
+//			String className = currentClass.getName();
+//			String errorMessage = e.getMessage();
+//			StackTraceElement[] stackTrace = e.getStackTrace();
+//			String methodName = stackTrace[0].getMethodName();
+//			int lineNumber = stackTrace[0].getLineNumber();
+//			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+//			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+//		}
+//	}
 
 	@Transactional
 	public void delete_old_error_log() {
@@ -2140,7 +2141,7 @@ public class Servicelayer {
 	@Transactional
 	public void correct_login_record_table() {
 		try {
-			userLoginDao.updateuserstatusreset();
+			userLoginDao.updateUserStatusReset();
 		} catch (Exception e) {
 			String exceptionAsString = e.toString();
 			// Get the current class
@@ -3568,5 +3569,9 @@ public class Servicelayer {
 		}
 	}
 
-
+  public void update_login_dao(User user)
+  {
+	  userLoginDao.updateSessionInterruptedStatus(user.getId());
+      userLoginDao.setDefaultLogoutTime(user.getId());
+  }
 }

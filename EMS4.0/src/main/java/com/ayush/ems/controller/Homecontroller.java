@@ -10,6 +10,7 @@ import java.util.concurrent.CompletableFuture;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -505,13 +506,15 @@ public class Homecontroller {
 			@RequestParam(value = "expiredsession", defaultValue = "false") boolean expiredsession,
 			HttpServletResponse response, HttpServletRequest request) {
 		try {
-			System.out.println("hi");
+			System.out.println("hi"+user.getId());
 			session = request.getSession();
 //			EMSMAIN.session_map_data.put(session.getId(), new Date());
-//			if (expiredsession) {
+			if (expiredsession) {
+				 servicelayer.update_login_dao(user);
 //				System.out.println(new Date() + " Expired Time");
-//				session.setAttribute("message", new Message("Session Expired", "alert-danger"));
-//			}
+//				session.setAttribute("message", new Message("Your session has expired. Please log in again.", "alert-warning"));
+				   return "redirect:/signin?expired=true";
+			}
 			System.out.println(")))))) " + session.getAttribute("messge"));
 			getCaptcha(user);
 			EMSMAIN.loginCaptcha.put(user.getHidden(), new Date());
