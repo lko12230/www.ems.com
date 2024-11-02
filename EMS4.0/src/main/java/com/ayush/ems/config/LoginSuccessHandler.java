@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -189,8 +190,10 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
 				+ "            <p>Thank you for your attention to this matter.</p>" + "            <p>Best regards,</p>"
 				+ "            <p><strong>Cyber Security Team</strong></p>" + "        </div>"
 				+ "        <div class='footer'>"
-				+ "            <p>Need help? <a href='#'>Visit our Help Center</a> or contact us at [Support Contact Info]</p>"
-				+ "            <p class='colored-logo'>"
+				+ "           <p>If you did not attempt to log in, please disregard this message.</p>"
+				+ "<p>Need help? <a href='#' style='color: #007BFF; text-decoration: none;'>Visit our Help Center</a> or contact us at <a href='mailto:support@example.com' style='color: #007BFF; text-decoration: none;'>support@example.com</a>.</p>"
+				+ "            <p style='margin: 0;'> &copy; " + LocalDateTime.now().getYear()
+				+ " Your Company. All Rights Reserved.</p>" + "<p class='colored-logo'>"
 				+ "                <span class='colored-char' style='color: rgb(66, 133, 244);'>w</span><span class='colored-char' style='color: rgb(255, 0, 0);'>w</span><span class='colored-char' style='color: rgb(255, 165, 0);'>w</span>"
 				+ "                <span class='colored-char' style='color: rgb(0, 0, 255);'>.</span><span class='colored-char' style='color: rgb(60, 179, 113);'>e</span><span class='colored-char' style='color: rgb(255, 0, 0);'>m</span><span class='colored-char' style='color: rgb(0, 0, 255);'>s</span><span class='colored-char' style='color: rgb(255, 0, 0);'>.</span><span class='colored-char' style='color: rgb(255, 165, 0);'>c</span><span class='colored-char' style='color: rgb(0, 0, 255);'>o</span><span class='colored-char' style='color: rgb(255, 0, 0);'>m</span>"
 				+ "            </p>" + "        </div>" + "    </div>" + "</body>" + "</html>";
