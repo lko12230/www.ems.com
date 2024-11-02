@@ -76,12 +76,12 @@ public class EMSMAIN {
 
 	@Scheduled(cron = "0 0/1 * * * *")
 	public void isEnabledJob() {
-		executeJob("Is_Enabled_Job", servicelayer::schedulerInactivateAccount);
+		executeJob("Is Enabled Job", servicelayer::schedulerInactivateAccount);
 	}
 
 	@Scheduled(cron = "0 0 0 * * *")
 	public void passwordFailedAttemptReset() {
-		executeJob("Password_FailedAttempt_Reset", servicelayer::reset_failed_attempts_password);
+		executeJob("Password Failed Attempt Reset", servicelayer::reset_failed_attempts_password);
 	}
 
 //	@Scheduled(cron = "0 0/1 * * * *")
@@ -96,7 +96,7 @@ public class EMSMAIN {
 
 	@Scheduled(cron = "0 0/1 * * * *")
 	public void deleteOldErrorLog() {
-		executeJob("delete_old_error_log", () -> {
+		executeJob("Delete Old Error Log", () -> {
 			servicelayer.delete_old_error_log();
 			System.out.println("MAP CAPTCHA " + captchaValidateMap);
 			System.out.println("MAP CAPTCHA SIZE " + captchaValidateMap.size());
@@ -105,10 +105,10 @@ public class EMSMAIN {
 
 	@Scheduled(cron = "0 0 0 * * *")
 	public void downtime() {
-		executeJob("downtime_maintaince", () -> {
+		executeJob("Downtime Maintaince", () -> {
 			servicelayer.syncEmployeeAndEmployeeDetailTable();
 			servicelayer.correct_login_record_table();
-			servicelayer.enabled_server_up_permitted("downtime_maintaince");
+			servicelayer.enabled_server_up_permitted("Downtime Maintaince");
 			System.out.println("SERVER UP");
 		});
 	}
@@ -125,7 +125,7 @@ public class EMSMAIN {
 
 	@Scheduled(cron = "0 0/1 * * * *")
 	public void disableExpiredPlanUsers() {
-		executeJob("disbaled_expired_plan_users", () -> servicelayer.disbaled_expired_plan_users("disbaled_expired_plan_users"));
+		executeJob("Disbaled Expired Plan Users", () -> servicelayer.disbaled_expired_plan_users("Disbaled Expired Plan Users"));
 	}
 
 //	@Scheduled(cron = "0 0/1 * * * *")

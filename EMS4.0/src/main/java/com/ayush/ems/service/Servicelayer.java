@@ -227,6 +227,8 @@ public class Servicelayer {
 				  Optional<CompanyInfo> companyOptional= company_dao.findByCompanyIdOptional(user.getCompany_id());
 				  if(companyOptional.isPresent())
 				  {
+					  CompanyInfo companyInfo = companyOptional.get();
+					  user.setCompany(companyInfo.getCompany_name());
 					  System.out.println("EMAIL "+user.getEmail());
 				Optional<stage_user> result3 = stageUserDao.findByUserNameAndPhone(to, user.getPhone());
 				if(!result3.isPresent())
@@ -278,33 +280,52 @@ public class Servicelayer {
 			else if (user.getRole().equals("ROLE_USER") || user.getRole().equals("ROLE_MANAGER")
 						|| user.getRole().equals("ROLE_HR") || user.getRole().equals("ROLE_IT"))
 				{
-					Optional<stage_user> result3 = stageUserDao.findByUserName(user.getEmail());
-					stage_user user3 = result3.get();
-					String to = user.getEmail();
-						Performance performance = new Performance();
-						performance.setId(user3.getId());
-						performance.setJanuary(0);
-						performance.setFebruary(0);
-						performance.setMarch(0);
-						performance.setApril(0);
-						performance.setMay(0);
-						performance.setJune(0);
-						performance.setJuly(0);
-						performance.setAugust(0);
-						performance.setSeptember(0);
-						performance.setOctober(0);
-						performance.setNovember(0);
-						performance.setDecember(0);
-						performance.setYear(currentYear);
-						performancedao.save(performance);
-						CompletableFuture<Boolean> flagFuture = this.emailService.sendEmail(message, subject, to);
-						flag = flagFuture.get(); // Blocking call to get the result
-						if (flag) {
-							user.setDefaultPasswordSent(true);
-						} else {
-							user.setDefaultPasswordSent(false);
-						}
-						stageUserDao.save(user);
+				  
+				String to = user.getEmail();
+				  Optional<CompanyInfo> companyOptional= company_dao.findByCompanyIdOptional(user.getCompany_id());
+				  if(companyOptional.isPresent())
+				  {
+					  CompanyInfo companyInfo = companyOptional.get();
+					  user.setCompany(companyInfo.getCompany_name());
+					  System.out.println("EMAIL "+user.getEmail());
+				Optional<stage_user> result3 = stageUserDao.findByUserNameAndPhone(to, user.getPhone());
+				if(!result3.isPresent())
+				{
+					CompletableFuture<Boolean> flagFuture = this.emailService.sendEmail(message, subject, to);
+					flag = flagFuture.get(); // Blocking call to get the result
+					if (flag) {
+						user.setDefaultPasswordSent(true);
+					} else {
+						user.setDefaultPasswordSent(false);
+					}
+					stageUserDao.save(user);
+					Optional<stage_user> OptionalFindUserByEmail = stageUserDao.findByUserName(user.getEmail());
+					stage_user user3=OptionalFindUserByEmail.get();
+					Performance performance = new Performance();
+					performance.setId(user3.getId());
+					performance.setJanuary(0);
+					performance.setFebruary(0);
+					performance.setMarch(0);
+					performance.setApril(0);
+					performance.setMay(0);
+					performance.setJune(0);
+					performance.setJuly(0);
+					performance.setAugust(0);
+					performance.setSeptember(0);
+					performance.setOctober(0);
+					performance.setNovember(0);
+					performance.setDecember(0);
+					performance.setYear(currentYear);
+					performancedao.save(performance);				}
+				else
+				{
+					throw new Exception("User Already Present !!");
+				}
+			}
+				  else
+				  {
+					  throw new Exception(user.getCompany_id()+" Company Is Not Registered With EMS INDIA PVT LTD"); 
+				  }
 				}
 			else
 			{
