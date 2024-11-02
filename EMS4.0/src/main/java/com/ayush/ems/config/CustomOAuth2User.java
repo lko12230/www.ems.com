@@ -10,10 +10,13 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import com.ayush.ems.entities.User;
 
 public class CustomOAuth2User implements OAuth2User {
-    private OAuth2User oauth2User;
-    private User user;
+    private final OAuth2User oauth2User;
+    private final User user;
 
     public CustomOAuth2User(OAuth2User oauth2User, User user) {
+        if (oauth2User == null || user == null) {
+            throw new IllegalArgumentException("OAuth2User and User must not be null");
+        }
         this.oauth2User = oauth2User;
         this.user = user;
     }
@@ -25,7 +28,8 @@ public class CustomOAuth2User implements OAuth2User {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // Return user's roles from the database
+        // If a user can have multiple roles, collect them into a list
+        // This assumes that user.getRoles() returns a List<String> of role names
         return Collections.singletonList(() -> user.getRole());
     }
 

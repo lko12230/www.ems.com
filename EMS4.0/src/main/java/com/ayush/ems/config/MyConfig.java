@@ -27,6 +27,9 @@ public class MyConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private CustomLogoutSuccessHandler customLogoutSuccessHandler;
+    
+    @Autowired
+    private CustomOAuth2UserService customOAuth2UserService;
 
     @Bean
     public UserDetailsService userDetailsService() {
@@ -56,18 +59,20 @@ public class MyConfig extends WebSecurityConfigurerAdapter {
         http
             .csrf().disable()
             .authorizeRequests()
+                .antMatchers("/signin", "/oauth2/**", "/css/**", "/js/**", "/img/**").permitAll()
                 .antMatchers("/user/**").hasRole("USER")
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 .antMatchers("/hr/**").hasRole("HR")
                 .antMatchers("/IT/**").hasRole("IT")
                 .antMatchers("/manager/**").hasRole("MANAGER")
-                .anyRequest().permitAll()
+                .antMatchers("/", "/register").permitAll()
+                .anyRequest().authenticated()
             .and()
             .formLogin()
                 .loginPage("/signin")
                 .loginProcessingUrl("/dologin")
-                .failureHandler(customLoginFailureHandler)
                 .successHandler(loginSuccessHandler)
+                .failureHandler(customLoginFailureHandler)
             .and()
             .logout()
                 .logoutUrl("/logout")
@@ -75,8 +80,16 @@ public class MyConfig extends WebSecurityConfigurerAdapter {
                 .deleteCookies("JSESSIONID")
                 .permitAll()
             .and()
+            .oauth2Login()
+                .loginPage("/signin")
+                .userInfoEndpoint()
+                    .userService(customOAuth2UserService)
+                .and()
+                .successHandler(loginSuccessHandler);
+
+        http
             .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 .sessionFixation().newSession()
                 .invalidSessionUrl("/signin?expired=true")
                 .maximumSessions(1)
