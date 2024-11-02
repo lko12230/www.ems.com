@@ -153,7 +153,6 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
 	private void sendLoginNotificationEmail(String username, String ipAddress, String osName, String osVersion,
 			String osArchitecture, String email) {
 		String subject = "Security Update: Successful Login Detected";
-		String loginTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
 		String emailContent = "" + "<!DOCTYPE html>" + "<html lang='en'>" + "<head>" + "    <meta charset='UTF-8'>"
 				+ "    <meta name='viewport' content='width=device-width, initial-scale=1.0'>" + "    <style>"
 				+ "        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; }"

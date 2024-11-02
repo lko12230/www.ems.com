@@ -766,6 +766,7 @@ public class Homecontroller {
 
 					System.out.println(user2.getPassword());
 					user2.setPassword(this.bCryptPasswordEncoder.encode(newpassword));
+					user2.setFailedAttempt(0);
 					this.userdao.save(user2);
 					session.setAttribute("message",new Message("Password Changed Successfully",	"alert-success"));
 					return "signin";
