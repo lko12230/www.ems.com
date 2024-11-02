@@ -156,40 +156,39 @@ public class Servicelayer {
 	@Autowired
 	private StageUserDao stageUserDao;
 
-	  @Transactional
-	    public stage_user register(stage_user user) throws Exception {
-		  try
-		  {
-	        System.out.println("User DOB: " + user.getDob());
-	        System.out.println("User Email: " + user.getUsername());
+	@Transactional
+	public stage_user register(stage_user user) throws Exception {
+		try {
+			System.out.println("User DOB: " + user.getDob());
+			System.out.println("User Email: " + user.getUsername());
 
-	        Calendar calendar = Calendar.getInstance();
-	        int currentYear = calendar.get(Calendar.YEAR);
+			Calendar calendar = Calendar.getInstance();
+			int currentYear = calendar.get(Calendar.YEAR);
 
-	        // Check for existing user by email and phone
-	        Optional<stage_user> existingUser = stageUserDao.findByUserNameAndPhone(user.getEmail(), user.getPhone());
-	        Optional<Admin> adminUser = adminDao.findByUserName(user.getEmail());
+			// Check for existing user by email and phone
+			Optional<stage_user> existingUser = stageUserDao.findByUserNameAndPhone(user.getEmail(), user.getPhone());
+			Optional<Admin> adminUser = adminDao.findByUserName(user.getEmail());
 
-	        if (existingUser.isPresent()) {
-	            throw new Exception("Email and Phone Number already exist");
-	        } else if (adminUser.isPresent()) {
-	            throw new Exception(user.getUsername() + " - Issue encountered. Contact Administrator.");
-	        }
+			if (existingUser.isPresent()) {
+				throw new Exception("Email and Phone Number already exist");
+			} else if (adminUser.isPresent()) {
+				throw new Exception(user.getUsername() + " - Issue encountered. Contact Administrator.");
+			}
 
-	        // Generate random password for the user
-	        String generateRandomPassword = generatePassword(15);
+			// Generate random password for the user
+			String generateRandomPassword = generatePassword(15);
 
-	        // Set user properties
-	        user.setAccountNonLocked(true);
-	        user.setPhone(user.getPhone().trim().replaceAll("\\s", ""));
-	        user.setPassword(passwordEncoder.encode(generateRandomPassword));
-	        user.setRepassword(passwordEncoder.encode(generateRandomPassword));
-	        user.setUsername(user.getUsername().toUpperCase());
-	        user.setEnabled(true);
-	        user.setBase_location("NA");
-	        user.setEditwho("NA");
-	        user.setStatus("ACTIVE");
-	        user.setAddwho(user.getAddwho());
+			// Set user properties
+			user.setAccountNonLocked(true);
+			user.setPhone(user.getPhone().trim().replaceAll("\\s", ""));
+			user.setPassword(passwordEncoder.encode(generateRandomPassword));
+			user.setRepassword(passwordEncoder.encode(generateRandomPassword));
+			user.setUsername(user.getUsername().toUpperCase());
+			user.setEnabled(true);
+			user.setBase_location("NA");
+			user.setEditwho("NA");
+			user.setStatus("ACTIVE");
+			user.setAddwho(user.getAddwho());
 			String subject = "www.ems.com : Your Crendential Created";
 			String message = "" + "<!DOCTYPE html>" + "<html lang='en'>" + "<head>" + "    <meta charset='UTF-8'>"
 					+ "    <meta name='viewport' content='width=device-width, initial-scale=1.0'>"
@@ -223,173 +222,154 @@ public class Servicelayer {
 
 			if (user.getRole() != null) {
 				if (user.getRole().equals("ROLE_ADMIN")) {
-				String to = user.getEmail();
-				  Optional<CompanyInfo> companyOptional= company_dao.findByCompanyIdOptional(user.getCompany_id());
-				  if(companyOptional.isPresent())
-				  {
-					  CompanyInfo companyInfo = companyOptional.get();
-					  user.setCompany(companyInfo.getCompany_name());
-					  System.out.println("EMAIL "+user.getEmail());
-				Optional<stage_user> result3 = stageUserDao.findByUserNameAndPhone(to, user.getPhone());
-				if(!result3.isPresent())
-				{
-					CompletableFuture<Boolean> flagFuture = this.emailService.sendEmail(message, subject, to);
-					flag = flagFuture.get(); // Blocking call to get the result
-					if (flag) {
-						user.setDefaultPasswordSent(true);
+					String to = user.getEmail();
+					Optional<CompanyInfo> companyOptional = company_dao.findByCompanyIdOptional(user.getCompany_id());
+					if (companyOptional.isPresent()) {
+						CompanyInfo companyInfo = companyOptional.get();
+						user.setCompany(companyInfo.getCompany_name());
+						System.out.println("EMAIL " + user.getEmail());
+						Optional<stage_user> result3 = stageUserDao.findByUserNameAndPhone(to, user.getPhone());
+						if (!result3.isPresent()) {
+							CompletableFuture<Boolean> flagFuture = this.emailService.sendEmail(message, subject, to);
+							flag = flagFuture.get(); // Blocking call to get the result
+							if (flag) {
+								user.setDefaultPasswordSent(true);
+							} else {
+								user.setDefaultPasswordSent(false);
+							}
+							stageUserDao.save(user);
+							Optional<stage_user> OptionalFindUserByEmail = stageUserDao.findByUserName(user.getEmail());
+							stage_user user3 = OptionalFindUserByEmail.get();
+							Performance performance = new Performance();
+							Admin admin = new Admin();
+							admin.setAid(user3.getId());
+							admin.setEmail(user.getEmail());
+							admin.setSystemDateAndTime(new Date());
+							admin.setPassword(passwordEncoder.encode("admin"));
+							admin.setRole(user.getRole());
+							performance.setId(user3.getId());
+							performance.setJanuary(0);
+							performance.setFebruary(0);
+							performance.setMarch(0);
+							performance.setApril(0);
+							performance.setMay(0);
+							performance.setJune(0);
+							performance.setJuly(0);
+							performance.setAugust(0);
+							performance.setSeptember(0);
+							performance.setOctober(0);
+							performance.setNovember(0);
+							performance.setDecember(0);
+							performance.setYear(currentYear);
+							performancedao.save(performance);
+							adminDao.save(admin);
+						} else {
+							throw new Exception("User Already Present !!");
+						}
 					} else {
-						user.setDefaultPasswordSent(false);
+						throw new Exception(user.getCompany_id() + " Company Is Not Registered With EMS INDIA PVT LTD");
 					}
-					stageUserDao.save(user);
-					Optional<stage_user> OptionalFindUserByEmail = stageUserDao.findByUserName(user.getEmail());
-					stage_user user3=OptionalFindUserByEmail.get();
-					Performance performance = new Performance();
-					Admin admin = new Admin();
-                    admin.setAid(user3.getId());
-					admin.setEmail(user.getEmail());
-					admin.setSystemDateAndTime(new Date());
-					admin.setPassword(passwordEncoder.encode("admin"));
-					admin.setRole(user.getRole());
-					performance.setId(user3.getId());
-					performance.setJanuary(0);
-					performance.setFebruary(0);
-					performance.setMarch(0);
-					performance.setApril(0);
-					performance.setMay(0);
-					performance.setJune(0);
-					performance.setJuly(0);
-					performance.setAugust(0);
-					performance.setSeptember(0);
-					performance.setOctober(0);
-					performance.setNovember(0);
-					performance.setDecember(0);
-					performance.setYear(currentYear);
-					performancedao.save(performance);
-					adminDao.save(admin);
-				}
-				else
-				{
-					throw new Exception("User Already Present !!");
-				}
-			}
-				  else
-				  {
-					  throw new Exception(user.getCompany_id()+" Company Is Not Registered With EMS INDIA PVT LTD"); 
-				  }
-			}
-			else if (user.getRole().equals("ROLE_USER") || user.getRole().equals("ROLE_MANAGER")
-						|| user.getRole().equals("ROLE_HR") || user.getRole().equals("ROLE_IT"))
-				{
-				  
-				String to = user.getEmail();
-				  Optional<CompanyInfo> companyOptional= company_dao.findByCompanyIdOptional(user.getCompany_id());
-				  if(companyOptional.isPresent())
-				  {
-					  CompanyInfo companyInfo = companyOptional.get();
-					  user.setCompany(companyInfo.getCompany_name());
-					  System.out.println("EMAIL "+user.getEmail());
-				Optional<stage_user> result3 = stageUserDao.findByUserNameAndPhone(to, user.getPhone());
-				if(!result3.isPresent())
-				{
-					CompletableFuture<Boolean> flagFuture = this.emailService.sendEmail(message, subject, to);
-					flag = flagFuture.get(); // Blocking call to get the result
-					if (flag) {
-						user.setDefaultPasswordSent(true);
+				} else if (user.getRole().equals("ROLE_USER") || user.getRole().equals("ROLE_MANAGER")
+						|| user.getRole().equals("ROLE_HR") || user.getRole().equals("ROLE_IT")) {
+
+					String to = user.getEmail();
+					Optional<CompanyInfo> companyOptional = company_dao.findByCompanyIdOptional(user.getCompany_id());
+					if (companyOptional.isPresent()) {
+						CompanyInfo companyInfo = companyOptional.get();
+						user.setCompany(companyInfo.getCompany_name());
+						System.out.println("EMAIL " + user.getEmail());
+						Optional<stage_user> result3 = stageUserDao.findByUserNameAndPhone(to, user.getPhone());
+						if (!result3.isPresent()) {
+							CompletableFuture<Boolean> flagFuture = this.emailService.sendEmail(message, subject, to);
+							flag = flagFuture.get(); // Blocking call to get the result
+							if (flag) {
+								user.setDefaultPasswordSent(true);
+							} else {
+								user.setDefaultPasswordSent(false);
+							}
+							stageUserDao.save(user);
+							Optional<stage_user> OptionalFindUserByEmail = stageUserDao.findByUserName(user.getEmail());
+							stage_user user3 = OptionalFindUserByEmail.get();
+							Performance performance = new Performance();
+							performance.setId(user3.getId());
+							performance.setJanuary(0);
+							performance.setFebruary(0);
+							performance.setMarch(0);
+							performance.setApril(0);
+							performance.setMay(0);
+							performance.setJune(0);
+							performance.setJuly(0);
+							performance.setAugust(0);
+							performance.setSeptember(0);
+							performance.setOctober(0);
+							performance.setNovember(0);
+							performance.setDecember(0);
+							performance.setYear(currentYear);
+							performancedao.save(performance);
+						} else {
+							throw new Exception("User Already Present !!");
+						}
 					} else {
-						user.setDefaultPasswordSent(false);
+						throw new Exception(user.getCompany_id() + " Company Is Not Registered With EMS INDIA PVT LTD");
 					}
-					stageUserDao.save(user);
-					Optional<stage_user> OptionalFindUserByEmail = stageUserDao.findByUserName(user.getEmail());
-					stage_user user3=OptionalFindUserByEmail.get();
-					Performance performance = new Performance();
-					performance.setId(user3.getId());
-					performance.setJanuary(0);
-					performance.setFebruary(0);
-					performance.setMarch(0);
-					performance.setApril(0);
-					performance.setMay(0);
-					performance.setJune(0);
-					performance.setJuly(0);
-					performance.setAugust(0);
-					performance.setSeptember(0);
-					performance.setOctober(0);
-					performance.setNovember(0);
-					performance.setDecember(0);
-					performance.setYear(currentYear);
-					performancedao.save(performance);				}
-				else
-				{
-					throw new Exception("User Already Present !!");
+				} else {
+					throw new Exception("Something Went Wrong !!");
 				}
+			} else {
+				throw new Exception(user.getCompany_id() + " Company Is Not Registered With EMS INDIA PVT LTD");
 			}
-				  else
-				  {
-					  throw new Exception(user.getCompany_id()+" Company Is Not Registered With EMS INDIA PVT LTD"); 
-				  }
-				}
-			else
-			{
-				throw new Exception("Something Went Wrong !!");
-			}
-			}
-		  else
-		  {
-			  throw new Exception(user.getCompany_id()+" Company Is Not Registered With EMS INDIA PVT LTD"); 
-		  }
-			}
-		  catch (Exception e) {
+		} catch (Exception e) {
 			// TODO: handle exception
-			  e.printStackTrace();
-			 throw e;
+			e.printStackTrace();
+			throw e;
 		}
-		  return user;
-	  }
-	
+		return user;
+	}
 
-	  // Characters to include in the password
-	    private static final String UPPERCASE = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-	    private static final String LOWERCASE = "abcdefghijklmnopqrstuvwxyz";
-	    private static final String DIGITS = "0123456789";
-	    private static final String SPECIAL_CHARACTERS = "!@#$%^&*()-_+=<>?";
-	    private static final String ALL_CHARACTERS = UPPERCASE + LOWERCASE + DIGITS + SPECIAL_CHARACTERS;
+	// Characters to include in the password
+	private static final String UPPERCASE = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	private static final String LOWERCASE = "abcdefghijklmnopqrstuvwxyz";
+	private static final String DIGITS = "0123456789";
+	private static final String SPECIAL_CHARACTERS = "!@#$%^&*()-_+=<>?";
+	private static final String ALL_CHARACTERS = UPPERCASE + LOWERCASE + DIGITS + SPECIAL_CHARACTERS;
 
-	    // SecureRandom for a more cryptographically secure random generator
-	    private static final SecureRandom random = new SecureRandom();
-	    
-	  public static String generatePassword(int length) {
-	        if (length < 8) {
-	            throw new IllegalArgumentException("Password length should be at least 8 characters.");
-	        }
+	// SecureRandom for a more cryptographically secure random generator
+	private static final SecureRandom random = new SecureRandom();
 
-	        StringBuilder password = new StringBuilder(length);
+	public static String generatePassword(int length) {
+		if (length < 8) {
+			throw new IllegalArgumentException("Password length should be at least 8 characters.");
+		}
 
-	        // Ensure the password has at least one of each character type
-	        password.append(UPPERCASE.charAt(random.nextInt(UPPERCASE.length())));
-	        password.append(LOWERCASE.charAt(random.nextInt(LOWERCASE.length())));
-	        password.append(DIGITS.charAt(random.nextInt(DIGITS.length())));
-	        password.append(SPECIAL_CHARACTERS.charAt(random.nextInt(SPECIAL_CHARACTERS.length())));
+		StringBuilder password = new StringBuilder(length);
 
-	        // Fill the remaining characters randomly from all types
-	        for (int i = 4; i < length; i++) {
-	            password.append(ALL_CHARACTERS.charAt(random.nextInt(ALL_CHARACTERS.length())));
-	        }
+		// Ensure the password has at least one of each character type
+		password.append(UPPERCASE.charAt(random.nextInt(UPPERCASE.length())));
+		password.append(LOWERCASE.charAt(random.nextInt(LOWERCASE.length())));
+		password.append(DIGITS.charAt(random.nextInt(DIGITS.length())));
+		password.append(SPECIAL_CHARACTERS.charAt(random.nextInt(SPECIAL_CHARACTERS.length())));
 
-	        // Shuffle the characters for randomness
-	        return shuffleString(password.toString());
-	    }
+		// Fill the remaining characters randomly from all types
+		for (int i = 4; i < length; i++) {
+			password.append(ALL_CHARACTERS.charAt(random.nextInt(ALL_CHARACTERS.length())));
+		}
 
-	    private static String shuffleString(String input) {
-	        StringBuilder shuffled = new StringBuilder(input.length());
-	        char[] chars = input.toCharArray();
-	        
-	        for (int i = chars.length; i > 0; i--) {
-	            int index = random.nextInt(i);
-	            shuffled.append(chars[index]);
-	            chars[index] = chars[i - 1];
-	        }
-	        return shuffled.toString();
-	    }
-	  
+		// Shuffle the characters for randomness
+		return shuffleString(password.toString());
+	}
+
+	private static String shuffleString(String input) {
+		StringBuilder shuffled = new StringBuilder(input.length());
+		char[] chars = input.toCharArray();
+
+		for (int i = chars.length; i > 0; i--) {
+			int index = random.nextInt(i);
+			shuffled.append(chars[index]);
+			chars[index] = chars[i - 1];
+		}
+		return shuffled.toString();
+	}
+
 	public static Captcha createCaptcha(int width, int height) {
 		return new Captcha.Builder(width, height).addBackground(new GradiatedBackgroundProducer())
 				.addText(new DefaultTextProducer()).addNoise(new StraightLineNoiseProducer()).build();
@@ -666,7 +646,7 @@ public class Servicelayer {
 			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
 		}
 	}
-	
+
 	@Transactional
 	public void seperationLogic(Integer id, User user) {
 		try {
@@ -738,7 +718,7 @@ public class Servicelayer {
 			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
 
 		}
-	
+
 //		Map<Integer,Date> map=daolayer.getLastWorkingDay_Records();
 //		Iterator<Entry<Integer, Date>> itr=map.entrySet().iterator();
 //		while(itr.hasNext())
@@ -1319,7 +1299,8 @@ public class Servicelayer {
 //			int lineNumber = stackTrace[0].getLineNumber();
 //			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
 //			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
-			e.printStackTrace();	}
+			e.printStackTrace();
+		}
 	}
 
 	@Transactional
@@ -1360,7 +1341,7 @@ public class Servicelayer {
 				userLoginDateTime.setLoginDateAndTime(loginDate);
 				userLoginDateTime.setUsername(user.getUsername());
 				userLoginDao.save(userLoginDateTime);
-                System.out.println("FAIL ATTEMPT MSC "+user.getFailedAttempt());
+				System.out.println("FAIL ATTEMPT MSC " + user.getFailedAttempt());
 				userdao.save(user);
 //		Thread.sleep(1000);
 				userDetailDao.save(userDetail2);
@@ -1923,58 +1904,60 @@ public class Servicelayer {
 
 	@Transactional
 	public void disbaled_expired_plan_users(String jobname) {
-	    try {
-	        List<Payment_Order_Info> order = orderDao.findAllByActive();
-	        ListIterator<Payment_Order_Info> orders_iterate = order.listIterator();
-	        while (orders_iterate.hasNext()) {
-	            Payment_Order_Info payment_Order_Info = orders_iterate.next();
+		try {
+			List<Payment_Order_Info> order = orderDao.findAllByActive();
+			ListIterator<Payment_Order_Info> orders_iterate = order.listIterator();
+			while (orders_iterate.hasNext()) {
+				Payment_Order_Info payment_Order_Info = orders_iterate.next();
 
-	            // Check if the payment status is "paid"
-	            if (payment_Order_Info.getStatus().equalsIgnoreCase("paid")) {
-	                
-	                int validityDays = payment_Order_Info.getValidity(); // e.g., 30 days
-	                Date expiryDate = payment_Order_Info.getSubscription_expiry_date();
-	                String company_id = payment_Order_Info.getCompany_id();
+				// Check if the payment status is "paid"
+				if (payment_Order_Info.getStatus().equalsIgnoreCase("paid")) {
 
-	                // Get the current date
-	                LocalDate currentDate = LocalDate.now();
+					int validityDays = payment_Order_Info.getValidity(); // e.g., 30 days
+					Date expiryDate = payment_Order_Info.getSubscription_expiry_date();
+					String company_id = payment_Order_Info.getCompany_id();
 
-	                // Convert expiryDate to LocalDate
-	                LocalDate expiryLocalDate = expiryDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+					// Get the current date
+					LocalDate currentDate = LocalDate.now();
 
-	                // Calculate the remaining days between the current date and the expiry date
-	                long remainingDays = Duration.between(currentDate.atStartOfDay(), expiryLocalDate.atStartOfDay()).toDays();
-	                System.out.println("REMAINING DAYS: " + remainingDays + " | VALIDITY DAYS: " + validityDays);
+					// Convert expiryDate to LocalDate
+					LocalDate expiryLocalDate = expiryDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
-	                // Trigger the expiry process only if remaining days are less than or equal to 0
-	                if (remainingDays < 0 && payment_Order_Info.getLicense_status().equals("ACTIVE")) {
-	                    System.out.println("Expiring license for company: " + company_id);
-	                    
-	                    // Call your methods to handle expired licenses and disable users with expired plans
-	                    orderDao.expired_license_status(company_id);
-	                    userdao.disbaled_expired_plan_users(company_id);
-	                }
-	            }
-	        }
-	        jobrunning("disbaled_expired_plan_users");
-	    } catch (Exception e) {
-	        jobDao.getJobRunningTimeInterrupted("disbaled_expired_plan_users");
-	        String exceptionAsString = e.toString();
+					// Calculate the remaining days between the current date and the expiry date
+					long remainingDays = Duration.between(currentDate.atStartOfDay(), expiryLocalDate.atStartOfDay())
+							.toDays();
+					System.out.println("REMAINING DAYS: " + remainingDays + " | VALIDITY DAYS: " + validityDays);
 
-	        // Get the current class
-	        Class<?> currentClass = Servicelayer.class;
+					// Trigger the expiry process only if remaining days are less than or equal to 0
+					if (remainingDays < 0 && payment_Order_Info.getLicense_status().equals("ACTIVE")) {
+						System.out.println("Expiring license for company: " + company_id);
 
-	        // Get the name of the class
-	        String className = currentClass.getName();
-	        String errorMessage = e.getMessage();
-	        StackTraceElement[] stackTrace = e.getStackTrace();
-	        String methodName = stackTrace[0].getMethodName();
-	        int lineNumber = stackTrace[0].getLineNumber();
-	        System.out.println("METHOD NAME: " + methodName + " at line " + lineNumber);
-	        insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
-	    }
+						// Call your methods to handle expired licenses and disable users with expired
+						// plans
+						orderDao.expired_license_status(company_id);
+						userdao.disbaled_expired_plan_users(company_id);
+					}
+				}
+			}
+			jobrunning("disbaled_expired_plan_users");
+		} catch (Exception e) {
+			jobDao.getJobRunningTimeInterrupted("disbaled_expired_plan_users");
+			String exceptionAsString = e.toString();
+
+			// Get the current class
+			Class<?> currentClass = Servicelayer.class;
+
+			// Get the name of the class
+			String className = currentClass.getName();
+			String errorMessage = e.getMessage();
+			StackTraceElement[] stackTrace = e.getStackTrace();
+			String methodName = stackTrace[0].getMethodName();
+			int lineNumber = stackTrace[0].getLineNumber();
+			System.out.println("METHOD NAME: " + methodName + " at line " + lineNumber);
+			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+		}
 	}
-	
+
 	public User findByUsername(String email) {
 		try {
 			Optional<User> user = userdao.findByEmail(email);
@@ -2143,7 +2126,6 @@ public class Servicelayer {
 //		}
 //	}
 
-	
 //	@Transactional
 //	public void expired_license_status() {
 //	    try {
@@ -2191,7 +2173,7 @@ public class Servicelayer {
 //	        insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
 //	    }
 //	}
-	
+
 	public void generateAndSendInvoice(Payment_Order_Info payment, SubscriptionPlans subscriptionPlans,
 			CompanyInfo companyInfo, User user, String formattedLicenseNumber) throws IOException, MessagingException {
 		String invoicePath = "C:\\Users\\ayush.gupta\\Documents\\Invoice Records\\invoice_" + payment.getPaymentId()
@@ -2199,58 +2181,45 @@ public class Servicelayer {
 		generatePdfInvoice(invoicePath, payment, subscriptionPlans, companyInfo, user);
 //	        sendInvoiceEmail("customer@example.com", "Your Invoice", "Please find attached your invoice.", invoicePath);
 		String subject = "Subscription Confirmation: Welcome to [Pro Plus]!";
-		String message = "" + "<!DOCTYPE html>" + "<html lang='en'>" + "<head>" 
-			    + "    <meta charset='UTF-8'>" 
-			    + "    <meta name='viewport' content='width=device-width, initial-scale=1.0'>" 
-			    + "    <meta http-equiv='X-UA-Compatible' content='IE=edge'>" 
-			    + "    <style>" 
-			    + "        body { font-family: Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 0; }" 
-			    + "        .email-wrapper { width: 100%; padding: 40px 0; display: flex; justify-content: center; align-items: center; background-color: #f4f6f9; }" 
-			    + "        .email-container { max-width: 600px; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1); text-align: center; margin: 0 auto; }" 
-			    + "        .email-header { background-color: #007bff; color: white; text-align: center; padding: 20px; font-size: 24px; font-weight: bold; }" 
-			    + "        .email-body { padding: 30px; text-align: left; }" 
-			    + "        .email-body p { margin: 0 0 20px 0; line-height: 1.6; font-size: 16px; }" 
-			    + "        .email-body .success-box { background-color: #e8f4f8; border-left: 4px solid #28a745; padding: 20px; margin-bottom: 30px; border-radius: 5px; }" 
-			    + "        .email-body .success-box h2 { margin: 0; color: #28a745; font-size: 22px; }" 
-			    + "        .email-body .details-box { padding: 20px; border-radius: 5px; border: 1px solid #ddd; background-color: #fafafa; margin-bottom: 30px; }" 
-			    + "        .email-body .details-box p { font-size: 15px; margin: 8px 0; }" 
-			    + "        .email-footer { background-color: #f7f9fc; padding: 20px; text-align: center; font-size: 14px; color: #555555; }" 
-			    + "        .email-footer a { color: #007bff; text-decoration: none; font-weight: bold; }" 
-			    + "        .email-footer img { max-width: 100px; margin-top: 10px; }" 
-			    + "    </style>" 
-			    + "</head>" 
-			    + "<body>" 
-			    + "    <div class='email-wrapper'>" 
-			    + "        <div class='email-container'>" 
-			    + "            <div class='email-header'>Subscription Confirmation</div>" 
-			    + "            <div class='email-body'>" 
-			    + "                <div class='success-box'>" 
-			    + "                    <h2>Payment Successful!</h2>" 
-			    + "                </div>" 
-			    + "                <p>Dear " + user.getUsername() + ",</p>" 
-			    + "                <p>Thank you for subscribing to <strong>[Pro Plus]</strong>! We're thrilled to have you on board.</p>" 
-			    + "                <div class='details-box'>" 
-			    + "                    <p><strong>Username:</strong> " + user.getUsername() + "</p>" 
-			    + "                    <p><strong>Email:</strong> " + payment.getEmail() + "</p>" 
-			    + "                    <p><strong>Payment Time:</strong> " + payment.getSystem_date_and_time() + "</p>" 
-			    + "                    <p><strong>License Number:</strong> " + payment.getLicense_number() + "</p>" 
-			    + "                    <p><strong>License Status:</strong> <span style='color: green;'>" + payment.getLicense_status() + "</span></p>" 
-			    + "                    <p><strong>Payment Status:</strong> <span style='color: green; text-transform: uppercase;'>" + payment.getStatus() + "</span></p>" 
-			    + "                </div>" 
-			    + "                <p>We have attached the invoice for your subscription. If you have any questions, feel free to contact our support team at [Support Contact Info].</p>" 
-			    + "                <p>Thank you for choosing <strong>[WWW EMS COM]</strong>. We look forward to serving you!</p>" 
-			    + "                <p>Best regards,<br>Payment Team</p>" 
-			    + "            </div>" 
-			    + "            <div class='email-footer'>" 
-			    + "                <p>Need help? <a href='#'>Contact Support</a> or visit our <a href='#'>Help Center</a>.</p>" 
-			    + "                <div style='font-size: 24px;'>" // Add this line for logo text
-			    + "                    <span class='colored-char' style='color: rgb(66, 133, 244);'>w</span><span class='colored-char' style='color: rgb(255, 0, 0);'>w</span><span class='colored-char' style='color: rgb(255, 165, 0);'>w</span><span class='colored-char' style='color: rgb(0, 0, 255);'>.</span><span class='colored-char' style='color: rgb(60, 179, 113);'>e</span><span class='colored-char' style='color: rgb(255, 0, 0);'>m</span><span class='colored-char' style='color: rgb(0, 0, 255);'>s</span><span class='colored-char' style='color: rgb(255, 0, 0);'>.</span><span class='colored-char' style='color: rgb(255, 165, 0);'>c</span><span class='colored-char' style='color: rgb(0, 0, 255);'>o</span><span class='colored-char' style='color: rgb(255, 0, 0);'>m</span>"
-			    + "                </div>" // Close the div for logo text
-			    + "            </div>" 
-			    + "        </div>" 
-			    + "    </div>" 
-			    + "</body>" 
-			    + "</html>";
+		String message = "" + "<!DOCTYPE html>" + "<html lang='en'>" + "<head>" + "    <meta charset='UTF-8'>"
+				+ "    <meta name='viewport' content='width=device-width, initial-scale=1.0'>"
+				+ "    <meta http-equiv='X-UA-Compatible' content='IE=edge'>" + "    <style>"
+				+ "        body { font-family: Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 0; }"
+				+ "        .email-wrapper { width: 100%; padding: 40px 0; display: flex; justify-content: center; align-items: center; background-color: #f4f6f9; }"
+				+ "        .email-container { max-width: 600px; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1); text-align: center; margin: 0 auto; }"
+				+ "        .email-header { background-color: #007bff; color: white; text-align: center; padding: 20px; font-size: 24px; font-weight: bold; }"
+				+ "        .email-body { padding: 30px; text-align: left; }"
+				+ "        .email-body p { margin: 0 0 20px 0; line-height: 1.6; font-size: 16px; }"
+				+ "        .email-body .success-box { background-color: #e8f4f8; border-left: 4px solid #28a745; padding: 20px; margin-bottom: 30px; border-radius: 5px; }"
+				+ "        .email-body .success-box h2 { margin: 0; color: #28a745; font-size: 22px; }"
+				+ "        .email-body .details-box { padding: 20px; border-radius: 5px; border: 1px solid #ddd; background-color: #fafafa; margin-bottom: 30px; }"
+				+ "        .email-body .details-box p { font-size: 15px; margin: 8px 0; }"
+				+ "        .email-footer { background-color: #f7f9fc; padding: 20px; text-align: center; font-size: 14px; color: #555555; }"
+				+ "        .email-footer a { color: #007bff; text-decoration: none; font-weight: bold; }"
+				+ "        .email-footer img { max-width: 100px; margin-top: 10px; }" + "    </style>" + "</head>"
+				+ "<body>" + "    <div class='email-wrapper'>" + "        <div class='email-container'>"
+				+ "            <div class='email-header'>Subscription Confirmation</div>"
+				+ "            <div class='email-body'>" + "                <div class='success-box'>"
+				+ "                    <h2>Payment Successful!</h2>" + "                </div>"
+				+ "                <p>Dear " + user.getUsername() + ",</p>"
+				+ "                <p>Thank you for subscribing to <strong>[Pro Plus]</strong>! We're thrilled to have you on board.</p>"
+				+ "                <div class='details-box'>" + "                    <p><strong>Username:</strong> "
+				+ user.getUsername() + "</p>" + "                    <p><strong>Email:</strong> " + payment.getEmail()
+				+ "</p>" + "                    <p><strong>Payment Time:</strong> " + payment.getSystem_date_and_time()
+				+ "</p>" + "                    <p><strong>License Number:</strong> " + payment.getLicense_number()
+				+ "</p>" + "                    <p><strong>License Status:</strong> <span style='color: green;'>"
+				+ payment.getLicense_status() + "</span></p>"
+				+ "                    <p><strong>Payment Status:</strong> <span style='color: green; text-transform: uppercase;'>"
+				+ payment.getStatus() + "</span></p>" + "                </div>"
+				+ "                <p>We have attached the invoice for your subscription. If you have any questions, feel free to contact our support team at [Support Contact Info].</p>"
+				+ "                <p>Thank you for choosing <strong>[WWW EMS COM]</strong>. We look forward to serving you!</p>"
+				+ "                <p>Best regards,<br>Payment Team</p>" + "            </div>"
+				+ "            <div class='email-footer'>"
+				+ "                <p>Need help? <a href='#'>Contact Support</a> or visit our <a href='#'>Help Center</a>.</p>"
+				+ "                <div style='font-size: 24px;'>" // Add this line for logo text
+				+ "                    <span class='colored-char' style='color: rgb(66, 133, 244);'>w</span><span class='colored-char' style='color: rgb(255, 0, 0);'>w</span><span class='colored-char' style='color: rgb(255, 165, 0);'>w</span><span class='colored-char' style='color: rgb(0, 0, 255);'>.</span><span class='colored-char' style='color: rgb(60, 179, 113);'>e</span><span class='colored-char' style='color: rgb(255, 0, 0);'>m</span><span class='colored-char' style='color: rgb(0, 0, 255);'>s</span><span class='colored-char' style='color: rgb(255, 0, 0);'>.</span><span class='colored-char' style='color: rgb(255, 165, 0);'>c</span><span class='colored-char' style='color: rgb(0, 0, 255);'>o</span><span class='colored-char' style='color: rgb(255, 0, 0);'>m</span>"
+				+ "                </div>" // Close the div for logo text
+				+ "            </div>" + "        </div>" + "    </div>" + "</body>" + "</html>";
 
 		CompletableFuture<Boolean> flagFuture = paymentSucessEmailService.sendEmail(invoicePath, message, subject,
 				user.getEmail());
@@ -2293,221 +2262,226 @@ public class Servicelayer {
 
 	private void generatePdfInvoice(String filePath, Payment_Order_Info payment, SubscriptionPlans subscriptionPlans,
 			CompanyInfo company_Info, User user) throws IOException {
-		try
-		{
-		PdfWriter writer = new PdfWriter(filePath);
-		com.itextpdf.kernel.pdf.PdfDocument pdf = new com.itextpdf.kernel.pdf.PdfDocument(writer);
-		Document document = new Document(pdf);
-		// Load fonts
-		PdfFont font = PdfFontFactory.createFont(StandardFonts.HELVETICA);
-		PdfFont boldFont = PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD);
+		try {
+			PdfWriter writer = new PdfWriter(filePath);
+			com.itextpdf.kernel.pdf.PdfDocument pdf = new com.itextpdf.kernel.pdf.PdfDocument(writer);
+			Document document = new Document(pdf);
+			// Load fonts
+			PdfFont font = PdfFontFactory.createFont(StandardFonts.HELVETICA);
+			PdfFont boldFont = PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD);
 
-		// Format the date
-		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-		String formattedDate = dateFormat.format(payment.getSystem_date_and_time());
+			// Format the date
+			SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+			String formattedDate = dateFormat.format(payment.getSystem_date_and_time());
 
-		// Title
-		Paragraph title = new Paragraph("Invoice").setFont(boldFont).setFontSize(20)
-				.setTextAlignment(TextAlignment.CENTER).setMarginBottom(20);
-		document.add(title);
+			// Title
+			Paragraph title = new Paragraph("Invoice").setFont(boldFont).setFontSize(20)
+					.setTextAlignment(TextAlignment.CENTER).setMarginBottom(20);
+			document.add(title);
 
-		// Create an array with the characters of the text
-		char[] textChars = "www.ems.com".toCharArray();
-		// Define the colors for each character
-		Color[] colors = { new DeviceRgb(66, 133, 244), // Blue
-				new DeviceRgb(219, 68, 55), // Red
-				new DeviceRgb(244, 180, 0), // Yellow
-				new DeviceRgb(66, 133, 244), // Blue
-				new DeviceRgb(15, 157, 88), // Green
-				new DeviceRgb(219, 68, 55), // Red
-				new DeviceRgb(66, 133, 244), // Blue
-				new DeviceRgb(219, 68, 55), // Red
-				new DeviceRgb(244, 180, 0) // Yellow
-		};
-		Paragraph title4 = new Paragraph();
-		// Add each character with its corresponding color
-		for (int i = 0; i < textChars.length; i++) {
-			// Create a Text object for each character
-			Text coloredText = new Text(String.valueOf(textChars[i])).setFontColor(colors[i % colors.length]); // Rotate
-																												// through
-																												// the
-																												// colors
+			// Create an array with the characters of the text
+			char[] textChars = "www.ems.com".toCharArray();
+			// Define the colors for each character
+			Color[] colors = { new DeviceRgb(66, 133, 244), // Blue
+					new DeviceRgb(219, 68, 55), // Red
+					new DeviceRgb(244, 180, 0), // Yellow
+					new DeviceRgb(66, 133, 244), // Blue
+					new DeviceRgb(15, 157, 88), // Green
+					new DeviceRgb(219, 68, 55), // Red
+					new DeviceRgb(66, 133, 244), // Blue
+					new DeviceRgb(219, 68, 55), // Red
+					new DeviceRgb(244, 180, 0) // Yellow
+			};
+			Paragraph title4 = new Paragraph();
+			// Add each character with its corresponding color
+			for (int i = 0; i < textChars.length; i++) {
+				// Create a Text object for each character
+				Text coloredText = new Text(String.valueOf(textChars[i])).setFontColor(colors[i % colors.length]); // Rotate
+																													// through
+																													// the
+																													// colors
 
-			// Add the Text object to the Paragraph
-			title4.add(coloredText);
-		}
-		title4.setFont(boldFont).setFontSize(26).setTextAlignment(TextAlignment.LEFT).setMarginBottom(10);
-		document.add(title4);
+				// Add the Text object to the Paragraph
+				title4.add(coloredText);
+			}
+			title4.setFont(boldFont).setFontSize(26).setTextAlignment(TextAlignment.LEFT).setMarginBottom(10);
+			document.add(title4);
 
-		// Company Info
-		Paragraph title1 = new Paragraph("Billed From").setFont(boldFont).setFontSize(12)
-				.setTextAlignment(TextAlignment.LEFT).setMarginBottom(20);
-		document.add(title1);
-		Paragraph BilledFrom = new Paragraph(payment.getCompany() + "\n" + user.getBase_location() + "\n"
-				+ payment.getEmail() + "\n" + payment.getPhone()).setFont(font).setFontSize(12)
-				.setTextAlignment(TextAlignment.LEFT).setMarginBottom(12);
-		document.add(BilledFrom);
+			// Company Info
+			Paragraph title1 = new Paragraph("Billed From").setFont(boldFont).setFontSize(12)
+					.setTextAlignment(TextAlignment.LEFT).setMarginBottom(20);
+			document.add(title1);
+			Paragraph BilledFrom = new Paragraph(payment.getCompany() + "\n" + user.getBase_location() + "\n"
+					+ payment.getEmail() + "\n" + payment.getPhone()).setFont(font).setFontSize(12)
+					.setTextAlignment(TextAlignment.LEFT).setMarginBottom(12);
+			document.add(BilledFrom);
 
-		Paragraph title2 = new Paragraph("Billed To").setFont(boldFont).setFontSize(12)
-				.setTextAlignment(TextAlignment.LEFT).setMarginBottom(9);
-		document.add(title2);
-		Paragraph BilledTo = new Paragraph(company_Info.getCompany_name() + "\n" + company_Info.getCompany_address()
-				+ "\n" + company_Info.getCompany_phone() + "\n" + company_Info.getCompany_email()).setFont(font)
-				.setFontSize(12).setTextAlignment(TextAlignment.LEFT).setMarginBottom(12);
-		document.add(BilledTo);
+			Paragraph title2 = new Paragraph("Billed To").setFont(boldFont).setFontSize(12)
+					.setTextAlignment(TextAlignment.LEFT).setMarginBottom(9);
+			document.add(title2);
+			Paragraph BilledTo = new Paragraph(company_Info.getCompany_name() + "\n" + company_Info.getCompany_address()
+					+ "\n" + company_Info.getCompany_phone() + "\n" + company_Info.getCompany_email()).setFont(font)
+					.setFontSize(12).setTextAlignment(TextAlignment.LEFT).setMarginBottom(12);
+			document.add(BilledTo);
 
-		// Invoice details table
-		Table invoiceTable = new Table(UnitValue.createPercentArray(new float[] { 1, 2 })).useAllAvailableWidth()
-				.setMarginBottom(12);
+			// Invoice details table
+			Table invoiceTable = new Table(UnitValue.createPercentArray(new float[] { 1, 2 })).useAllAvailableWidth()
+					.setMarginBottom(12);
 
-		invoiceTable.addCell(new Cell().add(new Paragraph("Payment ID:").setFont(boldFont).setFontSize(12))
-				.setBorder(Border.NO_BORDER));
-		invoiceTable.addCell(new Cell().add(new Paragraph(payment.getPaymentId()).setFont(font).setFontSize(12))
-				.setBorder(Border.NO_BORDER));
+			invoiceTable.addCell(new Cell().add(new Paragraph("Payment ID:").setFont(boldFont).setFontSize(12))
+					.setBorder(Border.NO_BORDER));
+			invoiceTable.addCell(new Cell().add(new Paragraph(payment.getPaymentId()).setFont(font).setFontSize(12))
+					.setBorder(Border.NO_BORDER));
 
-		invoiceTable.addCell(new Cell().add(new Paragraph("Order ID:").setFont(boldFont).setFontSize(12))
-				.setBorder(Border.NO_BORDER));
-		invoiceTable.addCell(new Cell().add(new Paragraph(payment.getOrderId()).setFont(font).setFontSize(12))
-				.setBorder(Border.NO_BORDER));
+			invoiceTable.addCell(new Cell().add(new Paragraph("Order ID:").setFont(boldFont).setFontSize(12))
+					.setBorder(Border.NO_BORDER));
+			invoiceTable.addCell(new Cell().add(new Paragraph(payment.getOrderId()).setFont(font).setFontSize(12))
+					.setBorder(Border.NO_BORDER));
 
-		invoiceTable.addCell(new Cell().add(new Paragraph("License Number:").setFont(boldFont).setFontSize(12))
-				.setBorder(Border.NO_BORDER));
-		invoiceTable.addCell(new Cell().add(new Paragraph(payment.getLicense_number()).setFont(font).setFontSize(12))
-				.setBorder(Border.NO_BORDER));
+			invoiceTable.addCell(new Cell().add(new Paragraph("License Number:").setFont(boldFont).setFontSize(12))
+					.setBorder(Border.NO_BORDER));
+			invoiceTable
+					.addCell(new Cell().add(new Paragraph(payment.getLicense_number()).setFont(font).setFontSize(12))
+							.setBorder(Border.NO_BORDER));
 
-		invoiceTable.addCell(new Cell().add(new Paragraph("License Status:").setFont(boldFont).setFontSize(12))
-				.setBorder(Border.NO_BORDER));
-		invoiceTable.addCell(new Cell().add(new Paragraph(payment.getLicense_status()).setFont(font).setFontSize(12))
-				.setBorder(Border.NO_BORDER));
+			invoiceTable.addCell(new Cell().add(new Paragraph("License Status:").setFont(boldFont).setFontSize(12))
+					.setBorder(Border.NO_BORDER));
+			invoiceTable
+					.addCell(new Cell().add(new Paragraph(payment.getLicense_status()).setFont(font).setFontSize(12))
+							.setBorder(Border.NO_BORDER));
 
-		invoiceTable.addCell(new Cell().add(new Paragraph("Receipt:").setFont(boldFont).setFontSize(12))
-				.setBorder(Border.NO_BORDER));
-		invoiceTable.addCell(new Cell().add(new Paragraph(payment.getReceipt()).setFont(font).setFontSize(12))
-				.setBorder(Border.NO_BORDER));
+			invoiceTable.addCell(new Cell().add(new Paragraph("Receipt:").setFont(boldFont).setFontSize(12))
+					.setBorder(Border.NO_BORDER));
+			invoiceTable.addCell(new Cell().add(new Paragraph(payment.getReceipt()).setFont(font).setFontSize(12))
+					.setBorder(Border.NO_BORDER));
 
-		// Status with uppercase and green text
-		invoiceTable.addCell(
-				new Cell().add(new Paragraph("Status:").setFont(boldFont).setFontSize(12)).setBorder(Border.NO_BORDER));
-		invoiceTable.addCell(new Cell().add(new Paragraph(payment.getStatus().toUpperCase()).setFont(font)
-				.setFontSize(12).setFontColor(ColorConstants.GREEN)).setBorder(Border.NO_BORDER));
+			// Status with uppercase and green text
+			invoiceTable.addCell(new Cell().add(new Paragraph("Status:").setFont(boldFont).setFontSize(12))
+					.setBorder(Border.NO_BORDER));
+			invoiceTable.addCell(new Cell().add(new Paragraph(payment.getStatus().toUpperCase()).setFont(font)
+					.setFontSize(12).setFontColor(ColorConstants.GREEN)).setBorder(Border.NO_BORDER));
 
-		invoiceTable.addCell(new Cell().add(new Paragraph("Payment Date/Time:").setFont(boldFont).setFontSize(12))
-				.setBorder(Border.NO_BORDER));
-		invoiceTable.addCell(
-				new Cell().add(new Paragraph(formattedDate).setFont(font).setFontSize(12)).setBorder(Border.NO_BORDER));
+			invoiceTable.addCell(new Cell().add(new Paragraph("Payment Date/Time:").setFont(boldFont).setFontSize(12))
+					.setBorder(Border.NO_BORDER));
+			invoiceTable.addCell(new Cell().add(new Paragraph(formattedDate).setFont(font).setFontSize(12))
+					.setBorder(Border.NO_BORDER));
 
-		document.add(invoiceTable);
+			document.add(invoiceTable);
 
-		// Divider
-		document.add(new Paragraph("\n"));
+			// Divider
+			document.add(new Paragraph("\n"));
 
-		/*
-		 * Cell invoiceDetailsCell = new Cell() .add(new
-		 * Paragraph("Invoice No:").setFont(boldFont).setFontSize(16).setMarginBottom(10
-		 * )) .add(new Paragraph(payment.getReceipt()).setFont(font).setFontSize(12))
-		 * .add(new
-		 * Paragraph("Invoice Date:").setFont(boldFont).setFontSize(16).setMarginTop(10)
-		 * ) .add(new Paragraph(formattedDate).setFont(font).setFontSize(12)) .add(new
-		 * Paragraph("Order No:").setFont(boldFont).setFontSize(16).setMarginTop(10))
-		 * .add(new Paragraph(payment.getOrderId()).setFont(font).setFontSize(12))
-		 * .add(new
-		 * Paragraph("Payment ID:").setFont(boldFont).setFontSize(16).setMarginTop(10))
-		 * .add(new Paragraph(payment.getPaymentId()).setFont(font).setFontSize(12))
-		 * .setTextAlignment(TextAlignment.RIGHT) .setBorder(Border.NO_BORDER);
-		 * 
-		 * billingTable.addCell(billedToCell); billingTable.addCell(invoiceDetailsCell);
-		 * document.add(billingTable);
-		 */
-		// Divider
-		document.add(new Paragraph("\n"));
+			/*
+			 * Cell invoiceDetailsCell = new Cell() .add(new
+			 * Paragraph("Invoice No:").setFont(boldFont).setFontSize(16).setMarginBottom(10
+			 * )) .add(new Paragraph(payment.getReceipt()).setFont(font).setFontSize(12))
+			 * .add(new
+			 * Paragraph("Invoice Date:").setFont(boldFont).setFontSize(16).setMarginTop(10)
+			 * ) .add(new Paragraph(formattedDate).setFont(font).setFontSize(12)) .add(new
+			 * Paragraph("Order No:").setFont(boldFont).setFontSize(16).setMarginTop(10))
+			 * .add(new Paragraph(payment.getOrderId()).setFont(font).setFontSize(12))
+			 * .add(new
+			 * Paragraph("Payment ID:").setFont(boldFont).setFontSize(16).setMarginTop(10))
+			 * .add(new Paragraph(payment.getPaymentId()).setFont(font).setFontSize(12))
+			 * .setTextAlignment(TextAlignment.RIGHT) .setBorder(Border.NO_BORDER);
+			 * 
+			 * billingTable.addCell(billedToCell); billingTable.addCell(invoiceDetailsCell);
+			 * document.add(billingTable);
+			 */
+			// Divider
+			document.add(new Paragraph("\n"));
 
-		// Order Summary Table
-		Table orderSummaryTable = new Table(UnitValue.createPercentArray(new float[] { 1, 4, 2, 2, 1, 2 }))
-				.useAllAvailableWidth().setMarginBottom(20);
+			// Order Summary Table
+			Table orderSummaryTable = new Table(UnitValue.createPercentArray(new float[] { 1, 4, 2, 2, 1, 2 }))
+					.useAllAvailableWidth().setMarginBottom(20);
 
-		orderSummaryTable.addHeaderCell(new Cell().add(new Paragraph("No.").setFont(boldFont).setFontSize(12))
-				.setBackgroundColor(ColorConstants.LIGHT_GRAY));
-		orderSummaryTable.addHeaderCell(new Cell().add(new Paragraph("Item").setFont(boldFont).setFontSize(12))
-				.setBackgroundColor(ColorConstants.LIGHT_GRAY));
-		orderSummaryTable.addHeaderCell(new Cell().add(new Paragraph("Price (INR)").setFont(boldFont).setFontSize(12))
-				.setBackgroundColor(ColorConstants.LIGHT_GRAY));
-		orderSummaryTable
-				.addHeaderCell(new Cell().add(new Paragraph("Discount (INR)").setFont(boldFont).setFontSize(12))
-						.setBackgroundColor(ColorConstants.LIGHT_GRAY));
-		orderSummaryTable.addHeaderCell(new Cell().add(new Paragraph("Tax (GST)").setFont(boldFont).setFontSize(12))
-				.setBackgroundColor(ColorConstants.LIGHT_GRAY));
+			orderSummaryTable.addHeaderCell(new Cell().add(new Paragraph("No.").setFont(boldFont).setFontSize(12))
+					.setBackgroundColor(ColorConstants.LIGHT_GRAY));
+			orderSummaryTable.addHeaderCell(new Cell().add(new Paragraph("Item").setFont(boldFont).setFontSize(12))
+					.setBackgroundColor(ColorConstants.LIGHT_GRAY));
+			orderSummaryTable
+					.addHeaderCell(new Cell().add(new Paragraph("Price (INR)").setFont(boldFont).setFontSize(12))
+							.setBackgroundColor(ColorConstants.LIGHT_GRAY));
+			orderSummaryTable
+					.addHeaderCell(new Cell().add(new Paragraph("Discount (INR)").setFont(boldFont).setFontSize(12))
+							.setBackgroundColor(ColorConstants.LIGHT_GRAY));
+			orderSummaryTable.addHeaderCell(new Cell().add(new Paragraph("Tax (GST)").setFont(boldFont).setFontSize(12))
+					.setBackgroundColor(ColorConstants.LIGHT_GRAY));
 //		orderSummaryTable.addHeaderCell(new Cell().add(new Paragraph("Quantity").setFont(boldFont).setFontSize(12))
 //				.setBackgroundColor(ColorConstants.LIGHT_GRAY));
-		orderSummaryTable.addHeaderCell(new Cell().add(new Paragraph("Total").setFont(boldFont).setFontSize(12))
-				.setBackgroundColor(ColorConstants.LIGHT_GRAY).setTextAlignment(TextAlignment.RIGHT));
+			orderSummaryTable.addHeaderCell(new Cell().add(new Paragraph("Total").setFont(boldFont).setFontSize(12))
+					.setBackgroundColor(ColorConstants.LIGHT_GRAY).setTextAlignment(TextAlignment.RIGHT));
 
-		orderSummaryTable.addCell(new Cell().add(new Paragraph("01").setFont(font).setFontSize(12)));
-		orderSummaryTable.addCell(new Cell().add(new Paragraph(
-				"EMS SUBSCRIPTION\nValidity: " + subscriptionPlans.getPlan_description() + "\nLicense Number: "
-						+ payment.getLicense_number() + "\nLic. Issue Date: " + payment.getSubscription_start_date()
-						+ "\nLic. End Date: " + payment.getSubscription_expiry_date() + "" + "\nQuantity: 1")
-				.setFont(font).setFontSize(12)));
-		float amt_without_gst = payment.getAmount() - payment.getGst_amount();
-		float discount = payment.getDiscount();
-		float gst_amount = payment.getGst_amount();
-		// Formatted values
-		String formattedAmtWithoutDiscount = String.format("%.2f", amt_without_gst);
-		String formattedDiscount = String.format("%.2f", discount);
-		String formattedGstAmount = String.format("%.2f", gst_amount);
-		orderSummaryTable.addCell(
-				new Cell().add(new Paragraph("₹" + formattedAmtWithoutDiscount).setFont(font).setFontSize(12)));
-		orderSummaryTable
-				.addCell(new Cell().add(new Paragraph("₹ -" + formattedDiscount)).setFont(font).setFontSize(12));
-		orderSummaryTable.addCell(new Cell().add(new Paragraph("₹" + payment.getTax() + "   " + formattedGstAmount))
-				.setFont(font).setFontSize(12));
-//		orderSummaryTable.addCell(new Cell().add(new Paragraph("1").setFont(font).setFontSize(12)));
-		orderSummaryTable.addCell(new Cell().add(new Paragraph("₹" + payment.getAmount()).setFont(font).setFontSize(12))
-				.setTextAlignment(TextAlignment.RIGHT));
-
-		orderSummaryTable.addCell(new Cell(1, 5).add(
-				new Paragraph("Sub Total").setFont(boldFont).setFontSize(12).setTextAlignment(TextAlignment.RIGHT)));
-		orderSummaryTable.addCell(new Cell().add(new Paragraph("₹" + payment.getAmount()).setFont(font).setFontSize(12))
-				.setTextAlignment(TextAlignment.RIGHT));
-
-		orderSummaryTable.addCell(new Cell(1, 5).add(
-				new Paragraph("Discount").setFont(boldFont).setFontSize(12).setTextAlignment(TextAlignment.RIGHT)));
-		if (subscriptionPlans.getDiscount() == 0) {
-			orderSummaryTable.addCell(new Cell().add(new Paragraph("₹ NA ").setFont(font).setFontSize(12))
-					.setTextAlignment(TextAlignment.RIGHT));
-		} else {
+			orderSummaryTable.addCell(new Cell().add(new Paragraph("01").setFont(font).setFontSize(12)));
+			orderSummaryTable.addCell(new Cell().add(new Paragraph(
+					"EMS SUBSCRIPTION\nValidity: " + subscriptionPlans.getPlan_description() + "\nLicense Number: "
+							+ payment.getLicense_number() + "\nLic. Issue Date: " + payment.getSubscription_start_date()
+							+ "\nLic. End Date: " + payment.getSubscription_expiry_date() + "" + "\nQuantity: 1")
+					.setFont(font).setFontSize(12)));
+			float amt_without_gst = payment.getAmount() - payment.getGst_amount();
+			float discount = payment.getDiscount();
+			float gst_amount = payment.getGst_amount();
+			// Formatted values
+			String formattedAmtWithoutDiscount = String.format("%.2f", amt_without_gst);
+			String formattedDiscount = String.format("%.2f", discount);
+			String formattedGstAmount = String.format("%.2f", gst_amount);
 			orderSummaryTable.addCell(
-					new Cell().add(new Paragraph("₹" + subscriptionPlans.getDiscount()).setFont(font).setFontSize(12))
-							.setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
-		}
-		orderSummaryTable.addCell(new Cell(1, 5)
-				.add(new Paragraph("Total").setFont(boldFont).setFontSize(12).setTextAlignment(TextAlignment.RIGHT)));
-		orderSummaryTable.addCell(new Cell().add(new Paragraph("₹" + payment.getAmount()).setFont(font).setFontSize(12))
-				.setTextAlignment(TextAlignment.RIGHT));
+					new Cell().add(new Paragraph("₹" + formattedAmtWithoutDiscount).setFont(font).setFontSize(12)));
+			orderSummaryTable
+					.addCell(new Cell().add(new Paragraph("₹ -" + formattedDiscount)).setFont(font).setFontSize(12));
+			orderSummaryTable.addCell(new Cell().add(new Paragraph("₹" + payment.getTax() + "   " + formattedGstAmount))
+					.setFont(font).setFontSize(12));
+//		orderSummaryTable.addCell(new Cell().add(new Paragraph("1").setFont(font).setFontSize(12)));
+			orderSummaryTable
+					.addCell(new Cell().add(new Paragraph("₹" + payment.getAmount()).setFont(font).setFontSize(12))
+							.setTextAlignment(TextAlignment.RIGHT));
 
-		document.add(orderSummaryTable);
+			orderSummaryTable.addCell(new Cell(1, 5).add(new Paragraph("Sub Total").setFont(boldFont).setFontSize(12)
+					.setTextAlignment(TextAlignment.RIGHT)));
+			orderSummaryTable
+					.addCell(new Cell().add(new Paragraph("₹" + payment.getAmount()).setFont(font).setFontSize(12))
+							.setTextAlignment(TextAlignment.RIGHT));
 
-		// Divider
-		document.add(new Paragraph("\n"));
+			orderSummaryTable.addCell(new Cell(1, 5).add(
+					new Paragraph("Discount").setFont(boldFont).setFontSize(12).setTextAlignment(TextAlignment.RIGHT)));
+			if (subscriptionPlans.getDiscount() == 0) {
+				orderSummaryTable.addCell(new Cell().add(new Paragraph("₹ NA ").setFont(font).setFontSize(12))
+						.setTextAlignment(TextAlignment.RIGHT));
+			} else {
+				orderSummaryTable.addCell(new Cell()
+						.add(new Paragraph("₹" + subscriptionPlans.getDiscount()).setFont(font).setFontSize(12))
+						.setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
+			}
+			orderSummaryTable.addCell(new Cell(1, 5).add(
+					new Paragraph("Total").setFont(boldFont).setFontSize(12).setTextAlignment(TextAlignment.RIGHT)));
+			orderSummaryTable
+					.addCell(new Cell().add(new Paragraph("₹" + payment.getAmount()).setFont(font).setFontSize(12))
+							.setTextAlignment(TextAlignment.RIGHT));
 
-		// Terms and Conditions
-		Paragraph termsTitle = new Paragraph("Terms and Conditions").setFont(boldFont).setFontSize(14)
-				.setTextAlignment(TextAlignment.LEFT).setMarginBottom(10);
-		document.add(termsTitle);
+			document.add(orderSummaryTable);
 
-		Div termsDiv = new Div();
-		termsDiv.add(new Paragraph("1. Payment Invoice valid for 1 Day.").setFont(font).setFontSize(12));
-		termsDiv.add(
-				new Paragraph("2. Late payments may be subject to additional charges.").setFont(font).setFontSize(12));
-		termsDiv.add(new Paragraph("3. Please contact support for any discrepancies in your invoice.").setFont(font)
-				.setFontSize(12));
-		termsDiv.add(new Paragraph("4. All sales are final. No refunds.").setFont(font).setFontSize(12));
-		termsDiv.add(new Paragraph("5. This invoice is subject to the terms and conditions of our service agreement.")
-				.setFont(font).setFontSize(12));
-		document.add(termsDiv);
+			// Divider
+			document.add(new Paragraph("\n"));
 
-		document.close();
-		}
-		catch (Exception e) {
+			// Terms and Conditions
+			Paragraph termsTitle = new Paragraph("Terms and Conditions").setFont(boldFont).setFontSize(14)
+					.setTextAlignment(TextAlignment.LEFT).setMarginBottom(10);
+			document.add(termsTitle);
+
+			Div termsDiv = new Div();
+			termsDiv.add(new Paragraph("1. Payment Invoice valid for 1 Day.").setFont(font).setFontSize(12));
+			termsDiv.add(new Paragraph("2. Late payments may be subject to additional charges.").setFont(font)
+					.setFontSize(12));
+			termsDiv.add(new Paragraph("3. Please contact support for any discrepancies in your invoice.").setFont(font)
+					.setFontSize(12));
+			termsDiv.add(new Paragraph("4. All sales are final. No refunds.").setFont(font).setFontSize(12));
+			termsDiv.add(
+					new Paragraph("5. This invoice is subject to the terms and conditions of our service agreement.")
+							.setFont(font).setFontSize(12));
+			document.add(termsDiv);
+
+			document.close();
+		} catch (Exception e) {
 			String exceptionAsString = e.toString();
 			// Get the current class
 			Class<?> currentClass = Servicelayer.class;
@@ -2881,29 +2855,27 @@ public class Servicelayer {
 
 		}
 	}
-	
+
 //	public Page<UserDetail> findPaginated(int page, int size) {
 //	    Pageable pageable = PageRequest.of(page, size);
 //	    Page<UserDetail> page2= userDetailDao.findAllEnabledUser(pageable);
 //	    return page2;
 //	}
-	
+
 	public Page<UserDetail> findPaginated(List<UserDetail> sortedList, int page, int pageSize) {
-		try
-		{
-	    int startItem = page * pageSize;
-	    List<UserDetail> paginatedList;
+		try {
+			int startItem = page * pageSize;
+			List<UserDetail> paginatedList;
 
-	    if (sortedList.size() < startItem) {
-	        paginatedList = Collections.emptyList();
-	    } else {
-	        int toIndex = Math.min(startItem + pageSize, sortedList.size());
-	        paginatedList = sortedList.subList(startItem, toIndex);
-	    }
+			if (sortedList.size() < startItem) {
+				paginatedList = Collections.emptyList();
+			} else {
+				int toIndex = Math.min(startItem + pageSize, sortedList.size());
+				paginatedList = sortedList.subList(startItem, toIndex);
+			}
 
-	    return new PageImpl<>(paginatedList, PageRequest.of(page, pageSize), sortedList.size());
-		}
-		catch (Exception e) {
+			return new PageImpl<>(paginatedList, PageRequest.of(page, pageSize), sortedList.size());
+		} catch (Exception e) {
 			String exceptionAsString = e.toString();
 			// Get the current class
 			Class<?> currentClass = Servicelayer.class;
@@ -2920,9 +2892,8 @@ public class Servicelayer {
 		}
 	}
 
-  public void update_login_dao(User user)
-  {
-	  userLoginDao.updateSessionInterruptedStatus(user.getId());
-      userLoginDao.setDefaultLogoutTime(user.getId());
-  }
+	public void update_login_dao(User user) {
+		userLoginDao.updateSessionInterruptedStatus(user.getId());
+		userLoginDao.setDefaultLogoutTime(user.getId());
+	}
 }

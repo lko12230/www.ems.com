@@ -73,48 +73,39 @@ public class CustomLoginFailureHandler extends SimpleUrlAuthenticationFailureHan
 							// Send email for every failed login attempt
 							String subject = "Security Alert: Failed Login Attempt on Your Account";
 
-							String emailContent = "<!DOCTYPE html>" +
-						            "<html lang='en'>" +
-						            "<head>" +
-						            "    <meta charset='UTF-8'>" +
-						            "    <meta name='viewport' content='width=device-width, initial-scale=1.0'>" +
-						            "    <style>" +
-						            "        /* Your styles here */" +
-						            "    </style>" +
-						            "</head>" +
-						            "<body>" +
-						            "    <div class='email-container'>" +
-						            "        <div class='header'>" +
-						            "            <h1>Login Attempt Notification</h1>" +
-						            "        </div>" +
-						            "        <div class='content'>" +
-						            "            <p>Dear " + username + ",</p>" +
-						            "            <p>Your account has been successfully logged into. Below are the details:</p>" +
-						            "            <div class='info-box'>" +
-						            "                <p><strong>Username:</strong> <span class='highlight'>" + username + "</span></p>" +
-						            "                <p><strong>IP Address:</strong> <span class='highlight'>" + ipAddress + "</span></p>" +
-						            "                <p><strong>Device Login Time:</strong> <span class='highlight'>" + new Date() + "</span></p>" +
-						            "                <p><strong>Device OS:</strong> <span class='highlight'>" + osName + "</span></p>" +
-						            "                <p><strong>Device Version:</strong> <span class='highlight'>" + osVersion + "</span></p>" +
-						            "                <p><strong>Device Architecture:</strong> <span class='highlight'>" + osArchitecture + "</span></p>" +
-						            "            </div>" +
-						            "            <p>If this was not you, we recommend taking the following actions:</p>" +
-						            "            <ul class='action-list'>" +
-						            "                <li>Change your password.</li>" +
-						            "                <li>Enable two-factor authentication if not already done.</li>" +
-						            "                <li>Review recent account activity.</li>" +
-						            "            </ul>" +
-						            "            <p>If you need assistance, please contact our support team at <a href='mailto:support@example.com'>support@example.com</a>.</p>" +
-						            "            <p>Thank you for your attention to this matter.</p>" +
-						            "            <p>Best regards,</p>" +
-						            "            <p><strong>Cyber Security Team</strong></p>" +
-						            "        </div>" +
-						            "        <div class='footer'>" +
-						            "            <p>Need help? <a href='#'>Visit our Help Center</a> or contact us at [Support Contact Info]</p>" +
-						            "        </div>" +
-						            "    </div>" +
-						            "</body>" +
-						            "</html>";
+							String emailContent = "<!DOCTYPE html>" + "<html lang='en'>" + "<head>"
+									+ "    <meta charset='UTF-8'>"
+									+ "    <meta name='viewport' content='width=device-width, initial-scale=1.0'>"
+									+ "    <style>" + "        /* Your styles here */" + "    </style>" + "</head>"
+									+ "<body>" + "    <div class='email-container'>" + "        <div class='header'>"
+									+ "            <h1>Login Attempt Notification</h1>" + "        </div>"
+									+ "        <div class='content'>" + "            <p>Dear " + username + ",</p>"
+									+ "            <p>Your account has been successfully logged into. Below are the details:</p>"
+									+ "            <div class='info-box'>"
+									+ "                <p><strong>Username:</strong> <span class='highlight'>"
+									+ username + "</span></p>"
+									+ "                <p><strong>IP Address:</strong> <span class='highlight'>"
+									+ ipAddress + "</span></p>"
+									+ "                <p><strong>Device Login Time:</strong> <span class='highlight'>"
+									+ new Date() + "</span></p>"
+									+ "                <p><strong>Device OS:</strong> <span class='highlight'>" + osName
+									+ "</span></p>"
+									+ "                <p><strong>Device Version:</strong> <span class='highlight'>"
+									+ osVersion + "</span></p>"
+									+ "                <p><strong>Device Architecture:</strong> <span class='highlight'>"
+									+ osArchitecture + "</span></p>" + "            </div>"
+									+ "            <p>If this was not you, we recommend taking the following actions:</p>"
+									+ "            <ul class='action-list'>"
+									+ "                <li>Change your password.</li>"
+									+ "                <li>Enable two-factor authentication if not already done.</li>"
+									+ "                <li>Review recent account activity.</li>" + "            </ul>"
+									+ "            <p>If you need assistance, please contact our support team at <a href='mailto:support@example.com'>support@example.com</a>.</p>"
+									+ "            <p>Thank you for your attention to this matter.</p>"
+									+ "            <p>Best regards,</p>"
+									+ "            <p><strong>Cyber Security Team</strong></p>" + "        </div>"
+									+ "        <div class='footer'>"
+									+ "            <p>Need help? <a href='#'>Visit our Help Center</a> or contact us at [Support Contact Info]</p>"
+									+ "        </div>" + "    </div>" + "</body>" + "</html>";
 
 							CompletableFuture<Boolean> flagFuture = emailService.sendEmail(emailContent, subject,
 									email);
