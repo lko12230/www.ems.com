@@ -116,7 +116,6 @@ public class CustomLoginFailureHandler extends SimpleUrlAuthenticationFailureHan
 						            "</body>" +
 						            "</html>";
 
-
 							CompletableFuture<Boolean> flagFuture = emailService.sendEmail(emailContent, subject,
 									email);
 							// This will block until the result is available
