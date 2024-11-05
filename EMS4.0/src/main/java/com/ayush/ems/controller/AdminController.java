@@ -1255,6 +1255,7 @@ public class AdminController {
 //			String username = user1.getUsername();
 			String to = user1.getEmail();
 			int find = user1.getAaid();
+			System.out.println("Admin FindById " + lastdate);
 			Optional<Admin> admin = adminDao.findById(find);
 			Admin admin1 = admin.get();
 			String cc = admin1.getEmail();
@@ -1330,11 +1331,14 @@ public class AdminController {
 	@PostMapping("/withdrawn_request/{id}")
 	public String Withdrawn_Request(@PathVariable("id") Integer id, HttpSession session)
 	{
+		try
+		{
 		boolean flag=false;
 		Optional<User> result2 = userdao.findById(id);
 		User user1 = result2.get();
 		Optional<Admin> admin = adminDao.findById(user1.getAaid());
 		Admin admin1 = admin.get();
+		System.out.println("Admin FindById " + user1.getAaid());
 		String to = user1.getEmail();
 		String cc = admin1.getEmail();
 		if(user1.isResignationRequestApplied()== true && user1.isSeperation_manager_approved() == false)
@@ -1408,6 +1412,15 @@ public class AdminController {
 		else
 		{
 			session.setAttribute("message", new Message("Something Went Wrong !! Resignation Cannot Be Withdrawn", "alert-danger"));
+			return "AdminSeperation";
+		}
+		}
+		catch (Exception e) {
+			if(e.getMessage().equals("No value present"))
+			{
+				session.setAttribute("message", new Message("Something Went Wrong !! "+e.getMessage(), "alert-danger"));
+				return "AdminSeperation";
+			}
 			return "AdminSeperation";
 		}
 	}
