@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
+import javax.persistence.EntityManagerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -49,30 +51,30 @@ public class EMSMAIN {
 	public static Map<String, Date> loginCaptcha = new HashMap<>();
 	public static Map<String, String> licenseStatus = new HashMap<>();
 
-	@Scheduled(cron = "0 0/1 * * * *")
+	@Scheduled(cron = "* * * * * *")
 	public void accountLockedJob() {
-		executeJob("Account_Locked_job", () -> servicelayer.getAllUsersByAccount_Non_LockedAndFailed_Attempts());
+		executeJob("Account Locked Job", () -> servicelayer.getAllUsersByAccount_Non_LockedAndFailed_Attempts());
 	}
 
-	@Scheduled(cron = "0 0/1 * * * *")
+	@Scheduled(cron = "0 0/1  * * * *")
 	public void oldOrdersArchiveJob() {
-		executeJob("Login_Old_Orders_Job", servicelayer::getAllOrdersAdddate);
+		executeJob("Login Old Orders Job", servicelayer::getAllOrdersAdddate);
 	}
 
-	@Scheduled(cron = "0 0/1 * * * *")
+	@Scheduled(cron = "0 0/1  * * * *")
 	public void loginOldDataArchiveJob() {
-		executeJob("Login_Archive_Job", servicelayer::getAllLoginAdddate);
+		executeJob("Login Archive Job", servicelayer::getAllLoginAdddate);
 	}
 
-	@Scheduled(cron = "0 0/1 * * * *")
+	@Scheduled(cron = "* * * * * *")
 	public void archiveDisabledOldUserJob() {
-		executeJob("Archive_Disabled_Old_User_Job", () -> {
+		executeJob("Archive Disabled Old User Job", () -> {
 			servicelayer.Archive_Disabled_Old_UserDetail_Job();
 			servicelayer.Archive_Disabled_Old_User_Job();
 		});
 	}
 
-	@Scheduled(cron = "0 0/1 * * * *")
+	@Scheduled(cron = "* * * * * *")
 	public void isEnabledJob() {
 		executeJob("Is Enabled Job", servicelayer::schedulerInactivateAccount);
 	}
@@ -82,17 +84,17 @@ public class EMSMAIN {
 		executeJob("Password Failed Attempt Reset", servicelayer::reset_failed_attempts_password);
 	}
 
-//	@Scheduled(cron = "0 0/1 * * * *")
+//	@Scheduled(cron = "* * * * * *")
 //	public void updateUserInactiveStatus() {
 //		executeJob("Update_User_Inactive_Status", servicelayer::user_inactive);
 //	}
 //
-//	@Scheduled(cron = "0 0/1 * * * *")
+//	@Scheduled(cron = "* * * * * *")
 //	public void getUserStatus() {
 //		executeJob("get_user_status", servicelayer::update_interrupt_user_status);
 //	}
 
-	@Scheduled(cron = "0 0/1 * * * *")
+	@Scheduled(cron = "* * * * * *")
 	public void deleteOldErrorLog() {
 		executeJob("Delete Old Error Log", () -> {
 			servicelayer.delete_old_error_log();
@@ -111,70 +113,85 @@ public class EMSMAIN {
 		});
 	}
 
-	@Scheduled(cron = "0 0/1 * * * *")
+	@Scheduled(cron = "* * * * * *")
 	public void captchaValidate() {
 		executeJob("Captcha Validate", servicelayer::validate_home_captcha);
 	}
 
-	@Scheduled(cron = "0 0/1 * * * *")
+	@Scheduled(cron = "* * * * * *")
 	public void otpValidate() {
 		executeJob("OTP Validate", servicelayer::validate_otp);
 	}
 
-	@Scheduled(cron = "0 0/1 * * * *")
+	@Scheduled(cron = "* * * * * *")
 	public void disableExpiredPlanUsers() {
 		executeJob("Disbaled Expired Plan Users", () -> servicelayer.disbaled_expired_plan_users("Disbaled Expired Plan Users"));
 	}
 
-//	@Scheduled(cron = "0 0/1 * * * *")
+//	@Scheduled(cron = "* * * * * *")
 //	public void expiredLicenseStatus() {
 //		executeJob("expired_license_status", servicelayer::expired_license_status);
 //	}
 
-	@Scheduled(cron = "0 0/1 * * * *")
+	@Scheduled(cron = "* * * * * *")
 	public void loginRetryEmails() {
 		executeJob("Email Retry", emailService::retryFailedEmails);
 	}
 
-	@Scheduled(cron = "0 0/1 * * * *")
+	@Scheduled(cron = "* * * * * *")
 	public void forgotOTPRetryEmails() {
 		executeJob("Forgot OTP Email Retry", forgotOTPEmailService::retryFailedEmails);
 	}
 
-	@Scheduled(cron = "0 0/1 * * * *")
+	@Scheduled(cron = "* * * * * *")
 	public void loginHistoryExportExcelRetryEmails() {
 		executeJob("Login History Export Email Retry", loginHistoryExportEmail::retryFailedEmails);
 	}
 
-	@Scheduled(cron = "0 0/1 * * * *")
+	@Scheduled(cron = "* * * * * *")
 	public void paymentSuccessEmailServiceRetryEmails() {
 		executeJob("Payment Success Email Retry", paymentSucessEmailService::retryFailedEmails);
 	}
 
-	@Scheduled(cron = "0 0/1 * * * *")
+	@Scheduled(cron = "* * * * * *")
 	public void teamEmailServiceRetryEmails() {
 		executeJob("Team Email Retry", teamEmailService::retryFailedEmails);
 	}
 
+	@Autowired
+	private EntityManagerFactory entityManagerFactory;
+
 	private void executeJob(String jobName, Runnable jobLogic) {
-		if (!lock.tryLock()) {
-			System.out.println("Job " + jobName + " is already running. Skipping execution.");
-			return;
-		}
-		try {
-			String status = servicelayer.getjob_active_or_not(jobName);
-			if ("Y".equalsIgnoreCase(status)) {
-				jobLogic.run();
-				servicelayer.jobrunning(jobName);
-			} else {
-				servicelayer.jobnotrunning(jobName);
-			}
-		} catch (Exception e) {
-			logAndHandleException(e, jobName);
-		} finally {
-			lock.unlock();
-		}
+	    if (!lock.tryLock()) {
+	        System.out.println("Job " + jobName + " is already running. Skipping execution.");
+	        return;
+	    }
+	    
+	    // Check if EntityManagerFactory is open before proceeding
+	    if (!entityManagerFactory.isOpen()) {
+	        System.out.println("EntityManagerFactory is closed. Skipping job execution for " + jobName);
+	        return;
+	    }
+	    
+	    try {
+	        String status = servicelayer.getjob_active_or_not(jobName);
+	    	System.out.println(jobName+"EXCEPTION "+status);
+
+	        if ("Y".equalsIgnoreCase(status)) {
+	            jobLogic.run();
+	            System.out.println(jobName + " Job Status " + status);
+	            servicelayer.jobrunning(jobName);
+	        } else {
+	            servicelayer.jobnotrunning(jobName);
+	        }
+	    } catch (Exception e) {
+//	        logAndHandleException(e, jobName);
+	    	System.out.println(e);
+	    } finally {
+	        lock.unlock();
+	    }
 	}
+
 
 	private void logAndHandleException(Exception e, String jobName) {
 		String exceptionAsString = e.toString();

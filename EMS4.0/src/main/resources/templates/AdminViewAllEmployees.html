@@ -56,8 +56,18 @@
     </div>
 </div>
 <br>
+
+<!-- Check if allDetails list is empty -->
+<div th:if="${all_emp_records.isEmpty()}">
+    <div class="card text-center">
+        <div class="card-body">
+            <h5 class="card-title" style="color: red; font-weight: bold;">Record Not Found</h5>
+        </div>
+    </div>
+</div>
+
        <!-- Pagination -->
-     <div th:if="${all_inbound_records != null and #lists.size(all_inbound_records.content) > 0}">
+     <div th:if="${all_emp_records != null and #lists.size(all_emp_records.content) > 0}">
         <nav aria-label="Page navigation example">
             <ul class="pagination">
                 <!-- Previous Button -->
@@ -99,7 +109,7 @@
     </div>
             <table>
                 <tbody>
-                    <tr th:each="c : ${all_inbound_records}">
+                    <tr th:each="c : ${all_emp_records}">
                         <td>
                             <div class="member-entry">
                                 <div th:if="${c.gender.equals('Male') and c.Image_Url.equals('default.jpg')}">
@@ -177,7 +187,7 @@
                 </tbody>
             </table>
             <!-- Pagination -->
-     <div th:if="${all_inbound_records != null and #lists.size(all_inbound_records.content) > 0}">
+     <div th:if="${all_emp_records != null and #lists.size(all_emp_records.content) > 0}">
         <nav aria-label="Page navigation example">
             <ul class="pagination">
                 <!-- Previous Button -->

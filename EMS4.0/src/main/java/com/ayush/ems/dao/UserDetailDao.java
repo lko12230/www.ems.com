@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 import com.ayush.ems.entities.UserDetail;
 
 public interface UserDetailDao extends JpaRepository<UserDetail, Integer> {
-	@Query("select u from UserDetail u where u.team = :team and length(u.team) > 1 and u.enabled = 1")
+	@Query("select u from UserDetail u where u.team = :team and length(u.team) > 1 and u.enabled = 1 and u.team <> 'NA'")
 	public List<UserDetail> getUserByTeam(String team);
 
 	@Query(value = "update employeedetail u set u.user_status='0' where u.email= ?1", nativeQuery = true)

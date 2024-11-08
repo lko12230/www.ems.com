@@ -667,8 +667,9 @@ public class ManagerController {
 			session.setAttribute("message", new Message("Your last working day is " + lastdate, "alert-success"));
 //			String username = user1.getUsername();
 			String to = user1.getEmail();
-			int find = user1.getAaid();
-			Optional<Admin> admin = adminDao.findById(find);
+			String adminId = user1.getAdmin_id();
+			int typeCastAdminId = Integer.parseInt(adminId);
+			Optional<Admin> admin = adminDao.findById(typeCastAdminId);
 			Admin admin1 = admin.get();
 			String cc = admin1.getEmail();
 //			EMSMAIN.id_with_email.put(user1.getId(), to);

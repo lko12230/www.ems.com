@@ -48,7 +48,6 @@ public class ArchiveDisabledUser implements Serializable{
 	private Date last_failed_attempt;
 	private int alert_message_sent;
 	private Date SystemDateAndTime;
-	private int aaid;
 	private String role;
 	private String ipAddress;
 	@Column(name = "account_non_locked")
@@ -79,5 +78,6 @@ public class ArchiveDisabledUser implements Serializable{
 	private String team;
 	private String company;
 	private String company_id;
+	private String admin_id;
 }
 

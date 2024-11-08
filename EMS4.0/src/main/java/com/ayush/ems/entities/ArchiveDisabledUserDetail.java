@@ -44,7 +44,7 @@ public class ArchiveDisabledUserDetail implements Serializable {
 	private String editwho;
 	private int alert_message_sent;
 	private Date SystemDateAndTime;
-	private int aaid;
+	private String admin_id;
 	private String role;
 	private String ipAddress;
 	@Column(name = "account_non_locked")

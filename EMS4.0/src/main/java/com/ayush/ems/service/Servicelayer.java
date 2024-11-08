@@ -41,10 +41,13 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -1033,75 +1036,121 @@ public class Servicelayer {
 		return filePath.toString();
 	}
 
-	public ByteArrayOutputStream exportUserLoginData() throws IOException {
-		List<UserLoginDateTime> dataInsertExcelList = userLoginDao.findAll();
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
+	public ByteArrayOutputStream exportUserLoginData(String generatedByEmail, String phone) throws IOException {
+	    List<UserLoginDateTime> dataInsertExcelList = userLoginDao.findAll();
+	    ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-		Workbook workbook = new XSSFWorkbook();
-		Sheet sheet = workbook.createSheet("USER_LOGIN_DATA");
+	    Workbook workbook = new XSSFWorkbook();
+	    Sheet sheet = workbook.createSheet("USER_LOGIN_DATA");
 
-		// Set column widths
-		sheet.setColumnWidth(0, 4000);
-		sheet.setColumnWidth(1, 5000);
-		sheet.setColumnWidth(2, 5000);
-		sheet.setColumnWidth(3, 7000);
-		sheet.setColumnWidth(4, 7000);
-		sheet.setColumnWidth(5, 5000);
-		sheet.setColumnWidth(6, 5000);
-		sheet.setColumnWidth(7, 5000);
+	    // Set column widths
+	    sheet.setColumnWidth(0, 4000);
+	    sheet.setColumnWidth(1, 5000);
+	    sheet.setColumnWidth(2, 5000);
+	    sheet.setColumnWidth(3, 7000);
+	    sheet.setColumnWidth(4, 7000);
+	    sheet.setColumnWidth(5, 5000);
+	    sheet.setColumnWidth(6, 5000);
+	    sheet.setColumnWidth(7, 5000);
+	    sheet.setColumnWidth(8, 7000);
 
-		// Create styles
-		Font headerFont = workbook.createFont();
-		headerFont.setFontHeightInPoints((short) 10);
-		headerFont.setFontName("Arial");
-		headerFont.setBold(true);
-		headerFont.setColor(IndexedColors.WHITE.getIndex());
+	    // Create styles
+	    Font headerFont = workbook.createFont();
+	    headerFont.setFontHeightInPoints((short) 10);
+	    headerFont.setFontName("Arial");
+	    headerFont.setBold(true);
+	    headerFont.setColor(IndexedColors.WHITE.getIndex());
 
-		CellStyle headerStyle = workbook.createCellStyle();
-		headerStyle.setFillForegroundColor(IndexedColors.BLACK.getIndex());
-		headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-		headerStyle.setFont(headerFont);
+	    CellStyle headerStyle = workbook.createCellStyle();
+	    headerStyle.setFillForegroundColor(IndexedColors.BLACK.getIndex());
+	    headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+	    headerStyle.setFont(headerFont);
 
-		CellStyle dateCellStyle = workbook.createCellStyle();
-		CreationHelper createHelper = workbook.getCreationHelper();
-		dateCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("yyyy-MM-dd HH:mm:ss"));
+	    CellStyle dateCellStyle = workbook.createCellStyle();
+	    CreationHelper createHelper = workbook.getCreationHelper();
+	    dateCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("yyyy-MM-dd HH:mm:ss"));
 
-		// Create header row
-		Row headerRow = sheet.createRow(0);
-		String[] columnHeaders = { "Employee ID", "LOGIN DATE TIME", "LOGOUT DATE TIME", "EMAIL", "IP ADDRESS",
-				"IS SESSION EXPIRED", "USERNAME", "USER STATUS" };
+	    CellStyle infoStyle = workbook.createCellStyle();
+	    infoStyle.setAlignment(HorizontalAlignment.LEFT);
+	    Font infoFont = workbook.createFont();
+	    infoFont.setFontHeightInPoints((short) 10);
+	    infoStyle.setFont(infoFont);
 
-		for (int i = 0; i < columnHeaders.length; i++) {
-			org.apache.poi.ss.usermodel.Cell cell = headerRow.createCell(i);
-			cell.setCellValue(columnHeaders[i]);
-			cell.setCellStyle(headerStyle);
-		}
+	    CellStyle titleStyle = workbook.createCellStyle();
+	    titleStyle.setAlignment(HorizontalAlignment.CENTER);
+	    titleStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+	    Font titleFont = workbook.createFont();
+	    titleFont.setFontHeightInPoints((short) 14);
+	    titleFont.setFontName("Arial");
+	    titleFont.setBold(true);
+	    titleStyle.setFont(titleFont);
 
-		// Populate data rows
-		int rowNum = 1;
-		for (UserLoginDateTime userLogin : dataInsertExcelList) {
-			Row row = sheet.createRow(rowNum++);
+	    // Add title row
+	    Row titleRow = sheet.createRow(0);
+	    org.apache.poi.ss.usermodel.Cell titleCell = titleRow.createCell(0);
+	    titleCell.setCellValue("Login History Report");
+	    titleCell.setCellStyle(titleStyle);
+	    sheet.addMergedRegion(new CellRangeAddress(0, 1, 0, 8)); // Merge title across all columns
 
-			row.createCell(0).setCellValue(userLogin.getId());
-			org.apache.poi.ss.usermodel.Cell loginDateCell = row.createCell(1);
-			loginDateCell.setCellValue(userLogin.getLoginDateAndTime());
-			loginDateCell.setCellStyle(dateCellStyle);
+	    // Add Excel generation metadata
+	    Row dateRow = sheet.createRow(2);
+	    org.apache.poi.ss.usermodel.Cell dateCell = dateRow.createCell(0);
+	    String generatedDateTime = "Generated on: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+	    dateCell.setCellValue(generatedDateTime);
+	    dateCell.setCellStyle(infoStyle);
+	    sheet.addMergedRegion(new CellRangeAddress(2, 2, 0, 8)); // Merged across columns
 
-			org.apache.poi.ss.usermodel.Cell logoutDateCell = row.createCell(2);
-			logoutDateCell.setCellValue(userLogin.getLogoutDateAndTime());
-			logoutDateCell.setCellStyle(dateCellStyle);
+	    Row emailRow = sheet.createRow(3);
+	    org.apache.poi.ss.usermodel.Cell emailCell = emailRow.createCell(0);
+	    emailCell.setCellValue("Generated by: " + generatedByEmail);
+	    emailCell.setCellStyle(infoStyle);
+	    sheet.addMergedRegion(new CellRangeAddress(3, 3, 0, 8)); // Merged across columns
 
-			row.createCell(3).setCellValue(userLogin.getEmail());
-			row.createCell(4).setCellValue(userLogin.getIpAddress());
-			row.createCell(5).setCellValue(userLogin.is_session_interrupted());
-			row.createCell(6).setCellValue(userLogin.getUsername());
-			row.createCell(7).setCellValue(userLogin.isUser_status());
-		}
+	    // Create header row
+	    Row headerRow = sheet.createRow(5); // Start header row after metadata
+	    String[] columnHeaders = { "Employee ID", "LOGIN DATE TIME", "LOGOUT DATE TIME", "EMAIL", "IP ADDRESS",
+	            "IS SESSION EXPIRED", "USERNAME", "USER STATUS", "Location" };
 
-		workbook.write(out);
-		workbook.close();
-		return out;
+	    for (int i = 0; i < columnHeaders.length; i++) {
+	        org.apache.poi.ss.usermodel.Cell cell = headerRow.createCell(i);
+	        cell.setCellValue(columnHeaders[i]);
+	        cell.setCellStyle(headerStyle);
+	    }
+
+	    // Populate data rows
+	    int rowNum = 6; // Start data rows after header row
+	    for (UserLoginDateTime userLogin : dataInsertExcelList) {
+	        Row row = sheet.createRow(rowNum++);
+
+	        row.createCell(0).setCellValue(userLogin.getId());
+	        org.apache.poi.ss.usermodel.Cell loginDateCell = row.createCell(1);
+	        loginDateCell.setCellValue(userLogin.getLoginDateAndTime());
+	        loginDateCell.setCellStyle(dateCellStyle);
+
+	        org.apache.poi.ss.usermodel.Cell logoutDateCell = row.createCell(2);
+	        logoutDateCell.setCellValue(userLogin.getLogoutDateAndTime());
+	        logoutDateCell.setCellStyle(dateCellStyle);
+
+	        row.createCell(3).setCellValue(userLogin.getEmail());
+	        row.createCell(4).setCellValue(userLogin.getIpAddress());
+	        row.createCell(5).setCellValue(userLogin.is_session_interrupted());
+	        row.createCell(6).setCellValue(userLogin.getUsername());
+	        row.createCell(7).setCellValue(userLogin.isUser_status());
+	        row.createCell(8).setCellValue(userLogin.getLocation());
+	    }
+
+	    // Validate generatedByEmail and phone
+	    String firstFourEmailCharacters = generatedByEmail.length() >= 4 ? generatedByEmail.substring(0, 4) : "GEN";
+	    String lastFourDigitPhoneNumber = phone.length() >= 4 ? phone.substring(phone.length() - 4) : "0000";
+
+	    // Protect the sheet
+	    sheet.protectSheet(firstFourEmailCharacters + lastFourDigitPhoneNumber); // Set the password for sheet protection
+	    workbook.write(out);
+	    workbook.close();
+	    return out;
 	}
+
+
 
 	public boolean update_profile(User user) {
 		try {
@@ -2609,7 +2658,7 @@ public class Servicelayer {
 					archiveDisabledUser.setLast_failed_attempt(user_info_get.getLast_failed_attempt());
 					archiveDisabledUser.setAlert_message_sent(user_info_get.getAlert_message_sent());
 					archiveDisabledUser.setSystemDateAndTime(user_info_get.getSystemDateAndTime());
-					archiveDisabledUser.setAaid(user_info_get.getAaid());
+					archiveDisabledUser.setAdmin_id(user_info_get.getAdmin_id());
 					archiveDisabledUser.setRole(user_info_get.getRole());
 					archiveDisabledUser.setIpAddress(user_info_get.getIpAddress());
 					archiveDisabledUser.setAccountNonLocked(user_info_get.isAccountNonLocked());
@@ -2665,7 +2714,7 @@ public class Servicelayer {
 					archiveDisabledUser.setLast_failed_attempt(user_info_get.getLast_failed_attempt());
 					archiveDisabledUser.setAlert_message_sent(user_info_get.getAlert_message_sent());
 					archiveDisabledUser.setSystemDateAndTime(user_info_get.getSystemDateAndTime());
-					archiveDisabledUser.setAaid(user_info_get.getAaid());
+					archiveDisabledUser.setAdmin_id(user_info_get.getAdmin_id());
 					archiveDisabledUser.setRole(user_info_get.getRole());
 					archiveDisabledUser.setIpAddress(user_info_get.getIpAddress());
 					archiveDisabledUser.setAccountNonLocked(user_info_get.isAccountNonLocked());

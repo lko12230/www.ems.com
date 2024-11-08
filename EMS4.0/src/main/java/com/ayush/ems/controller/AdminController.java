@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.security.GeneralSecurityException;
 import java.security.Principal;
 import java.time.Duration;
 import java.time.LocalDate;
@@ -334,7 +335,7 @@ public class AdminController {
 	            Page<UserDetail> user_page = servicelayer.findPaginated(all_users, page, pageSize);
 
 	            // Add the sorted and paginated data to the model
-	            model.addAttribute("all_inbound_records", user_page);
+	            model.addAttribute("all_emp_records", user_page);
 	            model.addAttribute("currentPage", page);
 	            model.addAttribute("totalPages", user_page.getTotalPages());
 	            model.addAttribute("selectedPageSize", pageSize); // For Thymeleaf page size selection
@@ -388,7 +389,7 @@ public class AdminController {
 				UserDetail userDetail = userOptional.get();
 				model.addAttribute("userdetail", userDetail);
 				model.addAttribute("title", "update form - " + userDetail.getUsername());
-				return "AdminViewEmpProfile";
+				return "AdminEmpProfile";
 			} else {
 				throw new Exception();
 			}
@@ -1254,9 +1255,10 @@ public class AdminController {
 			session.setAttribute("message", new Message("Your last working day is " + lastdate, "alert-success"));
 //			String username = user1.getUsername();
 			String to = user1.getEmail();
-			int find = user1.getAaid();
+			String adminId = user1.getAdmin_id();
+			int typeCastAdminId = Integer.parseInt(adminId);
 			System.out.println("Admin FindById " + lastdate);
-			Optional<Admin> admin = adminDao.findById(find);
+			Optional<Admin> admin = adminDao.findById(typeCastAdminId);
 			Admin admin1 = admin.get();
 			String cc = admin1.getEmail();
 //			EMSMAIN.id_with_email.put(user1.getId(), to);
@@ -1336,9 +1338,11 @@ public class AdminController {
 		boolean flag=false;
 		Optional<User> result2 = userdao.findById(id);
 		User user1 = result2.get();
-		Optional<Admin> admin = adminDao.findById(user1.getAaid());
+		String adminId = user1.getAdmin_id();
+		int typeCastAdminId = Integer.parseInt(adminId);
+		Optional<Admin> admin = adminDao.findById(typeCastAdminId);
 		Admin admin1 = admin.get();
-		System.out.println("Admin FindById " + user1.getAaid());
+		System.out.println("Admin FindById " + typeCastAdminId);
 		String to = user1.getEmail();
 		String cc = admin1.getEmail();
 		if(user1.isResignationRequestApplied()== true && user1.isSeperation_manager_approved() == false)
@@ -1716,10 +1720,11 @@ public class AdminController {
 //	} // method end***
 	
 	 @PostMapping("/export_excel")
-	 public ResponseEntity<byte[]> exportExcel() {
+	 public ResponseEntity<byte[]> exportExcel(User user) throws GeneralSecurityException {
 	        ByteArrayOutputStream out;
 	        try {
-	            out = servicelayer.exportUserLoginData();
+	        	System.out.println("EXPORT EXCEL "+user.getPhone());
+	            out = servicelayer.exportUserLoginData(user.getEmail(),user.getPhone());
 	        } catch (IOException e) {
 	            return ResponseEntity.internalServerError().build();
 	        }

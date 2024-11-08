@@ -64,7 +64,6 @@ public class User implements Serializable{
 	private Date SystemDateAndTime;
 	@Transient
 	private String imageCaptcha;
-	private int aaid;
 	private String role;
 	private String ipAddress;
 	@Column(name = "account_non_locked")

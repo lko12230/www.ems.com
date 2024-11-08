@@ -4,10 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import javax.persistence.LockModeType;
-
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -52,7 +49,7 @@ public interface UserDao extends JpaRepository<User, Integer> {
 //	@Query("select u from User u where u.account_number = :account_number or u.phone = :phone")
 //	public Optional<User> findByPhoneAndAccountNumber(long account_number,String phone);
 
-	@Query(value = "update employee u set u.lock_date_and_time=null,expire_lock_date_and_time=null,u.account_non_locked='1',u.failed_attempts=0 where u.lock_date_and_time <= (NOW() - INTERVAL 1 DAY)", nativeQuery = true)
+	@Query(value = "update employee u set u.lock_date_and_time=null,expire_lock_date_and_time=null,u.account_non_locked='1',u.failed_attempts=0 where u.lock_date_and_time <= (NOW() - INTERVAL 1 DAY) and u.enabled='1'", nativeQuery = true)
 	@Modifying
 	public void getAllAccount_LockedAndUnlokedDetails(Date lock_date_and_time);
 
