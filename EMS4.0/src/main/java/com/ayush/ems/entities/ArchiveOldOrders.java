@@ -36,4 +36,9 @@ public class ArchiveOldOrders {
 	private float gst_amount;
 	private String gst_no;
 	private boolean invoice_sent_or_not;
+	private int validity;
+	private Date adddate;
+	private Date editdate;
+	private String addwho;
+	private String editwho;
 }

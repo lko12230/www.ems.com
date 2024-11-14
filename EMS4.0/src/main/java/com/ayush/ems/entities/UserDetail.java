@@ -93,4 +93,5 @@ public class UserDetail implements Serializable {
 	private  Date adddate;
 	private String edithwo;
 	private String admin_id;
+	private String company_id;
 }

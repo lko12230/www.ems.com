@@ -87,4 +87,5 @@ public class ArchiveDisabledUserDetail implements Serializable {
 	private String addwho;
 	private  Date adddate;
 	private String edithwo;
+	private String company_id;
 	}

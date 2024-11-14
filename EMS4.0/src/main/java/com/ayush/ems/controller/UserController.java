@@ -435,7 +435,7 @@ public class UserController {
 	        System.out.println(" all_users_size " + all_users.size());
 
 	        // Assuming all_users gets populated here by fetching enabled users
-	        all_users = userDetailDao.findAllEnabledUser();
+	        all_users = userDetailDao.findAllEnabledUser(user.getCompany_id());
 	        
 	        System.out.println(" all_users_size " + all_users.size());
 

@@ -317,7 +317,7 @@ public class AdminController {
 	        System.out.println(" all_users_size " + all_users.size());
 
 	        // Assuming all_users gets populated here by fetching enabled users
-	        all_users = userDetailDao.findAllEnabledUser();
+	        all_users = userDetailDao.findAllEnabledUser(user.getCompany_id());
 	        
 	        System.out.println(" all_users_size " + all_users.size());
 
@@ -806,12 +806,16 @@ public class AdminController {
 	        HttpSession session) {
 	    try {
 	        System.out.println("BANK " + user.getBank_account_holder_name() + " --------------- " + user.getDob() + " ---------- " + user.getBank_name());
-	        servicelayer.update_profile(user);
+	      
 	        if (user.getBank_account_holder_name().trim().isEmpty()) {
 	            user.setBank_account_holder_name("NA");
 	            user.setBank_name("NA");
 	            user.setIfsc_code("NA");
 	            user.setBank_account_number(0);
+	        }
+	        else
+	        {
+	        	  servicelayer.update_profile(user);
 	        }
 	        
 	        // Handle profile image upload

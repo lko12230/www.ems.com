@@ -37,4 +37,8 @@ public class Payment_Order_Info {
 	private String gst_no;
 	private boolean invoice_sent_or_not;
 	private int validity;
+	private Date adddate;
+	private Date editdate;
+	private String addwho;
+	private String editwho;
 }

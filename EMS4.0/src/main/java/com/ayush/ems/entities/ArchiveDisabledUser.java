@@ -79,5 +79,8 @@ public class ArchiveDisabledUser implements Serializable{
 	private String company;
 	private String company_id;
 	private String admin_id;
+	private int validity;
+	private Date adddate;
+	private String addwho;
 }
 

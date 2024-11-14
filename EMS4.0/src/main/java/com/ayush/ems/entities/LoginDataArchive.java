@@ -28,5 +28,9 @@ public class LoginDataArchive {
 	private boolean User_status;
 	private String Session_Id;
 	private String location;
+	private String addwho;
+	private String editwho;
+	private Date adddate;
+	private Date editdate;
 
 }

@@ -56,10 +56,10 @@ public class EMSMAIN {
 		executeJob("Account Locked Job", () -> servicelayer.getAllUsersByAccount_Non_LockedAndFailed_Attempts());
 	}
 
-	@Scheduled(cron = "0 0/1  * * * *")
-	public void oldOrdersArchiveJob() {
-		executeJob("Login Old Orders Job", servicelayer::getAllOrdersAdddate);
-	}
+//	@Scheduled(cron = "0 0/1  * * * *")
+//	public void oldOrdersArchiveJob() {
+//		executeJob("Archive Old Orders Job", servicelayer::getAllOrdersAdddate);
+//	}
 
 	@Scheduled(cron = "0 0/1  * * * *")
 	public void loginOldDataArchiveJob() {
@@ -193,6 +193,7 @@ public class EMSMAIN {
 	}
 
 
+	@SuppressWarnings("unused")
 	private void logAndHandleException(Exception e, String jobName) {
 		String exceptionAsString = e.toString();
 		String className = this.getClass().getName();

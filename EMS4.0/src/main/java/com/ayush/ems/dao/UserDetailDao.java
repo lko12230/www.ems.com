@@ -25,8 +25,8 @@ public interface UserDetailDao extends JpaRepository<UserDetail, Integer> {
 	 @Query("SELECT u FROM UserDetail u WHERE u.username = :input OR u.email = :input OR u.id = :input")
 	  public List<UserDetail> findByNameContainingOrEmailContainingOrIdContaining(@Param("input") String input);
 	 
-	 @Query("select u from UserDetail u where u.enabled=1")
-	 public List<UserDetail> findAllEnabledUser();
+	 @Query("select u from UserDetail u where u.enabled=1 and u.company_id=?1")
+	 public List<UserDetail> findAllEnabledUser(String company_id);
 	 
 		@Query(value = "select * from database_ems.employeedetail u where u.enabled='0' and u.last_working_day <= (NOW() - INTERVAL 30 DAY)",nativeQuery = true )
 		public List<UserDetail>  Get_ALL_Disabled_Old_UserDetail_Job();
