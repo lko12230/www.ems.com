@@ -389,7 +389,7 @@ public class AdminController {
 				UserDetail userDetail = userOptional.get();
 				model.addAttribute("userdetail", userDetail);
 				model.addAttribute("title", "update form - " + userDetail.getUsername());
-				return "AdminEmpProfile";
+				return "AdminViewEmpProfile";
 			} else {
 				throw new Exception();
 			}
@@ -432,7 +432,7 @@ public class AdminController {
 				UserDetail userDetail = userOptional.get();
 				model.addAttribute("userdetail", userDetail);
 				model.addAttribute("title", "update form - " + userDetail.getUsername());
-				return "AdminEmpProfileEdit";
+				return "AdminEmpProfile";
 			} else {
 				throw new Exception();
 			}

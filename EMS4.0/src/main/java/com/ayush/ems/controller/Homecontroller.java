@@ -116,7 +116,7 @@ public class Homecontroller {
 				System.out.println("hi2 " + hiddenCaptcha);
 				System.out.println("hi1 " + adminn.get());
 				if (email.equals(admin.getEmail()) && password.equals("admin")) {
-					servicelayer.validate_home_captcha();
+//					servicelayer.validate_home_captcha();
 					boolean found = false;
 					Set<Map.Entry<String, Date>> entrySet_data = EMSMAIN.captchaValidateMap.entrySet();
 					for (Map.Entry<String, Date> entry : entrySet_data) {
@@ -135,7 +135,7 @@ public class Homecontroller {
 //			            model.addAttribute("title","Send OTP");
 						int otp = (int) (Math.random() * 9000) + 1000;
 						EMSMAIN.otpValidateMap.put(otp, new Date());
-						EMSMAIN.admin_send_otp.put(email, otp);
+//						EMSMAIN.admin_send_otp.put(email, otp);
 						System.out.println("OTP ?????????????????????///////////...... " + otp);
 						String subject = "Admin Verification";
 						String message = "" +
@@ -224,7 +224,7 @@ public class Homecontroller {
 					System.out.println("hi2 " + hiddenCaptcha);
 					System.out.println("hi1 " + adminn.get());
 					if (email.equals(admin.getEmail()) && password.equals("admin")) {
-						servicelayer.validate_home_captcha();
+//						servicelayer.validate_home_captcha();
 						boolean found = false;
 						Set<Map.Entry<String, Date>> entrySet_data = EMSMAIN.captchaValidateMap.entrySet();
 						for (Map.Entry<String, Date> entry : entrySet_data) {
@@ -243,7 +243,7 @@ public class Homecontroller {
 //				            model.addAttribute("title","Send OTP");
 							int otp = (int) (Math.random() * 9000) + 1000;
 							EMSMAIN.otpValidateMap.put(otp, new Date());
-							EMSMAIN.admin_send_otp.put(email, otp);
+//							EMSMAIN.admin_send_otp.put(email, otp);
 							System.out.println("OTP " + otp);
 							String subject = "Admin Verification";
 							String message = "" +
@@ -618,7 +618,7 @@ public class Homecontroller {
 //            {
 //            	throw new Exception();
 //            }
-				EMSMAIN.forgot_password_email_sent.put(email, otp);
+//				EMSMAIN.forgot_password_email_sent.put(email, otp);
 				EMSMAIN.otpValidateMap.put(otp, new Date());
 				String subject = "Forgot Email OTP Verification";
 				String message = "" +

@@ -194,8 +194,15 @@
               <div class="col-sm-3">
                 <p class="mb-0">Bank Name</p>
               </div>
-              <div class="col-sm-9">
-                <input type="text" class="text-muted mb-0" name="bank_name" th:value="${userdetail.bank_name}"/> <i class="fas fa-edit"></i>
+               <div class="col-sm-9">
+                  <select id="bank_name" name="bank_name" onchange="toggleRoleTypeOptions()" class="text-muted mb-0">
+                                        <option>NA</option>
+                                        <option>STATE BANK OF INDIA</option>
+                                        <option>PUNJAB NATIONAL BANK</option>
+                                        <option>HDFC</option>
+                                        <option>BANK OF BARODA</option>
+                                        <option>BANK OF INIDA</option>
+                                    </select><i class="fas fa-edit"></i>
               </div>
             </div>
             <hr>

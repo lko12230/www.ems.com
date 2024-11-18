@@ -1622,51 +1622,51 @@ public class Servicelayer {
 		}
 	}
 
-	@Transactional
-	public void validate_home_captcha() {
-		try {
-			Date date = new Date();
-			LocalDateTime localDateTime = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-			Set<Map.Entry<String, Date>> entrySet = EMSMAIN.captchaValidateMap.entrySet();
-//		entrySet.forEach(entry -> {
-//		String Captchaa=entry.getKey();
-//		Date captcha_valid_or_not=entry.getValue();
-//		LocalDateTime localDateTime1 = captcha_valid_or_not.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-//		Duration duration=Duration.between(localDateTime1, localDateTime);
-//		if(duration.toMinutes() >=1)
-//		{
-//			EMSMAIN.captcha_validate_map.remove(Captchaa);
+//	@Transactional
+//	public void validate_home_captcha() {
+//		try {
+//			Date date = new Date();
+//			LocalDateTime localDateTime = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+//			Set<Map.Entry<String, Date>> entrySet = EMSMAIN.captchaValidateMap.entrySet();
+////		entrySet.forEach(entry -> {
+////		String Captchaa=entry.getKey();
+////		Date captcha_valid_or_not=entry.getValue();
+////		LocalDateTime localDateTime1 = captcha_valid_or_not.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+////		Duration duration=Duration.between(localDateTime1, localDateTime);
+////		if(duration.toMinutes() >=1)
+////		{
+////			EMSMAIN.captcha_validate_map.remove(Captchaa);
+////		}
+////		});
+//
+//			for (Map.Entry<String, Date> entry : entrySet) {
+//				String Captchaa = entry.getKey();
+//				Date captcha_valid_or_not = entry.getValue();
+//				LocalDateTime localDateTime1 = captcha_valid_or_not.toInstant().atZone(ZoneId.systemDefault())
+//						.toLocalDateTime();
+//				Duration duration = Duration.between(localDateTime1, localDateTime);
+//				if (duration.toMinutes() >= 1) {
+//					EMSMAIN.captchaValidateMap.remove(Captchaa);
+//				}
+//			}
+//			jobrunning("Captcha Validate");
+//		} catch (Exception e) {
+//			jobDao.getJobRunningTimeInterrupted("Captcha Validate");
+//			String exceptionAsString = e.toString();
+//			// Get the current class
+//			Class<?> currentClass = Servicelayer.class;
+//
+//			// Get the name of the class
+//			String className = currentClass.getName();
+//			String errorMessage = e.getMessage();
+//			StackTraceElement[] stackTrace = e.getStackTrace();
+//			String methodName = stackTrace[0].getMethodName();
+//			int lineNumber = stackTrace[0].getLineNumber();
+//			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+//			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+//
 //		}
-//		});
-
-			for (Map.Entry<String, Date> entry : entrySet) {
-				String Captchaa = entry.getKey();
-				Date captcha_valid_or_not = entry.getValue();
-				LocalDateTime localDateTime1 = captcha_valid_or_not.toInstant().atZone(ZoneId.systemDefault())
-						.toLocalDateTime();
-				Duration duration = Duration.between(localDateTime1, localDateTime);
-				if (duration.toMinutes() >= 5) {
-					EMSMAIN.captchaValidateMap.remove(Captchaa);
-				}
-			}
-			jobrunning("Captcha Validate");
-		} catch (Exception e) {
-			jobDao.getJobRunningTimeInterrupted("Captcha Validate");
-			String exceptionAsString = e.toString();
-			// Get the current class
-			Class<?> currentClass = Servicelayer.class;
-
-			// Get the name of the class
-			String className = currentClass.getName();
-			String errorMessage = e.getMessage();
-			StackTraceElement[] stackTrace = e.getStackTrace();
-			String methodName = stackTrace[0].getMethodName();
-			int lineNumber = stackTrace[0].getLineNumber();
-			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
-			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
-
-		}
-	}
+//	}
 
 	@Transactional
 	public void validate_otp() {
