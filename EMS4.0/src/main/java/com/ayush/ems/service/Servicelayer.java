@@ -176,9 +176,17 @@ public class Servicelayer {
 
 			// Generate random password for the user
 			String generateRandomPassword = generatePassword(15);
-
+			long count= stageUserDao.count();
 			// Set user properties
-			user.setSno(null); // Ensure this is not set in the Java code
+            if(count>0)
+            {
+            	  int maxSno= stageUserDao.maxSno();
+            	user.setSno(++maxSno); // Ensure this is not set in the Java code
+            }
+            else
+            {
+            	user.setSno(1); // Ensure this is not set in the Java code
+            }
 			user.setAccountNonLocked(true);
 			user.setPhone(user.getPhone().trim().replaceAll("\\s", ""));
 			user.setPassword(passwordEncoder.encode(generateRandomPassword));
@@ -186,9 +194,10 @@ public class Servicelayer {
 			user.setUsername(user.getUsername().toUpperCase());
 			user.setEnabled(true);
 			user.setBase_location("NA");
-			user.setEditwho("no record found");
+			user.setEditwho("NA");
 			user.setStatus("ACTIVE");
-//			user.setAddwho(user.getAddwho());
+			user.setAdddate(new Date());
+			user.setAddwho(user.getAddwho_admin_id());
 			user.setIpAddress(ipaddress);
 			user.setLocation(location);
 			String subject = "www.ems.com : Your Crendential Created";
@@ -233,16 +242,19 @@ public class Servicelayer {
 						Optional<stage_user> result3 = stageUserDao.findByUserNameAndPhone(to, user.getPhone());
 						if (!result3.isPresent()) {
 							stageUserDao.save(user); // Save user to database first
+							stageUserDao.flush();					    
 						    
 						    CompletableFuture<Boolean> flagFuture = emailService.sendEmail(message, subject, user.getEmail());
 						    if (flagFuture.get()) { // Check email sending success
 						        user.setDefaultPasswordSent(true);
 						        stageUserDao.save(user); // Update user with email sent status
+								stageUserDao.flush();					    
 						    }
 						    else
 						    {
 						    	 user.setDefaultPasswordSent(false);
 							        stageUserDao.save(user); // Update user with email sent status
+									stageUserDao.flush();					    
 						    }
 						} else {
 							throw new Exception("User Already Present !!");
@@ -262,16 +274,19 @@ public class Servicelayer {
 						Optional<stage_user> result3 = stageUserDao.findByUserNameAndPhone(to, user.getPhone());
 						if (!result3.isPresent()) {
 							stageUserDao.save(user); // Save user to database first
-						    
+							stageUserDao.flush();					    
 						    CompletableFuture<Boolean> flagFuture = emailService.sendEmail(message, subject, user.getEmail());
 						    if (flagFuture.get()) { // Check email sending success
 						        user.setDefaultPasswordSent(true);
-//						        stageUserDao.save(user); // Update user with email sent status
+						        stageUserDao.save(user); // Update user with email sent status
+								stageUserDao.flush();					    
+
 						    }
 						    else
 						    {
 						    	 user.setDefaultPasswordSent(false);
-//							        stageUserDao.save(user); // Update user with email sent status
+							        stageUserDao.save(user); // Update user with email sent status
+									stageUserDao.flush();					    
 						    }
 //							stageUserDao.save(user);
 						} else {
