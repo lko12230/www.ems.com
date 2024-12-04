@@ -597,7 +597,8 @@ public class ManagerController {
 				if (input_team_by_manager.equals(team_id) && input_team_by_manager.equals(user_team_check)) {
 					session.setAttribute("message", new Message(" Same Team Cannot Be Reassigned!!", "alert-danger"));
 				}
-				if(input_team_by_manager.equals("0") && input_team_by_manager.equals(team_id))
+				if(input_team_by_manager.startsWith("R") && input_team_by_manager.equals(team_id) &&
+						input_team_by_manager.length() == 9 && !input_team_by_manager.equals(user_team_check))
 				{
 					username = userDetail3.getUsername();
 					email = userDetail3.getEmail();
@@ -611,11 +612,30 @@ public class ManagerController {
 //					EMSMAIN.id_with_team_desc.put(id, team_desc);
 					servicelayer.update_team_by_team_id(userDetail3, team_id, team_desc);
 //					String teamDescwithid = teamdao.getAllDataFromTeamDescription(team_id);
-					String message = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<p>" + "Dear " + username
-							+ "<br>" + "<br>" + "You have removed from team , " + "<b>" + team_id + " -> " + team_desc
-							+ "</b>" + " on "+ "<b>"+ new Date() +"</b>" + "<br><br>"
-							+ "Resource Management Team" + "</p>" + "</div>";
-					String subject = "Employee EMPID" + id + " Team Assigned";
+					String message = "" +
+						    "<div style='font-family: Arial, sans-serif; margin: 0; padding: 0;'>" +
+						        "<table width='100%' cellspacing='0' cellpadding='0' style='background-color: #f4f4f4; padding: 20px;'>" +
+						            "<tr>" +
+						                "<td align='center'>" +
+						                    "<table width='600' cellspacing='0' cellpadding='20' style='background-color: #ffffff; border-radius: 8px;'>" +
+						                        "<tr>" +
+						                            "<td>" +
+						                                "<h2 style='font-size: 24px; color: #333;'>Dear " + username + ",</h2>" +
+						                                "<p style='font-size: 16px; color: #555;'>We regret to inform you that you have been removed from the team, <b>" + team_id + " -> " + team_desc + "</b>, on <b>" + new Date() + "</b>.</p>" +
+						                                "<p style='font-size: 16px; color: #555;'>If you have any questions or concerns, please feel free to reach out to us.</p>" +
+						                                "<br>" +
+						                                "<p style='font-size: 16px; color: #555;'>Best regards,</p>" +
+						                                "<p style='font-size: 16px; color: #555;'><b>Resource Management Team</b></p>" +
+						                            "</td>" +
+						                        "</tr>" +
+						                    "</table>" +
+						                "</td>" +
+						            "</tr>" +
+						        "</table>" +
+						    "</div>";
+
+					String subject = "Team Removal Notification for Employee " + id;
+
 					  CompletableFuture<Boolean> flagFuture = this.teamEmailService.sendEmail(message, subject, email);
 					  Boolean flag = flagFuture.get(); // Blocking call to get the result
 				        if (flag) {
@@ -623,9 +643,12 @@ public class ManagerController {
 				        } else {
 				            System.out.println(false);
 				        }
+				        session.setAttribute("message",
+								new Message("Employee Details Successfully Updated !!", "alert-success"));
+
 				}
-				if (input_team_by_manager.startsWith("EMS") && input_team_by_manager.length() == 9
-						&& input_team_by_manager.equals(team_id)) {
+				if (input_team_by_manager.startsWith("T") && input_team_by_manager.length() == 9
+						&& input_team_by_manager.equals(team_id) && !input_team_by_manager.equals(user_team_check)) {
 					username = userDetail3.getUsername();
 					email = userDetail3.getEmail();
 					System.out.println("EMAIL " + email);
@@ -638,12 +661,32 @@ public class ManagerController {
 //					EMSMAIN.id_with_team_desc.put(id, team_desc);
 					servicelayer.update_team_by_team_id(userDetail3, team_id, team_desc);
 //					String teamDescwithid = teamdao.getAllDataFromTeamDescription(team_id);
-					String message = "" + "<div style='border:1px solid #e2e2e2;padding:20px'>" + "<p>" + "Dear " + username
-							+ "<br>" + "<br>" + "Your Team Changed and your new team is " + "<b>" + team_id + " -> " + team_desc
-							+ "</b>" + ",You will get mail from your manager within 2 working days." + "<br><br>"
-							+ "Resource Management Team" + "</p>" + "</div>";
-					String subject = "Employee EMPID" + id + " Team Assigned";
-					  CompletableFuture<Boolean> flagFuture = this.emailService.sendEmail(message, subject, email);
+					String message = "" +
+						    "<div style='font-family: Arial, sans-serif; margin: 0; padding: 0;'>" +
+						        "<table width='100%' cellspacing='0' cellpadding='0' style='background-color: #f4f4f4; padding: 20px;'>" +
+						            "<tr>" +
+						                "<td align='center'>" +
+						                    "<table width='600' cellspacing='0' cellpadding='20' style='background-color: #ffffff; border-radius: 8px;'>" +
+						                        "<tr>" +
+						                            "<td>" +
+						                                "<h2 style='font-size: 24px; color: #333;'>Dear " + username + ",</h2>" +
+						                                "<p style='font-size: 16px; color: #555;'>We would like to inform you that your team has been changed. Your new team is: <b>" + team_id + " -> " + team_desc + "</b>.</p>" +
+						                                "<p style='font-size: 16px; color: #555;'>You will receive further instructions from your manager within 2 working days.</p>" +
+						                                "<br>" +
+						                                "<p style='font-size: 16px; color: #555;'>If you have any questions, feel free to contact us.</p>" +
+						                                "<br>" +
+						                                "<p style='font-size: 16px; color: #555;'>Best regards,</p>" +
+						                                "<p style='font-size: 16px; color: #555;'><b>Resource Management Team</b></p>" +
+						                            "</td>" +
+						                        "</tr>" +
+						                    "</table>" +
+						                "</td>" +
+						            "</tr>" +
+						        "</table>" +
+						    "</div>";
+
+						String subject = "Employee " + id + " - Team Assignment Notification";
+					  CompletableFuture<Boolean> flagFuture = this.teamEmailService.sendEmail(message, subject, email);
 					  Boolean flag = flagFuture.get(); // Blocking call to get the result
 				        if (flag) {
 				           System.out.println(true);
