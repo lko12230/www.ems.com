@@ -31,5 +31,8 @@ public class UserLoginDateTime {
 	private boolean User_status;
 	private String Session_Id;
 	private String location;
-
+	private Date adddate;
+	private String addwho;
+	private Date editdate;
+	private String editwho;
 }

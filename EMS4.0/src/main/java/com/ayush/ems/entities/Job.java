@@ -1,5 +1,7 @@
 package com.ayush.ems.entities;
 
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -22,4 +24,8 @@ public class Job {
 	private String job_running_time;
 	private String job_Status;
 	private String job_active_or_not;
+	private Date adddate;
+	private String addwho;
+	private Date editdate;
+	private String editwho;
 }

@@ -228,6 +228,7 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
 	}
 
 	// Optional: You may implement this if you need to check the authorities.
+	@SuppressWarnings("unused")
 	private Collection<? extends GrantedAuthority> getAuthorities(User user) {
 		List<GrantedAuthority> authorities = new ArrayList<>();
 

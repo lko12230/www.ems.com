@@ -18,4 +18,8 @@ public class Downtime_Maintaince {
 	private Date server_downtime;
 	private String status;
 	private boolean server_down_or_not;
+	private Date adddate;
+	private String addwho;
+	private Date editdate;
+	private String editwho;
 }

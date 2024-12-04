@@ -1,5 +1,9 @@
 package com.ayush.ems.controller;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.Map;
@@ -79,7 +83,8 @@ public class Homecontroller {
 		Optional<Admin> admin = adminDao.findById(id);
 		if (admin != null) {
 			Admin admin1 = admin.get();
-			user.setAddwho(admin1.getAid());
+			String admin_id = String.valueOf(admin1.getAid());
+			user.setAddwho_admin_id(admin_id);
 		}
 //		int var=user.getAaid();
 		System.out.println("hi");
@@ -452,7 +457,7 @@ public class Homecontroller {
 	@PostMapping("/do-register")
 	public String home(@Valid stage_user user, BindingResult result,
 	                   @RequestParam(value = "agreement", defaultValue = "false") boolean agreement,
-	                   @RequestParam("profileImage") MultipartFile file, HttpSession session) {
+	                   @RequestParam("profileImage") MultipartFile file, HttpSession session, HttpServletRequest request) {
 	    System.out.println("Account locked/not locked: " + user.isAccountNonLocked());
 	    
 	    try {
@@ -474,10 +479,17 @@ public class Homecontroller {
 	        if (!isCaptchaValid) {
 	            throw new InvalidCaptchaException("Invalid Captcha");
 	        }
+	        
+	        // Capture client IP address
+            String clientIp = getClientIpAddress(request);
+
+            // Fetch location based on IP address
+            String location = getLocationFromIp(clientIp);
 
 	        // Call the register method and handle any thrown exceptions
-	        servicelayer.register(user);
+	        servicelayer.register(user, clientIp, location);
 	        session.setAttribute("message", new Message("Successfully Registered", "alert-success"));
+	        getCaptcha(user);
 	        return "signup";
 
 	    } catch (UserAlreadyExistsException e) {
@@ -498,6 +510,50 @@ public class Homecontroller {
 	    return "signup";
 	}
 
+	
+	public String getClientIpAddress(HttpServletRequest request) {
+	    String ipAddress = request.getHeader("X-Forwarded-For");
+	    if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
+	        ipAddress = request.getHeader("Proxy-Client-IP");
+	    }
+	    if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
+	        ipAddress = request.getHeader("WL-Proxy-Client-IP");
+	    }
+	    if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
+	        ipAddress = request.getRemoteAddr();
+	    }
+	    // Handle cases where multiple IPs are in X-Forwarded-For
+	    if (ipAddress != null && ipAddress.contains(",")) {
+	        ipAddress = ipAddress.split(",")[0];
+	    }
+	    return ipAddress;
+	}
+	
+	 /* Get location information from IP address using a simple API.
+	 * Replace this method with your API call.
+	 */
+	private String getLocationFromIp(String ip) {
+	    try {
+	        // Use a simple public API to get location data
+	        String url = "https://ipapi.co/" + ip + "/city/";
+	        HttpURLConnection urlConnection = (HttpURLConnection) new URL(url).openConnection();
+	        urlConnection.setRequestMethod("GET");
+
+	        BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+	        String inputLine;
+	        StringBuilder response = new StringBuilder();
+	        while ((inputLine = in.readLine()) != null) {
+	            response.append(inputLine);
+	        }
+	        in.close();
+
+	        // Return city name
+	        return response.toString().isEmpty() ? "Unknown Location" : response.toString();
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return "Unknown Location";
+	    }
+	}
 
 	@GetMapping("/signin")
 	public String homee(@ModelAttribute User user, Model model, HttpSession session,

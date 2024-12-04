@@ -48,7 +48,7 @@ public class CustomLoginFailureHandler extends SimpleUrlAuthenticationFailureHan
 //		String osVersion = System.getProperty("os.version");
 //		String osArchitecture = System.getProperty("os.arch");
 		User user = userdao.getUserByUserName(email);
-		boolean get_status = downtime_Maintaince_Dao.server_status_check_active_or_not("downtime_maintaince");
+		boolean get_status = downtime_Maintaince_Dao.server_status_check_active_or_not("Server Maintaince");
 //		boolean getresponse=servicelayer.active_user_email(user);
 //		System.out.println("USER ACTIVE OR NOT "+getresponse);
 		if (user != null) {

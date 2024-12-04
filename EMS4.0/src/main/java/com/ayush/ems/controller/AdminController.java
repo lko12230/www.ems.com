@@ -1330,7 +1330,7 @@ public class AdminController {
 			session.setAttribute("message", new Message(
 					"Sorry!! You have already applied speration request and your last working day is " + lastdate,
 					"alert-danger"));
-			return "Seperation3";
+			return "AdminSeperation";
 		}
 	}
 	
@@ -1342,8 +1342,11 @@ public class AdminController {
 		boolean flag=false;
 		Optional<User> result2 = userdao.findById(id);
 		User user1 = result2.get();
+		System.out.println("Admin FindById 1 " + user1);
 		String adminId = user1.getAdmin_id();
+		System.out.println("Admin FindById 2 " + adminId);
 		int typeCastAdminId = Integer.parseInt(adminId);
+		System.out.println("Admin FindById 3 " + typeCastAdminId);
 		Optional<Admin> admin = adminDao.findById(typeCastAdminId);
 		Admin admin1 = admin.get();
 		System.out.println("Admin FindById " + typeCastAdminId);

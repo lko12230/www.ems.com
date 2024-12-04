@@ -6,6 +6,8 @@ import java.util.Date;
 //import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 //import javax.persistence.GeneratedValue;
 //import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -19,6 +21,8 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 //import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import org.hibernate.annotations.DynamicInsert;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,15 +34,17 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@DynamicInsert
 public class stage_user implements Serializable {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private int sno;
+	   @Column(name = "sno", nullable = true)
+	private Integer sno;
 	@Id
-//	@GeneratedValue(strategy = GenerationType.AUTO)
-	private int id;
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Integer id;
 //	private int a_id;
 //	@NotBlank(message="username field is required")
 //	@Size(min=2,max=20,message="min 2 and max 20 characters are allowed")
@@ -81,7 +87,7 @@ public class stage_user implements Serializable {
 	private Date adddate;
 	@Transient
 	private String imageCaptcha;
-	private int addwho;
+	private String addwho;
 	private String role;
 	private String ipAddress;
 	@Column(name = "account_non_locked")
@@ -94,4 +100,6 @@ public class stage_user implements Serializable {
 	private String company;
 	private String company_id;
 	private String error_message;
+	private String location;
+	private String addwho_admin_id;
 }

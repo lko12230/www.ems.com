@@ -19,7 +19,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Calendar;
+//import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -156,13 +156,13 @@ public class Servicelayer {
 	private StageUserDao stageUserDao;
 
 	@Transactional
-	public stage_user register(stage_user user) throws Exception {
+	public stage_user register(stage_user user, String ipaddress, String location) throws Exception {
 		try {
 			System.out.println("User DOB: " + user.getDob());
 			System.out.println("User Email: " + user.getUsername());
 
-			Calendar calendar = Calendar.getInstance();
-			int currentYear = calendar.get(Calendar.YEAR);
+//			Calendar calendar = Calendar.getInstance();
+//			int currentYear = calendar.get(Calendar.YEAR);
 
 			// Check for existing user by email and phone
 			Optional<stage_user> existingUser = stageUserDao.findByUserNameAndPhone(user.getEmail(), user.getPhone());
@@ -178,6 +178,7 @@ public class Servicelayer {
 			String generateRandomPassword = generatePassword(15);
 
 			// Set user properties
+			user.setSno(null); // Ensure this is not set in the Java code
 			user.setAccountNonLocked(true);
 			user.setPhone(user.getPhone().trim().replaceAll("\\s", ""));
 			user.setPassword(passwordEncoder.encode(generateRandomPassword));
@@ -185,9 +186,11 @@ public class Servicelayer {
 			user.setUsername(user.getUsername().toUpperCase());
 			user.setEnabled(true);
 			user.setBase_location("NA");
-			user.setEditwho("NA");
+			user.setEditwho("no record found");
 			user.setStatus("ACTIVE");
-			user.setAddwho(user.getAddwho());
+//			user.setAddwho(user.getAddwho());
+			user.setIpAddress(ipaddress);
+			user.setLocation(location);
 			String subject = "www.ems.com : Your Crendential Created";
 			String message = "" + "<!DOCTYPE html>" + "<html lang='en'>" + "<head>" + "    <meta charset='UTF-8'>"
 					+ "    <meta name='viewport' content='width=device-width, initial-scale=1.0'>"
@@ -208,7 +211,7 @@ public class Servicelayer {
 					+ "            </tr>" + "            <tr>" + "                <td class='content'>"
 					+ "                    <p>Dear " + user.getUsername() + ",</p>"
 					+ "                    <p>Your default password is: <span class='password'>"
-					+ generateRandomPassword + "</span>.</p>"
+					+ generateRandomPassword + "</span></p>"
 					+ "                    <p>We kindly request that you reset this password at your earliest convenience to ensure the security of your account.</p>"
 					+ "                    <p>If you need any help, feel free to contact our support team.</p>"
 					+ "                </td>" + "            </tr>" + "            <tr>"
@@ -217,7 +220,7 @@ public class Servicelayer {
 					+ "                </td>" + "            </tr>" + "        </table>" + "    </div>" + "</body>"
 					+ "</html>";
 
-			boolean flag = false;
+//			boolean flag = false;
 
 			if (user.getRole() != null) {
 				if (user.getRole().equals("ROLE_ADMIN")) {
@@ -229,39 +232,18 @@ public class Servicelayer {
 						System.out.println("EMAIL " + user.getEmail());
 						Optional<stage_user> result3 = stageUserDao.findByUserNameAndPhone(to, user.getPhone());
 						if (!result3.isPresent()) {
-							CompletableFuture<Boolean> flagFuture = this.emailService.sendEmail(message, subject, to);
-							flag = flagFuture.get(); // Blocking call to get the result
-							if (flag) {
-								user.setDefaultPasswordSent(true);
-							} else {
-								user.setDefaultPasswordSent(false);
-							}
-							stageUserDao.save(user);
-							Optional<stage_user> OptionalFindUserByEmail = stageUserDao.findByUserName(user.getEmail());
-							stage_user user3 = OptionalFindUserByEmail.get();
-							Performance performance = new Performance();
-							Admin admin = new Admin();
-							admin.setAid(user3.getId());
-							admin.setEmail(user.getEmail());
-							admin.setSystemDateAndTime(new Date());
-							admin.setPassword(passwordEncoder.encode("admin"));
-							admin.setRole(user.getRole());
-							performance.setId(user3.getId());
-							performance.setJanuary(0);
-							performance.setFebruary(0);
-							performance.setMarch(0);
-							performance.setApril(0);
-							performance.setMay(0);
-							performance.setJune(0);
-							performance.setJuly(0);
-							performance.setAugust(0);
-							performance.setSeptember(0);
-							performance.setOctober(0);
-							performance.setNovember(0);
-							performance.setDecember(0);
-							performance.setYear(currentYear);
-							performancedao.save(performance);
-							adminDao.save(admin);
+							stageUserDao.save(user); // Save user to database first
+						    
+						    CompletableFuture<Boolean> flagFuture = emailService.sendEmail(message, subject, user.getEmail());
+						    if (flagFuture.get()) { // Check email sending success
+						        user.setDefaultPasswordSent(true);
+						        stageUserDao.save(user); // Update user with email sent status
+						    }
+						    else
+						    {
+						    	 user.setDefaultPasswordSent(false);
+							        stageUserDao.save(user); // Update user with email sent status
+						    }
 						} else {
 							throw new Exception("User Already Present !!");
 						}
@@ -279,32 +261,19 @@ public class Servicelayer {
 						System.out.println("EMAIL " + user.getEmail());
 						Optional<stage_user> result3 = stageUserDao.findByUserNameAndPhone(to, user.getPhone());
 						if (!result3.isPresent()) {
-							CompletableFuture<Boolean> flagFuture = this.emailService.sendEmail(message, subject, to);
-							flag = flagFuture.get(); // Blocking call to get the result
-							if (flag) {
-								user.setDefaultPasswordSent(true);
-							} else {
-								user.setDefaultPasswordSent(false);
-							}
-							stageUserDao.save(user);
-							Optional<stage_user> OptionalFindUserByEmail = stageUserDao.findByUserName(user.getEmail());
-							stage_user user3 = OptionalFindUserByEmail.get();
-							Performance performance = new Performance();
-							performance.setId(user3.getId());
-							performance.setJanuary(0);
-							performance.setFebruary(0);
-							performance.setMarch(0);
-							performance.setApril(0);
-							performance.setMay(0);
-							performance.setJune(0);
-							performance.setJuly(0);
-							performance.setAugust(0);
-							performance.setSeptember(0);
-							performance.setOctober(0);
-							performance.setNovember(0);
-							performance.setDecember(0);
-							performance.setYear(currentYear);
-							performancedao.save(performance);
+							stageUserDao.save(user); // Save user to database first
+						    
+						    CompletableFuture<Boolean> flagFuture = emailService.sendEmail(message, subject, user.getEmail());
+						    if (flagFuture.get()) { // Check email sending success
+						        user.setDefaultPasswordSent(true);
+//						        stageUserDao.save(user); // Update user with email sent status
+						    }
+						    else
+						    {
+						    	 user.setDefaultPasswordSent(false);
+//							        stageUserDao.save(user); // Update user with email sent status
+						    }
+//							stageUserDao.save(user);
 						} else {
 							throw new Exception("User Already Present !!");
 						}
@@ -915,11 +884,11 @@ public class Servicelayer {
 	public void insert_error_log(String error_description, String java_file_name, String error_message,
 			String method_name, int linenumber) {
 		try {
-			int count = error_log_dao.getCount();
-			if (count > 0) {
-				int getLoginLastId = error_log_dao.getLastId();
+//			int count = error_log_dao.getCount();
+//			if (count > 0) {
+//				int getLoginLastId = error_log_dao.getLastId();
 				Error_Log error_Log = new Error_Log();
-				error_Log.setSno(++getLoginLastId);
+//				error_Log.setSno(++getLoginLastId);
 				error_Log.setError_description(error_description);
 				error_Log.setErrorDate(new Date());
 				error_Log.setJava_class_Name(java_file_name);
@@ -927,17 +896,17 @@ public class Servicelayer {
 				error_Log.setMethod_name(method_name);
 				error_Log.setError_line_number(linenumber);
 				error_log_dao.save(error_Log);
-			} else {
-				Error_Log error_Log = new Error_Log();
-				error_Log.setSno(1);
-				error_Log.setError_description(error_description);
-				error_Log.setErrorDate(new Date());
-				error_Log.setJava_class_Name(java_file_name);
-				error_Log.setError_message(error_message);
-				error_Log.setMethod_name(method_name);
-				error_Log.setError_line_number(linenumber);
-				error_log_dao.save(error_Log);
-			}
+//			} else {
+//				Error_Log error_Log = new Error_Log();
+////				error_Log.setSno(1);
+//				error_Log.setError_description(error_description);
+//				error_Log.setErrorDate(new Date());
+//				error_Log.setJava_class_Name(java_file_name);
+//				error_Log.setError_message(error_message);
+//				error_Log.setMethod_name(method_name);
+//				error_Log.setError_line_number(linenumber);
+//				error_log_dao.save(error_Log);
+//			}
 		} catch (Exception e) {
 			String exceptionAsString = e.toString();
 			// Get the current class
@@ -1486,23 +1455,23 @@ public class Servicelayer {
 
 	@Transactional
 	public void disabled_server_down_permitted(String server_name) {
-		try {
+//		try {
 			downtime_Maintaince_Dao.update_server_status_down(server_name);
-		} catch (Exception e) {
-			String exceptionAsString = e.toString();
-			// Get the current class
-			Class<?> currentClass = Servicelayer.class;
-
-			// Get the name of the class
-			String className = currentClass.getName();
-			String errorMessage = e.getMessage();
-			StackTraceElement[] stackTrace = e.getStackTrace();
-			String methodName = stackTrace[0].getMethodName();
-			int lineNumber = stackTrace[0].getLineNumber();
-			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
-			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
-
-		}
+//		} catch (Exception e) {
+//			String exceptionAsString = e.toString();
+//			// Get the current class
+//			Class<?> currentClass = Servicelayer.class;
+//
+//			// Get the name of the class
+//			String className = currentClass.getName();
+//			String errorMessage = e.getMessage();
+//			StackTraceElement[] stackTrace = e.getStackTrace();
+//			String methodName = stackTrace[0].getMethodName();
+//			int lineNumber = stackTrace[0].getLineNumber();
+//			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+//			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+//
+//		}
 	}
 
 	public boolean check_server_status(String server) {
@@ -1755,14 +1724,14 @@ public class Servicelayer {
 			int amt = 0;
 			Payment_Order_Info order_Info = new Payment_Order_Info();
 			Optional<User> user = userdao.findByEmail(principal.getName());
-			int count = orderDao.countt();
-			int last_id = orderDao.getLastId();
-			if (count > 0) {
-				order_Info.setSno(++last_id);
-			} else {
-				order_Info.setSno(1);
-			}
-			System.out.println("ORDER SNO " + last_id);
+//			int count = orderDao.countt();
+//			int last_id = orderDao.getLastId();
+//			if (count > 0) {
+//				order_Info.setSno(++last_id);
+//			} else {
+//				order_Info.setSno(1);
+//			}
+//			System.out.println("ORDER SNO " + last_id);
 			User user1 = user.get();
 			amt = order.get("amount");
 			int paise_to_rupee = amt / 100;
@@ -1797,81 +1766,71 @@ public class Servicelayer {
 
 	@Transactional
 	public boolean update_payment(User user, @RequestBody Map<String, Object> data) {
-		Payment_Order_Info payment_Order_Info = orderDao.findByOrderId(data.get("order_id").toString());
-		payment_Order_Info.setPaymentId(data.get("payment_id").toString());
-		payment_Order_Info.setStatus(data.get("status").toString());
-		// Generate a random UUID
-		UUID uuid = UUID.randomUUID();
+	    try {
+	        // Fetch and update payment information
+	        Payment_Order_Info payment_Order_Info = orderDao.findByOrderId(data.get("order_id").toString());
+	        payment_Order_Info.setPaymentId(data.get("payment_id").toString());
+	        payment_Order_Info.setStatus(data.get("status").toString());
 
-		// Convert UUID to string and format it as needed
-		String licenseNumber = uuid.toString().toUpperCase().replace("-", "");
+	        // Generate a random license number
+	        UUID uuid = UUID.randomUUID();
+	        String licenseNumber = "LICNO" + uuid.toString().toUpperCase().replace("-", "");
+	        payment_Order_Info.setLicense_number(licenseNumber);
 
-		// Optionally, add some custom formatting or prefixes
-		String formattedLicenseNumber = "LICNO" + licenseNumber;
-		payment_Order_Info.setLicense_number(formattedLicenseNumber);
-		payment_Order_Info.setSubscription_start_date(new Date());
-//		Instant i = Instant.now();
-//		Instant i1 = i.plus(Duration.ofDays(1));
-//		Date subscriptionExpiryDate = Date.from(i1);
-//		payment_Order_Info.setSubscription_expiry_date(subscriptionExpiryDate);
-		payment_Order_Info.setLicense_status("ACTIVE");
-		System.out.println("USER COMPANY ID" + user.getCompany_id());
-		update_enable_user_after_success_payment(user.getCompany_id());
-		SubscriptionPlans subscriptionPlans = findSubscriptionPlans();
-		float gst = subscriptionPlans.getGst() * 100;
-		String gst_no = Float.toString(gst);
-		payment_Order_Info.setDiscount(subscriptionPlans.getDiscount());
-		payment_Order_Info.setTax(gst_no + '%');
-		Optional<SubscriptionPlans> subscriptionPlansOptional = subscriptionPlansDao.getAllPlans();
-		SubscriptionPlans subscriptionPlans2 = subscriptionPlansOptional.get();
-		payment_Order_Info.setGst_amount(payment_Order_Info.getAmount() * subscriptionPlans2.getGst());
-		String validity = subscriptionPlans2.getPlan_description();
-		String[] extractvalidity = validity.trim().split("\\s+");
-		int validtyDays = Integer.parseInt(extractvalidity[1]);
-		Instant i = Instant.now();
-		Instant i1 = i.plus(Duration.ofDays(validtyDays));
-		Date subscriptionExpiryDate = Date.from(i1);
-		payment_Order_Info.setSubscription_expiry_date(subscriptionExpiryDate);
-		payment_Order_Info.setValidity(validtyDays);
-		float without_gst_amount = payment_Order_Info.getAmount() - payment_Order_Info.getGst_amount();
-		payment_Order_Info.setAmount_without_gst(without_gst_amount);
-		CompanyInfo companyInfo = findCompanyInfo();
-		payment_Order_Info.setGst_no(companyInfo.getGst_no());
-		orderDao.save(payment_Order_Info);
-		try {
-			generateAndSendInvoice(payment_Order_Info, subscriptionPlans, companyInfo, user, formattedLicenseNumber);
-		} catch (IOException e) {
-			jobDao.getJobRunningTimeInterrupted("disbaled_expired_plan_users");
-			String exceptionAsString = e.toString();
-			// Get the current class
-			Class<?> currentClass = Servicelayer.class;
-			// Get the name of the class
-			String className = currentClass.getName();
-			String errorMessage = e.getMessage();
-			StackTraceElement[] stackTrace = e.getStackTrace();
-			String methodName = stackTrace[0].getMethodName();
-			int lineNumber = stackTrace[0].getLineNumber();
-			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
-			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
-			return false;
-		} catch (MessagingException e) {
-			jobDao.getJobRunningTimeInterrupted("disbaled_expired_plan_users");
-			String exceptionAsString = e.toString();
-			// Get the current class
-			Class<?> currentClass = Servicelayer.class;
-			// Get the name of the class
-			String className = currentClass.getName();
-			String errorMessage = e.getMessage();
-			StackTraceElement[] stackTrace = e.getStackTrace();
-			String methodName = stackTrace[0].getMethodName();
-			int lineNumber = stackTrace[0].getLineNumber();
-			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
-			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
-			return false;
-		}
-		System.out.println(data);
-		return true;
+	        // Set subscription details
+	        payment_Order_Info.setSubscription_start_date(new Date());
+	        payment_Order_Info.setLicense_status("ACTIVE");
+	        update_enable_user_after_success_payment(user.getCompany_id());
+
+	        // Fetch subscription plans
+	        SubscriptionPlans subscriptionPlans = findSubscriptionPlans();
+	        float gst = subscriptionPlans.getGst() * 100;
+	        String gst_no = Float.toString(gst);
+	        payment_Order_Info.setDiscount(subscriptionPlans.getDiscount());
+	        payment_Order_Info.setTax(gst_no + '%');
+	        
+	        // Calculate GST and expiry date
+	        Optional<SubscriptionPlans> subscriptionPlansOptional = subscriptionPlansDao.getAllPlans();
+	        SubscriptionPlans subscriptionPlans2 = subscriptionPlansOptional.get();
+	        payment_Order_Info.setGst_amount(payment_Order_Info.getAmount() * subscriptionPlans2.getGst());
+
+	        String validity = subscriptionPlans2.getPlan_description();
+	        String[] extractValidity = validity.trim().split("\\s+");
+	        int validityDays = Integer.parseInt(extractValidity[1]);
+
+	        Instant now = Instant.now();
+	        Instant expiry = now.plus(Duration.ofDays(validityDays));
+	        payment_Order_Info.setSubscription_expiry_date(Date.from(expiry));
+	        payment_Order_Info.setValidity(validityDays);
+
+	        // Calculate amount without GST
+	        float withoutGstAmount = payment_Order_Info.getAmount() - payment_Order_Info.getGst_amount();
+	        payment_Order_Info.setAmount_without_gst(withoutGstAmount);
+
+	        // Fetch company info
+	        CompanyInfo companyInfo = findCompanyInfo();
+	        payment_Order_Info.setGst_no(companyInfo.getGst_no());
+
+	        // Save the updated payment information
+	        orderDao.save(payment_Order_Info);
+
+	        // Send invoice only after successful update
+	        try {
+	            generateAndSendInvoice(payment_Order_Info, subscriptionPlans, companyInfo, user, licenseNumber);
+	        } catch (Exception e) {
+	            // Handle any exceptions during invoice generation or email sending
+	            e.printStackTrace();
+	            System.err.println("Failed to send invoice email. Payment info updated successfully.");
+	        }
+
+	        return true;
+	    } catch (Exception e) {
+	        // Log any exceptions and ensure rollback
+	        e.printStackTrace();
+	        return false;
+	    }
 	}
+
 
 	public CompanyInfo fetch_date_from_company_records(String company_id) {
 		try {
@@ -2292,28 +2251,6 @@ public class Servicelayer {
 			e.printStackTrace();
 			user.setDefaultPasswordSent(false);
 		}
-//		try {
-//			EMSMAIN.payment_success_email_alert.put(user.getEmail(), user.getUsername());
-//			EMSMAIN.license_number.put(user.getEmail(), formattedLicenseNumber);
-//			EMSMAIN.license_status.put(user.getEmail(), payment.getLicense_status());
-//			EMSMAIN.payment_time.put(user.getEmail(), payment.getSystem_date_and_time());
-//			EMSMAIN.license_payment_status.put(user.getEmail(), payment.getStatus());
-//			EMSMAIN.payment_invoice_email.put(user.getEmail(), invoicePath);
-//		} catch (Exception e) {
-//			String exceptionAsString = e.toString();
-//			// Get the current class
-//			Class<?> currentClass = servicelayer.class;
-//
-//			// Get the name of the class
-//			String className = currentClass.getName();
-//			String errorMessage = e.getMessage();
-//			StackTraceElement[] stackTrace = e.getStackTrace();
-//			String methodName = stackTrace[0].getMethodName();
-//			int lineNumber = stackTrace[0].getLineNumber();
-//			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
-//			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
-//		}
-
 	}
 
 	private void generatePdfInvoice(String filePath, Payment_Order_Info payment, SubscriptionPlans subscriptionPlans,
@@ -2376,7 +2313,7 @@ public class Servicelayer {
 					.setTextAlignment(TextAlignment.LEFT).setMarginBottom(9);
 			document.add(title2);
 			Paragraph BilledTo = new Paragraph(company_Info.getCompany_name() + "\n" + company_Info.getCompany_address()
-					+ "\n" + company_Info.getCompany_phone() + "\n" + company_Info.getCompany_email()).setFont(font)
+					+ "\n" + company_Info.getCompany_phone() + "\n" + company_Info.getCompany_email()+ "\n" + payment.getGst_no()).setFont(font)
 					.setFontSize(12).setTextAlignment(TextAlignment.LEFT).setMarginBottom(12);
 			document.add(BilledTo);
 

@@ -33,7 +33,7 @@ public class User implements Serializable{
 	private static final long serialVersionUID = 1L;
 	private int sno;
 	@Id
-	private int id;
+	private Integer id;
 	private String username;
 	private String state;
 	private String email;

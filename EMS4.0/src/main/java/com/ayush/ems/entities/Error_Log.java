@@ -20,5 +20,9 @@ public class Error_Log {
 	private String error_message;
 	private String method_name;
 	private int error_line_number;
+	private Date adddate;
+	private String addwho;
+	private Date editdate;
+	private String editwho;
 
 }

@@ -1,5 +1,7 @@
 package com.ayush.ems.entities;
 
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
@@ -26,4 +28,8 @@ public class RecordActivity{
 	private java.util.Date Date;
 	private String ipAddress;
 	private String functionality;
+	private Date adddate;
+	private String addwho;
+	private Date editdate;
+	private String editwho;
 }

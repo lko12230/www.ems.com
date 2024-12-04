@@ -1,5 +1,7 @@
 package com.ayush.ems.entities;
 
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
@@ -16,4 +18,8 @@ public class SubscriptionPlans {
 	private float amount;
 	private float gst;
 	private float discount;
+	private Date adddate;
+	private String addwho;
+	private Date editdate;
+	private String editwho;
 }

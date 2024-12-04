@@ -1,5 +1,7 @@
 package com.ayush.ems.entities;
 
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -32,5 +34,9 @@ public class Performance {
 	private double november;
 	private double december;
 	private int year;
+	private Date adddate;
+	private String addwho;
+	private Date editdate;
+	private String editwho;
 
 }

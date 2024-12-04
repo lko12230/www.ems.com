@@ -148,12 +148,22 @@ public class ITcontroller {
 	/**
 	 * Get the client IP address from the request.
 	 */
-	private String getClientIpAddress(HttpServletRequest request) {
-	    String xfHeader = request.getHeader("X-Forwarded-For");
-	    if (xfHeader == null || xfHeader.isEmpty()) {
-	        return request.getRemoteAddr();
+	public String getClientIpAddress(HttpServletRequest request) {
+	    String ipAddress = request.getHeader("X-Forwarded-For");
+	    if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
+	        ipAddress = request.getHeader("Proxy-Client-IP");
 	    }
-	    return xfHeader.split(",")[0];
+	    if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
+	        ipAddress = request.getHeader("WL-Proxy-Client-IP");
+	    }
+	    if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
+	        ipAddress = request.getRemoteAddr();
+	    }
+	    // Handle cases where multiple IPs are in X-Forwarded-For
+	    if (ipAddress != null && ipAddress.contains(",")) {
+	        ipAddress = ipAddress.split(",")[0];
+	    }
+	    return ipAddress;
 	}
 
 	/**

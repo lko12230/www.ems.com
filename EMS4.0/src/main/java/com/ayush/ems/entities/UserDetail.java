@@ -31,7 +31,7 @@ public class UserDetail implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private int sno;
 	@Id
-	private int id;
+	private Integer id;
 	private String username;
 	@Column(unique = true)
 	private String email;
@@ -91,7 +91,6 @@ public class UserDetail implements Serializable {
 	private boolean seperation_manager_approved;
 	private String addwho;
 	private  Date adddate;
-	private String edithwo;
 	private String admin_id;
 	private String company_id;
 }

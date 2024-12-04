@@ -1,5 +1,7 @@
 package com.ayush.ems.entities;
 
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -26,4 +28,8 @@ public class laptop {
 	private String laptop_colour;
 	private String laptop_brand;
 	private String device_id;
+	private Date adddate;
+	private String addwho;
+	private Date editdate;
+	private String editwho;
 }

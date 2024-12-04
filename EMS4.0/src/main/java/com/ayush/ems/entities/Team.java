@@ -1,5 +1,7 @@
 package com.ayush.ems.entities;
 
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -17,6 +19,10 @@ public class Team {
 	private int id;
 	private String team_id;
 	private String team_description;
+	private Date adddate;
+	private String addwho;
+	private Date editdate;
+	private String editwho;
 //@OneToMany(cascade = CascadeType.ALL,mappedBy = "team",orphanRemoval = true )
 //private List<UserDetail> team_users_list =new ArrayList<>();
 //@OneToOne
