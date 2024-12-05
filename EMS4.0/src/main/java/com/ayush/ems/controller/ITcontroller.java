@@ -293,7 +293,7 @@ public class ITcontroller {
 	            model.addAttribute("sort", sort); // Pass sorting parameter to maintain state on frontend
 
 	            System.out.println("IN");
-	            return "ViewMembers5";
+	            return "ITViewAllEmployees";
 	        } else {
 	            throw new Exception();
 	        }

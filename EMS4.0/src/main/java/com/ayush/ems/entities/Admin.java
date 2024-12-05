@@ -57,5 +57,6 @@ private Date adddate;
 private String addwho;
 private Date editdate;
 private String editwho;
-
+private String company_id;
+private boolean allowMultipleCompany;
 }

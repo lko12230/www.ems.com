@@ -46,7 +46,6 @@ import com.ayush.ems.entities.Team;
 import com.ayush.ems.entities.User;
 import com.ayush.ems.entities.UserDetail;
 import com.ayush.ems.helper.Message;
-import com.ayush.ems.service.EmailService;
 import com.ayush.ems.service.SeperationEmailService;
 import com.ayush.ems.service.Servicelayer;
 import com.ayush.ems.service.TeamEmailService;
@@ -68,8 +67,8 @@ public class ManagerController {
 	private TeamDao teamdao;
 	@Autowired
 	private AdminDao adminDao;
-	@Autowired
-	private EmailService emailService;
+//	@Autowired
+//	private EmailService emailService;
 	@Autowired
 	private SeperationEmailService emailService1;
 	@Autowired
@@ -334,7 +333,7 @@ public class ManagerController {
 	            model.addAttribute("sort", sort); // Pass sorting parameter to maintain state on frontend
 
 	            System.out.println("IN");
-	            return "ViewMembers3";
+	            return "ManagerViewAllEmployees";
 	        } else {
 	            throw new Exception();
 	        }

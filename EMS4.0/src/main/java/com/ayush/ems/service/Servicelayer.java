@@ -161,7 +161,20 @@ public class Servicelayer {
 			System.out.println("User DOB: " + user.getDob());
 			System.out.println("User Email: " + user.getUsername());
 
-//			Calendar calendar = Calendar.getInstance();
+			String admin_id= user.getAddwho_admin_id();
+			System.out.println("AD ID "+admin_id);
+			int admin_cast_to_int = Integer.parseInt(admin_id);
+			Optional<Admin> get_admin =adminDao.findById(admin_cast_to_int);
+			Admin get_admin_data = get_admin.get();
+			if (!get_admin_data.getCompany_id().equals(user.getCompany_id()) && !get_admin_data.isAllowMultipleCompany()) {
+			    throw new Exception(
+			        "Registration failed: The provided company ID (" + user.getCompany_id() + 
+			        ") does not match the assigned company ID (" + get_admin_data.getCompany_id() + ")."
+			    );
+			}
+
+
+			//			Calendar calendar = Calendar.getInstance();
 //			int currentYear = calendar.get(Calendar.YEAR);
 
 			// Check for existing user by email and phone
