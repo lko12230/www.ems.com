@@ -89,8 +89,11 @@ public class UserDetail implements Serializable {
 	private String team_desc;
 	private String review_rating;
 	private boolean seperation_manager_approved;
+	private boolean resignationRequestApplied;
 	private String addwho;
 	private  Date adddate;
 	private String admin_id;
 	private String company_id;
+	private Date SeperationDate;
+
 }

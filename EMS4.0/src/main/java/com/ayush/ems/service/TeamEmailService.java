@@ -59,7 +59,7 @@ public class TeamEmailService {
 			// If sending fails, add to retry queue
 			System.out.println("Failed to send email, adding to retry queue");
 			retryQueue.add(new EmailRequest(message, subject, to));
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
 
 		// Return a CompletableFuture

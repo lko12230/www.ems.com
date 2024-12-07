@@ -17,18 +17,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import com.ayush.ems.entities.EmailRequestCC;
+import com.ayush.ems.entities.EmailRequestCC2;
 
 @Service
-public class SeperationEmailService {
+public class SeperationEmailService2 {
 	@Autowired
 	private Servicelayer servicelayer;
 	
 	// Retry queue for failed emails (using a Set to prevent duplicates)
-		private final Set<EmailRequestCC> retryQueue = new HashSet<>();
+		private final Set<EmailRequestCC2> retryQueue = new HashSet<>();
 	
 	@Async
-	public CompletableFuture<Boolean> sendEmail(String message, String subject, String to, String cc) {
+	public CompletableFuture<Boolean> sendEmail(String message, String subject, String to, String cc, String cc1) {
 		boolean success = false;
 		// variable for gmail host
 		String from = "guptaayush12418@gmail.com";
@@ -63,6 +63,7 @@ public class SeperationEmailService {
 			m.setFrom(from);
 			m.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
 			m.addRecipient(Message.RecipientType.CC, new InternetAddress(cc));
+			m.addRecipient(Message.RecipientType.CC, new InternetAddress(cc1));
 			m.setSubject(subject);
 			// m.setText(message);
 			m.setContent(message, "text/html");
@@ -91,14 +92,14 @@ public class SeperationEmailService {
 	
 	// Method to retry sending emails from the queue
 		public void retryFailedEmails() {
-			Set<EmailRequestCC> retryList = new HashSet<>(retryQueue); // Copy the queue
+			Set<EmailRequestCC2> retryList = new HashSet<>(retryQueue); // Copy the queue
 //	        List<EmailRequest> retryList = new LinkedList<>(retryQueue);
 			retryQueue.clear(); // Clear queue before retry
 			System.out.println("CLEAR LIST AFTER COPY LIST INTO RETRY LIST -> " + retryQueue);
 			System.out.println("RETRY LIST -> " + retryList);
 			System.out.println("Size " + retryList.size());
-			for (EmailRequestCC request : retryList) {
-				CompletableFuture<Boolean> result = sendEmail(request.getMessage(), request.getSubject(), request.getTo(), request.getCc());
+			for (EmailRequestCC2 request : retryList) {
+				CompletableFuture<Boolean> result = sendEmail(request.getMessage(), request.getSubject(), request.getTo(), request.getCc(),request.getCc1());
 				result.thenAccept(success -> {
 					if (!success) {
 						retryQueue.add(request); // Add back to queue if it fails again

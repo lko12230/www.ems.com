@@ -11,14 +11,14 @@
 
 <body>
 		<section style="background-color: #eee;">
-			<form id="login-form" class="form p-3 mt-3" th:action="@{'/manager/update_emp_Profile/'+${userdetail.id}}"  action="#" method="post" enctype="multipart/form-data">
+			<form id="login-form" class="form p-3 mt-3" th:action="@{'/manager/processing_seperation_by_manager/'+${userdetail.id}}"  action="#" method="post" enctype="multipart/form-data">
   <div class="container py-5">
     <div class="row">
       <div class="col">
         <nav aria-label="breadcrumb" class="bg-body-tertiary rounded-3 p-3 mb-4">
           <ol class="breadcrumb mb-0">
             <li class="breadcrumb-item"><a href="#">Home</a></li>
-            <li class="breadcrumb-item"><a href="#">User</a></li>
+            <li class="breadcrumb-item"><a href="#">Employees</a></li>
             <li class="breadcrumb-item active" aria-current="page">User Profile</li>
              <li class="ml-auto">
                         <b>
@@ -118,7 +118,7 @@
                 <p class="mb-0">Employee ID</p>
               </div>
               <div class="col-sm-9">
-                <p class="text-muted mb-0"><span th:text="${userdetail.id}"></span></p>
+                <p class="text-muted mb-0"><span th:text="${'GOOGLEIND00'+userdetail.id}"></span></p>
               </div>
             </div>
             <hr>
@@ -170,8 +170,8 @@
             <div class="col-sm-6">
                 <div class="text-right">
                     <b>
-                        <a href="" th:href="@{'/manager/emp_profile_edit_1/'+${userdetail.id}}" class="item">
-                            <p>BACK <i class="fas fa-edit"></i></p>
+                        <a href="" th:href="@{'/manager/emp_profile_edit_2/'+${userdetail.id}}" class="item">
+                            <p>EDIT <i class="fas fa-edit"></i></p>
                         </a>
                     </b>
                 </div>
@@ -183,10 +183,15 @@
                 <p class="mb-0">Team ID</p>
               </div>
               <div class="col-sm-9">
-             <!--    <input type="text" class="text-muted mb-0" name="team" th:value="${userdetail.team}"/> <i class="fas fa-edit"></i> -->
-               <select name="team">
-                <option th:each="size : ${teams}"  th:text="${size.team_id}" ></option>
-                </select>
+               <div th:if="${userdetail.team!=('0')}">
+                <p class="text-muted mb-0"><span th:text="${userdetail.team}"></span></p>
+                </div>
+                  <div th:if="${userdetail.team.equals('0')}">
+										<p class="text-muted mb-0">
+												<b class="text-muted mb-0"> <span style="color: blue;">No
+													Record Found</span></b>
+										</p>
+										</div>
               </div>
             </div>
             <hr>
@@ -195,16 +200,23 @@
                 <p class="mb-0">Designation</p>
               </div>
               <div class="col-sm-9">
+               <div th:if="${userdetail.designation!=('NA')}">
                 <p class="text-muted mb-0"><span th:text="${userdetail.designation}"></span></p>
+                </div>
+                 <div th:if="${userdetail.designation.equals('NA')}">
+										<p class="text-muted mb-0">
+												<b class="text-muted mb-0"> <span style="color: blue;">No
+													Record Found</span></b>
+										</p>
+										</div>
               </div>
             </div>
             <hr>
-                
-            <div class="row">
+                  <div class="row">
               <div class="col-sm-3">
                 <p class="mb-0">Base Location</p>
               </div>
-               
+              
               <div class="col-sm-9">
                <div th:if="${userdetail.base_location!=('NA')}">
                    <p class="text-muted mb-0"><span th:text="${userdetail.base_location}"></span></p>
@@ -217,8 +229,24 @@
 										</div>
               </div>
             </div>
-            <div class="mt-5"><button class="btn btn-primary profile-button"
-										type="submit">Submit</button></div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Review Rating</p>
+              </div>
+              <div class="col-sm-9">
+               <div th:if="${userdetail.review_rating!=('NA')}">
+                <p class="text-muted mb-0"><span th:text="${userdetail.review_rating}"></span></p>
+                </div>
+                <div th:if="${userdetail.review_rating.equals('NA')}">
+										<p class="text-muted mb-0">
+												<b class="text-muted mb-0"> <span style="color: blue;">No
+													Record Found</span></b>
+										</p>
+										</div>
+              </div>
+            </div>
+            
           </div>
         </div>
         
@@ -241,7 +269,7 @@
         </div>
 			<br>
 			  <div class="row">
-                <div class="col-sm-3">
+              <div class="col-sm-3">
                 <p class="mb-0">Bank Holder Name</p>
               </div>
               <div class="col-sm-9">
@@ -309,8 +337,9 @@
             </div>
             
           </div>
-        </div>        
-               <div class="card mb-4">
+        </div>
+        
+         <div class="card mb-4">
           <div class="card-body">
 			   <div class="row">
             <div class="col-sm-6">
@@ -384,14 +413,15 @@
         </div>
         
         
-           <div class="card mb-4">
+       
+                 <div class="card mb-4">
           <div class="card-body">
 			   <div class="row">
             <div class="col-sm-7">
                 <h3>Employee Seperation Info</h3>
                 <!-- Asset Info Content Goes Here -->
             </div>
-       <!--      <div class="col-sm-5">
+           <div class="col-sm-5">
                 <div class="text-right">
                     <b>
                         <a href="" th:href="@{'/manager/emp_profile_edit_1/'+${userdetail.id}}" class="item">
@@ -399,7 +429,7 @@
                         </a>
                     </b>
                 </div>
-            </div>  -->
+            </div>
         </div>
 			<br>
             <div class="row">

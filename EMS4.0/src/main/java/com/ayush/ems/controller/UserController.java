@@ -741,7 +741,7 @@ public class UserController {
 		System.out.println("{{{{{{{{{{{{{{{ " + user1);
 		Date lastdate = user1.getLastWorkingDay();
 		System.out.println("}}}}}}}}}}}}}}} " + lastdate);
-		if (user1.getSperationDate() == null && user1.getLastWorkingDay() == null) {
+		if (user1.getSeperationDate() == null && user1.getLastWorkingDay() == null) {
 			servicelayer.seperationLogic(user1.getId(), user1);
 			lastdate = user1.getLastWorkingDay();
 			System.out.println("}}}}}}}}}}}}}}} " + lastdate);

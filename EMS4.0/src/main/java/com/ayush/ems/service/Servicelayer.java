@@ -457,7 +457,7 @@ public class Servicelayer {
 		user.setRole(null);
 		user.setUsername(null);
 		user.setLastWorkingDay(null);
-		user.setSperationDate(null);
+		user.setSeperationDate(null);
 
 	}
 
@@ -645,7 +645,7 @@ public class Servicelayer {
 	@Transactional
 	public void seperationLogic(Integer id, User user) {
 		try {
-			user.setSperationDate(new Date());
+			user.setSeperationDate(new Date());
 			Instant i = Instant.now();
 			Instant i1 = i.plus(Duration.ofDays(2));
 			Date myDate = Date.from(i1);
@@ -656,6 +656,8 @@ public class Servicelayer {
 			userdao.save(user);
 			Optional<UserDetail> userDetail = userDetailDao.findById(id);
 			UserDetail userDetail2 = userDetail.get();
+			userDetail2.setSeperationDate(user.getSeperationDate());
+			userDetail2.setResignationRequestApplied(true);
 			userDetail2.setLastWorkingDay(myDate);
 			userDetailDao.save(userDetail2);
 		} catch (Exception e) {
@@ -674,6 +676,68 @@ public class Servicelayer {
 
 		}
 
+	}
+	
+	
+	@Transactional
+	public void seperationWithdrawnLogic(Integer id, User user) {
+		try {
+			user.setLastWorkingDay(null);
+			user.setSeperationDate(null);
+			user.setResignationRequestApplied(false);
+			userdao.save(user);
+			Optional<UserDetail> userOptional = userDetailDao.findById(id);
+		    UserDetail  userDetail =userOptional.get();
+		    userDetail.setLastWorkingDay(null);
+		    userDetail.setSeperationDate(null);
+		    userDetail.setResignationRequestApplied(false);
+		    userDetailDao.save(userDetail);
+			
+		} catch (Exception e) {
+			String exceptionAsString = e.toString();
+			// Get the current class
+			Class<?> currentClass = Servicelayer.class;
+
+			// Get the name of the class
+			String className = currentClass.getName();
+			String errorMessage = e.getMessage();
+			StackTraceElement[] stackTrace = e.getStackTrace();
+			String methodName = stackTrace[0].getMethodName();
+			int lineNumber = stackTrace[0].getLineNumber();
+			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+		}
+
+	}
+	
+	@Transactional
+	public boolean processing_seperation_by_manager(Integer id, User user)
+	{
+		try
+		{
+			user.setSeperation_manager_approved(true);
+			userdao.save(user);
+			Optional<UserDetail> userOptional = userDetailDao.findById(id);
+		    UserDetail  userDetail =userOptional.get();
+		    userDetail.setSeperation_manager_approved(true);
+		    userDetailDao.save(userDetail);
+		    return true;
+		}
+		catch (Exception e) {
+			String exceptionAsString = e.toString();
+			// Get the current class
+			Class<?> currentClass = Servicelayer.class;
+
+			// Get the name of the class
+			String className = currentClass.getName();
+			String errorMessage = e.getMessage();
+			StackTraceElement[] stackTrace = e.getStackTrace();
+			String methodName = stackTrace[0].getMethodName();
+			int lineNumber = stackTrace[0].getLineNumber();
+			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+			return false;
+		}
 	}
 
 	@Transactional
@@ -2621,7 +2685,7 @@ public class Servicelayer {
 					archiveDisabledUser.setImage_Url(user_info_get.getImage_Url());
 					archiveDisabledUser.setExperience(user_info_get.getExperience());
 					archiveDisabledUser.setSkills(user_info_get.getSkills());
-					archiveDisabledUser.setSperationDate(user_info_get.getSperationDate());
+					archiveDisabledUser.setSperationDate(user_info_get.getSeperationDate());
 					archiveDisabledUser.setLastWorkingDay(user_info_get.getLastWorkingDay());
 					archiveDisabledUser.setEditdate(user_info_get.getEditdate());
 					archiveDisabledUser.setEditwho(user_info_get.getEditwho());
@@ -2677,7 +2741,7 @@ public class Servicelayer {
 					archiveDisabledUser.setImage_Url(user_info_get.getImage_Url());
 					archiveDisabledUser.setExperience(user_info_get.getExperience());
 					archiveDisabledUser.setSkills(user_info_get.getSkills());
-					archiveDisabledUser.setSperationDate(user_info_get.getSperationDate());
+					archiveDisabledUser.setSperationDate(user_info_get.getSeperationDate());
 					archiveDisabledUser.setLastWorkingDay(user_info_get.getLastWorkingDay());
 					archiveDisabledUser.setEditdate(user_info_get.getEditdate());
 					archiveDisabledUser.setEditwho(user_info_get.getEditwho());

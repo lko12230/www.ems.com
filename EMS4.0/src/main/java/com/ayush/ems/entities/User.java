@@ -49,7 +49,7 @@ public class User implements Serializable{
 	private String Image_Url;
 	private String experience;
 	private String skills;
-	private Date SperationDate;
+	private Date SeperationDate;
 	private Date lastWorkingDay;
 	private Date editdate;
 	private String editwho;

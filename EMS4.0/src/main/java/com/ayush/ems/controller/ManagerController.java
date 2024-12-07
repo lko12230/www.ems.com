@@ -47,6 +47,7 @@ import com.ayush.ems.entities.User;
 import com.ayush.ems.entities.UserDetail;
 import com.ayush.ems.helper.Message;
 import com.ayush.ems.service.SeperationEmailService;
+import com.ayush.ems.service.SeperationEmailService2;
 import com.ayush.ems.service.Servicelayer;
 import com.ayush.ems.service.TeamEmailService;
 
@@ -71,6 +72,8 @@ public class ManagerController {
 //	private EmailService emailService;
 	@Autowired
 	private SeperationEmailService emailService1;
+	@Autowired
+	private SeperationEmailService2 emailService2;
 	@Autowired
 	private TeamEmailService teamEmailService;
 
@@ -365,6 +368,8 @@ public class ManagerController {
 				UserDetail userDetail = userOptional.get();
 				model.addAttribute("userdetail", userDetail);
 				model.addAttribute("title", "update form - " + userDetail.getUsername());
+				System.out.println(userOptional);
+				System.out.println(userDetail.isSeperation_manager_approved()+" <-> "+userDetail.isResignationRequestApplied());
 				return "emp_profile3.0";
 			} else {
 				throw new Exception();
@@ -434,6 +439,52 @@ public class ManagerController {
 		}
 	}
 
+	
+	@GetMapping("/team_emp_profile_edit_2/{id}")
+	public String edit_emp_team_profile(@PathVariable("id") Integer id, Model model, Principal principal) {
+		try {
+			if (principal != null) {
+				System.out.println("IN");
+				Optional<UserDetail> userOptional = this.userDetailDao.findById(id);
+				UserDetail userDetail = userOptional.get();
+				List<Team> teams= teamdao.findAll();
+				model.addAttribute("teams", teams);
+				model.addAttribute("userdetail", userDetail);
+				model.addAttribute("title", "update form - " + userDetail.getUsername());
+				return "ManagerTeamEditProfile";
+			} else {
+				throw new Exception();
+			}
+		} catch (Exception e) {
+//			return "SomethingWentWrong";
+//			String error=" java.lang.NullPointerException: Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null";
+			System.out.println("ERRRRRRRRRRRRR " + e + " " + count);
+//			String exString=e.toString();
+//			if(exString.equals("Cannot invoke \"java.security.Principal.equals(Object)\" because \"principal\" is null") && count==1 || count==0)
+//			{
+			String exceptionAsString = e.toString();
+			// Get the current class
+			Class<?> currentClass = ManagerController.class;
+
+			// Get the name of the class
+			String className = currentClass.getName();
+			String errorMessage = e.getMessage();
+			StackTraceElement[] stackTrace = e.getStackTrace();
+			String methodName = stackTrace[0].getMethodName();
+			int lineNumber = stackTrace[0].getLineNumber();
+			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+			servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+//			return "SomethingWentWrong";)
+//				return "redirect:/swr";
+//			}
+//			else
+//			{
+			return "redirect:/logout";
+//			}
+
+		}
+	}
+	
 //	@GetMapping("/profile/{id}")
 //	public String profile(@PathVariable("id") Integer id, Model model) {
 //		System.out.println("IN");
@@ -709,11 +760,497 @@ public class ManagerController {
 		}
 		return "redirect:/manager/emp_profile_edit_1/" + userDetail.getId();
 	}
+	
+	
+	@PostMapping("/team_update_emp_Profile/{id}")
+	public String ManagerAssignTeam(UserDetail userDetail, Model model, HttpSession session) {
+		try {
+			int id = userDetail.getId();
+			String email = null;
+			String username = null;
+			String team_desc = null;
+			String team_id = null;
+			String input_team_by_manager = userDetail.getTeam();
+			System.out.println("USERDETAIL " + input_team_by_manager);
+			Optional<UserDetail> userDetail2 = userDetailDao.findById(userDetail.getId());
+			UserDetail userDetail3 = userDetail2.get();
+			String user_team_check = userDetail3.getTeam();
+			String team_validate_by_db = teamdao.getAllDataFromTeamDescription(input_team_by_manager);
+			if (team_validate_by_db != null) {
+				System.out.println(" team is valid or not " + team_validate_by_db);
+				String[] string_array = team_validate_by_db.split(",");
+				team_id = string_array[0];
+				team_desc = string_array[1];
+				System.out.println(team_id + " TEAM INFO " + team_desc);
+				if (input_team_by_manager.equals(team_id) && input_team_by_manager.equals(user_team_check)) {
+					session.setAttribute("message", new Message(" Same Team Cannot Be Reassigned!!", "alert-danger"));
+				}
+				if(input_team_by_manager.startsWith("R") && input_team_by_manager.equals(team_id) &&
+						input_team_by_manager.length() == 9 && !input_team_by_manager.equals(user_team_check))
+				{
+					username = userDetail3.getUsername();
+					email = userDetail3.getEmail();
+					System.out.println("EMAIL " + email);
+					System.out.println("TEAMID " + team_id);
+					System.out.println("USERNAME " + username);
+					System.out.println("TEAMDESC " + team_desc);
+//					EMSMAIN.id_with_email.put(id, email);
+//					EMSMAIN.id_with_team_id.put(id, team_id);
+//					EMSMAIN.id_with_username.put(id, username);
+//					EMSMAIN.id_with_team_desc.put(id, team_desc);
+					servicelayer.update_team_by_team_id(userDetail3, team_id, team_desc);
+//					String teamDescwithid = teamdao.getAllDataFromTeamDescription(team_id);
+					String message = "" +
+						    "<div style='font-family: Arial, sans-serif; margin: 0; padding: 0;'>" +
+						        "<table width='100%' cellspacing='0' cellpadding='0' style='background-color: #f4f4f4; padding: 20px;'>" +
+						            "<tr>" +
+						                "<td align='center'>" +
+						                    "<table width='600' cellspacing='0' cellpadding='20' style='background-color: #ffffff; border-radius: 8px;'>" +
+						                        "<tr>" +
+						                            "<td>" +
+						                                "<h2 style='font-size: 24px; color: #333;'>Dear " + username + ",</h2>" +
+						                                "<p style='font-size: 16px; color: #555;'>We regret to inform you that you have been removed from the team, <b>" + team_id + " -> " + team_desc + "</b>, on <b>" + new Date() + "</b>.</p>" +
+						                                "<p style='font-size: 16px; color: #555;'>If you have any questions or concerns, please feel free to reach out to us.</p>" +
+						                                "<br>" +
+						                                "<p style='font-size: 16px; color: #555;'>Best regards,</p>" +
+						                                "<p style='font-size: 16px; color: #555;'><b>Resource Management Team</b></p>" +
+						                            "</td>" +
+						                        "</tr>" +
+						                    "</table>" +
+						                "</td>" +
+						            "</tr>" +
+						        "</table>" +
+						    "</div>";
+
+					String subject = "Team Removal Notification for Employee " + id;
+
+					  CompletableFuture<Boolean> flagFuture = this.teamEmailService.sendEmail(message, subject, email);
+					  Boolean flag = flagFuture.get(); // Blocking call to get the result
+				        if (flag) {
+				           System.out.println(true);
+				        } else {
+				            System.out.println(false);
+				        }
+				        session.setAttribute("message",
+								new Message("Employee Details Successfully Updated !!", "alert-success"));
+
+				}
+				if (input_team_by_manager.startsWith("T") && input_team_by_manager.length() == 9
+						&& input_team_by_manager.equals(team_id) && !input_team_by_manager.equals(user_team_check)) {
+					username = userDetail3.getUsername();
+					email = userDetail3.getEmail();
+					System.out.println("EMAIL " + email);
+					System.out.println("TEAMID " + team_id);
+					System.out.println("USERNAME " + username);
+					System.out.println("TEAMDESC " + team_desc);
+//					EMSMAIN.id_with_email.put(id, email);
+//					EMSMAIN.id_with_team_id.put(id, team_id);
+//					EMSMAIN.id_with_username.put(id, username);
+//					EMSMAIN.id_with_team_desc.put(id, team_desc);
+					servicelayer.update_team_by_team_id(userDetail3, team_id, team_desc);
+//					String teamDescwithid = teamdao.getAllDataFromTeamDescription(team_id);
+					String message = "" +
+						    "<div style='font-family: Arial, sans-serif; margin: 0; padding: 0;'>" +
+						        "<table width='100%' cellspacing='0' cellpadding='0' style='background-color: #f4f4f4; padding: 20px;'>" +
+						            "<tr>" +
+						                "<td align='center'>" +
+						                    "<table width='600' cellspacing='0' cellpadding='20' style='background-color: #ffffff; border-radius: 8px;'>" +
+						                        "<tr>" +
+						                            "<td>" +
+						                                "<h2 style='font-size: 24px; color: #333;'>Dear " + username + ",</h2>" +
+						                                "<p style='font-size: 16px; color: #555;'>We would like to inform you that your team has been changed. Your new team is: <b>" + team_id + " -> " + team_desc + "</b>.</p>" +
+						                                "<p style='font-size: 16px; color: #555;'>You will receive further instructions from your manager within 2 working days.</p>" +
+						                                "<br>" +
+						                                "<p style='font-size: 16px; color: #555;'>If you have any questions, feel free to contact us.</p>" +
+						                                "<br>" +
+						                                "<p style='font-size: 16px; color: #555;'>Best regards,</p>" +
+						                                "<p style='font-size: 16px; color: #555;'><b>Resource Management Team</b></p>" +
+						                            "</td>" +
+						                        "</tr>" +
+						                    "</table>" +
+						                "</td>" +
+						            "</tr>" +
+						        "</table>" +
+						    "</div>";
+
+						String subject = "Employee " + id + " - Team Assignment Notification";
+					  CompletableFuture<Boolean> flagFuture = this.teamEmailService.sendEmail(message, subject, email);
+					  Boolean flag = flagFuture.get(); // Blocking call to get the result
+				        if (flag) {
+				           System.out.println(true);
+				        } else {
+				            System.out.println(false);
+				        }
+					session.setAttribute("message",
+							new Message("Employee Details Successfully Updated !!", "alert-success"));
+				}
+			} else {
+				session.setAttribute("message", new Message("Team ID is not valid !!", "alert-danger"));
+			}
+		} catch (Exception e) {
+			if (e.getMessage().equals("No value present")) {
+				session.setAttribute("message",
+						new Message("Something went wrong !! : Admin Not Registered", "alert-danger"));
+			} else {
+				session.setAttribute("message",
+						new Message("Something went wrong !! : " + e.getMessage(), "alert-danger"));
+			}
+		}
+		return "redirect:/manager/teamprofile/" + userDetail.getId();
+	}
+
 
 	@GetMapping("/seperation")
 	public String Seperation() {
-		return "Seperation";
+		return "ManagerSeperation";
 	}
+	
+	
+	@PostMapping("/withdrawn_request/{id}")
+	public String Withdrawn_Request(@PathVariable("id") Integer id, HttpSession session)
+	{
+		try
+		{
+		boolean flag=false;
+		Optional<User> result2 = userdao.findById(id);
+		User user1 = result2.get();
+		System.out.println("Admin FindById 1 " + user1);
+		String adminId = user1.getAdmin_id();
+		System.out.println("Admin FindById 2 " + adminId);
+		int typeCastAdminId = Integer.parseInt(adminId);
+		System.out.println("Admin FindById 3 " + typeCastAdminId);
+		Optional<Admin> admin = adminDao.findById(typeCastAdminId);
+		Admin admin1 = admin.get();
+		System.out.println("Admin FindById 4 " + typeCastAdminId);
+		String to = user1.getEmail();
+		String cc = admin1.getEmail();
+		if(user1.isResignationRequestApplied()== true && user1.isSeperation_manager_approved() == false)
+		{
+			servicelayer.seperationWithdrawnLogic(id, user1);
+		    String subject = "Withdraw Seperation Request EMPID: " + user1.getId();
+		    String message = "" +
+		    	    "<!DOCTYPE html>" +
+		    	    "<html lang='en'>" +
+		    	    "<head>" +
+		    	    "    <meta charset='UTF-8'>" +
+		    	    "    <meta name='viewport' content='width=device-width, initial-scale=1.0'>" +
+		    	    "    <meta http-equiv='X-UA-Compatible' content='IE=edge'>" +
+		    	    "    <style>" +
+		    	    "        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; }" +
+		    	    "        .email-container { max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); }" +
+		    	    "        .header { background-color: #28a745; padding: 20px; text-align: center; color: #ffffff; border-top-left-radius: 8px; border-top-right-radius: 8px; }" + // Changed header color to indicate success
+		    	    "        .header h1 { margin: 0; font-size: 24px; }" +
+		    	    "        .content { padding: 30px; color: #333333; line-height: 1.6; }" +
+		    	    "        .content p { font-size: 16px; margin: 0 0 20px 0; }" +
+		    	    "        .content .highlight { font-weight: bold; color: #28a745; }" + // Changed highlight color to match success
+		    	    "        .footer { padding: 20px; text-align: center; font-size: 12px; color: #888888; background-color: #f1f1f1; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; }" +
+		    	    "    </style>" +
+		    	    "</head>" +
+		    	    "<body>" +
+		    	    "    <div class='email-container'>" +
+		    	    "        <div class='header'>" +
+		    	    "            <h1>Resignation Withdrawn</h1>" + // Updated header text
+		    	    "        </div>" +
+		    	    "        <div class='content'>" +
+		    	    "            <p>Dear " + user1.getUsername() + ",</p>" +
+		    	    "            <p>Your resignation request has been successfully withdrawn.</p>" + // Updated content message
+		    	    "            <p>We are glad to have you continue with us and appreciate your contributions.</p>" +
+		    	    "            <p>Sincerely,</p>" +
+		    	    "            <p><strong>HR Team</strong></p>" +
+		    	    "        </div>" +
+		    	    "        <div class='footer'>" +
+		    	    "            <p>If you have any questions, feel free to reach out to us at any time.</p>" +
+		    	    "        </div>" +
+		    	    "    </div>" +
+		    	    "</body>" +
+		    	    "</html>";
+
+
+			CompletableFuture<Boolean> flagFuture = this.emailService1.sendEmail(message, subject, to, cc);
+		    
+		    // This will block until the result is available
+			try {
+		         flag = flagFuture.get(); // Blocking call to get the result
+		        if (flag) {
+		           System.out.println(true);
+		        } else {
+		            System.out.println(false);
+		        }
+			}
+			catch (Exception e) {
+		        e.printStackTrace();
+		       System.out.println("ERROR");
+		    }
+
+		session.setAttribute("message", new Message("Your Resignation Request Has Been Withdrawn Successfully ", "alert-success"));
+		return "ManagerSeperation";
+		}
+		else
+		{
+			session.setAttribute("message", new Message("Something Went Wrong !! Resignation Cannot Be Withdrawn", "alert-danger"));
+			return "ManagerSeperation";
+		}
+		}
+		catch (Exception e) {
+			if(e.getMessage().equals("No value present"))
+			{
+				session.setAttribute("message", new Message("Something Went Wrong !! "+e.getMessage(), "alert-danger"));
+				e.printStackTrace();
+				return "AdminSeperation";
+			}
+			return "ManagerSeperation";
+		}
+	}
+
+	
+	@PostMapping("/processing_seperation_by_manager/{id}")
+	public String processing_seperation_by_manager(@PathVariable("id") Integer id, Model model, Principal principal, HttpSession session)
+	{
+		Optional<User> result2 = userdao.findById(id);
+		User user1 = result2.get();
+		System.out.println("Admin FindById 1 " + user1);
+		String adminId = user1.getAdmin_id();
+		System.out.println("Admin FindById 2 " + adminId);
+		int typeCastAdminId = Integer.parseInt(adminId);
+		System.out.println("Admin FindById 3 " + typeCastAdminId);
+		Optional<Admin> admin = adminDao.findById(typeCastAdminId);
+		Admin admin1 = admin.get();
+		System.out.println("Admin FindById 4 " + typeCastAdminId);
+		String to = user1.getEmail();
+		String cc = admin1.getEmail();
+		String cc1 = principal.getName();
+		System.out.println("CC1 "+cc1+" CC "+cc);
+		if(user1.isResignationRequestApplied()== true && user1.isSeperation_manager_approved() == false)
+		{
+			boolean isUpdate =servicelayer.processing_seperation_by_manager(id, user1);
+			if(isUpdate)
+			{
+				
+				String subject = "Resignation Accepted - EMPID: " + user1.getId();
+				String message = "" +
+				    "<!DOCTYPE html>" +
+				    "<html lang='en'>" +
+				    "<head>" +
+				    "    <meta charset='UTF-8'>" +
+				    "    <meta name='viewport' content='width=device-width, initial-scale=1.0'>" +
+				    "    <meta http-equiv='X-UA-Compatible' content='IE=edge'>" +
+				    "    <style>" +
+				    "        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f9f9f9; }" +
+				    "        .email-container { max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); }" +
+				    "        .header { background-color: #007BFF; color: #ffffff; padding: 20px; text-align: center; border-top-left-radius: 8px; border-top-right-radius: 8px; }" +
+				    "        .header h1 { margin: 0; font-size: 22px; }" +
+				    "        .content { padding: 20px; color: #333333; line-height: 1.5; }" +
+				    "        .content p { margin: 10px 0; font-size: 16px; }" +
+				    "        .content .highlight { font-weight: bold; color: #007BFF; }" +
+				    "        .footer { background-color: #f1f1f1; padding: 10px 20px; text-align: center; color: #888888; font-size: 12px; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; }" +
+				    "    </style>" +
+				    "</head>" +
+				    "<body>" +
+				    "    <div class='email-container'>" +
+				    "        <div class='header'>" +
+				    "            <h1>Resignation Accepted</h1>" +
+				    "        </div>" +
+				    "        <div class='content'>" +
+				    "            <p>Dear " + user1.getUsername() + ",</p>" +
+				    "            <p>This email is to formally acknowledge the acceptance of your resignation request. Your last working day has been confirmed as <span class='highlight'>" + user1.getLastWorkingDay() + "</span>.</p>" +
+				    "            <p>We would like to express our deepest gratitude for the contributions you have made during your tenure with the organization. Your efforts and dedication have left a significant impact, and you will be greatly missed.</p>" +
+				    "            <p>We wish you continued success in all your future endeavors. If there is anything we can assist you with during your transition, please do not hesitate to let us know.</p>" +
+				    "            <p>Best regards,</p>" +
+				    "            <p><strong>HR Team</strong></p>" +
+				    "        </div>" +
+				    "        <div class='footer'>" +
+				    "            <p>If you have any questions or need further assistance, feel free to contact the HR department.</p>" +
+				    "        </div>" +
+				    "    </div>" +
+				    "</body>" +
+				    "</html>";
+				CompletableFuture<Boolean> flagFuture = this.emailService2.sendEmail(message, subject, to, cc, cc1);
+				System.out.println("processing_seperation_by_manager "+flagFuture);
+
+			}
+		}
+		session.setAttribute("message", new Message("Success","alert-danger"));
+		Optional<UserDetail> userOptional = this.userDetailDao.findById(id);
+		UserDetail userDetail = userOptional.get();
+		model.addAttribute("userdetail", userDetail);
+		return "emp_profile3.0";
+	}
+	
+	@PostMapping("/team_processing_seperation_by_manager/{id}")
+	public String team_processing_seperation_by_manager(@PathVariable("id") Integer id, Model model, Principal principal, HttpSession session)
+	{
+		Optional<User> result2 = userdao.findById(id);
+		User user1 = result2.get();
+		System.out.println("Admin FindById 1 " + user1);
+		String adminId = user1.getAdmin_id();
+		System.out.println("Admin FindById 2 " + adminId);
+		int typeCastAdminId = Integer.parseInt(adminId);
+		System.out.println("Admin FindById 3 " + typeCastAdminId);
+		Optional<Admin> admin = adminDao.findById(typeCastAdminId);
+		Admin admin1 = admin.get();
+		System.out.println("Admin FindById 4 " + typeCastAdminId);
+		String to = user1.getEmail();
+		String cc = admin1.getEmail();
+		String cc1 = principal.getName();
+		System.out.println("CC1 "+cc1+" CC "+cc);
+		if(user1.isResignationRequestApplied()== true && user1.isSeperation_manager_approved() == false)
+		{
+			boolean isUpdate =servicelayer.processing_seperation_by_manager(id, user1);
+			if(isUpdate)
+			{
+				
+				String subject = "Resignation Accepted - EMPID: " + user1.getId();
+				String message = "" +
+				    "<!DOCTYPE html>" +
+				    "<html lang='en'>" +
+				    "<head>" +
+				    "    <meta charset='UTF-8'>" +
+				    "    <meta name='viewport' content='width=device-width, initial-scale=1.0'>" +
+				    "    <meta http-equiv='X-UA-Compatible' content='IE=edge'>" +
+				    "    <style>" +
+				    "        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f9f9f9; }" +
+				    "        .email-container { max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); }" +
+				    "        .header { background-color: #007BFF; color: #ffffff; padding: 20px; text-align: center; border-top-left-radius: 8px; border-top-right-radius: 8px; }" +
+				    "        .header h1 { margin: 0; font-size: 22px; }" +
+				    "        .content { padding: 20px; color: #333333; line-height: 1.5; }" +
+				    "        .content p { margin: 10px 0; font-size: 16px; }" +
+				    "        .content .highlight { font-weight: bold; color: #007BFF; }" +
+				    "        .footer { background-color: #f1f1f1; padding: 10px 20px; text-align: center; color: #888888; font-size: 12px; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; }" +
+				    "    </style>" +
+				    "</head>" +
+				    "<body>" +
+				    "    <div class='email-container'>" +
+				    "        <div class='header'>" +
+				    "            <h1>Resignation Accepted</h1>" +
+				    "        </div>" +
+				    "        <div class='content'>" +
+				    "            <p>Dear " + user1.getUsername() + ",</p>" +
+				    "            <p>This email is to formally acknowledge the acceptance of your resignation request. Your last working day has been confirmed as <span class='highlight'>" + user1.getLastWorkingDay() + "</span>.</p>" +
+				    "            <p>We would like to express our deepest gratitude for the contributions you have made during your tenure with the organization. Your efforts and dedication have left a significant impact, and you will be greatly missed.</p>" +
+				    "            <p>We wish you continued success in all your future endeavors. If there is anything we can assist you with during your transition, please do not hesitate to let us know.</p>" +
+				    "            <p>Best regards,</p>" +
+				    "            <p><strong>HR Team</strong></p>" +
+				    "        </div>" +
+				    "        <div class='footer'>" +
+				    "            <p>If you have any questions or need further assistance, feel free to contact the HR department.</p>" +
+				    "        </div>" +
+				    "    </div>" +
+				    "</body>" +
+				    "</html>";
+				CompletableFuture<Boolean> flagFuture = this.emailService2.sendEmail(message, subject, to, cc, cc1);
+				System.out.println("processing_seperation_by_manager "+flagFuture);
+
+			}
+		}
+		session.setAttribute("message", new Message("EMP ID "+user1.getId()+" Seperation Request Has Been Approved","alert-success"));
+		Optional<UserDetail> userOptional = this.userDetailDao.findById(id);
+		UserDetail userDetail = userOptional.get();
+		model.addAttribute("userdetail", userDetail);
+		return "ManagerTeamViewProfile";
+	}
+	
+	@GetMapping("/employee_seperation_details/{id}")
+	public String emp_seperation_details(@PathVariable("id") Integer id, Model model, Principal principal) {
+	    try {
+	        if (principal != null) {
+	            System.out.println("Accessing employee details...");
+	            
+	            // Fetching user details from the database
+	            Optional<UserDetail> userOptional = this.userDetailDao.findById(id);
+	            if (userOptional.isPresent()) {
+	                UserDetail userDetail = userOptional.get();
+	                
+	                // Fetching all teams for dropdown (if required)
+	                List<Team> teams = teamdao.findAll();
+	                model.addAttribute("teams", teams);
+	                
+	                // Adding data to the model
+	                model.addAttribute("userdetail", userDetail);
+	                model.addAttribute("title", "Update Employee Info - " + userDetail.getUsername());
+	                return "emp_profile3.1"; // Redirect to the specific Thymeleaf template
+	            } else {
+	                throw new Exception("User not found with ID: " + id);
+	            }
+	        } else {
+	            throw new Exception("Unauthorized access.");
+	        }
+	    } catch (Exception e) {
+	        // Logging error details
+	        String exceptionAsString = e.toString();
+	        String errorMessage = e.getMessage();
+	        StackTraceElement[] stackTrace = e.getStackTrace();
+	        String methodName = stackTrace[0].getMethodName();
+	        int lineNumber = stackTrace[0].getLineNumber();
+	        servicelayer.insert_error_log(exceptionAsString, this.getClass().getName(), errorMessage, methodName, lineNumber);
+
+	        // Redirecting to logout or error page
+	        return "redirect:/logout";
+	    }
+	}
+
+	
+	@GetMapping("/team_employee_seperation_details/{id}")
+	public String team_emp_seperation_details(@PathVariable("id") Integer id, Model model, Principal principal, HttpSession session) {
+	    try {
+	        // Ensure the user is logged in
+	        if (principal != null) {
+	            System.out.println("Accessing employee details... " + id);
+
+	            // Fetch the employee details for the given ID
+	            Optional<UserDetail> userDetailOptional = this.userDetailDao.findById(id);
+
+	            // Fetch the logged-in user's details
+	            Optional<User> loggedInUserOptional = userdao.findByEmail(principal.getName());
+
+	            // Ensure both userDetail and logged-in user exist
+	            if (userDetailOptional.isPresent() && loggedInUserOptional.isPresent()) {
+	                UserDetail userDetail = userDetailOptional.get();
+	                User loggedInUser = loggedInUserOptional.get();
+
+	                System.out.println("Logged-in User ID: " + loggedInUser.getId() + ", Employee ID: " + userDetail.getId());
+
+	                // Restrict self-approval
+	                if (loggedInUser.getId().equals(userDetail.getId()) && userDetail.isResignationRequestApplied() && userDetail.isSeperation_manager_approved()==false) {
+	                    session.setAttribute("message", new Message(
+	                        "You cannot approve your own separation request. Please contact HR/Admin Team.", 
+	                        "alert-danger"
+	                    ));
+	                    return "redirect:/manager/teamprofile/"+userDetail.getId(); // Redirect to a relevant page
+	                }
+
+	                // Fetch teams for the dropdown if required
+	                List<Team> teams = teamdao.findAll();
+	                model.addAttribute("teams", teams);
+
+	                // Add user and employee details to the model
+	                model.addAttribute("userdetail", userDetail);
+	                model.addAttribute("user", loggedInUser);
+	                model.addAttribute("title", "Update Employee Info - " + userDetail.getUsername());
+
+	                // Return the approval page
+	                return "ManagerTeamSeperationRequestIApproved";
+	            } else {
+	                session.setAttribute("message", new Message("Employee details not found.", "alert-danger"));
+	                return "redirect:/error-page"; // Redirect if the user or employee is not found
+	            }
+	        } else {
+	            throw new Exception("Unauthorized access.");
+	        }
+	    } catch (Exception e) {
+	        // Log error details
+	        String exceptionAsString = e.toString();
+	        String errorMessage = e.getMessage();
+	        StackTraceElement[] stackTrace = e.getStackTrace();
+	        String methodName = stackTrace[0].getMethodName();
+	        int lineNumber = stackTrace[0].getLineNumber();
+	        servicelayer.insert_error_log(exceptionAsString, this.getClass().getName(), errorMessage, methodName, lineNumber);
+
+	        // Redirect to logout or error page
+	        return "redirect:/logout";
+	    }
+	}
+
+
 
 	@PostMapping("/seperation/{id}")
 	public String Seperation(@PathVariable("id") Integer id, HttpSession session) {
@@ -722,11 +1259,11 @@ public class ManagerController {
 		System.out.println("{{{{{{{{{{{{{{{ " + user1);
 		Date lastdate = user1.getLastWorkingDay();
 		System.out.println("}}}}}}}}}}}}}}} " + lastdate);
-		if (user1.getSperationDate() == null && user1.getLastWorkingDay() == null) {
+		if (user1.getSeperationDate() == null && user1.getLastWorkingDay() == null) {
 			servicelayer.seperationLogic(user1.getId(), user1);
 			lastdate = user1.getLastWorkingDay();
 			System.out.println("}}}}}}}}}}}}}}} " + lastdate);
-			session.setAttribute("message", new Message("Your last working day is " + lastdate, "alert-success"));
+			session.setAttribute("message", new Message("Your resignation request has been submitted successfully. The HR team will review your request and provide further updates.", "alert-success"));
 //			String username = user1.getUsername();
 			String to = user1.getEmail();
 			String adminId = user1.getAdmin_id();
@@ -739,7 +1276,7 @@ public class ManagerController {
 //			EMSMAIN.id_with_last_working_day_date.put(user1.getId(), lastdate);
 //			EMSMAIN.id_with_username.put(user1.getId(), username);
 //			servicelayer.sentMessage2(to, subject, username, lastdate, cc,id);
-			String subject = "Seperation Request EMPID: EMPID" + user1.getId();
+			String subject = "Seperation Request EMPID: " + user1.getId();
 			String message = "" +
 				    "<!DOCTYPE html>" +
 				    "<html lang='en'>" +
@@ -792,13 +1329,13 @@ public class ManagerController {
 		        e.printStackTrace();
 		       System.out.println("ERROR");
 		    }
-			return "Seperation";
+			return "ManagerSeperation";
 		} else {
 			lastdate = user1.getLastWorkingDay();
 			session.setAttribute("message", new Message(
 					"Sorry!! You have already applied speration request and your last working day is " + lastdate,
 					"alert-danger"));
-			return "Seperation";
+			return "ManagerSeperation";
 		}
 	}
 
@@ -863,7 +1400,7 @@ public class ManagerController {
 		System.out.println("{{{{{{{{{{{{{{{ " + user1);
 		Date lastdate = user1.getLastWorkingDay();
 		System.out.println("}}}}}}}}}}}}}}} " + lastdate);
-		if (user1.getSperationDate() == null && user1.getLastWorkingDay() == null) {
+		if (user1.getSeperationDate() == null && user1.getLastWorkingDay() == null) {
 			servicelayer.seperationLogic(user1.getId(), user1);
 			lastdate = user1.getLastWorkingDay();
 			System.out.println("}}}}}}}}}}}}}}} " + lastdate);

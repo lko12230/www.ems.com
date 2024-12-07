@@ -18,12 +18,12 @@
         <nav aria-label="breadcrumb" class="bg-body-tertiary rounded-3 p-3 mb-4">
           <ol class="breadcrumb mb-0">
             <li class="breadcrumb-item"><a href="#">Home</a></li>
-            <li class="breadcrumb-item"><a href="#">Team</a></li>
+            <li class="breadcrumb-item"><a href="#">Employees</a></li>
             <li class="breadcrumb-item active" aria-current="page">User Profile</li>
-              <li class="ml-auto">
+             <li class="ml-auto">
                         <b>
-                            <a href="" th:href="@{/manager/viewTeamMembersOnly}" class="item">
-                                List View <i class="fa-solid fa-list"></i>
+                            <a href="" th:href="@{/manager/viewMembers}" class="item">
+                                <p>List View <i class="fa-solid fa-list"></i></p>
                             </a>
                         </b>
                     </li>
@@ -96,21 +96,13 @@
       <div class="col-lg-8">
         <div class="card mb-4">
           <div class="card-body">
-			   <div class="row">
-            <div class="col-sm-6">
-                <h3>Personal Info</h3>
-                <!-- Asset Info Content Goes Here -->
-            </div>
-         <!--   <div class="col-sm-6">
-                <div class="text-right">
-                    <b>
-                        <a href="" th:href="@{/manager/viewTeamMembersOnly}" class="item">
-                            <p>Back <i class="fas fa-edit"></i></p>
-                        </a>
-                    </b>
-                </div>
-            </div>   -->
-        </div>
+			  <h3>Personal Info</h3>
+		<!--	  <div class="text-right">
+				<b> <a href="" th:href="@{'/IT/emp_profile_edit_2/'+${userdetail.id}}" class="item">
+						<p>EDIT <i class="fas fa-edit"></i></p>
+					</a>
+				</b>
+			</div>  -->
 			<br>
             <div class="row">
               <div class="col-sm-3">
@@ -126,7 +118,7 @@
                 <p class="mb-0">Employee ID</p>
               </div>
               <div class="col-sm-9">
-                <p class="text-muted mb-0"><span th:text="${'GOOGLEIND00'+userdetail.id}"></span></p>
+                <p class="text-muted mb-0"><span th:text="${userdetail.id}"></span></p>
               </div>
             </div>
             <hr>
@@ -136,15 +128,6 @@
               </div>
               <div class="col-sm-9">
                 <p class="text-muted mb-0"><span th:text="${userdetail.email}"></span></p>
-              </div>
-            </div>
-            <hr>
-             <div class="row">
-              <div class="col-sm-3">
-                <p class="mb-0">Team ID</p>
-              </div>
-              <div class="col-sm-9">
-                <p class="text-muted mb-0"><span th:text="${userdetail.team}"></span></p>
               </div>
             </div>
             <hr>
@@ -177,8 +160,96 @@
           </div>
         </div>
         
+            <div class="card mb-4">
+          <div class="card-body">
+			   <div class="row">
+            <div class="col-sm-6">
+                <h3>Professional Info</h3>
+                <!-- Asset Info Content Goes Here -->
+            </div>
+            <div class="col-sm-6">
+                <div class="text-right">
+                    <b>
+                        <a href="" th:href="@{'/manager/team_emp_profile_edit_2/'+${userdetail.id}}" class="item">
+                            <p>EDIT <i class="fas fa-edit"></i></p>
+                        </a>
+                    </b>
+                </div>
+            </div>
+        </div>
+			<br>
+			  <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Team ID</p>
+              </div>
+              <div class="col-sm-9">
+               <div th:if="${userdetail.team!=('0')}">
+                <p class="text-muted mb-0"><span th:text="${userdetail.team}"></span></p>
+                </div>
+                  <div th:if="${userdetail.team.equals('0')}">
+										<p class="text-muted mb-0">
+												<b class="text-muted mb-0"> <span style="color: blue;">No
+													Record Found</span></b>
+										</p>
+										</div>
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Designation</p>
+              </div>
+              <div class="col-sm-9">
+               <div th:if="${userdetail.designation!=('NA')}">
+                <p class="text-muted mb-0"><span th:text="${userdetail.designation}"></span></p>
+                </div>
+                 <div th:if="${userdetail.designation.equals('NA')}">
+										<p class="text-muted mb-0">
+												<b class="text-muted mb-0"> <span style="color: blue;">No
+													Record Found</span></b>
+										</p>
+										</div>
+              </div>
+            </div>
+            <hr>
+                  <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Base Location</p>
+              </div>
+              
+              <div class="col-sm-9">
+               <div th:if="${userdetail.base_location!=('NA')}">
+                   <p class="text-muted mb-0"><span th:text="${userdetail.base_location}"></span></p>
+                   </div>
+                   <div th:if="${userdetail.base_location.equals('NA')}">
+										<p class="text-muted mb-0">
+												<b class="text-muted mb-0"> <span style="color: blue;">No
+													Record Found</span></b>
+										</p>
+										</div>
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Review Rating</p>
+              </div>
+              <div class="col-sm-9">
+               <div th:if="${userdetail.review_rating!=('NA')}">
+                <p class="text-muted mb-0"><span th:text="${userdetail.review_rating}"></span></p>
+                </div>
+                <div th:if="${userdetail.review_rating.equals('NA')}">
+										<p class="text-muted mb-0">
+												<b class="text-muted mb-0"> <span style="color: blue;">No
+													Record Found</span></b>
+										</p>
+										</div>
+              </div>
+            </div>
+            
+          </div>
+        </div>
         
-        	<div th:if="${get_user.manager_or_not==true}">
                  <div class="card mb-4">
           <div class="card-body">
 			   <div class="row">
@@ -186,7 +257,7 @@
                 <h3>Banking Info</h3>
                 <!-- Asset Info Content Goes Here -->
             </div>
-       <!--     <div class="col-sm-6">
+         <!--   <div class="col-sm-6">
                 <div class="text-right">
                     <b>
                         <a href="" th:href="@{'/admin/emp_profile_edit_2/'+${userdetail.id}}" class="item">
@@ -194,7 +265,7 @@
                         </a>
                     </b>
                 </div>
-            </div>-->
+            </div> -->
         </div>
 			<br>
 			  <div class="row">
@@ -202,7 +273,15 @@
                 <p class="mb-0">Bank Holder Name</p>
               </div>
               <div class="col-sm-9">
+               <div th:if="${userdetail.bank_account_holder_name!=('NA')}">
                 <p class="text-muted mb-0"><span th:text="${userdetail.bank_account_holder_name}"></span></p>
+                </div>
+                <div th:if="${userdetail.bank_account_holder_name.equals('NA')}">
+										<p class="text-muted mb-0">
+												<b class="text-muted mb-0"> <span style="color: blue;">No
+													Record Found</span></b>
+										</p>
+										</div>
               </div>
             </div>
             <hr>
@@ -211,7 +290,15 @@
                 <p class="mb-0">Bank Name</p>
               </div>
               <div class="col-sm-9">
+               <div th:if="${userdetail.bank_name!=('NA')}">
                 <p class="text-muted mb-0"><span th:text="${userdetail.bank_name}"></span></p>
+                </div>
+                 <div th:if="${userdetail.bank_name.equals('NA')}">
+										<p class="text-muted mb-0">
+												<b class="text-muted mb-0"> <span style="color: blue;">No
+													Record Found</span></b>
+										</p>
+										</div>
               </div>
             </div>
             <hr>
@@ -220,7 +307,15 @@
                 <p class="mb-0">Account Number</p>
               </div>
               <div class="col-sm-9">
+              <div th:if="${userdetail.bank_account_number!=0}">
                    <p class="text-muted mb-0"><span th:text="${userdetail.bank_account_number}"></span></p>
+                   </div>
+                   <div th:if="${userdetail.bank_account_number==0}">
+										<p class="text-muted mb-0">
+												<b class="text-muted mb-0"> <span style="color: blue;">No
+													Record Found</span></b>
+										</p>
+										</div>
               </div>
             </div>
             <hr>
@@ -229,7 +324,15 @@
                 <p class="mb-0">Ifsc Code</p>
               </div>
               <div class="col-sm-9">
+              <div th:if="${userdetail.ifsc_code!=('NA')}">
                 <p class="text-muted mb-0"><span th:text="${userdetail.ifsc_code}"></span></p>
+                </div>
+                <div th:if="${userdetail.ifsc_code.equals('NA')}">
+										<p class="text-muted mb-0">
+												<b class="text-muted mb-0"> <span style="color: blue;">No
+													Record Found</span></b>
+										</p>
+										</div>
               </div>
             </div>
             
@@ -243,7 +346,7 @@
                 <h3>Asset Info</h3>
                 <!-- Asset Info Content Goes Here -->
             </div>
-     <!--       <div class="col-sm-6">
+        <!--    <div class="col-sm-6">
                 <div class="text-right">
                     <b>
                         <a href="" th:href="@{'/admin/emp_profile_edit_21/'+${userdetail.id}}" class="item">
@@ -251,15 +354,24 @@
                         </a>
                     </b>
                 </div>
-            </div>-->
+            </div>  -->
         </div>
 			<br>
             <div class="row">
               <div class="col-sm-3">
                 <p class="mb-0">Laptop Brand</p>
               </div>
+              
               <div class="col-sm-9">
+                  <div th:if="${userdetail.laptop_brand!=('NA')}">
                 <p class="text-muted mb-0"><span th:text="${userdetail.laptop_brand}"></span></p>
+                </div>
+                <div th:if="${userdetail.laptop_brand.equals('NA')}">
+										<p class="text-muted mb-0">
+												<b class="text-muted mb-0"> <span style="color: blue;">No
+													Record Found</span></b>
+										</p>
+										</div>
               </div>
             </div>
             <hr>
@@ -268,7 +380,15 @@
                 <p class="mb-0">Serial Number</p>
               </div>
               <div class="col-sm-9">
+                <div th:if="${userdetail.laptop_serial_number!=('NA')}">
                    <p class="text-muted mb-0"><span th:text="${userdetail.laptop_serial_number}"></span></p>
+                   </div>
+                      <div th:if="${userdetail.laptop_serial_number.equals('NA')}">
+										<p class="text-muted mb-0">
+												<b class="text-muted mb-0"> <span style="color: blue;">No
+													Record Found</span></b>
+										</p>
+										</div>
               </div>
             </div>
             <hr>
@@ -277,14 +397,141 @@
                 <p class="mb-0">Product Id</p>
               </div>
               <div class="col-sm-9">
+               <div th:if="${userdetail.laptop_id!=('NA')}">
                 <p class="text-muted mb-0"><span th:text="${userdetail.laptop_id}"></span></p>
+                </div>
+                <div th:if="${userdetail.laptop_id.equals('NA')}">
+										<p class="text-muted mb-0">
+												<b class="text-muted mb-0"> <span style="color: blue;">No
+													Record Found</span></b>
+										</p>
+										</div>
               </div>
             </div>
             
           </div>
         </div>
+        
+        
+       
+                 <div class="card mb-4">
+          <div class="card-body">
+			   <div class="row">
+            <div class="col-sm-7">
+                <h3>Employee Seperation Info</h3>
+                <!-- Asset Info Content Goes Here -->
+            </div>
+           <div class="col-sm-5">
+                <div class="text-right">
+                    <b>
+                        <a href="" th:href="@{'/manager/team_employee_seperation_details/'+${userdetail.id}}" class="item">
+                            <p>EDIT <i class="fas fa-edit"></i></p>
+                        </a>
+                    </b>
+                </div>
+            </div>
         </div>
-            </div>    
+			<br>
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Occupation</p>
+              </div>
+              <div class="col-sm-9">
+                <p class="text-muted mb-0"><span th:text="${userdetail.Designation}"></span></p>
+              </div>
+            </div>
+            <hr>
+                  <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Base Location</p>
+              </div>
+              <div class="col-sm-9">
+                <div th:if="${!userdetail.base_location.equals('NA')}">
+                   <p class="text-muted mb-0"><span th:text="${userdetail.base_location}"></span></p>
+                   </div>
+                    <div th:if="${userdetail.base_location.equals('NA')}">
+                <b><span style="color: blue;">No Record Found</span></b>
+                </div>
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Team</p>
+              </div>
+              <div class="col-sm-9">
+                <div th:if="${userdetail.team!=('0')}">
+                <p class="text-muted mb-0"><span th:text="${userdetail.team}"></span></p>
+                </div>
+                <div th:if="${userdetail.team.equals('0')}">
+                <b><span style="color: blue;">No Record Found</span></b>
+                </div>
+              </div>
+            </div>
+            <hr>
+             <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Request Status</p>
+              </div>
+              <div class="col-sm-9">
+                <div th:if="${userdetail.seperation_manager_approved==false and userdetail.resignationRequestApplied==false}">
+                <b><span style="color: blue;">No Record Found</span></b>
+                </div>
+                 <div th:if="${userdetail.seperation_manager_approved==false and userdetail.resignationRequestApplied==true and userdetail.enabled==true}">
+                <b><span style="color: red;">Pending</span></b>
+                </div>
+                  <div th:if="${userdetail.seperation_manager_approved==true and userdetail.resignationRequestApplied==true and userdetail.enabled==true}">
+                <b><span style="color: green;">Approved</span></b>
+                </div>
+              </div>
+            </div>
+            <hr>
+             <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Last Working Day</p>
+              </div>
+              <div class="col-sm-9">
+                <div th:if="${userdetail.lastWorkingDay!=null}">
+                <p class="text-muted mb-0"><span th:text="${userdetail.lastWorkingDay}"></span></p>
+                </div>
+                  <div th:if="${userdetail.lastWorkingDay==null}">
+                <b><span style="color: blue;">No Record Found</span></b>
+                </div>
+              </div>
+            </div>
+            
+            <hr>
+            <div class="row">
+              <div th:if="${userdetail.seperation_manager_approved==false and userdetail.resignationRequestApplied==true and userdetail.enabled==true}">
+  <div class="alert alert-warning mt-4" role="alert">
+    <strong>Note:</strong> This employee account will be <b>disabled</b> after 
+    <span th:text="${userdetail.lastWorkingDay}"></span>. 
+    To retain access, please <b>Reject</b> the resignation request using the <em>Reject</em> button below.
+  </div>
+</div>
+
+            </div>
+            <div th:if="${userdetail.seperation_manager_approved==true and userdetail.resignationRequestApplied==true and userdetail.enabled==true}">
+  <div class="alert alert-danger mt-4" role="alert">
+    <strong>Important Notice:</strong> The employee with ID <b><span th:text="${userdetail.id}"></span></b> has an approved resignation request.  
+    If you wish to retain this employee, please contact the <b>Administrator</b> or <b>HR Department</b> at the earliest.
+  </div>
+</div>
+            <hr>
+<!--  <div th:if="${userdetail.seperation_manager_approved==false and userdetail.resignationRequestApplied==true}">
+  <span style="color: red;">
+    Note :- Your account will be disabled after 
+    <th:block>
+        <b th:text="${user.lastWorkingDay}"></b>
+    </th:block>
+    . You can withdraw resignation request by using withdraw button.
+</span>
+</div>  -->
+
+
+    </div>
+  </div>
+                
     </div>
   </div>
 			</form>

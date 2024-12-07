@@ -111,7 +111,7 @@
                 <p class="mb-0">Employee ID</p>
               </div>
               <div class="col-sm-9">
-                <p class="text-muted mb-0"><span th:text="${'GOOGLEIND00'+user.id}"></span></p>
+                <p class="text-muted mb-0"><span th:text="${user.id}"></span></p>
               </div>
             </div>
             <hr>
@@ -186,8 +186,15 @@
               <div class="col-sm-3">
                 <p class="mb-0">Base Location</p>
               </div>
-              <div class="col-sm-9">
+               <div class="col-sm-9">
+               <div th:if="${user.base_location!=('NA')}">
                    <p class="text-muted mb-0"><span th:text="${user.base_location}"></span></p>
+                   </div>
+                   <div th:if="${user.base_location.equals('NA')}">
+										<p class="text-muted mb-0">
+									<b class="text-muted mb-0"> <span style="color: blue;">No Record Found</span></b>
+										</p>
+										</div>
               </div>
             </div>
             <hr>
@@ -196,7 +203,29 @@
                 <p class="mb-0">Team</p>
               </div>
               <div class="col-sm-9">
+                <div th:if="${!user.team.equals('No Record Found')}">
                 <p class="text-muted mb-0"><span th:text="${user.team}"></span></p>
+                </div>
+                <div th:if="${user.team.equals('No Record Found')}">
+               <b><span style="color: blue;">No Record Found</span></b>
+                </div>
+              </div>
+            </div>
+            <hr>
+             <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Request Status</p>
+              </div>
+              <div class="col-sm-9">
+                <div th:if="${user.seperation_manager_approved==false and user.resignationRequestApplied==false}">
+                <b><span style="color: blue;">No Record Found</span></b>
+                </div>
+                 <div th:if="${user.seperation_manager_approved==false and user.resignationRequestApplied==true}">
+                <b><span style="color: red;">Not Approved</span></b>
+                </div>
+                  <div th:if="${user.seperation_manager_approved==true and user.resignationRequestApplied==true}">
+                <b><span style="color: green;">Approved</span></b>
+                </div>
               </div>
             </div>
             <hr>
@@ -205,18 +234,57 @@
                 <p class="mb-0">Last Working Day</p>
               </div>
               <div class="col-sm-9">
+                <div th:if="${user.lastWorkingDay!=null}">
                 <p class="text-muted mb-0"><span th:text="${user.lastWorkingDay}"></span></p>
+                </div>
+                  <div th:if="${user.lastWorkingDay==null}">
+                <b><span style="color: blue;">No Record Found</span></b>
+                </div>
               </div>
             </div>
             <hr>
+              <div th:if="${user.seperation_manager_approved==true and user.resignationRequestApplied==true}">
+         <span style="color: red;">
+    Note :- Your Account will be disabled after
+    <th:block>
+        <b th:text="${user.lastWorkingDay}"></b>
+    </th:block>
+</span>
+</div>
+ <div th:if="${user.seperation_manager_approved==false and user.resignationRequestApplied==true}">
+  <span style="color: red;">
+    Note :- Your account will be disabled after 
+    <th:block>
+        <b th:text="${user.lastWorkingDay}"></b>
+    </th:block>
+    . You can withdraw resignation request by using withdraw button.
+</span>
+</div>
+
+              <div th:if="${user.resignationRequestApplied==false}">
             <div class="mt-5 text-center"><button class="btn btn-primary profile-button"
 										type="submit">Submit</button></div>
-          </div>
         </div>
-                
+        
+      <div th:if="${user.seperation_manager_approved==false and user.resignationRequestApplied==true}">
+                <div class="mt-5 text-center"><button class="btn btn-success profile-button"
+									type="button" onclick="WithDrawnRequest()">Withdraw</button></div>
+    </div>
     </div>
   </div>
 			</form>
+	<script>
+			// Thymeleaf inserts the user ID here
+			var userId = '[[${user.id}]]';
+
+			function WithDrawnRequest() {
+				const emailForm = document.createElement("form");
+				emailForm.method = "post";
+				emailForm.action = "/manager/withdrawn_request/" + userId; // Append user ID in the URL
+				document.body.appendChild(emailForm);
+				emailForm.submit();
+			}
+		</script>
 </section>
 </body>
 
