@@ -47,4 +47,10 @@ public interface UserLoginDao extends JpaRepository<UserLoginDateTime, Integer> 
 	
 	@Query(value="select count(1) from database_ems.employee_login_record",nativeQuery = true)
 	public int getLoginCount();
+	
+	 // Update session interruption status for a specific session ID
+    @Modifying
+    @Query(value = "UPDATE employee_login_record u SET u.is_session_interrupted = '1', u.user_status='0',u.logout_date_and_time = CURRENT_TIMESTAMP WHERE u.email = ?1 ORDER BY u.adddate DESC LIMIT 1", nativeQuery = true)
+    void updateSessionInterruptedStatusBrowserClosed(String email);
+
 }
