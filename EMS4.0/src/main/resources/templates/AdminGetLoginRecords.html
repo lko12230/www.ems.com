@@ -167,7 +167,7 @@
                         <tbody>
                             <tr th:each="c, lineNumber : ${all_users_login_records}" th:if="${all_users_login_records != null and #lists.size(all_users_login_records) > 0}">
                                 <td> <span th:text="${lineNumber.index + 1}">1</span></td>
-                                <th scope="row" th:text="${'EMPID' + c.id}">1</th>
+                                <th scope="row" th:text="${c.id}">1</th>
                                 <td> <span th:text="${c.username}"></span></td>
                                 <td><span th:if="${c.email != null}" th:text="${c.email}"></span>
                                  <span th:if="${c.email == null}" style="color: blue;"><b>Not Available</b></span>

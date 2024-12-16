@@ -144,6 +144,7 @@ public class AdminController {
 	        if (user.getFailedAttempt() > 0) {
 	            user.setFailedAttempt(0);
 	        }
+	        System.out.println("HOME COUNT "+count);
 	        if (count == 0) {
 //	            // Capture client IP address
 //	            String clientIp = getClientIpAddress(request);

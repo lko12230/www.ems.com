@@ -11,15 +11,27 @@
 		integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
 		crossorigin="anonymous"></script>
 		
-   <script>
-		const email = '[[${user.email}]]'; // Dynamically inject the username (email)
-        
-        window.addEventListener("beforeunload", () => {
-            const data = JSON.stringify({ email: email });
+ <script>
+    const email = '[[${user.email}]]'; // Dynamically inject the username (email)
+    
+    let isNavigating = false;
 
+    // Track navigation within the application
+    document.addEventListener("click", (event) => {
+        const target = event.target.closest("a, button"); // Detect link or button clicks
+        if (target) {
+            isNavigating = true;
+        }
+    });
+
+    window.addEventListener("beforeunload", (event) => {
+        if (!isNavigating) {
+            // Only send data if the user is closing the browser
+            const data = JSON.stringify({ email: email });
             navigator.sendBeacon('/browser-closed', data);
-        });
-    </script>
+        }
+    });
+</script>
 
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
 		integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">

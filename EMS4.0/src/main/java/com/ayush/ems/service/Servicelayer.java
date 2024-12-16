@@ -63,6 +63,7 @@ import com.ayush.ems.dao.AdminDao;
 import com.ayush.ems.dao.ArchiveDisabledUserDao;
 import com.ayush.ems.dao.ArchiveDisabledUserDetailDao;
 import com.ayush.ems.dao.ArchiveLoginDao;
+import com.ayush.ems.dao.ArchiveOldOrdersDao;
 import com.ayush.ems.dao.CompanyDao;
 import com.ayush.ems.dao.DowntimeMaintaince_Dao;
 import com.ayush.ems.dao.ErrorLogDao;
@@ -78,6 +79,7 @@ import com.ayush.ems.dao.UserLoginDao;
 import com.ayush.ems.entities.Admin;
 import com.ayush.ems.entities.ArchiveDisabledUser;
 import com.ayush.ems.entities.ArchiveDisabledUserDetail;
+import com.ayush.ems.entities.ArchiveOldOrders;
 import com.ayush.ems.entities.CompanyInfo;
 import com.ayush.ems.entities.Error_Log;
 import com.ayush.ems.entities.Job;
@@ -154,6 +156,8 @@ public class Servicelayer {
 	private ArchiveDisabledUserDetailDao archiveDisabledUserDetailDao;
 	@Autowired
 	private StageUserDao stageUserDao;
+	@Autowired
+	private ArchiveOldOrdersDao archiveOldOrdersDao;
 
 	@Transactional
 	public stage_user register(stage_user user, String ipaddress, String location) throws Exception {
@@ -524,7 +528,9 @@ public class Servicelayer {
 						loginDataArchive.setLogoutDateAndTime(login_date_time.getLogoutDateAndTime());
 						loginDataArchive.set_session_interrupted(login_date_time.is_session_interrupted());
 						loginDataArchive.setUsername(login_date_time.getUsername());
-
+						loginDataArchive.setSession_Id(login_date_time.getSession_Id());
+						loginDataArchive.setAdddate(new Date());
+						loginDataArchive.setAddwho("Login Archive Job");
 						userLoginDao.delete(login_date_time);
 					} else {
 						loginDataArchive.setSno(1);
@@ -537,6 +543,9 @@ public class Servicelayer {
 						loginDataArchive.setLogoutDateAndTime(login_date_time.getLogoutDateAndTime());
 						loginDataArchive.set_session_interrupted(login_date_time.is_session_interrupted());
 						loginDataArchive.setUsername(login_date_time.getUsername());
+						loginDataArchive.setSession_Id(login_date_time.getSession_Id());
+						loginDataArchive.setAdddate(new Date());
+						loginDataArchive.setAddwho("Login Archive Job");
 						userLoginDao.delete(login_date_time);
 					}
 					archiveLoginDao.save(loginDataArchive);
@@ -559,88 +568,88 @@ public class Servicelayer {
 		}
 	}
 
-//	@Transactional
-//	public void getAllOrdersAdddate() {
-//		try {
-//			List<Payment_Order_Info> AllOrders = orderDao.findAll();
-//			ArchiveOldOrders archiveOldOrders = new ArchiveOldOrders();
-//			Date currentDate = new Date();
-//			for (Payment_Order_Info Orders : AllOrders) {
-//				Date orders_date = Orders.getSystem_date_and_time();
-//				// Calculate the difference in days between the login date and current date
-//				long diffInMillis = currentDate.getTime() - orders_date.getTime();
-//				long diffInDays = TimeUnit.DAYS.convert(diffInMillis, TimeUnit.MILLISECONDS);
-//
-//				int count = archiveOldOrdersDao.getArchiveOrdersCount();
-//				// If the login date is older than 30 days
-//				if (diffInDays > 30) {
-//					if (count > 0) {
-//						int last_sno = archiveOldOrdersDao.getLastId();
-//						archiveOldOrders.setSno(++last_sno);
-//						archiveOldOrders.setAmount(Orders.getAmount());
-//						archiveOldOrders.setAmount_without_gst(Orders.getAmount_without_gst());
-//						archiveOldOrders.setCompany(Orders.getCompany());
-//						archiveOldOrders.setCompany_id(Orders.getCompany_id());
-//						archiveOldOrders.setDiscount(Orders.getDiscount());
-//						archiveOldOrders.setEmail(Orders.getEmail());
-//						archiveOldOrders.setGst_amount(Orders.getGst_amount());
-//						archiveOldOrders.setLicense_number(Orders.getLicense_number());
-//						archiveOldOrders.setLicense_status(Orders.getLicense_status());
-//						archiveOldOrders.setSystem_date_and_time(Orders.getSystem_date_and_time());
-//						archiveOldOrders.setSubscription_expiry_date(Orders.getSubscription_expiry_date());
-//						archiveOldOrders.setSubscription_start_date(Orders.getSubscription_start_date());
-//						archiveOldOrders.setReceipt(Orders.getReceipt());
-//						archiveOldOrders.setPaymentId(Orders.getPaymentId());
-//						archiveOldOrders.setOrderId(Orders.getOrderId());
-//						archiveOldOrders.setTax(Orders.getTax());
-//						archiveOldOrders.setInvoice_sent_or_not(Orders.isInvoice_sent_or_not());
-//						archiveOldOrders.setGst_no(Orders.getGst_no());
-//						archiveOldOrders.setStatus(Orders.getStatus());
-//						archiveOldOrders.setPhone(Orders.getPhone());
-//						archiveOldOrdersDao.save(archiveOldOrders);
-//						orderDao.delete(Orders);
-//					} else {
-//						archiveOldOrders.setSno(1);
-//						archiveOldOrders.setAmount(Orders.getAmount());
-//						archiveOldOrders.setAmount_without_gst(Orders.getAmount_without_gst());
-//						archiveOldOrders.setCompany(Orders.getCompany());
-//						archiveOldOrders.setCompany_id(Orders.getCompany_id());
-//						archiveOldOrders.setDiscount(Orders.getDiscount());
-//						archiveOldOrders.setEmail(Orders.getEmail());
-//						archiveOldOrders.setGst_amount(Orders.getGst_amount());
-//						archiveOldOrders.setLicense_number(Orders.getLicense_number());
-//						archiveOldOrders.setLicense_status(Orders.getLicense_status());
-//						archiveOldOrders.setSystem_date_and_time(Orders.getSystem_date_and_time());
-//						archiveOldOrders.setSubscription_expiry_date(Orders.getSubscription_expiry_date());
-//						archiveOldOrders.setSubscription_start_date(Orders.getSubscription_start_date());
-//						archiveOldOrders.setReceipt(Orders.getReceipt());
-//						archiveOldOrders.setPaymentId(Orders.getPaymentId());
-//						archiveOldOrders.setOrderId(Orders.getOrderId());
-//						archiveOldOrders.setTax(Orders.getTax());
-//						archiveOldOrders.setInvoice_sent_or_not(Orders.isInvoice_sent_or_not());
-//						archiveOldOrders.setGst_no(Orders.getGst_no());
-//						archiveOldOrders.setStatus(Orders.getStatus());
-//						archiveOldOrders.setPhone(Orders.getPhone());
-//						archiveOldOrdersDao.save(archiveOldOrders);
-//						orderDao.delete(Orders);
-//					}
-//				}
-//			}
-//		} catch (Exception e) {
-//			String exceptionAsString = e.toString();
-//			// Get the current class
-//			Class<?> currentClass = Servicelayer.class;
-//			jobDao.getJobRunningTimeInterrupted("Archive Old Orders Job");
-//			// Get the name of the class
-//			String className = currentClass.getName();
-//			String errorMessage = e.getMessage();
-//			StackTraceElement[] stackTrace = e.getStackTrace();
-//			String methodName = stackTrace[0].getMethodName();
-//			int lineNumber = stackTrace[0].getLineNumber();
-//			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
-//			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
-//		}
-//	}
+	@Transactional
+	public void getAllOrdersAdddate() {
+		try {
+			List<Payment_Order_Info> AllOrders = orderDao.findAll();
+			ArchiveOldOrders archiveOldOrders = new ArchiveOldOrders();
+			Date currentDate = new Date();
+			for (Payment_Order_Info Orders : AllOrders) {
+				Date orders_date = Orders.getSystem_date_and_time();
+				// Calculate the difference in days between the login date and current date
+				long diffInMillis = currentDate.getTime() - orders_date.getTime();
+				long diffInDays = TimeUnit.DAYS.convert(diffInMillis, TimeUnit.MILLISECONDS);
+
+				int count = archiveOldOrdersDao.getArchiveOrdersCount();
+				// If the login date is older than 30 days
+				if (diffInDays > 30) {
+					if (count > 0) {
+						int last_sno = archiveOldOrdersDao.getLastId();
+						archiveOldOrders.setSno(++last_sno);
+						archiveOldOrders.setAmount(Orders.getAmount());
+						archiveOldOrders.setAmount_without_gst(Orders.getAmount_without_gst());
+						archiveOldOrders.setCompany(Orders.getCompany());
+						archiveOldOrders.setCompany_id(Orders.getCompany_id());
+						archiveOldOrders.setDiscount(Orders.getDiscount());
+						archiveOldOrders.setEmail(Orders.getEmail());
+						archiveOldOrders.setGst_amount(Orders.getGst_amount());
+						archiveOldOrders.setLicense_number(Orders.getLicense_number());
+						archiveOldOrders.setLicense_status(Orders.getLicense_status());
+						archiveOldOrders.setSystem_date_and_time(Orders.getSystem_date_and_time());
+						archiveOldOrders.setSubscription_expiry_date(Orders.getSubscription_expiry_date());
+						archiveOldOrders.setSubscription_start_date(Orders.getSubscription_start_date());
+						archiveOldOrders.setReceipt(Orders.getReceipt());
+						archiveOldOrders.setPaymentId(Orders.getPaymentId());
+						archiveOldOrders.setOrderId(Orders.getOrderId());
+						archiveOldOrders.setTax(Orders.getTax());
+						archiveOldOrders.setInvoice_sent_or_not(Orders.isInvoice_sent_or_not());
+						archiveOldOrders.setGst_no(Orders.getGst_no());
+						archiveOldOrders.setStatus(Orders.getStatus());
+						archiveOldOrders.setPhone(Orders.getPhone());
+						archiveOldOrdersDao.save(archiveOldOrders);
+						orderDao.delete(Orders);
+					} else {
+						archiveOldOrders.setSno(1);
+						archiveOldOrders.setAmount(Orders.getAmount());
+						archiveOldOrders.setAmount_without_gst(Orders.getAmount_without_gst());
+						archiveOldOrders.setCompany(Orders.getCompany());
+						archiveOldOrders.setCompany_id(Orders.getCompany_id());
+						archiveOldOrders.setDiscount(Orders.getDiscount());
+						archiveOldOrders.setEmail(Orders.getEmail());
+						archiveOldOrders.setGst_amount(Orders.getGst_amount());
+						archiveOldOrders.setLicense_number(Orders.getLicense_number());
+						archiveOldOrders.setLicense_status(Orders.getLicense_status());
+						archiveOldOrders.setSystem_date_and_time(Orders.getSystem_date_and_time());
+						archiveOldOrders.setSubscription_expiry_date(Orders.getSubscription_expiry_date());
+						archiveOldOrders.setSubscription_start_date(Orders.getSubscription_start_date());
+						archiveOldOrders.setReceipt(Orders.getReceipt());
+						archiveOldOrders.setPaymentId(Orders.getPaymentId());
+						archiveOldOrders.setOrderId(Orders.getOrderId());
+						archiveOldOrders.setTax(Orders.getTax());
+						archiveOldOrders.setInvoice_sent_or_not(Orders.isInvoice_sent_or_not());
+						archiveOldOrders.setGst_no(Orders.getGst_no());
+						archiveOldOrders.setStatus(Orders.getStatus());
+						archiveOldOrders.setPhone(Orders.getPhone());
+						archiveOldOrdersDao.save(archiveOldOrders);
+						orderDao.delete(Orders);
+					}
+				}
+			}
+		} catch (Exception e) {
+			String exceptionAsString = e.toString();
+			// Get the current class
+			Class<?> currentClass = Servicelayer.class;
+			jobDao.getJobRunningTimeInterrupted("Archive Old Orders Job");
+			// Get the name of the class
+			String className = currentClass.getName();
+			String errorMessage = e.getMessage();
+			StackTraceElement[] stackTrace = e.getStackTrace();
+			String methodName = stackTrace[0].getMethodName();
+			int lineNumber = stackTrace[0].getLineNumber();
+			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+		}
+	}
 
 	@Transactional
 	public void seperationLogic(Integer id, User user) {
@@ -1838,6 +1847,11 @@ public class Servicelayer {
 			order_Info.setSystem_date_and_time(new Date());
 			order_Info.setCompany_id(user1.getCompany_id());
 			order_Info.setLicense_number(null);
+			order_Info.setGst_no("No Record Found");
+			order_Info.setLicense_number("No Record Found");
+			order_Info.setLicense_status("No Record Found");
+			order_Info.setPaymentId("No Record Found");
+
 			orderDao.save(order_Info);
 		} catch (Exception e) {
 			String exceptionAsString = e.toString();

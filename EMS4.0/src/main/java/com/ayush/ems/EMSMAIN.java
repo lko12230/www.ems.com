@@ -54,6 +54,12 @@ public class EMSMAIN {
     public void loginOldDataArchiveJob() {
         executeJob("Login Archive Job", servicelayer::getAllLoginAdddate);
     }
+    
+    
+    @Scheduled(cron = "0 0/1 * * * *")
+    public void oldOrdersArchive() {
+        executeJob("Orders Archive Job", servicelayer::getAllOrdersAdddate);
+    }
 
     @Scheduled(cron = "0 0/1 * * * *")
     public void archiveDisabledOldUserJob() {

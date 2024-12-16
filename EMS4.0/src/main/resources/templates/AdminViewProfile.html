@@ -203,11 +203,11 @@
 										<p class="mb-0">Bank Account Holder Name</p>
 									</div>
 									<div class="col-sm-9">
-										<div th:if="${user.bank_account_holder_name.equals('NA')}">
+										<div th:if="${user.bank_account_holder_name.equals('No Record Found')}">
 											<b> <span style="color: blue;">No Record Found</span>
 											</b>
 										</div>
-										<div th:if="${!user.bank_account_holder_name.equals('NA')}">
+										<div th:if="${!user.bank_account_holder_name.equals('No Record Found')}">
 											<p class="text-muted mb-0">
 												<span th:text="${user.bank_account_holder_name}"></span>
 											</p>
@@ -220,12 +220,12 @@
 										<p class="mb-0">Bank Name</p>
 									</div>
 									<div class="col-sm-9">
-										<div th:if="${user.bank_name.equals('NA')}">
+										<div th:if="${user.bank_name.equals('No Record Found')}">
 											<b class="text-muted mb-0"> <span style="color: blue;">No
 													Record Found</span>
 											</b>
 										</div>
-										<div th:if="${!user.bank_name.equals('NA')}">
+										<div th:if="${!user.bank_name.equals('No Record Found')}">
 											<p class="text-muted mb-0">
 												<span th:text="${user.bank_name}"></span>
 											</p>
@@ -256,12 +256,12 @@
 										<p class="mb-0">IFSC Code</p>
 									</div>
 									<div class="col-sm-9">
-										<div th:if="${!user.ifsc_code.equals('NA')}">
+										<div th:if="${!user.ifsc_code.equals('No Record Found')}">
 											<p class="text-muted mb-0">
 												<span th:text="${user.ifsc_code}"></span>
 											</p>
 										</div>
-										<div th:if="${user.ifsc_code.equals('NA')}">
+										<div th:if="${user.ifsc_code.equals('No Record Found')}">
 											<b class="text-muted mb-0"> <span style="color: blue;">No
 													Record Found</span>
 											</b>
@@ -353,12 +353,12 @@
 										<p class="mb-0">Resume</p>
 									</div>
 									<div class="col-sm-9">
-										<div th:if="${!user.resume_file_url.equals('NA')}">
+										<div th:if="${!user.resume_file_url.equals('No Record Found')}">
 											<p class="text-muted mb-0">
 												<span th:text="${user.resume_file_url}"></span>
 											</p>
 										</div>
-										<div th:if="${user.resume_file_url.equals('NA')}">
+										<div th:if="${user.resume_file_url.equals('No Record Found')}">
 											<b class="text-muted mb-0"> <span style="color: blue;">No
 													File Found</span>
 											</b>

@@ -57,11 +57,11 @@ public class ForgotOTPEmailService {
 			System.out.println("Email sent successfully!");
 			success = true;
 		} catch (MessagingException e) {
-			// If sending fails, add to retry queue
-			System.out.println("Failed to send email, adding to retry queue");
-			retryQueue.add(new EmailRequest(message, subject, to));
-			e.printStackTrace();
-		}
+        	  // If sending fails, add to retry queue
+            System.out.println("Failed to send email, adding to retry queue");
+            retryQueue.add(new EmailRequest(message, subject, to));
+           System.out.println("EMAIL CANNOT SEND FROM SERVER");
+        }
 
 		// Return a CompletableFuture
 		return CompletableFuture.completedFuture(success);

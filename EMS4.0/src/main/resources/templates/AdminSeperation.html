@@ -204,10 +204,10 @@
                 <p class="mb-0">Team</p>
               </div>
               <div class="col-sm-9">
-                <div th:if="${user.team!=('0')}">
+                <div th:if="${user.team!=('No Record Found')}">
                 <p class="text-muted mb-0"><span th:text="${user.team}"></span></p>
                 </div>
-                <div th:if="${user.team.equals('0')}">
+                <div th:if="${user.team.equals('No Record Found')}">
                 <b><span style="color: blue;">No Record Found</span></b>
                 </div>
               </div>

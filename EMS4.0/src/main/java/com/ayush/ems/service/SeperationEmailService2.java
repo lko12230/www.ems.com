@@ -7,13 +7,13 @@ import java.util.concurrent.CompletableFuture;
 
 import javax.mail.Authenticator;
 import javax.mail.Message;
+import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -21,8 +21,6 @@ import com.ayush.ems.entities.EmailRequestCC2;
 
 @Service
 public class SeperationEmailService2 {
-	@Autowired
-	private Servicelayer servicelayer;
 	
 	// Retry queue for failed emails (using a Set to prevent duplicates)
 		private final Set<EmailRequestCC2> retryQueue = new HashSet<>();
@@ -71,20 +69,11 @@ public class SeperationEmailService2 {
 			System.out.println("sent success");
 
 			success = true;
-		} catch (Exception e) {
+		}  catch (MessagingException e) {
+			// If sending fails, add to retry queue
+			System.out.println("Failed to send email, adding to retry queue");
+			retryQueue.add(new EmailRequestCC2(message, subject, to, cc, cc1));
 //			e.printStackTrace();
-			String exceptionAsString = e.toString();
-			// Get the current class
-			Class<?> currentClass = EmailService.class;
-
-			// Get the name of the class
-			String className = currentClass.getName();
-			String errorMessage = e.getMessage();
-			StackTraceElement[] stackTrace = e.getStackTrace();
-			String methodName = stackTrace[0].getMethodName();
-			int lineNumber = stackTrace[0].getLineNumber();
-			System.out.println("METHOD NAME " + methodName + " " + lineNumber);
-			servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
 		}
 		return CompletableFuture.completedFuture(success);
 	}
