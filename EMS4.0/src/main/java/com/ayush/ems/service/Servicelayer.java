@@ -1802,7 +1802,11 @@ public class Servicelayer {
 			userDetail.setTeam_desc(team_desc);
 			userDetail.setEmployeeOnBench(false);
 			userDetailDao.save(userDetail);
-		} catch (Exception e) {
+			Optional<User> OptionalUser = userdao.findById(userDetail.getId());
+			User GetOptionalUser =OptionalUser.get();
+			GetOptionalUser.setTeam(team_id);
+	        userdao.save(GetOptionalUser);
+			} catch (Exception e) {
 			String exceptionAsString = e.toString();
 			// Get the current class
 			Class<?> currentClass = Servicelayer.class;
@@ -2024,7 +2028,7 @@ public class Servicelayer {
 //	}
 
 	@Transactional
-	public void disbaled_expired_plan_users(String jobname) {
+	public void disbaled_expired_plan_users() {
 		try {
 			List<Payment_Order_Info> order = orderDao.findAllByActive();
 			ListIterator<Payment_Order_Info> orders_iterate = order.listIterator();
@@ -2060,22 +2064,11 @@ public class Servicelayer {
 					}
 				}
 			}
-			jobrunning("disbaled_expired_plan_users");
+//			jobrunning("disbaled_expired_plan_users");
 		} catch (Exception e) {
-			jobDao.getJobRunningTimeInterrupted("disbaled_expired_plan_users");
-			String exceptionAsString = e.toString();
-
-			// Get the current class
-			Class<?> currentClass = Servicelayer.class;
-
-			// Get the name of the class
-			String className = currentClass.getName();
-			String errorMessage = e.getMessage();
-			StackTraceElement[] stackTrace = e.getStackTrace();
-			String methodName = stackTrace[0].getMethodName();
-			int lineNumber = stackTrace[0].getLineNumber();
-			System.out.println("METHOD NAME: " + methodName + " at line " + lineNumber);
-			insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+			jobDao.getJobRunningTimeInterrupted("Disabled Expired Plan users");
+			
+			e.printStackTrace();
 		}
 	}
 

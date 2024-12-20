@@ -1402,9 +1402,9 @@ public class AdminController {
 			try {
 		         flag = flagFuture.get(); // Blocking call to get the result
 		        if (flag) {
-		           System.out.println(true);
+		           System.out.println("withdrawn email true");
 		        } else {
-		            System.out.println(false);
+		            System.out.println("withdrawn email false");
 		        }
 			}
 			catch (Exception e) {

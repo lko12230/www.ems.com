@@ -40,6 +40,13 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         if (!userOpt.isPresent()) {
             throw new UsernameNotFoundException("User does not exist, please contact administrator.");
         }
+        
+        User userGet = userOpt.get();
+        System.out.println("OAUTH2USER "+userGet.isEnabled());
+        if (!userGet.isEnabled() && userOpt.isPresent()) {
+        	   System.out.println("OAUTH2USER EXCEPTION "+userGet.isEnabled());
+            throw new UsernameNotFoundException("Your Acoount Is Disabled Due to Some Reasons , Please Contact Administrator.");
+        }
 
         // Return user with authorities from the database
         User user = userOpt.get();

@@ -57,6 +57,11 @@ public class EMSMAIN {
     
     
     @Scheduled(cron = "0 0/1 * * * *")
+    public void disbaled_expired_plan_users() {
+        executeJob("Disabled Expired Plan users", servicelayer::disbaled_expired_plan_users);
+    }
+    
+    @Scheduled(cron = "0 0/1 * * * *")
     public void oldOrdersArchive() {
         executeJob("Orders Archive Job", servicelayer::getAllOrdersAdddate);
     }
