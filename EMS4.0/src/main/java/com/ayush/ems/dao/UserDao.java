@@ -70,7 +70,7 @@ public interface UserDao extends JpaRepository<User, Integer> {
 	@Query("select u.experience from User u ")
 	public List<Integer> getAllExp();
 
-	@Query(value = "update database_ems.employee u set u.experience  where u.system_date_and_time <= (NOW() - INTERVAL 365 DAY)", nativeQuery = true)
+	@Query(value = "update railway.employee u set u.experience  where u.system_date_and_time <= (NOW() - INTERVAL 365 DAY)", nativeQuery = true)
 	@Modifying
 	public void skills(int experience);
 
@@ -102,13 +102,13 @@ public interface UserDao extends JpaRepository<User, Integer> {
 //	@Modifying
 //	public void getAllAccount_LockedAndFailedAttempt();
 	
-	@Query(value = "select * from database_ems.employee u where u.enabled='0' and u.last_working_day <= (NOW() - INTERVAL 30 DAY)",nativeQuery = true )
+	@Query(value = "select * from railway.employee u where u.enabled='0' and u.last_working_day <= (NOW() - INTERVAL 30 DAY)",nativeQuery = true )
 	public List<User>  Get_ALL_Disabled_Old_User_Job();
 	
-	@Query(value = "select count(1) from database_ems.employee", nativeQuery = true)
+	@Query(value = "select count(1) from railway.employee", nativeQuery = true)
 	public int getUserCount();
 
-	@Query(value = "select u.sno from database_ems.employee u order by u.sno desc limit 1", nativeQuery = true)
+	@Query(value = "select u.sno from railway.employee u order by u.sno desc limit 1", nativeQuery = true)
 	public int getLastSno();
 
 }
