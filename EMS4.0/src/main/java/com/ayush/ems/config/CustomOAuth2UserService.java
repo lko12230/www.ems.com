@@ -47,6 +47,11 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         	   System.out.println("OAUTH2USER EXCEPTION "+userGet.isEnabled());
             throw new UsernameNotFoundException("Your Acoount Is Disabled Due to Some Reasons , Please Contact Administrator.");
         }
+        
+        if (!userGet.isAccountNonLocked()) {
+     	   System.out.println("OAUTH2USER EXCEPTION "+userGet.isAccountNonLocked());
+         throw new UsernameNotFoundException("Account Is Locked Due To 3 Failed Login Attempt For 24 HOURS , And Your Account Will Be Unlock At  :: ("+ userGet.getExpirelockDateAndTime()+") UnLockDate Shown This Formatted (YYYY-MM-DD HH:MM:SS)");
+     }
 
         // Return user with authorities from the database
         User user = userOpt.get();
