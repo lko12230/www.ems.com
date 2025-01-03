@@ -20,6 +20,7 @@ import lombok.Setter;
 public class Performance {
 	@Id
 //	@GeneratedValue(strategy = GenerationType.AUTO)
+	private int sno;
 	private int id;
 	private double january;
 	private double february;

@@ -16,6 +16,7 @@ import lombok.Setter;
 //@NoArgsConstructor
 public class Team {
 	@Id
+	private int sno;
 	private int id;
 	private String team_id;
 	private String team_description;

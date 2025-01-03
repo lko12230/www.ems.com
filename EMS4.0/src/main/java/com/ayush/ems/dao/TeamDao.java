@@ -12,7 +12,7 @@ public interface TeamDao extends JpaRepository<Team, Integer> {
 	@Query("select u.team_id, u.team_description from Team u where u.team_id = :team_id")
 	public String getAllDataFromTeamDescription(String team_id);
 	
-	@Query(value="select count(1) from railway.team",nativeQuery = true)
+	@Query(value="select count(1) from database_ems.team",nativeQuery = true)
 	public int getTeamCount();
 	
 	@Query(value="select id from database_ems.team order by id desc limit 1",nativeQuery = true)

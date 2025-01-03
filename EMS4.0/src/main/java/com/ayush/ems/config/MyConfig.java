@@ -65,7 +65,7 @@ public class MyConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/hr/**").hasRole("HR")
                 .antMatchers("/IT/**").hasRole("IT")
                 .antMatchers("/manager/**").hasRole("MANAGER")
-                .antMatchers("/", "/signup/**","/forgot/","/verify_admin_get","/verify_admin","/verify-otp2/**","/do-register","/send-otp","/verify-otp","/change-password").permitAll()
+                .antMatchers("/", "/signup/**","/forgot/","/verify_admin_get","/verify_admin","/verify-otp2/**","/do-register","/send-otp","/verify-otp","/change-password","/resendotp").permitAll()
                 .anyRequest().authenticated()
             .and()
             .formLogin()

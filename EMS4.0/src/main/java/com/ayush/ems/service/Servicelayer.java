@@ -168,7 +168,7 @@ public class Servicelayer {
 			String admin_id= user.getAddwho_admin_id();
 			System.out.println("AD ID "+admin_id);
 			int admin_cast_to_int = Integer.parseInt(admin_id);
-			Optional<Admin> get_admin =adminDao.findById(admin_cast_to_int);
+			Optional<Admin> get_admin =adminDao.findByAdminId(admin_cast_to_int);
 			Admin get_admin_data = get_admin.get();
 			if (!get_admin_data.getCompany_id().equals(user.getCompany_id()) && !get_admin_data.isAllowMultipleCompany()) {
 			    throw new Exception(
@@ -210,8 +210,9 @@ public class Servicelayer {
 			user.setRepassword(passwordEncoder.encode(generateRandomPassword));
 			user.setUsername(user.getUsername().toUpperCase());
 			user.setEnabled(true);
-			user.setBase_location("NA");
-			user.setEditwho("NA");
+			user.setBase_location("No Record Found");
+			user.setEditwho("No Record Found");
+			user.setState("No Record Found");
 			user.setStatus("ACTIVE");
 			user.setAdddate(new Date());
 			user.setAddwho(user.getAddwho_admin_id());

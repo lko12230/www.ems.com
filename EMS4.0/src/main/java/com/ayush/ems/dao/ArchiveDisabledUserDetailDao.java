@@ -9,6 +9,6 @@ public interface ArchiveDisabledUserDetailDao extends JpaRepository<ArchiveDisab
 	@Query(value = "select count(1) from database_ems.archive_disabled_user_detail", nativeQuery = true)
 	public int getArchiveUserCount();
 
-	@Query(value = "select u.sno from railway.archive_disabled_user_detail u order by u.sno desc limit 1", nativeQuery = true)
+	@Query(value = "select u.sno from database_ems.archive_disabled_user_detail u order by u.sno desc limit 1", nativeQuery = true)
 	public int getLastSno();
 }

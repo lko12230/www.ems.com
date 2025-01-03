@@ -42,7 +42,7 @@ public class stage_user implements Serializable {
 	private static final long serialVersionUID = 1L;
 	   @Column(name = "sno", nullable = true)
 	private Integer sno;
-	@Id
+	   @Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 //	private int a_id;

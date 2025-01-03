@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -80,7 +82,7 @@ public class Homecontroller {
 
 //		System.out.println("adminid1 " + adminID1);
 //		user.setAaid(adminID1);
-		Optional<Admin> admin = adminDao.findById(id);
+		Optional<Admin> admin = adminDao.findByAdminId(id);
 		if (admin != null) {
 			Admin admin1 = admin.get();
 			String admin_id = String.valueOf(admin1.getAid());
@@ -94,6 +96,15 @@ public class Homecontroller {
 		session.setAttribute("hiddenCaptcha", user.getHidden());
 		System.out.println(user.getHidden());
 		return "signup";
+	}
+	
+	public int otp()
+	{
+		int otp = (int) (Math.random() * 9000) + 1000;
+		EMSMAIN.otpValidateMap.put(otp, new Date());
+//		EMSMAIN.admin_send_otp.put(email, otp);
+		System.out.println("OTP ?????????????????????///////////...... " + otp);
+		return otp;
 	}
 
 	@PostMapping("/verify_admin")
@@ -138,10 +149,7 @@ public class Homecontroller {
 						session.setAttribute("adminId", adminId);
 						System.out.println("email " + email);
 //			            model.addAttribute("title","Send OTP");
-						int otp = (int) (Math.random() * 9000) + 1000;
-						EMSMAIN.otpValidateMap.put(otp, new Date());
-//						EMSMAIN.admin_send_otp.put(email, otp);
-						System.out.println("OTP ?????????????????????///////////...... " + otp);
+						int otp =  otp();
 						String subject = "Admin Verification";
 						String message = "" +
 							    "<!DOCTYPE html>" +
@@ -197,7 +205,12 @@ public class Homecontroller {
 							session.setAttribute("myotp", otp);
 							session.setAttribute("email", email);
 							System.out.println("email is   " + email);
-							System.out.println("otp is   " + otp);
+							System.out.println("aid "+admin.getAid()+" otp is   " + otp);
+							session.setAttribute("message", new Message("OTP sent successfully", "alert-success"));
+						}
+						else
+						{
+							session.setAttribute("message", new Message("OTP not sent successfully", "alert-danger"));
 						}
 						return "redirect:/verify-otp2/" + admin.getAid();
 //						} else {
@@ -245,9 +258,7 @@ public class Homecontroller {
 							int adminId = admin.getAid();
 							session.setAttribute("adminId", adminId);
 							System.out.println("email " + email);
-//				            model.addAttribute("title","Send OTP");
-							int otp = (int) (Math.random() * 9000) + 1000;
-							EMSMAIN.otpValidateMap.put(otp, new Date());
+				           	int otp =  otp();
 //							EMSMAIN.admin_send_otp.put(email, otp);
 							System.out.println("OTP " + otp);
 							String subject = "Admin Verification";
@@ -306,6 +317,11 @@ public class Homecontroller {
 								session.setAttribute("email", email);
 								System.out.println("email is   " + email);
 								System.out.println("otp is   " + otp);
+								session.setAttribute("message", new Message("OTP sent successfully", "alert-success"));
+							}
+							else
+							{
+								session.setAttribute("message", new Message("OTP not sent successfully", "alert-danger"));
 							}
 							return "redirect:/verify-otp2/" + admin.getAid();
 //							} else {
@@ -353,18 +369,19 @@ public class Homecontroller {
 				servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
 
 			} else {
-				String exceptionAsString = e.toString();
-				// Get the current class
-				Class<?> currentClass = Homecontroller.class;
-
-				// Get the name of the class
-				String className = currentClass.getName();
-				String errorMessage = e.getMessage();
-				StackTraceElement[] stackTrace = e.getStackTrace();
-				String methodName = stackTrace[0].getMethodName();
-				int lineNumber = stackTrace[0].getLineNumber();
-				System.out.println("METHOD NAME " + methodName + " " + lineNumber);
-				servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+//				String exceptionAsString = e.toString();
+//				// Get the current class
+//				Class<?> currentClass = Homecontroller.class;
+//
+//				// Get the name of the class
+//				String className = currentClass.getName();
+//				String errorMessage = e.getMessage();
+//				StackTraceElement[] stackTrace = e.getStackTrace();
+//				String methodName = stackTrace[0].getMethodName();
+//				int lineNumber = stackTrace[0].getLineNumber();
+//				System.out.println("METHOD NAME " + methodName + " " + lineNumber);
+//				servicelayer.insert_error_log(exceptionAsString, className, errorMessage, methodName, lineNumber);
+				e.printStackTrace();
 
 				session.setAttribute("message",
 						new Message("Something went wrong !! : " + e.getMessage(), "alert-danger"));
@@ -405,12 +422,20 @@ public class Homecontroller {
 	}
 
 	@GetMapping("/verify-otp2/{id}")
-	public String verify_otp(Model model, @PathVariable("id") Integer id, Admin admin) {
+	public String verify_otp(Model model, @PathVariable("id") Integer id, Admin admin,HttpSession session) {
 		try {
-			Optional<Admin> admin_get = adminDao.findById(id);
+			Optional<Admin> admin_get = adminDao.findByAdminId(id);
 			if (admin_get != null) {
 				Admin admin2 = admin_get.get();
 				System.out.println("OTP ADMIN " + admin2.getAid());
+				  // Retrieve the message from the session
+			    Message message = (Message) session.getAttribute("message");
+			    if (message != null) {
+			        // Add the message to the model to pass it to the view
+			    	session.setAttribute("message", message);
+			    }
+			    System.out.println("Message: " + message);
+
 				model.addAttribute("admin", admin2);
 			}
 			return "verify_otp2";
@@ -900,4 +925,76 @@ public class Homecontroller {
 //	        System.out.println(">>>>>>>>>>>>>>>> "+response);
 //	        return response;
 //	    }
+	
+	@RequestMapping("/resendotp")
+	public String resendOTP(@RequestParam("admin_email") String email, HttpSession session) throws InterruptedException, ExecutionException
+	{
+	    	
+		int otp =  otp();
+		Optional<Admin> admin= adminDao.findByUserName(email);
+		Admin get_admin = admin.get();
+		String subject = "Admin Verification";
+		String message = "" +
+			    "<!DOCTYPE html>" +
+			    "<html lang='en'>" +
+			    "<head>" +
+			    "    <meta charset='UTF-8'>" +
+			    "    <meta name='viewport' content='width=device-width, initial-scale=1.0'>" +
+			    "    <meta http-equiv='X-UA-Compatible' content='IE=edge'>" +
+			    "    <style>" +
+			    "        body { font-family: 'Arial', sans-serif; margin: 0; padding: 0; background-color: #f9f9f9; }" +
+			    "        .wrapper { width: 100%; background-color: #f9f9f9; padding: 40px 0; }" +
+			    "        .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); }" +
+			    "        .header { background-color: #4CAF50; padding: 20px; text-align: center; color: #ffffff; }" +
+			    "        .header h1 { margin: 0; font-size: 24px; }" +
+			    "        .content { padding: 30px; text-align: center; }" +
+			    "        .content h2 { font-size: 20px; color: #333; margin-bottom: 10px; }" +
+			    "        .otp { font-size: 36px; font-weight: bold; letter-spacing: 10px; color: #4CAF50; margin: 20px 0; }" +
+			    "        .info { font-size: 16px; color: #666; }" +
+			    "        .footer { padding: 20px; text-align: center; font-size: 12px; color: #888; background-color: #f1f1f1; }" +
+			    "        .footer a { color: #4CAF50; text-decoration: none; }" +
+			    "    </style>" +
+			    "</head>" +
+			    "<body>" +
+			    "    <div class='wrapper'>" +
+			    "        <table class='container' align='center'>" +
+			    "            <tr>" +
+			    "                <td class='header'>" +
+			    "                    <h1>Your OTP Code</h1>" +
+			    "                </td>" +
+			    "            </tr>" +
+			    "            <tr>" +
+			    "                <td class='content'>" +
+			    "                    <h2>Use the following OTP to complete your action:</h2>" +
+			    "                    <div class='otp'>" + otp + "</div>" +  // Dynamic OTP inserted here
+			    "                    <p class='info'>This OTP is valid for the next 05 minutes. Please do not share it with anyone.</p>" +
+			    "                </td>" +
+			    "            </tr>" +
+			    "            <tr>" +
+			    "                <td class='footer'>" +
+			    "                    <p>If you didn’t request this, please ignore this email. Need help? <a href='#'>Contact Support</a>.</p>" +
+			    "                </td>" +
+			    "            </tr>" +
+			    "        </table>" +
+			    "    </div>" +
+			    "</body>" +
+			    "</html>";
+
+		String to = email;
+		 CompletableFuture<Boolean> flagFuture = this.forgotOTPEmailService.sendEmail(message, subject, to);
+		   Boolean flag = flagFuture.get(); // Blocking call to get the result
+		System.out.println(flag);
+		if (flag) {
+			session.setAttribute("myotp", otp);
+			session.setAttribute("email", email);
+			System.out.println("email is   " + email);
+			System.out.println("aid "+get_admin.getAid()+" otp is   " + otp);
+			   session.setAttribute("message", new Message("Resend OTP Sent Successfully", "alert-success"));
+		}
+		else
+		{
+			   session.setAttribute("message", new Message("Resend OTP not Sent Successfully", "alert-danger"));
+		}
+		return "redirect:/verify-otp2/" + get_admin.getAid();
+	}
 }

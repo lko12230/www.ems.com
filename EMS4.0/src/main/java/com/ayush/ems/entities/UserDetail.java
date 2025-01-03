@@ -29,8 +29,8 @@ public class UserDetail implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private int sno;
 	@Id
+	private int sno;
 	private Integer id;
 	private String username;
 	@Column(unique = true)

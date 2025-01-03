@@ -28,12 +28,12 @@ public interface UserDetailDao extends JpaRepository<UserDetail, Integer> {
 	 @Query("select u from UserDetail u where u.enabled=1 and u.company_id=?1")
 	 public List<UserDetail> findAllEnabledUser(String company_id);
 	 
-		@Query(value = "select * from railway.employeedetail u where u.enabled='0' and u.last_working_day <= (NOW() - INTERVAL 30 DAY)",nativeQuery = true )
+		@Query(value = "select * from database_ems.employeedetail u where u.enabled='0' and u.last_working_day <= (NOW() - INTERVAL 30 DAY)",nativeQuery = true )
 		public List<UserDetail>  Get_ALL_Disabled_Old_UserDetail_Job();
 		
-		@Query(value = "select count(1) from railway.employeedetail", nativeQuery = true)
+		@Query(value = "select count(1) from database_ems.employeedetail", nativeQuery = true)
 		public int getUserDetailCount();
 
-		@Query(value = "select u.sno from railway.employeedetail u order by u.sno desc limit 1", nativeQuery = true)
+		@Query(value = "select u.sno from database_ems.employeedetail u order by u.sno desc limit 1", nativeQuery = true)
 		public int getLastSno();
 }

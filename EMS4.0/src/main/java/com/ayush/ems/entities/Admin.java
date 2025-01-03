@@ -31,8 +31,8 @@ public class Admin implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private int sno;
 	@Id
+	private int sno;
 //	@GeneratedValue(strategy = GenerationType.AUTO)
 private int aid;
 @Column(unique = true)

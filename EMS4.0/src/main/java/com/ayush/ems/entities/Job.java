@@ -19,6 +19,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Job {
 	@Id
+	private int sno;
 	private int id;
 	private String job_description;
 	private String job_running_time;
