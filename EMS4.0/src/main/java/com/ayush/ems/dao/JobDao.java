@@ -22,10 +22,10 @@ public interface JobDao extends JpaRepository<Job, Integer> {
 	@Modifying
 	public void getJobNotRunning(String job_description);
 	
-	@Query(value = "select u.id from database_ems.Job u order by id desc limit 1",nativeQuery = true)
+	@Query(value = "select u.id from Job u order by id desc limit 1",nativeQuery = true)
 	public int getJobLastId();
 	
-	@Query(value="select count(1) from database_ems.Job",nativeQuery = true)
+	@Query(value="select count(1) from Job",nativeQuery = true)
 	public int getJobCount();
 
 }
