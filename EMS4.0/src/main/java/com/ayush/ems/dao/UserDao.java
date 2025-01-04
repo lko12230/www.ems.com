@@ -21,7 +21,7 @@ public interface UserDao extends JpaRepository<User, Integer> {
 	@Query("select u from User u where u.email = :email")
 	public Optional<User> findByEmail(@Param("email") String email);
 	
-    @Query(value = "select * from employee u where u.email = :email u.limit :limit u.offset :offset", nativeQuery = true)
+    @Query(value = "select * from employee u where u.email = :email u.limit :limit offset :offset", nativeQuery = true)
     List<User> findByUserName(@Param("email") String email, @Param("limit") int limit, @Param("offset") int offset);
 
 
