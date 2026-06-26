@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="base2::layout(~{::section})">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manager | Attendance & Leave Requests</title>
+    <section>
+    <style>
+        .container {
+            padding: 20px;
+        }
+
+        .request-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .request-card:hover {
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+        }
+
+        .request-row {
+            display: flex;
+            flex-wrap: wrap;
+            row-gap: 12px;
+            column-gap: 40px;
+        }
+
+        .request-item {
+            display: flex;
+            align-items: center;
+            font-size: 15px;
+            min-width: 250px;
+            white-space: nowrap;
+        }
+
+        .request-item span {
+            margin-left: 6px;
+            word-break: break-word;
+        }
+
+        .badge-warning {
+            background-color: #ffc107;
+            color: black;
+            font-size: 0.85rem;
+            padding: 4px 10px;
+            border-radius: 10px;
+        }
+
+        .btn-sm {
+            padding: 0.35rem 0.7rem;
+            font-size: 0.85rem;
+            border-radius: 8px;
+        }
+
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+            margin-right: 8px;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .history-button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .history-button:hover {
+            background-color: #0069d9;
+            text-decoration: none;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card p-4">
+
+            <div class="mb-4 text-right">
+                <a th:href="@{/admin/request-history}" class="history-button">
+                    📜 View Request History
+                </a>
+            </div>
+
+            <h3 class="mb-4 text-center font-weight-bold">📝 Pending Attendance & Leave Requests</h3>
+
+            <div th:if="${#lists.isEmpty(requests)}" class="text-center text-muted">No pending requests found.</div>
+
+            <div th:each="req : ${requests}" class="request-card">
+                <div class="request-row mb-3">
+   <div class="request-item">🔢 <strong>Request ID:</strong> <span th:text="${req.request_id != null ? req.request_id : '--'}"></span></div>
+<div class="request-item">🆔 <strong>ID:</strong> <span th:text="${req.employee_id}"></span></div>
+<div class="request-item">📧 <strong>Email:</strong><span th:text="${req.email != null ? req.email : '--'}"></span></div>
+<div class="request-item">👤 <strong>Employee:</strong><span th:text="${req.employee_name != null ? req.employee_name : '--'}"></span></div>
+<div class="request-item">📧 <strong>ADDDATE:</strong>
+    <span th:text="${req.adddate != null ? #dates.format(req.adddate, 'yyyy-MM-dd HH:mm:ss') : '--'}"></span>
+</div>
+<div class="request-item">📧 <strong>EDITDATE:</strong>
+    <span th:text="${req.editdate != null ? #dates.format(req.editdate, 'yyyy-MM-dd HH:mm:ss') : '--'}"></span>
+</div>
+<div class="request-item">📅 <strong>From Date:</strong><span th:text="${req.fromDate != null ? req.fromDate : '--'}"></span></div>
+<div class="request-item">📅 <strong>To Date:</strong><span th:text="${req.toDate != null ? req.toDate : '--'}"></span></div>
+<div class="request-item">⏳ <strong>Number of Days:</strong><span th:text="${req.totalDays != null ? req.totalDays : '--'}"></span></div>
+<div class="request-item">📋 <strong>Type:</strong><span th:text="${req.status != null ? req.status : '--'}"></span></div>
+<div class="request-item">
+    📌 <strong>Status:</strong>
+    <span th:text="${req.approved_or_reject_or_pending != null ? req.approved_or_reject_or_pending : '--'}"
+          th:classappend="${req.approved_or_reject_or_pending == 'Approved' ? 'badge badge-success' : 
+                           req.approved_or_reject_or_pending == 'Rejected' ? 'badge badge-danger' : 
+                           req.approved_or_reject_or_pending == 'Pending' ? 'badge badge-warning' : ''}">
+    </span>
+</div>
+
+<div class="request-item">🕑 <strong>In Time:</strong><span th:text="${req.updatedCheckInTime != null ? req.updatedCheckInTime : '--'}"></span></div>
+<div class="request-item">🕒 <strong>Out Time:</strong><span th:text="${req.updatedcheckOutTime != null ? req.updatedcheckOutTime : '--'}"></span></div>
+<div class="request-item mb-1 w-100">
+    <strong>📎 Document:</strong><br/>
+
+   <span th:if="${req.file_name != null 
+              and #strings.trim(req.file_name) != '' 
+              and #strings.trim(req.file_name)?.toLowerCase() != 'no record found'}">
+
+        <a th:href="${req.fileViewUrl}" target="_blank"
+           class="text-decoration-none d-inline-flex align-items-center text-primary">
+            
+            <span th:switch="${#strings.substring(req.file_name?.toLowerCase(), req.file_name.lastIndexOf('.') + 1)}">
+                <i th:case="'pdf'" class="fa-solid fa-file-pdf me-1 text-danger"></i>
+                <i th:case="'doc'" class="fa-solid fa-file-word me-1 text-primary"></i>
+                <i th:case="'docx'" class="fa-solid fa-file-word me-1 text-primary"></i>
+                <i th:case="'xls'" class="fa-solid fa-file-excel me-1 text-success"></i>
+                <i th:case="'xlsx'" class="fa-solid fa-file-excel me-1 text-success"></i>
+                <i th:case="'png'" class="fa-solid fa-file-image me-1 text-warning"></i>
+                <i th:case="'jpg'" class="fa-solid fa-file-image me-1 text-warning"></i>
+                <i th:case="'jpeg'" class="fa-solid fa-file-image me-1 text-warning"></i>
+                <i th:case="*" class="fa-solid fa-file me-1 text-secondary"></i>
+            </span>
+
+            <span th:text="${req.file_name}" class="me-2 mr-2"></span>
+        </a>
+
+  <!-- Open in Drive -->
+<a th:href="${req.fileViewUrl}" target="_blank"
+   class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center ml-2 animate-icon px-3 py-1"
+   style="min-width: 140px;">
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTuexfChBaGyMSJiO-3xKGAMo6OVD2Zy97wJQ&s"
+         alt="Drive" class="icon-img me-2 mr-1" style="height: 16px; width: 16px;">
+    Open in Drive
+</a>
+
+<!-- Download Button -->
+<a th:href="${req.fileDownloadUrl}" download
+   class="btn btn-outline-primary btn-sm d-inline-flex align-items-center ml-2 animate-icon px-3 py-1"
+   style="min-width: 140px;">
+    <i class="fa-solid fa-cloud-arrow-down icon-img me-2 mr-1" style="height: 16px; width: 16px;"></i>
+    Download
+</a>
+
+    </span>
+
+    <!-- If no file, show 'No file attached' with a file icon -->
+    <span th:if="${req.file_name == null 
+                  or #strings.trim(req.file_name) == '' 
+                  or #strings.trim(req.file_name)?.toLowerCase() == 'no record found'}" 
+          class="text-muted">
+        <i class="fa-solid fa-file me-1 text-secondary"></i> No file attached
+    </span>
+
+
+</div>
+<div class="request-item">📝 <strong>Reason:</strong><span th:text="${req.reason != null ? req.reason : '--'}"></span></div>
+
+                </div>
+
+                <div class="mt-2">
+                    <!-- ✅ Approve Button Form -->
+                    <form th:action="@{/admin/approve-request}" method="post" style="display:inline;" onsubmit="return handleApproval(event, 'Approve')">
+                        <input type="hidden" name="request_id" th:value="${req.request_id}" />
+                        <input type="hidden" name="approved" value="true" />
+                        <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                    </form>
+
+                    <!-- ✅ Reject Button Form -->
+                    <form th:action="@{/admin/approve-request}" method="post" style="display:inline;" onsubmit="return handleApproval(event, 'Reject')">
+                        <input type="hidden" name="request_id" th:value="${req.request_id}" />
+                        <input type="hidden" name="approved" value="false" />
+                        <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        function handleApproval(event, actionType) {
+            event.preventDefault(); // ❌ Stop direct submit
+
+            const form = event.target;
+
+            Swal.fire({
+                title: actionType === 'Approve' ? '✅ Approved Successfully!' : '❌ Rejected Successfully!',
+                text: `You have ${actionType.toLowerCase()}d the request.`,
+                icon: actionType === 'Approve' ? 'success' : 'error',
+                confirmButtonColor: actionType === 'Approve' ? '#28a745' : '#dc3545',
+                timer: 1500,
+                showConfirmButton: false
+            }).then(() => {
+                form.submit(); // ✅ After popup, now submit form
+            });
+
+            return false; // Stop default behavior
+        }
+    </script>
+
+</section>
+</body>
+</html>

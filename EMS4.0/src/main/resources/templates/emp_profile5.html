@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	th:replace="base5::layout(~{::section})">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<title>Sign Up Form</title>
+</head>
+
+<body>
+	<section style="background-color: #eee;">
+		<form id="login-form" class="form p-3 mt-3"
+			th:action="@{'/IT/emp_processing_profile/'+${userdetail.id}}"
+			action="#" method="post" enctype="multipart/form-data">
+			<div class="container py-5">
+				<div class="row">
+					<div class="col">
+						<nav aria-label="breadcrumb"
+							class="bg-body-tertiary rounded-3 p-3 mb-4">
+							<ol class="breadcrumb mb-0">
+								<li class="breadcrumb-item"><a href="#">Home</a></li>
+								<li class="breadcrumb-item"><a href="#">User</a></li>
+								<li class="breadcrumb-item active" aria-current="page">User
+									Profile</li>
+							</ol>
+						</nav>
+					</div>
+				</div>
+			</div>
+			<div th:if="${session.message}"
+				th:classappend="${session.message.type}" class="alert"
+				role="alert text-center">
+				<p th:text="${session.message.content}"></p>
+				<th:block th:text="${#session.removeAttribute('message')}"></th:block>
+			</div>
+			<div class="row">
+				<div class="col-lg-4">
+					<div class="card mb-4">
+						<div class="card-body text-center">
+							<div
+								th:if="${userdetail.Image_Name.equals('default.jpg') and userdetail.gender.equals('Male')}">
+								<img src="https://bootdey.com/img/Content/avatar/avatar7.png"
+									alt="avatar" class="rounded-circle img-fluid"
+									style="width: 150px;">
+							</div>
+							<div
+								th:if="${userdetail.Image_Name.equals('default.jpg') and userdetail.gender.equals('Female')}">
+								<img
+									src="https://img.freepik.com/premium-vector/portrait-beautiful-lady-with-sunglasses_684058-1186.jpg?size=626&ext=jpg&ga=GA1.1.1331334970.1715351181&semt=ais_user"
+									alt="avatar" class="rounded-circle img-fluid"
+									style="width: 150px;">
+							</div>
+								 <!-- Agar user ke paas Google Drive access hai -->
+        <div th:if="${userdetail.Has_drive_access}">
+           <img th:src="@{'/IT/user-image/' + ${userdetail.id}}"
+                 class="rounded-circle img-fluid" alt="User Photo" style="width: 150px; height: 150px; object-fit: cover;">
+        </div>
+
+        <!-- Agar user ke paas Google Drive access nahi hai -->
+        <div th:if="${!userdetail.Has_drive_access}">
+            <img src="/img/no-access.png" class="rounded-circle img-fluid" alt="No Access">
+        </div>
+							<h5 class="my-3">
+								<span th:text="${userdetail.username}"></span>
+							</h5>
+							<p class="text-muted mb-1">
+								<span th:text="${userdetail.designation}"></span>
+							</p>
+							<p class="text-muted mb-4">
+								<span th:text="${userdetail.base_location}"></span>
+							</p>
+							<div class="d-flex justify-content-center mb-2">
+								<div th:if="${userdetail.status.equals('ACTIVE')}">
+									<button disabled type="button" data-mdb-button-init
+										data-mdb-ripple-init class="btn btn-success">
+										<span th:text="${userdetail.status}"></span>
+									</button>
+								</div>
+								<div th:if="${userdetail.status.equals('INACTIVE')}">
+									<button disabled type="button" data-mdb-button-init
+										data-mdb-ripple-init class="btn btn-danger">
+										<span th:text="${userdetail.status}"></span>
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="card mb-4 mb-lg-0">
+						<div class="card-body p-0">
+							<ul class="list-group list-group-flush rounded-3">
+								<li
+									class="list-group-item d-flex justify-content-between align-items-center p-3">
+									<i class="fas fa-globe fa-lg text-warning"></i>
+									<p class="mb-0">https://mdbootstrap.com</p>
+								</li>
+								<li
+									class="list-group-item d-flex justify-content-between align-items-center p-3">
+									<i class="fab fa-github fa-lg text-body"></i>
+									<p class="mb-0">mdbootstrap</p>
+								</li>
+								<li
+									class="list-group-item d-flex justify-content-between align-items-center p-3">
+									<i class="fab fa-twitter fa-lg" style="color: #55acee;"></i>
+									<p class="mb-0">@mdbootstrap</p>
+								</li>
+								<li
+									class="list-group-item d-flex justify-content-between align-items-center p-3">
+									<i class="fab fa-instagram fa-lg" style="color: #ac2bac;"></i>
+									<p class="mb-0">mdbootstrap</p>
+								</li>
+								<li
+									class="list-group-item d-flex justify-content-between align-items-center p-3">
+									<i class="fab fa-facebook-f fa-lg" style="color: #3b5998;"></i>
+									<p class="mb-0">mdbootstrap</p>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-8">
+					<div class="card mb-4">
+						<div class="card-body">
+							<h3>Personal Info</h3>
+							<br>
+							<div class="row">
+								<div class="col-sm-3">
+									<p class="mb-0">Full Name</p>
+								</div>
+								<div class="col-sm-9">
+									<p class="text-muted mb-0">
+										<span th:text="${userdetail.username}"></span>
+									</p>
+								</div>
+							</div>
+							<hr>
+							<div class="row">
+								<div class="col-sm-3">
+									<p class="mb-0">Employee ID</p>
+								</div>
+								<div class="col-sm-9">
+									<p class="text-muted mb-0">
+										<span th:text="${userdetail.id}"></span>
+									</p>
+								</div>
+							</div>
+							<hr>
+							<div class="row">
+								<div class="col-sm-3">
+									<p class="mb-0">Email</p>
+								</div>
+								<div class="col-sm-9">
+									<p class="text-muted mb-0">
+										<span th:text="${userdetail.email}"></span>
+									</p>
+								</div>
+							</div>
+							<hr>
+							<div class="row">
+								<div class="col-sm-3">
+									<p class="mb-0">Phone</p>
+								</div>
+								<div class="col-sm-9">
+									<p class="text-muted mb-0">
+										<span th:text="${userdetail.phone}"></span>
+									</p>
+								</div>
+							</div>
+							<hr>
+							<div class="row">
+								<div class="col-sm-3">
+									<p class="mb-0">Address</p>
+								</div>
+								<div class="col-sm-9">
+									<p class="text-muted mb-0">
+										<span th:text="${userdetail.address}"></span>
+									</p>
+								</div>
+							</div>
+							<hr>
+							<div class="row">
+								<div class="col-sm-3">
+									<p class="mb-0">Country</p>
+								</div>
+								<div class="col-sm-9">
+									<p class="text-muted mb-0">
+										<span th:text="${userdetail.country}"></span>
+									</p>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="card mb-4">
+						<div class="card-body">
+							<div class="row">
+								<div class="col-sm-6">
+									<h3>Asset Info</h3>
+									<!-- Asset Info Content Goes Here -->
+								</div>
+								<div class="col-sm-6">
+									<div class="text-right">
+										<b> <a href=""
+											th:href="@{'/IT/emp_profile_edit_1/'+${userdetail.id}}"
+											class="item">
+												<p>
+													BACK <i class="fas fa-edit"></i>
+												</p>
+										</a>
+										</b>
+									</div>
+								</div>
+							</div>
+							<br>
+							<div class="row">
+								<div class="col-sm-3">
+									<p class="mb-0">Laptop Brand</p>
+								</div>
+								<div class="col-sm-9">
+									<select id="laptop_brand" name="laptop_brand"
+										class="form-control" onchange="fetchLaptopModels()">
+										<option value="">Select Laptop Brand</option>
+										<option th:each="brand : ${laptopBrands}" th:value="${brand}"
+											th:text="${brand}"></option>
+									</select>
+								</div>
+							</div>
+							<hr>
+
+							<div class="row">
+								<div class="col-sm-3">
+									<p class="mb-0">Laptop Model</p>
+								</div>
+								<div class="col-sm-9">
+									<select id="laptop_model" name="laptop_model"
+										class="form-control" onchange="fetchSerialNumbers()">
+										<option value="">Select Laptop Model</option>
+									</select>
+								</div>
+							</div>
+							<hr>
+
+							<div class="row">
+								<div class="col-sm-3">
+									<p class="mb-0">Serial Number</p>
+								</div>
+								<div class="col-sm-9">
+									<select id="laptop_serial_number" name="laptop_serial_number"
+										class="form-control" onchange="fetchProductIdAndColor()">
+										<option value="">Select Laptop Serial Number</option>
+									</select>
+								</div>
+							</div>
+							<hr>
+							<div class="row">
+								<div class="col-sm-3">
+									<p class="mb-0">Laptop Operational Status</p>
+								</div>
+								<div class="col-sm-9">
+									<select id="laptop_operational_status"
+										name="laptop_operational_status" class="form-control" disabled
+										onchange="enableAssignmentDropdown()">
+										<option value="">Select Operational Status</option>
+										<option value="working">Working</option>
+										<option value="under_maintenance">Under Maintenance</option>
+										<option value="damaged">Damaged</option>
+										<option value="decommissioned">Decommissioned</option>
+										<option value="removed">REMOVED</option>
+										<!-- Ensure REMOVED option is present -->
+									</select>
+								</div>
+							</div>
+
+							<hr>
+
+							<div class="row">
+								<div class="col-sm-3">
+									<p class="mb-0">Laptop Assignment Status</p>
+								</div>
+								<div class="col-sm-9">
+									<select id="laptop_assignment_status"
+										name="laptop_assignment_status" class="form-control" disabled>
+										<option value="">Select Assignment Status</option>
+										<option value="assigned_to_employee">Assigned to
+											Employee</option>
+										<option value="returned_from_employee">Returned from
+											Employee</option>
+										<option value="in_inventory">In Inventory</option>
+										<option value="disposed">Disposed</option>
+										<option value="removed">REMOVED</option>
+										<!-- Ensure REMOVED option is present -->
+									</select>
+								</div>
+							</div>
+
+							<hr>
+
+							<input type="hidden" id="hidden_operational_status"
+								name="laptop_operational_status"> 
+								
+							<input type="hidden"
+								id="hidden_assignment_status" name="laptop_assignment_status">
+
+
+
+							<div class="row">
+								<div class="col-sm-3">
+									<p class="mb-0">Product ID</p>
+								</div>
+								<div class="col-sm-9">
+									<input type="text" id="laptop_id" name="laptop_id"
+										class="form-control" readonly>
+								</div>
+							</div>
+							<hr>
+							<div class="row">
+								<div class="col-sm-3">
+									<p class="mb-0">Device ID</p>
+								</div>
+								<div class="col-sm-9">
+									<input type="text" id="device_id" name="device_id"
+										class="form-control" readonly>
+								</div>
+							</div>
+							<hr>
+							<div class="row">
+								<div class="col-sm-3">
+									<p class="mb-0">Laptop Color</p>
+								</div>
+								<div class="col-sm-9">
+									<input type="text" id="laptop_color" name="laptop_color"
+										class="form-control" readonly>
+								</div>
+							</div>
+							<hr>
+							<div class="row">
+								<div class="col-sm-3">
+									<p class="mb-0">Receipt</p>
+								</div>
+								<div class="col-sm-9">
+									<input type="file" class="text-muted mb-0" name="profileImage" />
+									<i class="fas fa-edit"></i>
+								</div>
+							</div>
+							<hr>
+							<div class="col-md-12 mt-5">
+								<button class="btn btn-primary profile-button" type="submit">Save
+									Profile</button>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+			<script>
+	document.addEventListener("DOMContentLoaded", function () {
+    const laptopBrand = document.getElementById("laptop_brand");
+    const laptopModel = document.getElementById("laptop_model");
+    const laptopSerialNumber = document.getElementById("laptop_serial_number");
+    const laptopStatus = document.getElementById("laptop_status");
+
+    laptopBrand.addEventListener("change", () => {
+        fetchLaptopModels();
+        updateLaptopStatus();
+    });
+
+    laptopModel.addEventListener("change", () => {
+        fetchSerialNumbers();
+        updateLaptopStatus();
+    });
+
+    laptopSerialNumber.addEventListener("change", () => {
+        fetchProductIdAndColor();
+        updateLaptopStatus();
+    });
+
+    laptopStatus.addEventListener("change", normalizeLaptopStatus);
+
+    updateLaptopStatus(); // Initial status update
+});
+
+async function fetchLaptopModels() {
+    const brand = document.getElementById("laptop_brand").value;
+    const companyId = '[[${userdetail.company_id}]]';
+
+    if (!brand) return;
+
+    try {
+        const response = await fetch('/IT/getModelsByBrand', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ laptop_brand: brand, company_id: companyId })
+        });
+        const models = await response.json();
+
+        updateDropdown("laptop_model", models, "Select Laptop Model");
+    } catch (error) {
+        console.error('Error fetching models:', error);
+    }
+}
+
+async function fetchSerialNumbers() {
+    const brand = document.getElementById("laptop_brand").value;
+    const model = document.getElementById("laptop_model").value;
+    const companyId = '[[${userdetail.company_id}]]';
+
+    if (!model) return;
+
+    try {
+        const response = await fetch('/IT/getSerialNumbersByModel', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ laptop_brand: brand, laptop_model: model, company_id: companyId })
+        });
+        const serialNumbers = await response.json();
+
+        updateDropdown("laptop_serial_number", serialNumbers, "Select Laptop Serial Number");
+    } catch (error) {
+        console.error('Error fetching serial numbers:', error);
+    }
+}
+
+async function fetchProductIdAndColor() {
+    const brand = document.getElementById("laptop_brand").value;
+    const model = document.getElementById("laptop_model").value;
+    const serialNumber = document.getElementById("laptop_serial_number").value;
+    const companyId = '[[${userdetail.company_id}]]';
+
+    if (!serialNumber) return;
+
+    try {
+        const response = await fetch('/IT/getProductIdAndColorBySerialNumber', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ laptop_brand: brand, laptop_model: model, serial_number: serialNumber, company_id: companyId })
+        });
+        const data = await response.json();
+
+        document.getElementById("laptop_id").value = data.product_id || "Not Found";
+        document.getElementById("device_id").value = data.device_id || "Not Found";
+        document.getElementById("laptop_color").value = data.laptop_color || "Not Found";
+    } catch (error) {
+        console.error('Error fetching product ID and laptop color:', error);
+    }
+}
+
+function updateDropdown(elementId, items, defaultText) {
+    const dropdown = document.getElementById(elementId);
+    dropdown.innerHTML = `<option value="">${defaultText}</option>`;
+    items.forEach(item => {
+        dropdown.innerHTML += `<option value="${item}">${item}</option>`;
+    });
+}
+
+function updateLaptopStatus() {
+    let brand = document.getElementById("laptop_brand").value;
+    let model = document.getElementById("laptop_model").value;
+    let serial = document.getElementById("laptop_serial_number").value;
+    let operationalStatus = document.getElementById("laptop_operational_status");
+    let assignmentStatus = document.getElementById("laptop_assignment_status");
+
+   // Case 1: If all three fields are "REMOVED", set both statuses to "REMOVED" and disable them
+if (brand === "REMOVED" && model === "REMOVED" && serial === "REMOVED") {
+    operationalStatus.value = "removed";
+    assignmentStatus.value = "removed";
+
+    // Dispatch change events properly
+    operationalStatus.dispatchEvent(new Event("change", { bubbles: true }));
+    assignmentStatus.dispatchEvent(new Event("change", { bubbles: true }));
+
+    operationalStatus.disabled = true;
+    assignmentStatus.disabled = true;
+    
+    document.getElementById("hidden_operational_status").value = operationalStatus.value;
+document.getElementById("hidden_assignment_status").value = assignmentStatus.value;
+    
+    
+    console.log("Operational Status:", operationalStatus.value);
+    console.log("Assignment Status:", assignmentStatus.value);
+} 
+    // Case 2: If all three fields have valid data, enable operational status
+    else if (brand && model && serial && brand !== "REMOVED" && model !== "REMOVED" && serial !== "REMOVED") {
+        operationalStatus.disabled = false;
+        assignmentStatus.disabled = true; // Keep assignment status disabled initially
+        removeRemovedOption(operationalStatus);
+        removeRemovedOption(assignmentStatus);
+    } 
+    // Case 3: If any field is missing, disable both dropdowns
+    else {
+        operationalStatus.value = "";
+        operationalStatus.disabled = true;
+        assignmentStatus.value = "";
+        assignmentStatus.disabled = true;
+    }
+}
+
+// Enable assignment dropdown only when operational status is selected
+function enableAssignmentDropdown() {
+    let operationalStatus = document.getElementById("laptop_operational_status").value;
+    let assignmentStatus = document.getElementById("laptop_assignment_status");
+
+    if (operationalStatus && operationalStatus !== "removed") {
+        assignmentStatus.disabled = false;
+    } else {
+        assignmentStatus.disabled = true;
+    }
+}
+
+// Remove "REMOVED" option when dropdown is enabled
+function removeRemovedOption(dropdown) {
+    let removedOption = dropdown.querySelector('option[value="removed"]');
+    if (removedOption) {
+        removedOption.remove();
+    }
+}
+
+	</script>
+	</section>
+</body>
+
+</html>

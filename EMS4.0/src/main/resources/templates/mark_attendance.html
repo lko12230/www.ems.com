@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Mark Attendance</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+    <style>
+        .alert-custom {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-4 text-center">
+    <h2 class="mb-4">Mark Attendance</h2>
+
+    <!-- Public Holiday Alert -->
+    <div id="holidayAlert" class="alert alert-danger alert-custom" role="alert">
+        🚫 You cannot mark attendance on a Public Holiday.
+    </div>
+
+    <!-- Alert Message Area -->
+    <div id="messageArea" class="alert d-none" role="alert"></div>
+
+    <!-- Mark Attendance Buttons -->
+    <div class="d-grid gap-3 col-6 mx-auto">
+        <button class="btn btn-success btn-lg" onclick="markAttendance('checkin')" id="checkInBtn">✅ Check In</button>
+        <button class="btn btn-primary btn-lg" onclick="markAttendance('checkout')" id="checkOutBtn">📤 Check Out</button>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    const alertBox = document.getElementById('holidayAlert');
+    const messageBox = document.getElementById('messageArea');
+    const today = new Date().toISOString().split("T")[0];
+
+    // Check if today is a public holiday
+    function checkIfHoliday() {
+        axios.get("/attendance/events").then(response => {
+            const holidays = response.data.filter(e =>
+                e.date === today &&
+                e.status &&
+                e.status.toLowerCase().includes("public")
+            );
+
+            if (holidays.length > 0) {
+                alertBox.style.display = "block";
+                document.getElementById("checkInBtn").disabled = true;
+                document.getElementById("checkOutBtn").disabled = true;
+            } else {
+                alertBox.style.display = "none";
+            }
+        });
+    }
+
+    checkIfHoliday();
+
+    // Mark Attendance
+    function markAttendance(type) {
+        const now = new Date().toLocaleTimeString('en-GB', { hour12: false });
+
+        const payload = {
+            date: today,
+            status: 'Present',
+            employeeId: 1, // Replace with actual session-based user
+            checkInTime: type === 'checkin' ? now : null,
+            checkOutTime: type === 'checkout' ? now : null
+        };
+
+        axios.post('/attendance/mark-auto', payload)
+            .then(res => showMessage(`✅ ${type === 'checkin' ? 'Check In' : 'Check Out'} marked at ${now}`, "success"))
+            .catch(err => showMessage("❌ Failed to mark attendance", "danger"));
+    }
+
+    function showMessage(msg, type) {
+        messageBox.className = `alert alert-${type}`;
+        messageBox.textContent = msg;
+        messageBox.classList.remove("d-none");
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:fragment="layout(content)">
+
+<head>
+	<!-- Required meta tags -->
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<link rel="icon" type="image/x-icon"
+		href="https://www.freepnglogos.com/uploads/google-logo-png/google-logo-png-webinar-optimizing-for-success-google-business-webinar-13.png">
+
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+		integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
+		integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
+		crossorigin="anonymous" referrerpolicy="no-referrer" />
+	<script src='https://www.google.com/recaptcha/api.js'></script>
+	<script src="https://code.jquery.com/jquery-3.6.1.min.js"
+		integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+	<title>www.ems.com</title>
+
+</head>
+
+<body>
+		<!-- Navbar -->
+<nav class="fixed-top navbar navbar-expand-lg navbar-dark" style="background-color: black;">
+
+    <a class="navbar-brand" href="/">
+        <img th:src="@{/img/EMS.png}" style="width: 200px; height: 35px" alt="EMS Logo">
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+       
+			<ul class="navbar-nav ml-auto text-uppercase">
+
+
+				<!--	<li class="nav-item active">
+					<a class="nav-link" th:href="@{/about/}" href="#">About</a>
+				</li> -->
+
+			<li class="nav-item active"><a class="nav-link" href="#">WELCOME
+						(<span class="text-warning">ADMIN</span>)
+					</a></li>
+				<li class="nav-item active bg-light d-flex align-items-center justify-content-center"
+    style="border-radius: 50%; height: 50px; width: 50px; overflow: hidden;">
+    
+    <div>
+        <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Male Avatar"
+             class="nav-link img-fluid"
+             style="max-width: 100%; border-radius: 50%;">
+    </div>
+</li>
+
+<!-- 				<li class="nav-item active">
+					<a class="nav-link" th:href="@{/signin/}" href="#"><i class="fa-solid fa-briefcase"></i>
+					Careers</a>
+				</li>
+-->
+				<li class="nav-item active ml-2">
+					<input type="text" class="form-control" id="liveDateTime" readonly>
+				</li>
+				<li class="nav-item active"><a class="nav-link" th:href="@{/logout}" href="#"><i
+							class="fa-solid fa-right-from-bracket"></i>Go To Login</a></li>
+			</ul>
+    </div>
+</nav>
+
+	<div th:replace="${content}"></div>
+	<!-- Optional JavaScript -->
+	<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+
+	<!--   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>  -->
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js"
+		integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+		crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"
+		integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+		crossorigin="anonymous"></script>
+	<script th:src="@{/js/script.js}"></script>
+	<script>
+		$(document).ready(function () {
+			// Function to update live date and time every second
+			function updateLiveDateTime() {
+				var now = new Date();
+				var formattedDateTime = now.toLocaleString(); // Adjust as per your required format
+				$("#liveDateTime").val(formattedDateTime);
+			}
+
+			// Initial call to update live date and time
+			updateLiveDateTime();
+
+			// Update live date and time every second
+			setInterval(updateLiveDateTime, 1000);
+		});
+	</script>
+	<script>
+		// JavaScript code to disable right-click and show an alert
+		document.addEventListener('contextmenu', function (event) {
+			event.preventDefault(); // Prevent default right-click behavior
+			alert("Right-clicking is disabled on EMS.");
+		});
+	</script>
+	<script>
+	window.onload = async function () {
+   const email = 'user@gmail.com'; // Replace with dynamic email if available
+    // Check if email is available
+    if (!email) {
+        console.error('Email is not available');
+        return; // Prevent further execution if email is missing
+    }
+
+    // Get the current path
+    const currentPath = window.location.pathname;
+console.log(currentPath);
+    // Set functionality based on the route
+    let functionality;
+    
+if (currentPath.includes('/')) {
+    functionality = 'Home';
+} else if (currentPath.includes('/signin')) {
+    functionality = 'Go to Login';
+} else if (currentPath.includes('/admin')) {
+    functionality = 'Admin Section';
+} else {
+    functionality = 'Unknown Page';
+}
+
+    // Log activity
+    await logActivity(email, functionality);
+
+};
+
+async function logActivity(email, functionality) {
+    try {
+    
+        console.log("Attempting to log activity...");
+
+        // Fetch client IP address
+        const ipAddress = await getClientIp();
+  console.log(email);
+            console.log(ipAddress);
+            console.log(functionality);
+        // Prepare activity data
+        const data = {
+            email: email,
+            ipAddress: ipAddress,
+            functionality: functionality,
+        };
+          console.log(email);
+            console.log(ipAddress);
+            console.log(functionality);
+
+        console.log('Logging activity:', data);
+
+        // Send the log activity request
+        const response = await fetch('/log-activity', {  // Ensure the URL is correct
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+
+        console.log("Response status:", response.status); // Log response status
+
+        // Check the response from the server
+        if (response.ok) {
+            console.log('Activity logged successfully');
+        } else {
+            console.error('Failed to log activity:', response.statusText);
+        }
+    } catch (error) {
+        console.error('Error during log activity:', error);
+    }
+}
+
+
+        async function getClientIp() {
+            try {
+                const response = await fetch('https://api.ipify.org?format=json');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch IP address');
+                }
+                const data = await response.json();
+                return data.ip;
+            } catch (error) {
+                console.error('Error fetching IP address:', error);
+                return 'Unknown IP'; // Fallback value if IP can't be fetched
+            }
+        }
+	</script>
+</body>
+
+</html>

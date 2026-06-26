@@ -1,0 +1,37 @@
+{"properties": [
+  {
+    "name": "cookie.setMaxAge(24",
+    "type": "java.lang.String",
+    "description": "A description for 'cookie.setMaxAge(24'"
+  },
+  {
+    "name": "google.app.name",
+    "type": "java.lang.String",
+    "description": "A description for 'google.app.name'"
+  },
+  {
+    "name": "google.refresh.token",
+    "type": "java.lang.String",
+    "description": "A description for 'google.refresh.token'"
+  },
+  {
+    "name": "google.client.secret",
+    "type": "java.lang.String",
+    "description": "A description for 'google.client.secret'"
+  },
+  {
+    "name": "google.client.id",
+    "type": "java.lang.String",
+    "description": "A description for 'google.client.id'"
+  },
+  {
+    "name": "sendgrid.api.key",
+    "type": "java.lang.String",
+    "description": "A description for 'sendgrid.api.key'"
+  },
+  {
+    "name": "sendgrid.api.key",
+    "type": "java.lang.String",
+    "description": "A description for 'sendgrid.api.key'"
+  }
+]}

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="base3::layout(~{::section})">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Task Status</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/fontawesome.min.css}" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+<section>
+<style>
+    .custom-dark-header {
+        background-color: #000000 !important;
+        color: #ffffff !important;
+        padding: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .custom-dark-header i {
+        font-size: 1.8rem;
+        color: #ffcc00;
+        margin-right: 10px;
+    }
+</style>
+
+<div class="container mt-5">
+    <div class="card shadow-lg p-4">
+        <!-- Header -->
+        <div class="custom-dark-header">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-tasks"></i>
+                <h4 class="mb-0 text-uppercase">Edit Task Status</h4>
+            </div>
+            <a th:href="@{'/manager/ViewTaskList/' + ${task.id}}" class="btn btn-outline-light">
+                <i class="fas fa-list"></i> List View
+            </a>
+        </div>
+
+        <!-- Form to update task status -->
+        <div class="card-body">
+            <form id="taskForm" th:action="@{'/manager/updateTaskStatus/' + ${task.taskId}}" method="post">
+                <input type="hidden" name="taskId" th:value="${task.taskId}" />
+                <input type="hidden" name="id" th:value="${task.id}" />
+
+                <!-- Read-only Fields -->
+                <div class="mb-3">
+                    <label class="form-label"><strong>Task ID:</strong></label>
+                    <input type="text" class="form-control" th:value="${task.taskId}" readonly />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label"><strong>Team ID:</strong></label>
+                    <input type="text" class="form-control" th:value="${userdetail.team}" readonly />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label"><strong>Employee ID:</strong></label>
+                    <input type="text" class="form-control" th:value="${task.id}" readonly />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label"><strong>Employee Name:</strong></label>
+                    <input type="text" class="form-control" th:value="${userdetail.username}" readonly />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label"><strong>Task Description:</strong></label>
+                    <input type="text" class="form-control" th:value="${task.taskDescription}" readonly />
+                </div>
+
+                <!-- Editable Task Status -->
+                <div class="mb-3">
+                    <label class="form-label"><strong>Status:</strong></label>
+                    <select class="form-control" name="taskStatus" id="taskStatusDropdown">
+                        <option value="Pending" th:selected="${task.taskPending}">Pending</option>
+                        <option value="In Progress" th:selected="${task.taskInProgress}">In Progress</option>
+                        <option value="Completed" th:selected="${task.taskCompleted}">Completed</option>
+                        <option value="Overdue" th:selected="${task.taskOverdue}">Overdue</option>
+                    </select>
+                </div>
+                
+                  <div class="mb-3">
+    <label class="form-label"><strong>Action By Manager:</strong></label>
+    <div>
+        <!-- Task Status Label -->
+        <span th:if="${task.taskClosed == true and task.taskReopen == false}" class="badge bg-danger text-white">Closed</span>
+        <span th:if="${task.taskClosed == false and task.taskReopen == true}" class="badge bg-warning text-white">Reopened</span>
+        <span th:if="${task.taskClosed == false and task.taskReopen == false}" class="badge bg-success text-white">Open</span>
+    </div>
+</div>
+
+                <!-- Save Button -->
+                <div class="d-flex justify-content-between">
+                    <a th:href="@{'/manager/ViewTaskList/' + ${task.id}}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </a>
+                    <button type="button" class="btn btn-success" id="saveButton">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Close/Reopen Task Buttons (separate forms) -->
+        <div class="card-footer mt-3">
+            <div class="d-flex gap-3">
+                <!-- Close Task -->
+               <form th:if="${!task.taskClosed}" th:action="@{'/manager/closeTask/' + ${task.taskId}}" method="post">
+    <input type="hidden" name="id" th:value="${task.id}" />
+    <input type="hidden" name="taskId" th:value="${task.taskId}" />
+    <input type="hidden" id="taskStatus" name="taskStatus" th:value="${task.taskStatus}" />  <!-- Initially set taskStatus -->
+
+    <button type="submit" class="btn btn-danger">
+        <i class="fas fa-times-circle"></i> Close Task
+    </button>
+</form>
+
+<form th:if="${task.taskClosed and !task.taskReopen}" th:action="@{'/manager/re-openTask/' + ${task.taskId}}" method="post">
+    <input type="hidden" name="id" th:value="${task.id}" />
+    <input type="hidden" name="taskId" th:value="${task.taskId}" />
+    <input type="hidden" id="taskStatusReopen" name="taskStatus" th:value="${task.taskStatus}" />  <!-- Initially set taskStatus -->
+
+    <button type="submit" class="btn btn-warning">
+        <i class="fas fa-redo-alt"></i> Reopen Task
+    </button>
+</form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+<script>
+    document.getElementById('saveButton').addEventListener('click', function(event) {
+        event.preventDefault();
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Do you really want to save the changes?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#28a745',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, save it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('taskForm').submit();
+            }
+        });
+    });
+</script>
+<script>
+    // Add event listener for when the task status is changed
+    document.getElementById('taskStatusDropdown').addEventListener('change', function() {
+        // Update the hidden input field with the selected status value
+        var selectedStatus = this.value;
+        document.getElementById('taskStatus').value = selectedStatus;
+        document.getElementById('taskStatusReopen').value = selectedStatus;
+    });
+</script>
+</section>
+</body>
+</html>

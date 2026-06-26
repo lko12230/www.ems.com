@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="base6::layout(~{::section})">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Performance Dashboard</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+<section>
+    <style>
+        body {
+            background-color: #f4f6f9;
+            overflow-x: hidden;
+        }
+        .container {
+            max-width: 95vw;
+        }
+        .main-card {
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            background: #fff;
+        }
+        .info-card, .kpi-card, .chart-container, .remarks {
+            padding: 15px;
+            border-radius: 10px;
+        }
+        .info-card {
+            background: #e9ecef;
+        }
+        .kpi-card {
+            text-align: center;
+            color: #fff;
+            font-size: 0.9rem;
+        }
+        .chart-container {
+            height: 250px;
+        }
+        .remarks textarea {
+            font-size: 0.9rem;
+            padding: 8px;
+            min-height: 100px; /* Prevent shrinkage */
+        }
+        /* Flexbox adjustment */
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .col-md-5, .col-md-7 {
+            flex: 1;
+            min-width: 300px; /* Ensure columns don't shrink too much */
+            margin: 10px;
+        }
+
+        /* Fix the chart size */
+        .chart-container {
+            height: auto;
+            flex: 2;
+        }
+
+        /* Make sure the remarks are at the bottom in smaller screens */
+        .remarks {
+            margin-top: 20px;
+            flex: 1;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .col-md-5, .col-md-7 {
+                min-width: 100%;
+                margin: 0;
+            }
+        }
+    </style>
+
+    <div class="container mt-3">
+        <div class="card main-card">
+            <h5 class="text-center mb-3"><span th:text="${user.username}"></span> Performance Dashboard</h5>
+
+            <!-- KPI Cards Row -->
+            <div class="row text-center">
+                <div class="col-6 col-md-3">
+                    <div class="kpi-card bg-primary"> <h6>Attendance</h6> <h4>95%</h4> </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="kpi-card bg-success"> <h6>Efficiency</h6> <h4><span th:text="${taskCounts.efficiency}"></span>%</h4> </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="kpi-card bg-warning"> <h6>Tasks Completed</h6> <h4><span th:text="${taskCounts.tasksCompleted}"></span></h4></div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="kpi-card bg-danger"> <h6>Pending Tasks</h6> <h4><span th:text="${taskCounts.tasksPending}"></span></h4> </div>
+                </div>
+            </div>
+
+            <!-- Employee Details & Performance Chart Row -->
+            <div class="row mt-3">
+    <div class="col-md-5">
+        <div class="info-card">
+            <h6 class="text-center fw-bold">Employee Details</h6>
+
+            <div class="d-flex justify-content-between border-bottom py-1">
+                <strong><i class="fa-solid fa-id-badge text-primary"></i> Emp ID:</strong> 
+                <span th:text="${user.id}"></span>
+            </div>
+            <div class="d-flex justify-content-between border-bottom py-1">
+                <strong><i class="fa-solid fa-user text-success"></i> Name:</strong> 
+                <span th:text="${user.username}"></span>
+            </div>
+            <div class="d-flex justify-content-between border-bottom py-1">
+                <strong><i class="fa-solid fa-envelope text-danger"></i> Email:</strong> 
+                <span class="text-truncate d-inline-block email-text" th:text="${user.email}"></span>
+            </div>
+            <div class="d-flex justify-content-between border-bottom py-1">
+                <strong><i class="fa-solid fa-phone text-warning"></i> Phone:</strong> 
+                <span th:text="${user.phone}"></span>
+            </div>
+            <div class="d-flex justify-content-between border-bottom py-1">
+                <strong><i class="fa-solid fa-building text-info"></i> Company ID:</strong> 
+                <span th:text="${user.company_id}"></span>
+            </div>
+            <div class="d-flex justify-content-between border-bottom py-1">
+                <strong><i class="fa-solid fa-users text-secondary"></i> Team ID:</strong> 
+                <span th:text="${user.team}"></span>
+            </div>
+            <div class="d-flex justify-content-between py-1">
+                <strong><i class="fa-solid fa-map-marker-alt text-dark"></i> Base Location:</strong> 
+                <span th:text="${user.base_location}"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart -->
+    <div class="col-md-7">
+        <div class="chart-container">
+            <canvas id="taskPerformanceChart"></canvas>
+        </div>
+    </div>
+</div>
+
+            <!-- Manager Remarks -->
+            <div class="remarks mt-3">
+                <h6>Manager's Remarks</h6>
+                <textarea disabled id="remarks" class="form-control" rows="2" placeholder="Manager remarks..."></textarea>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart.js -->
+<script th:inline="javascript">
+    $(document).ready(function() {
+        var performanceData = /*[[${performanceData}]]*/ [];
+
+        if (!Array.isArray(performanceData) || performanceData.length === 0) {
+            console.error("Performance data is empty or not an array.");
+            return;
+        }
+
+        var months = [], usernames = [];
+        var totalTasks = [], completedTasks = [], pendingTasks = [];
+        var inProgressTasks = [], overdueTasks = [], lateCompletedTasks = [], onTimeCompletedTasks = [];
+
+        var totalTaskIDs = [], completedTaskIDs = [], pendingTaskIDs = [];
+        var inProgressTaskIDs = [], overdueTaskIDs = [], lateCompletedTaskIDs = [], onTimeCompletedTaskIDs = [];
+
+        // **Function to split long text into lines**
+        function wrapText(text, maxLineLength = 40) {
+            if (!text || text.trim().length === 0) return ["Task IDs: No Tasks"];
+            
+            let words = text.split(", ");
+            let lines = [];
+            let currentLine = "";
+
+            words.forEach(word => {
+                if ((currentLine.length + word.length) > maxLineLength) {
+                    lines.push(currentLine + ",");  // Add a comma before breaking line
+                    currentLine = "";
+                }
+                currentLine += (currentLine ? ", " : "") + word;
+            });
+
+            if (currentLine) lines.push(currentLine);
+            return lines;
+        }
+
+        performanceData.forEach(function(data) {
+            months.push(data.month || "Unknown");
+            usernames.push(data.username || "N/A");
+            totalTasks.push(data.totalTasks || 0);
+            completedTasks.push(data.completedTasks || 0);
+            pendingTasks.push(data.pendingTasks || 0);
+            inProgressTasks.push(data.inProgressTasks || 0);
+            overdueTasks.push(data.overdueTasks || 0);
+            lateCompletedTasks.push(data.lateCompletedTasks || 0);
+            onTimeCompletedTasks.push(data.onTimeCompletedTasks || 0);
+
+            totalTaskIDs.push(wrapText((data.totalTasksList || []).join(", ")));
+            completedTaskIDs.push(wrapText((data.completedTaskList || []).join(", ")));
+            pendingTaskIDs.push(wrapText((data.pendingTaskList || []).join(", ")));
+            inProgressTaskIDs.push(wrapText((data.inProgressTaskList || []).join(", ")));
+            overdueTaskIDs.push(wrapText((data.overdueTaskList || []).join(", ")));
+            lateCompletedTaskIDs.push(wrapText((data.lateCompletedTaskList || []).join(", ")));
+            onTimeCompletedTaskIDs.push(wrapText((data.onTimeCompletedTaskList || []).join(", ")));
+        });
+
+        var chartCanvas = document.getElementById('taskPerformanceChart');
+        chartCanvas.width = performanceData.length * 50;
+
+        var ctx = chartCanvas.getContext('2d');
+        if (!ctx) {
+            console.error("Chart element not found.");
+            return;
+        }
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: months,
+                datasets: [
+                    { label: 'Total Tasks', data: totalTasks, borderColor: 'blue', backgroundColor: 'rgba(0, 0, 255, 0.2)', fill: true, tension: 0.4 },
+                    { label: 'Completed Tasks', data: completedTasks, borderColor: 'green', backgroundColor: 'rgba(0, 255, 0, 0.2)', fill: true, tension: 0.4 },
+                    { label: 'Pending Tasks', data: pendingTasks, borderColor: 'yellow', backgroundColor: 'rgba(255, 255, 0, 0.2)', fill: true, tension: 0.4 },
+                    { label: 'In Progress Tasks', data: inProgressTasks, borderColor: 'purple', backgroundColor: 'rgba(128, 0, 128, 0.2)', fill: true, tension: 0.4 },
+                    { label: 'Overdue Tasks', data: overdueTasks, borderColor: 'red', backgroundColor: 'rgba(255, 0, 0, 0.2)', fill: true, tension: 0.4 },
+                    { label: 'Late Completed Tasks', data: lateCompletedTasks, borderColor: 'brown', backgroundColor: 'rgba(139, 69, 19, 0.2)', fill: true, tension: 0.4 },
+                    { label: 'On-Time Completed Tasks', data: onTimeCompletedTasks, borderColor: 'orange', backgroundColor: 'rgba(255, 165, 0, 0.2)', fill: true, tension: 0.4 }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: { duration: 1500, easing: 'easeInOutQuart' },
+               scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Month'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Task Count'
+                        },
+                        beginAtZero: true
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                var index = tooltipItem.dataIndex;
+                                var datasetLabel = tooltipItem.dataset.label || '';
+                                var value = tooltipItem.raw;
+                                var username = usernames[index] || "N/A";
+                                var taskIDs = ["No Tasks"];
+
+                                switch (tooltipItem.datasetIndex) {
+                                    case 0: taskIDs = totalTaskIDs[index]; break;
+                                    case 1: taskIDs = completedTaskIDs[index]; break;
+                                    case 2: taskIDs = pendingTaskIDs[index]; break;
+                                    case 3: taskIDs = inProgressTaskIDs[index]; break;
+                                    case 4: taskIDs = overdueTaskIDs[index]; break;
+                                    case 5: taskIDs = lateCompletedTaskIDs[index]; break;
+                                    case 6: taskIDs = onTimeCompletedTaskIDs[index]; break;
+                                }
+
+                                // **Ensures "No Tasks" is on the same line**
+                                if (taskIDs.length === 1 && taskIDs[0] === "Task IDs: No Tasks") {
+                                    return [`${datasetLabel}: ${value} (User: ${username})`, `Task IDs: No Tasks`];
+                                }
+
+                                return [`${datasetLabel}: ${value} (User: ${username})`, "Task IDs:"].concat(taskIDs);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+
+</section>
+
+</body>
+</html>

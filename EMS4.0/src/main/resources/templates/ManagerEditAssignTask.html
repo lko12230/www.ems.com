@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+    th:replace="base3::layout(~{::section})">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Assignment</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+
+<body>
+    <section style="background-color: #f8f9fa;">
+        <div class="container py-5">
+            <!-- Breadcrumb Navigation -->
+            <nav aria-label="breadcrumb" class="bg-white p-3 shadow-sm rounded">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item"><a href="#">Employees</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">User Profile</li>
+                    <li class="ml-auto">
+                     <a th:href="@{'/manager/ViewTaskList/'+ ${userdetail.id}}" class="btn btn-outline-primary">
+                            Task List View <i class="fas fa-list"></i>
+                        </a>
+                        <a th:href="@{/manager/viewMembers/0}" class="btn btn-outline-primary">
+                            List View <i class="fas fa-list"></i>
+                        </a>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- User Profile Section -->
+            <div class="row mt-4">
+                <div class="col-lg-4">
+                    <div class="card mb-4 shadow-sm">
+                        <div class="card-body text-center">
+                            <!-- User Image -->
+                            <div
+									th:if="${userdetail.Image_Name.equals('default.jpg') and userdetail.gender.equals('Male')}">
+									<img src="https://bootdey.com/img/Content/avatar/avatar7.png"
+										alt="avatar" class="rounded-circle img-fluid"
+										style="width: 150px;">
+								</div>
+								<div
+									th:if="${userdetail.Image_Name.equals('default.jpg') and userdetail.gender.equals('Female')}">
+									<img
+										src="https://img.freepik.com/premium-vector/portrait-beautiful-lady-with-sunglasses_684058-1186.jpg?size=626&ext=jpg&ga=GA1.1.1331334970.1715351181&semt=ais_user"
+										alt="avatar" class="rounded-circle img-fluid"
+										style="width: 150px;">
+								</div>
+								<div th:if="${!userdetail.Image_Name.equals('default.jpg')}">
+									 <img th:src="@{'/manager/user-image/' + ${user.id}}"
+										alt="avatar" class="rounded-circle img-fluid" style="width: 150px; height: 150px; object-fit: cover;">
+								</div>
+                            <h5 class="my-3" th:text="${userdetail.username}"></h5>
+                            <p class="text-muted" th:text="${userdetail.designation}"></p>
+                            <p class="text-muted" th:text="${userdetail.base_location}"></p>
+
+                            <!-- Status Button -->
+                            <button disabled type="button" class="btn"
+                                th:classappend="${userdetail.status.equals('ACTIVE')} ? 'btn-success' : 'btn-danger'">
+                                <span th:text="${userdetail.status}"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Panel - User Details -->
+                <div class="col-lg-8">
+                    <div class="card mb-4 shadow-sm">
+                        <div class="card-body">
+                            <h3>Personal Info</h3>
+                            <hr>
+                            
+                            	 <input type="hidden" name="email" th:value="${userdetail.email}" />
+                            	  <input type="hidden" name="username" th:value="${userdetail.username}" />
+
+                            <div class="row">
+                                <div class="col-sm-3"><strong>Full Name:</strong></div>
+                                <div class="col-sm-9 text-muted" th:text="${userdetail.username}"></div>
+                            </div>
+                            <hr>
+
+                            <div class="row">
+                                <div class="col-sm-3"><strong>Employee ID:</strong></div>
+                                <div class="col-sm-9 text-muted" th:text="${userdetail.id}"></div>
+                            </div>
+                            <hr>
+
+                            <div class="row">
+                                <div class="col-sm-3"><strong>Email:</strong></div>
+                                <div class="col-sm-9 text-muted" th:text="${userdetail.email}"></div>
+                            </div>
+                            <hr>
+
+                            <div class="row">
+                                <div class="col-sm-3"><strong>Phone:</strong></div>
+                                <div class="col-sm-9 text-muted" th:text="${userdetail.phone}"></div>
+                            </div>
+                            <hr>
+
+                            <div class="row">
+                                <div class="col-sm-3"><strong>Address:</strong></div>
+                                <div class="col-sm-9 text-muted" th:text="${userdetail.address}"></div>
+                            </div>
+                            <hr>
+
+                            <div class="row">
+                                <div class="col-sm-3"><strong>Country:</strong></div>
+                                <div class="col-sm-9 text-muted" th:text="${userdetail.country}"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Task Assignment Form -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h3>Assign Task</h3>
+                        <a th:href="@{'/manager/managerViewTask/' + ${userdetail.id}}" class="btn btn-outline-primary">
+                            <i class="fas fa-arrow-left"></i> Back
+                        </a>
+                    </div>
+
+                    <form th:action="@{/manager/managerSaveAssignTask/{id}(id=${userdetail.id})}" method="post">
+                        <!-- Task Description -->
+                        <div class="row mb-3">
+                            <label class="col-sm-3 col-form-label"><strong>Task Description:</strong></label>
+                            <div class="col-sm-9">
+                                <textarea class="form-control" name="taskDescription" rows="3" required></textarea>
+                            </div>
+                        </div>
+                        
+                        <!-- Task Dates -->
+                        <div class="row mb-3">
+                            <label class="col-sm-3 col-form-label"><strong>Task Assigned Date:</strong></label>
+                            <div class="col-sm-9">
+                                <input type="date" name="taskAssignedDate" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <label class="col-sm-3 col-form-label"><strong>Task End Date:</strong></label>
+                            <div class="col-sm-9">
+                                <input type="date" name="taskEndDate" class="form-control" required>
+                            </div>
+                        </div>
+                        
+                        	 <input type="hidden" name="email" th:value="${userdetail.email}" />
+								  <input type="hidden" name="username" th:value="${userdetail.username}" />
+
+                        <!-- Task Status -->
+                        <div class="row mb-3">
+                            <label class="col-sm-3 col-form-label"><strong>Status:</strong></label>
+                            <div class="col-sm-9">
+                                <select class="form-control" name="taskStatus">
+                                    <option value="Pending">Pending</option>
+                                    <option value="In Progress">In Progress</option>
+                                    <option value="Completed">Completed</option>
+                                    <option value="Overdue">Overdue</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="text-center">
+                            <button class="btn btn-primary" type="submit">
+                                <i class="fas fa-save"></i> Save Task
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>

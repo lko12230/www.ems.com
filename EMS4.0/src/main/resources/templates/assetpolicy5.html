@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="base5::layout(~{::section})">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Asset Policy</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <section>
+        <style>
+            body {
+                background-color: #ecf0f3;
+            }
+
+            .container {
+                max-width: 900px;
+            }
+
+            .card {
+                border-radius: 15px;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+                background: #ffffff;
+                padding: 30px;
+                margin-top: 50px;
+            }
+
+            .header {
+                background: linear-gradient(to right, #4facfe, #00f2fe);
+                color: white;
+                text-align: center;
+                padding: 15px;
+                font-size: 1.5rem;
+                border-top-left-radius: 15px;
+                border-top-right-radius: 15px;
+                font-weight: 600;
+            }
+
+            .section-title {
+                color: #007bff;
+                font-weight: bold;
+                font-size: 1.2rem;
+                margin-top: 20px;
+            }
+
+            ul {
+                padding-left: 20px;
+            }
+        </style>
+
+        <div class="container">
+            <div class="card">
+                <div class="header">Company Asset Policy</div>
+                <div class="content">
+                    <p class="section-title">1. Hardware, Software, and Applications</p>
+                    <ul>
+                        <li>All hardware, software, and applications must be approved and managed by IT.</li>
+                        <li>Unauthorized installation or modification of software is strictly prohibited.</li>
+                        <li>Company-owned assets must be properly documented and maintained.</li>
+                    </ul>
+
+                    <p class="section-title">2. Asset Maintenance and Security</p>
+                    <ul>
+                        <li>All company assets require regular maintenance as per IT standards.</li>
+                        <li>Assets should not be removed from company premises without prior approval.</li>
+                        <li>All assets must be tagged with an official company asset label.</li>
+                    </ul>
+
+                    <p class="section-title">3. Mobile Device Usage</p>
+                    <ul>
+                        <li>Personal devices must not be connected to the corporate network without approval.</li>
+                        <li>Mobile devices accessing company data must comply with security protocols.</li>
+                        <li>Encryption is mandatory for confidential data stored on mobile devices.</li>
+                    </ul>
+
+                    <p class="section-title">4. Data Backup & Media Handling</p>
+                    <ul>
+                        <li>Backups must be conducted regularly in compliance with company policies.</li>
+                        <li>Data stored on removable media should be encrypted and securely disposed of when no longer needed.</li>
+                        <li>Loss or theft of media must be reported to IT immediately.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>

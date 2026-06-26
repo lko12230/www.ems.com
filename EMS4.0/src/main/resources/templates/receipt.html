@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	th:replace="base2::layout(~{::section})">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<title>Sign Up Form</title>
+<style>
+body {
+	margin-top: 20px;
+	background-color: #eee;
+}
+
+.card {
+	box-shadow: 0 20px 27px 0 rgb(0 0 0/ 5%);
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+	word-wrap: break-word;
+	background-color: #fff;
+	background-clip: border-box;
+	border: 0 solid rgba(0, 0, 0, .125);
+	border-radius: 1rem;
+}
+</style>
+</head>
+
+<body>
+	<section style="background-color: #eee;">
+		<form id="myForm" th:action="@{/admin/download-invoice-pdf}"
+			method="post">
+			<div class="container">
+				<div class="row">
+					<div class="col-lg-12">
+						<div class="card">
+							<div class="card-body">
+								<div class="invoice-title">
+									<h4 class="float-end font-size-15">
+										Invoice : <span th:text="${payment_Order_Info.receipt}"></span>
+										<span th:text="${payment_Order_Info.status}"
+											class="badge bg-success font-size-12 ms-2"
+											style="text-transform: uppercase; color: white;"></span>
+									</h4>
+									<div class="mb-4">
+										<h2 class="mb-1 text-muted">www.ems.com</h2>
+									</div>
+									<div class="text-muted">
+										<p class="mb-1">
+											<span th:text="${payment_Order_Info.company}"></span>
+										</p>
+										<p class="mb-1">
+											<span th:text="${user.base_location}"></span>
+										</p>
+										<p class="mb-1">
+											<i class="uil uil-envelope-alt me-1"></i><span
+												th:text="${payment_Order_Info.email}"></span>
+										</p>
+										<p>
+											<i class="uil uil-phone me-1"></i><span
+												th:text="${payment_Order_Info.phone}"></span>
+										</p>
+									</div>
+								</div>
+								<hr class="my-4">
+								<div class="row">
+									<div class="col-sm-6">
+										<div class="text-muted">
+											<h5 class="font-size-16 mb-3">Billed To:</h5>
+											<h5 class="font-size-15 mb-2">
+												<span th:text="${companyinfo.Company_name}"></span>
+											</h5>
+											<p class="mb-1">
+												<span th:text="${companyinfo.company_address}"></span>
+											</p>
+											<p class="mb-1">
+												<span th:text="${companyinfo.company_email}"></span>
+											</p>
+											<p class="mb-1">
+												<span th:text="${companyinfo.company_phone}"></span>
+											</p>
+											<p class="mb-1">
+												<span th:text="${companyinfo.gst_no}"></span>
+											</p>
+										</div>
+									</div>
+									<!-- end col -->
+									<div class="col-sm-6">
+										<div class="text-muted text-sm-end">
+											<div>
+												<h5 class="font-size-15 mb-1">Invoice No:</h5>
+												<p>
+													<span th:text="${payment_Order_Info.receipt}"></span>
+												</p>
+											</div>
+											<div class="mt-4">
+												<h5 class="font-size-15 mb-1">Invoice Date:</h5>
+												<p>
+													<span th:text="${payment_Order_Info.system_date_and_time}"></span>
+												</p>
+											</div>
+											<div class="mt-4">
+												<h5 class="font-size-15 mb-1">Order No:</h5>
+												<p>
+													<span th:text="${payment_Order_Info.orderId}"></span>
+												</p>
+											</div>
+											<div class="mt-4">
+												<h5 class="font-size-15 mb-1">Payment ID:</h5>
+												<p>
+													<span th:text="${payment_Order_Info.paymentId}"></span>
+												</p>
+											</div>
+										</div>
+									</div>
+									<!-- end col -->
+								</div>
+								<!-- end row -->
+								<div class="py-2">
+									<h5 class="font-size-15">Order Summary</h5>
+									<div class="table-responsive">
+										<table
+											class="table align-middle table-nowrap table-centered mb-0"
+											id="billingTable">
+											<thead>
+												<tr>
+													<th style="width: 80px;">No.</th>
+													<th>Item</th>
+													<th>Price (INR)</th>
+													<th>Discount (INR)</th>
+													<th>Tax (GST)</th>
+													<th>Quantity</th>
+													<th class="text-end" style="width: 120px;">Total</th>
+												</tr>
+											</thead>
+											<!-- end thead -->
+											<tbody>
+												<tr>
+													<th scope="row">01</th>
+													<td>
+														<div>
+															<h5 class="text-truncate font-size-14 mb-1">EMS
+																SUBSCRIPTION</h5>
+															<p class="text-muted mb-0">
+																Validity :<span
+																	th:text="${subscriptionPlans.plan_description}"></span>
+															</p>
+															<p class="text-muted mb-0">
+																License Number : <span
+																	th:text="${payment_Order_Info.license_number}"></span>
+															</p>
+															<p class="text-muted mb-0">
+																License Issue Date : <span
+																	th:text="${payment_Order_Info.subscription_start_date}"></span>
+															</p>
+															<p class="text-muted mb-0">
+																License End Date : <span
+																	th:text="${payment_Order_Info.subscription_expiry_date}"></span>
+															</p>
+														</div>
+													</td>
+													<td><i class="fa-solid fa-indian-rupee-sign"></i> <span
+														th:text="${payment_Order_Info.amount}"></span></td>
+															<td>- <i class="fa-solid fa-indian-rupee-sign"></i><span
+														th:text="${payment_Order_Info.discount}"></span></td>
+													<td><span th:text="${payment_Order_Info.tax}"></span>
+													<br>
+													<i class="fa-solid fa-indian-rupee-sign"></i><span th:text="${payment_Order_Info.gst_amount}"></span></td>
+													<td>1</td>
+													<td class="text-end"><i
+														class="fa-solid fa-indian-rupee-sign"></i> <span
+														th:text="${payment_Order_Info.amount}"></span></td>
+												</tr>
+												<!-- end tr -->
+												<tr>
+													<th scope="row" colspan="4" class="text-end">Sub Total</th>
+													<td class="text-end"><i
+														class="fa-solid fa-indian-rupee-sign"></i> <span
+														th:text="${payment_Order_Info.amount}"></span></td>
+												</tr>
+												<!-- end tr -->
+												<tr>
+													<th scope="row" colspan="4" class="border-0 text-end">Discount
+														:</th>
+													<td class="border-0 text-end"><span
+														th:text="${payment_Order_Info.discount}"></span></td>
+												</tr>
+												<!-- end tr -->
+												<!-- <tr>
+													<th scope="row" colspan="4" class="border-0 text-end">Tax</th>
+													<td class="border-0 text-end">$12.00</td>
+												</tr> -->
+												<!-- end tr -->
+												<tr>
+													<th scope="row" colspan="4" class="border-0 text-end">Total</th>
+													<td class="border-0 text-end">
+														<h5 class="m-0 fw-semibold">
+															<i class="fa-solid fa-indian-rupee-sign"></i> <span
+																th:text="${payment_Order_Info.amount}"></span>
+														</h5>
+													</td>
+												</tr>
+												<!-- end tr -->
+											</tbody>
+											<!-- end tbody -->
+										</table>
+										<!-- end table -->
+									</div>
+									<!-- end table responsive -->
+									<div class="d-print-none mt-4">
+										<div class="float-end">
+											<a href="javascript:printInvoice()"
+												class="btn btn-success me-1"><i class="fa fa-print"></i></a>
+											<!--  	<a href="javascript:submitForm()" class="btn btn-primary w-md">Send</a> -->
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- end col -->
+				</div>
+			</div>
+		</form>
+		<script>
+			function submitForm() {
+				document.getElementById("myForm").submit();
+			}
+
+			function printInvoice() {
+				// Get the current date and time
+				var currentDate = new Date();
+				var formattedDate = currentDate.toLocaleString(); // Convert date to string format
+
+				// Get the content of the current body
+				var content = document.querySelector('section').innerHTML;
+
+				// Create a new window
+				var printWindow = window.open('', '', 'height=700,width=900');
+				printWindow.document.write('<html><head><title>EMS Invoice - '
+						+ formattedDate + '</title>');
+				printWindow.document
+						.write('<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">');
+				printWindow.document.write('</head><body>');
+				printWindow.document.write(content);
+				printWindow.document.write('</body></html>');
+
+				// Close the document to finish loading the content
+				printWindow.document.close();
+				printWindow.focus();
+
+				// Print the content
+				printWindow.print();
+			}
+		</script>
+	</section>
+</body>
+
+</html>

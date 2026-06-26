@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="base2::layout(~{::section})">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Sign Up Form </title>
+
+</head>
+
+<body>
+		<section style="background-color: #eee;">
+			<form id="login-form" class="form p-3 mt-3" th:action="@{'/admin/processing_profile/'+${user.id}}"  action="#" method="post" enctype="multipart/form-data">
+  <div class="container py-5">
+    <div class="row">
+      <div class="col">
+        <nav aria-label="breadcrumb" class="bg-body-tertiary rounded-3 p-3 mb-4">
+          <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item"><a href="#">User</a></li>
+            <li class="breadcrumb-item active" aria-current="page">User Profile</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-4">
+        <div class="card mb-4">
+          <div class="card-body text-center">
+			<div th:if="${user.Image_Name == null or user.Image_Name.equals('default.jpg')}">
+    <!-- Default avatar for Male -->
+    <div th:if="${user.gender.equals('Male')}">
+        <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar"
+             class="rounded-circle img-fluid" style="width: 150px;">
+    </div>
+    <!-- Default avatar for Female -->
+    <div th:if="${user.gender.equals('Female')}">
+        <img src="https://img.freepik.com/premium-vector/portrait-beautiful-lady-with-sunglasses_684058-1186.jpg"
+             alt="avatar" class="rounded-circle img-fluid" style="width: 150px;">
+    </div>
+</div>
+
+<div>
+<div th:if="${!user.Image_Name.equals('default.jpg')}">
+  <img th:src="@{'/admin/user-image/' + ${user.id}}"
+       alt="avatar"
+       class="rounded-circle img-fluid"
+       style="width: 150px; height: 150px; object-fit: cover;">
+</div>
+</div>
+
+
+
+
+            <h5 class="my-3"><span th:text="${user.username}"></span></h5>
+            <p class="text-muted mb-1"><span th:text="${user.designation}"></span></p>
+            <p class="text-muted mb-4"><span th:text="${user.base_location}"></span></p>
+            <div class="d-flex justify-content-center mb-2">
+				<div th:if="${user.status.equals('ACTIVE')}">
+              <button  disabled type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-success"><span th:text="${user.status}"></span></button>
+				</div>
+				<div th:if="${user.status.equals('INACTIVE')}">
+              <button  disabled type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-danger"><span th:text="${user.status}"></span></button>
+				</div>
+           <!--   <button  type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-outline-primary ms-1">Message</button>-->
+            </div>
+          </div>
+        </div>
+        <div class="card mb-4 mb-lg-0">
+          <div class="card-body p-0">
+            <ul class="list-group list-group-flush rounded-3">
+              <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                <i class="fas fa-globe fa-lg text-warning"></i>
+                <p class="mb-0">https://mdbootstrap.com</p>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                <i class="fab fa-github fa-lg text-body"></i>
+                <p class="mb-0">mdbootstrap</p>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                <i class="fab fa-twitter fa-lg" style="color: #55acee;"></i>
+                <p class="mb-0">@mdbootstrap</p>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                <i class="fab fa-instagram fa-lg" style="color: #ac2bac;"></i>
+                <p class="mb-0">mdbootstrap</p>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                <i class="fab fa-facebook-f fa-lg" style="color: #3b5998;"></i>
+                <p class="mb-0">mdbootstrap</p>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-8">
+        <div class="card mb-4">
+          <div class="card-body">
+			  <div class="text-right">
+				<b> <a href="" th:href="@{'/admin/admin_profile_edit_1/'+${user.id}}" class="item">
+						<p>BACK <i class="fas fa-edit"></i></p>
+					</a>
+				</b>
+			</div>
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Full Name</p>
+              </div>
+              <div class="col-sm-9">
+                <p class="text-muted mb-0"><span th:text="${user.username}"></span></p>
+              </div>
+            </div>
+            <hr>
+                  <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Employee ID</p>
+              </div>
+              <div class="col-sm-9">
+                <p class="text-muted mb-0"><span th:text="${user.id}"></span></p>
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Email</p>
+              </div>
+              <div class="col-sm-9">
+                <p class="text-muted mb-0"><span th:text="${user.email}"></span></p>
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Phone</p>
+              </div>
+              <div class="col-sm-9">
+                <p class="text-muted mb-0"><span th:text="${user.phone}"></span></p>
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Address</p>
+              </div>
+              <div class="col-sm-9">
+                <p class="text-muted mb-0"><span th:text="${user.address}"></span></p>
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Country</p>
+              </div>
+              <div class="col-sm-9">
+                <p class="text-muted mb-0"><span th:text="${user.country}"></span></p>
+              </div>
+            </div>
+             <hr>
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Bank Name</p>
+              </div>
+              <div class="col-sm-9">
+                <input type="text" class="text-muted mb-0" name="bank_name" th:value="${user.bank_name}"/> <i class="fas fa-edit"></i>
+              </div>
+            </div>
+             <hr>
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Account Number</p>
+              </div>
+              <div class="col-sm-9">
+                <input type="number" class="text-muted mb-0" name="bank_account_number"  th:value="${user.bank_account_number}"/> <i class="fas fa-edit"></i>
+              </div>
+            </div>
+             <hr>
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">IFSC Code</p>
+              </div>
+              <div class="col-sm-9">
+				  <input type="text" class="text-muted mb-0" name="ifsc_code" th:value="${user.ifsc_code}"/> <i class="fas fa-edit"></i>
+              </div>
+            </div>
+             <hr>
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Status</p>
+              </div>
+              <div class="col-sm-9">
+                <p class="text-muted mb-0"><span th:text="${user.status}"></span></p>
+              </div>
+            </div>
+             <hr>
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Laptop Brand</p>
+              </div>
+              <div class="col-sm-9">
+                <p class="text-muted mb-0"><span th:text="${user.laptop_brand}"></span></p>
+              </div>
+            </div>
+             <hr>
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Serial Number</p>
+              </div>
+              <div class="col-sm-9">
+                <p class="text-muted mb-0"><span th:text="${user.laptop_serial_number}"></span></p>
+              </div>
+            </div>
+             <hr>
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Laptop Status</p>
+              </div>
+              <div class="col-sm-9">
+                <p class="text-muted mb-0"><span th:text="${user.SystemDateAndTime}"></span></p>
+              </div>
+            </div>
+<hr>
+<div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">2-Step Verification</p>
+              </div>
+            <div class="col-sm-9">
+    <label for="twoStepSwitch" style="position: relative; display: inline-block; width: 50px; height: 26px;">
+      <input type="checkbox"
+             id="twoStepSwitch"
+             name="twoStepEnabled"
+             th:checked="${user.twoStepEnabled}"
+             onchange="toggle2FAStatusLabel()"
+             style="
+                opacity: 0;
+                width: 0;
+                height: 0;
+              " />
+      <span style="
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: .4s;
+        border-radius: 26px;
+      "></span>
+      <span style="position: absolute; content: '';
+        height: 20px;
+        width: 20px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: .4s;
+        border-radius: 50%;
+        pointer-events: none;
+      " id="circle"></span>
+    </label>
+    <span id="twoStepStatus"
+          style="margin-left: 1rem;"
+          th:text="${user.twoStepEnabled ? 'Enabled ✅' : 'Disabled ❌'}"
+          th:classappend="${user.twoStepEnabled ? 'text-success' : 'text-danger'}">
+    </span>
+  </div>
+</div>
+             <hr>
+  <!-- 📷 Profile Image -->
+<div class="row">
+  <div class="col-sm-3"><p class="mb-0">Profile Image</p></div>
+  <div class="col-sm-9" id="profileImageContainer">
+
+    <!-- File preview if already uploaded -->
+    <div id="profileImageDisplay"
+         th:if="${user.Image_Name != null and !user.Image_Name.equals('default.jpg')}"
+         class="d-flex align-items-center mb-2">
+      <a th:href="${user.Image_File_Url}" target="_blank"
+         class="text-primary text-decoration-none me-2" id="imageFileName">
+        <span th:text="${user.Image_Name}"></span>
+      </a>
+      <button type="button" class="btn btn-sm btn-outline-danger"
+              onclick="removeProfileImage()">Remove</button>
+    </div>
+
+    <!-- File input -->
+    <div id="profileImageUploadField">
+      <input type="file" class="form-control" name="profileImage"
+             id="profileImageInput" onchange="hideProfileImageRemovedMessage()" />
+    </div>
+
+    <!-- Removed message -->
+    <div id="profileImageRemovedMessage" class="text-muted small mt-1"
+         style="display: none;">Profile image removed</div>
+
+    <!-- Hidden field (always stores current value) -->
+    <input type="hidden" name="Image_Name" id="Image_Name"
+           th:value="${user.Image_Name}" />
+  </div>
+</div>
+<hr>
+
+<!-- 📎 Resume Upload -->
+<div class="row">
+  <div class="col-sm-3">
+    <p class="mb-0">Resume</p>
+  </div>
+  <div class="col-sm-9" id="resumeContainer">
+
+    <!-- File preview (only if resume exists) -->
+    <div id="resumeFileDisplay"
+         th:if="${user.resume_file_name != null and !user.resume_file_name.equals('NA')}"
+         class="d-flex align-items-center mb-2">
+      <a th:href="${user.resume_file_url}" target="_blank"
+         class="text-primary text-decoration-none me-2" id="resumeFileName">
+        <span th:text="${user.resume_file_name}"></span>
+      </a>
+      <button type="button" class="btn btn-sm btn-outline-danger"
+              onclick="removeResume()">Remove</button>
+    </div>
+
+    <!-- File input -->
+    <div id="resumeUploadField">
+      <input type="file" class="form-control" name="resume"
+             id="resumeFileInput" onchange="hideRemovedMessage()" />
+    </div>
+
+    <!-- Removed message -->
+    <div id="resumeRemovedMessage" class="text-muted small mt-1"
+         style="display: none;">Resume removed</div>
+
+    <!-- Hidden fields (always submit values to backend) -->
+    <input type="hidden" name="resume_file_url" id="resume_file_url"
+           th:value="${user.resume_file_url}" />
+    <input type="hidden" name="resume_file_name" id="resume_file_name"
+           th:value="${user.resume_file_name}" />
+
+  </div>
+</div>
+
+            <hr>
+            <div class="col-md-12 mt-5"><button class="btn btn-primary profile-button"
+											type="submit">Save Profile</button></div>
+          </div>
+        </div>
+      
+      </div>
+    </div>
+  </div>
+			</form>
+<script>
+function removeProfileImage() {
+  // Hide preview
+  const display = document.getElementById('profileImageDisplay');
+  if (display) display.style.display = 'none';
+
+  // Reset file input
+  document.getElementById('profileImageInput').value = '';
+
+  // Show removed msg
+  document.getElementById('profileImageRemovedMessage').style.display = 'block';
+
+  // Mark as removed
+  document.getElementById('Image_Name').value = 'default.jpg';
+}
+
+function hideProfileImageRemovedMessage() {
+  document.getElementById('profileImageRemovedMessage').style.display = 'none';
+}
+
+function removeResume() {
+  // Hide preview section
+  const fileDisplay = document.getElementById('resumeFileDisplay');
+  if (fileDisplay) fileDisplay.style.display = 'none';
+
+  // Reset file input
+  document.getElementById('resumeFileInput').value = '';
+
+  // Show removed message
+  document.getElementById('resumeRemovedMessage').style.display = 'block';
+
+  // Reset hidden fields so backend knows resume is removed
+  document.getElementById('resume_file_url').value = 'NA';
+  document.getElementById('resume_file_name').value = 'NA';
+}
+
+function hideRemovedMessage() {
+  document.getElementById('resumeRemovedMessage').style.display = 'none';
+}
+
+</script>
+
+<script>
+  function toggle2FAStatusLabel() {
+    const checkbox = document.getElementById('twoStepSwitch');
+    const statusLabel = document.getElementById('twoStepStatus');
+    const track = checkbox.nextElementSibling;
+    const knob = document.getElementById('circle');
+
+    if (checkbox.checked) {
+      statusLabel.textContent = 'Enabled ✅';
+      statusLabel.classList.remove('text-danger');
+      statusLabel.classList.add('text-success');
+      track.style.backgroundColor = '#4CAF50'; // green
+      knob.style.transform = 'translateX(24px)';
+    } else {
+      statusLabel.textContent = 'Disabled ❌';
+      statusLabel.classList.remove('text-success');
+      statusLabel.classList.add('text-danger');
+      track.style.backgroundColor = '#ccc'; // gray
+      knob.style.transform = 'translateX(0)';
+    }
+  }
+
+  // Initialize the toggle on page load
+  window.addEventListener('DOMContentLoaded', () => {
+    toggle2FAStatusLabel();
+  });
+</script>
+
+
+</section>
+</body>
+
+</html>

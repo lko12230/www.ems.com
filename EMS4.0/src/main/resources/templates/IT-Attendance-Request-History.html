@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en" th:replace="base5::layout(~{::section})">
+<head>
+  <meta charset="UTF-8">
+  <title>Request History</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <section class="container py-5">
+    <style>
+      body {
+        background: linear-gradient(to right, #f0f4ff, #ffe0ec);
+        font-family: 'Nunito', sans-serif;
+      }
+      .card-custom {
+        border-radius: 16px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+      }
+      .btn-withdraw {
+        background-color: #ff4d4d;
+        color: white;
+        font-weight: 600;
+        border: none;
+        border-radius: 6px;
+      }
+      .btn-withdraw:hover {
+        background-color: #d63031;
+      }
+      .funky-btn {
+        background: linear-gradient(45deg, #ff6f61, #d84315);
+        color: #fff;
+        font-weight: 600;
+        border: none;
+        padding: 6px 14px;
+        border-radius: 10px;
+        box-shadow: 0 3px 8px rgba(255, 111, 97, 0.4);
+        transition: all 0.3s ease-in-out;
+      }
+      .funky-btn:hover:enabled {
+        background: linear-gradient(45deg, #d84315, #ff6f61);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 12px rgba(255, 111, 97, 0.6);
+      }
+      .funky-btn:disabled {
+        opacity: 0.65;
+        cursor: not-allowed;
+        filter: grayscale(10%);
+      }
+      .view-btn {
+        background: linear-gradient(45deg, #1e88e5, #3949ab);
+        color: #fff;
+        font-weight: 600;
+        border: none;
+        padding: 6px 14px;
+        border-radius: 10px;
+        box-shadow: 0 3px 8px rgba(30, 136, 229, 0.4);
+        transition: all 0.3s ease-in-out;
+      }
+      .view-btn:hover {
+        background: linear-gradient(45deg, #3949ab, #1e88e5);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 12px rgba(30, 136, 229, 0.6);
+      }
+    </style>
+</head>
+<body>
+  <div class="card card-custom p-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h4 class="mb-0 text-dark"><i class="fa-solid fa-clock-rotate-left me-2"></i>WFH / Leave Request History</h4>
+      <a href="/IT/calendar" class="btn btn-outline-primary">
+        <i class="fa-solid fa-arrow-left me-1"></i>Back to Dashboard
+      </a>
+    </div>
+
+    <!-- Flash Messages -->
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+    <!-- Table -->
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead class="table-dark">
+          <tr>
+            <th>#</th>
+            <th>Request ID</th>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Request Type</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Iterate over the sorted list of requests -->
+         <tr th:each="req, iter : ${requests}">
+  <td th:text="${iter.count != null ? iter.count : 'N/A'}" 
+      th:classappend="${iter.count == null ? 'text-danger' : ''}">1</td>
+  <td th:text="${req.request_id != null ? req.request_id : 'N/A'}" 
+      th:classappend="${req.request_id == null ? 'text-danger' : ''}">Request ID</td>
+  <td th:text="${(req.fromDate != null && req.toDate != null) 
+          ? #temporals.format(req.fromDate, 'dd MMM yyyy') + ' → ' + #temporals.format(req.toDate, 'dd MMM yyyy') 
+          : 'Date not available'}" 
+      th:classappend="${req.fromDate == null || req.toDate == null ? 'text-danger' : ''}">
+      Date not available
+  </td>
+  <td th:text="${req.wfh_request != null ? (req.wfh_request ? 'WFH Request' : (req.leave_request ? 'Leave Request' : 'Attendance Request')) : 'N/A'}"
+      th:classappend="${req.wfh_request == null && req.leave_request == null ? 'text-danger' : ''}">Leave</td>
+  <!-- Request Type with Icon -->
+  <td>
+    <span th:if="${req.requestType == 'Medical'}">
+      <i class="fa-solid fa-heartbeat text-danger"></i> Medical
+    </span>
+    <span th:if="${req.requestType == 'Other'}">
+      <i class="fa-solid fa-question-circle text-secondary"></i> Other
+    </span>
+    <span th:if="${req.requestType == 'Travel'}">
+      <i class="fa-solid fa-plane-departure text-info"></i> Travel
+    </span>
+    <span th:if="${req.requestType == 'Personal'}">
+      <i class="fa-solid fa-user text-warning"></i> Personal
+    </span>
+    <span th:if="${req.requestType == 'Emergency'}">
+      <i class="fa-solid fa-exclamation-triangle text-danger"></i> Emergency
+    </span>
+    <span th:if="${req.requestType == null}">
+      N/A
+    </span>
+  </td>
+  <td>
+    <span class="badge bg-success text-white" th:if="${req.approved_or_reject_or_pending == 'Approved'}" 
+          th:text="${req.approved_or_reject_or_pending != null ? req.approved_or_reject_or_pending : 'N/A'}">Approved</span>
+    <span class="badge bg-danger text-white" th:if="${req.approved_or_reject_or_pending == 'Rejected'}" 
+          th:text="${req.approved_or_reject_or_pending != null ? req.approved_or_reject_or_pending : 'N/A'}">Rejected</span>
+    <span class="badge bg-warning text-white" th:if="${req.approved_or_reject_or_pending == 'Pending'}" 
+          th:text="${req.approved_or_reject_or_pending != null ? req.approved_or_reject_or_pending : 'N/A'}">Pending</span>
+    <span class="badge badge-status bg-primary text-white" th:if="${req.approved_or_reject_or_pending == 'Withdrawn'}" 
+          th:text="${req.approved_or_reject_or_pending != null ? req.approved_or_reject_or_pending : 'N/A'}">Withdrawn</span>
+    <!-- Default No Data Available if none of the conditions are met -->
+    <span th:if="${req.approved_or_reject_or_pending != 'Approved' 
+                  and req.approved_or_reject_or_pending != 'Rejected' 
+                  and req.approved_or_reject_or_pending != 'Pending' 
+                  and req.approved_or_reject_or_pending != 'Withdrawn'}" 
+          class="text-danger">N/A</span>
+</td>
+
+  <td class="d-flex gap-2 flex-wrap">
+    <!-- View Button -->
+    <a th:href="@{'/IT/view-request/' + ${req.request_id}}" class="btn btn-sm view-btn mr-3">
+      <i class="fa-solid fa-eye me-1"></i>View
+    </a>
+
+    <!-- Withdraw Button -->
+    <form th:action="@{/IT/withdraw-request}" method="post">
+      <input type="hidden" name="sno" th:value="${req.sno}" />
+      <input type="hidden" name="request_id" th:value="${req.request_id}" />
+      <button type="submit"
+              th:disabled="${req.approved_or_reject_or_pending != 'Pending'}"
+              th:class="'btn btn-sm funky-btn ' + (req.approved_or_reject_or_pending != 'Pending' ? 'disabled-btn' : '')">
+        <i class="fa-solid fa-ban me-1"></i>
+        <span th:text="${req.approved_or_reject_or_pending == 'Pending' ? 'Withdraw' : 'Disabled'}"></span>
+      </button>
+    </form>
+  </td>
+</tr>
+
+          <!-- No data row -->
+          <tr th:if="${#lists.isEmpty(requests)}">
+            <td colspan="7" class="text-center text-muted">No request history found.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+</body>
+</html>

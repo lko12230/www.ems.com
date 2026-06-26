@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>View Attendance</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+</head>
+<body>
+<div class="container mt-4">
+    <h2 class="mb-4">Attendance Records</h2>
+    <form method="get" th:action="@{/attendance/view}" class="mb-3">
+        <label class="form-label">Select Date</label>
+        <div class="input-group">
+            <input type="date" name="date" class="form-control" th:value="${date}" required />
+            <button type="submit" class="btn btn-primary">View</button>
+        </div>
+    </form>
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+        <tr>
+            <th>#</th>
+            <th>Employee</th>
+            <th>Status</th>
+            <th>Check In</th>
+            <th>Check Out</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="att, iStat : ${attendanceList}">
+            <td th:text="${iStat.index + 1}"></td>
+            <td th:text="${att.employee.name}"></td>
+            <td th:text="${att.status}"></td>
+            <td th:text="${att.checkInTime}"></td>
+            <td th:text="${att.checkOutTime}"></td>
+        </tr>
+        <tr th:if="${attendanceList.size()} == 0">
+            <td colspan="5" class="text-center">No records found for the selected date.</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="base1::layout(~{::section})">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Attendance Calendar</title>
+
+  <!-- Bootstrap & FullCalendar CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@6.1.8/main.min.css" rel="stylesheet">
+
+  <!-- Emoji Friendly Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+<section>
+
+  <style>
+    body {
+      background: linear-gradient(to right, #e3f2fd, #fce4ec);
+      margin: 0;
+      padding: 0;
+    }
+
+    .calendar-wrapper {
+      padding: 30px 20px;
+    }
+
+    .card-custom {
+      border-radius: 14px;
+      background: white;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+      padding: 20px;
+    }
+
+    .fc {
+      border-radius: 16px;
+      overflow: hidden;
+      background: white;
+    }
+
+    .fc-toolbar-title {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+
+    .fc-button {
+      border-radius: 6px !important;
+      background: linear-gradient(to right, #42a5f5, #7e57c2) !important;
+      border: none !important;
+      color: white !important;
+      font-weight: 600;
+      padding: 6px 14px;
+    }
+
+    .fc-button:hover {
+      filter: brightness(1.1);
+    }
+
+    .fc-day-sat,
+    .fc-day-sun {
+      background: #f9f9ff;
+    }
+
+    .fc .fc-daygrid-event {
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      padding: 4px 8px;
+      margin-bottom: 4px;
+      white-space: normal !important;
+      word-break: break-word !important;
+      overflow-wrap: break-word !important;
+      line-height: 1.4;
+      box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+      color: white;
+    }
+
+    .fc-event[data-status="present"] { background-color: #4caf50 !important; }
+    .fc-event[data-status="wfh"] { background-color: #1e88e5 !important; }
+    .fc-event[data-status="leave"] { background-color: #fb8c00 !important; }
+    .fc-event[data-status="absent"] { background-color: #e53935 !important; }
+    .fc-event[data-status="public holiday"] { background-color: #2e7d32 !important; }
+    .fc-event[data-status="restricted holiday"] { background-color: #1976d2 !important; }
+    .fc-event[data-status="festival"] { background-color: #8e24aa !important; }
+    .fc-event[data-status="weekend"] {
+      background-color: #d0e7ff !important;
+      color: #000 !important;
+    }
+
+    .event-box {
+      background: #f5f5f5;
+      padding: 12px 16px;
+      margin-bottom: 12px;
+      border-left: 5px solid #7e57c2;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .event-box small {
+      font-size: 0.75rem;
+      color: #666;
+    }
+
+    @media (max-width: 992px) {
+      .calendar-wrapper {
+        padding: 15px 10px;
+      }
+
+      .fc-toolbar-title {
+        font-size: 1.2rem;
+      }
+
+      .event-box {
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container-fluid calendar-wrapper">
+  <h4 class="text-center mb-4 fw-semibold">
+    <i class="fa-solid fa-calendar-days me-2" style="color: #4CAF50;"></i>
+    <span th:text="'Attendance Calendar for ' + ${user.username}"></span>
+  </h4>
+
+  <div class="row g-4">
+    <!-- 📅 Left Side: Calendar + Leave/WFH Card -->
+    <div class="col-lg-8 col-12">
+      <div class="card card-custom p-3 bg-white mb-4">
+        <div id="calendar"></div>
+      </div>
+
+   <div class="card card-custom p-4 mt-5 shadow-sm bg-white rounded-4">
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-4">
+
+    <!-- 🌟 Left Section: Title and Info (Optional) -->
+    <div>
+      <h5 class="mb-3 fw-semibold text-primary">
+        <i class="fa-solid fa-calendar-check me-2"></i>Quick Actions
+      </h5>
+    </div>
+
+    <!-- 🎯 Right Section: Action Buttons -->
+    <div class="d-flex flex-column gap-3 w-100" style="max-width: 300px;">
+      <a th:href="@{'/user/summary/Leave'}" class="btn btn-primary fw-semibold w-100">
+        <i class="fa-solid fa-plane-departure me-2"></i>Apply Leave
+      </a>
+      <a th:href="@{'/user/summary/Wfh'}" class="btn btn-info fw-semibold w-100 text-white">
+        <i class="fa-solid fa-laptop-house me-2"></i>Apply WFH
+      </a>
+      <a th:href="@{'/user/attendance-request-history'}" class="btn btn-secondary fw-semibold w-100">
+        <i class="fa-solid fa-clock-rotate-left me-2"></i>Leave/WFH History
+      </a>
+    </div>
+    
+  </div>
+</div>
+
+
+    </div>
+
+    <!-- 📆 Right Side: Upcoming Events -->
+    <div class="col-lg-4 col-12">
+      <div class="card card-custom p-3 bg-white">
+        <h5 class="mb-3">Upcoming Holidays / Events</h5>
+        <div id="upcomingEvents" class="side-panel-content"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.8/index.global.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@6.1.8/index.global.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script th:inline="javascript">
+document.addEventListener('DOMContentLoaded', function () {
+  const calendarEl = document.getElementById('calendar');
+  const upcomingBox = document.getElementById('upcomingEvents');
+
+   // 🧩 Expanded Emoji Map
+     // 🧩 Emoji Map (All global events and leaves)
+    const emojiMap = {
+        // 🏢 Leaves
+        'present': '✅', 'wfh': '💻', 'work from home': '💻',
+        'leave': '🛫', 'casual leave': '🛋️', 'sick leave': '🤒',
+        'earned leave': '🏖️', 'half day': '🌗', 'comp off': '🧾',
+        'absent': '❌', 'weekend': '🛌', 'holiday': '🌴', 'optional holiday': '🗓️',
+
+        // 🇮🇳 Indian festivals
+        'diwali': '🪔', 'holi': '🎨', 'eid': '🕌', 'eid ul fitr': '🕌',
+        'eid ul adha': '🕋', 'christmas': '🎄', 'janmashtami': '🧚‍♂️',
+        'raksha bandhan': '🎁', 'dussehra': '🏹', 'navratri': '🕉️',
+        'pongal': '🌾', 'onam': '🌸', 'lohri': '🔥', 'baisakhi': '🥁',
+        'bihu': '🎶', 'guru nanak': '🕯️', 'shivratri': '🕉️',
+        'ram navami': '🛕', 'hanuman': '🐒', 'ambedkar': '📜',
+        'mahavir': '🧘‍♂️',
+
+        // 🌍 Global days
+        'independence': '🇮🇳', 'republic': '🎖️', 'labor day': '🛠️',
+        'labour day': '🛠️', 'environment day': '🌱', 'women': '👩',
+        'yoga day': '🧘', 'world health': '🏥', 'earth day': '🌍',
+        'engineer': '🛠️', 'teacher': '🧑‍🏫', 'children': '🧒',
+        'parents': '👨‍👩‍👧', 'valentine': '❤️', 'friendship': '🤝',
+        'halloween': '🎃', 'thanksgiving': '🦃', 'new year': '🎉',
+        'easter': '🐣', 'good friday': '✝️', 'hanukkah': '🕎',
+        'bastille': '🇫🇷', 'boxing day': '📦', 'spring festival': '🌸',
+        'chinese new year': '🐉',
+
+        // 🏢 Work events
+        'exam': '📝', 'result': '📈', 'farewell': '👋',
+        'birthday': '🎂', 'anniversary': '💍', 'training': '📚',
+        'conference': '🎤', 'meeting': '📅', 'webinar': '💻',
+        'workshop': '🛠️', 'deadline': '⏰', 'review': '🔎',
+
+        // 🎊 Categories
+        'public holiday': '🏖️', 'restricted holiday': '📅', 'festival': '🎊'
+    };
+
+  function getEmoji(text) {
+    if (!text) return '';
+    text = text.toLowerCase();
+    for (const key in emojiMap) {
+      if (text.includes(key)) return emojiMap[key];
+    }
+    return '';
+  }
+
+  const calendar = new FullCalendar.Calendar(calendarEl, {
+    initialView: 'dayGridMonth',
+    height: 'auto',
+    expandRows: true,
+    contentHeight: 'auto',
+    aspectRatio: 1.5,
+    handleWindowResize: true,
+    headerToolbar: {
+      left: 'prev,next today',
+      center: 'title',
+      right: ''
+    },
+    eventContent: function(arg) {
+      const title = arg.event.title || '';
+      const emoji = getEmoji(title);
+      const spanEl = document.createElement('span');
+      spanEl.innerHTML = `${emoji ? emoji + ' ' : ''}${title}`;
+      return { domNodes: [spanEl] };
+    },
+    events: function (fetchInfo, successCallback, failureCallback) {
+      axios.get('/user/events')
+        .then(response => {
+          const rawEvents = response.data;
+
+          const weekendDays = new Set(
+            rawEvents.filter(e => e.status?.toLowerCase() === 'weekend').map(e => e.name)
+          );
+
+          const year = new Date().getFullYear();
+          const weekendEvents = [];
+          for (let m = 0; m < 12; m++) {
+            const daysInMonth = new Date(year, m + 1, 0).getDate();
+            for (let d = 1; d <= daysInMonth; d++) {
+              const date = new Date(year, m, d);
+              const dayName = date.toLocaleDateString('en-US', { weekday: 'long' });
+              if (weekendDays.has(dayName)) {
+                weekendEvents.push({
+                  title: `${dayName} - Weekend`,
+                  start: date,
+                  backgroundColor: '#d0ebff',
+                  borderColor: '#d0ebff',
+                  textColor: 'black',
+                  display: 'block'
+                });
+              }
+            }
+          }
+
+          const seenDates = new Set();
+          const attendanceEvents = rawEvents.filter(att => {
+            const dateOnly = att.date?.split(' ')[0];
+            if (seenDates.has(dateOnly)) return false;
+            seenDates.add(dateOnly);
+            return true;
+          }).map(att => {
+  let color = '#7e57c2'; // Default
+
+  // Prefer flag-based differentiation
+  if (att.wfh_request === true) {
+    color = '#42a5f5'; // Blue shade for WFH
+  } else if (att.leave_request === true) {
+    color = '#fb8c00'; // Orange shade for Leave
+  } else {
+    // Fallback on status string (in lowercase)
+    const status = att.status?.toLowerCase();
+    switch (status) {
+      case 'present': color = '#4caf50'; break;
+      case 'absent': color = '#e53935'; break;
+      case 'public holiday': color = '#2e7d32'; break;
+      case 'restricted holiday': color = '#1976d2'; break;
+      case 'festival': color = '#9C27B0'; break;
+      case 'weekend': color = '#d0ebff'; break;
+    }
+  }
+
+  return {
+    title: att.name ? `${att.name} (${att.status})` : att.status,
+    start: att.date,
+    backgroundColor: color,
+    borderColor: color,
+    textColor: 'white',
+    display: 'block'
+  };
+})
+
+          const allEvents = [...attendanceEvents, ...weekendEvents];
+          successCallback(allEvents);
+          showUpcoming(allEvents);
+        })
+        .catch(failureCallback);
+    }
+  });
+
+  calendar.render();
+
+  function showUpcoming(events) {
+    const future = events.filter(e => {
+      const date = new Date(e.start);
+      const now = new Date();
+      const type = e.title.toLowerCase();
+      return date >= now && (type.includes('public holiday') || type.includes('restricted holiday') || type.includes('festival'));
+    }).sort((a, b) => new Date(a.start) - new Date(b.start));
+
+    upcomingBox.innerHTML = future.length === 0
+      ? '<p class="text-muted">No upcoming holidays.</p>'
+      : future.map(ev =>
+          `<div class='event-box' style="border-left: 4px solid ${ev.backgroundColor};">
+              <strong>${getEmoji(ev.title)} ${ev.title}</strong><br>
+              <small>${new Date(ev.start).toLocaleDateString()}</small>
+          </div>`
+        ).join('');
+  }
+
+  // Resize Observer
+  const sidebar = document.querySelector('.sidebar');
+  const observer = new MutationObserver(() => {
+    setTimeout(() => calendar.updateSize(), 500);
+  });
+  if (sidebar) {
+    observer.observe(sidebar, { attributes: true, attributeFilter: ['style', 'class'] });
+  }
+
+  window.addEventListener('resize', () => {
+    setTimeout(() => calendar.updateSize(), 300);
+  });
+});
+</script>
+</section>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      lang="en"
+      th:replace="base::layout(~{::section})">
+<head>
+    <title>Enable 2FA</title>
+    <link rel="stylesheet" 
+          href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+</head>
+
+<section>
+    <div class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+        <div class="card shadow p-4" style="max-width: 500px; width: 100%;">
+            <div class="card-body text-center">
+                <h3 class="text-primary mb-3">🔐 Enable 2-Step Verification</h3>
+                <p class="text-muted mb-4">
+                    Add an extra layer of security to your account.<br>
+                    Click below to begin the 2FA setup.
+                </p>
+                <a th:href="@{/2fa/email}" class="btn btn-primary btn-lg px-4">
+                    Enable 2FA Now
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+</html>

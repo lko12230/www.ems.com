@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="base2::layout(~{::section})">
+<head>
+    <title>Upload Payroll Excel</title>
+</head>
+<body>
+<section>
+    <h2>Upload Payroll Excel File</h2>
+
+    <!-- Alert Messages -->
+    <div th:if="${status == 'success'}" class="alert alert-success" style="color:green; font-weight:bold;">
+        <p th:text="${message}"></p>
+    </div>
+    <div th:if="${status == 'fail'}" class="alert alert-danger" style="color:red; font-weight:bold;">
+        <p th:text="${message}"></p>
+    </div>
+
+    <!-- Configure Job Schedule Button -->
+    <div style="margin: 15px 0;">
+        <a href="#" th:href="@{/admin/configurable_job}" 
+           style="display: inline-block; background-color: #007bff; color: white; padding: 8px 16px; 
+                  border-radius: 6px; text-decoration: none; font-weight: bold;">
+            ⚙️ Configure Job Schedule
+        </a>
+    </div>
+
+    <!-- Upload Form -->
+    <form method="POST" enctype="multipart/form-data" action="/admin/upload-salary-data">
+        <input type="file" name="file" accept=".xls,.xlsx" required />
+        <button type="submit">Upload</button>
+    </form>
+
+    <hr/>
+
+    <!-- Upload History with Card -->
+    <h3>Upload History</h3>
+
+    <div style="
+        background: #fff; 
+        border-radius: 12px; 
+        box-shadow: 0 6px 12px rgb(0 0 0 / 0.1); 
+        padding: 15px;
+        overflow-x: auto;
+    ">
+        <table border="1" style="border-collapse: collapse; width: 100%;">
+            <thead style="background-color: #f0f0f0;">
+                <tr>
+                    <th>#</th>
+                    <th>Filename</th>
+                    <th>Uploaded By</th>
+                    <th>Upload Time</th>
+                    <th>Status</th>
+                    <th>Remarks</th>
+                </tr>
+            </thead>
+            <tbody style="background: white;">
+                <tr th:each="record, iterStat : ${uploadHistory}">
+                    <td th:text="${iterStat.index + 1}">1</td>
+                    <td th:text="${record.fileName}">salary_june.xlsx</td>
+                    <td th:text="${record.uploadedBy}">admin</td>
+                    <td th:text="${#temporals.format(record.uploadTime, 'yyyy-MM-dd HH:mm:ss')}">2025-06-07 13:45:00</td>
+                    <td th:text="${record.status}" th:classappend="${record.status == 'Success'} ? 'text-success' : 'text-danger'">Success</td>
+                    <td th:text="${record.remarks}">Uploaded 45 records</td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(uploadHistory)}">
+                    <td colspan="6" style="text-align: center; padding: 12px; font-style: italic; color: #555;">
+                        No upload history available.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+</body>
+</html>

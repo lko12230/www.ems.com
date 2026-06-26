@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="base1::layout(~{::section})">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Sign Up Form </title>
+</head>
+
+<body>
+    <section>
+        <div class="card mb-4">
+    <div class="card-body">
+     <div th:if="${message != null}" th:class="'alert ' + ${message.type}" role="alert">
+    <span th:text="${message.content}"></span>
+</div>
+        <!-- Header with Back Button & Assign Task Button -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3>Task List</h3>
+            <div>
+             <!--    <a th:href="@{'/manager/managerEditAssignTask/' + ${userdetail.id}}" class="btn btn-success">
+                    <i class="fas fa-plus"></i> Assign New Task
+                </a> 
+                <a th:href="@{/manager/assignTeamMembersOnly/}" class="btn btn-outline-primary">
+                    <i class="fas fa-arrow-left"></i> Back
+                </a>  -->
+            </div>
+        </div>
+
+        <!-- Live Search Box -->
+        <input type="text" id="searchInput" class="form-control mb-3" placeholder="Search Task ID...">
+<ul id="suggestions" class="list-group position-absolute w-100"></ul>
+
+        <!-- Filter Buttons -->
+        <div class="mb-3 text-center">
+            <a th:href="@{'/user/tasks_all/' + ${userdetail.id}}" class="btn btn-info">
+                <i class="fas fa-tasks"></i> All Tasks
+            </a> 
+            <a th:href="@{'/user/tasks_pending/' + ${userdetail.id}}" class="btn btn-warning">
+                <i class="fas fa-hourglass-half"></i> Pending
+            </a> 
+             <a th:href="@{'/user/tasks_inprogress/' + ${userdetail.id}}" class="btn btn-primary">
+        <i class="fas fa-spinner"></i> In Progress
+    </a> 
+            <a th:href="@{'/user/tasks_completed/' + ${userdetail.id}}" class="btn btn-success">
+                <i class="fas fa-check-circle"></i> Completed
+            </a> 
+            <a th:href="@{'/user/tasks_overdue/' + ${userdetail.id}}" class="btn btn-danger">
+                <i class="fas fa-exclamation-triangle"></i> Overdue
+            </a>
+        </div>
+
+        <!-- Task List -->
+        <h4 class="text-center">Task List</h4>
+
+        <!-- ✅ Table inside card & responsive -->
+        <div class="table-responsive">
+            <table class="table table-bordered" id="taskTable">
+    <thead class="table-dark">
+        <tr>
+            <th onclick="sortTable(0)">Task ID 🔽</th>
+            <th onclick="sortTable(1)">Description 🔽</th>
+            <th onclick="sortTable(2)">Who Assigned By 🔽</th>
+            <th onclick="sortTable(3)">Assigned Date 🔽</th>
+            <th onclick="sortTable(4)">End Date 🔽</th>
+             <th onclick="sortTable(5)">Status 🔽</th>
+            <th onclick="sortTable(6)">Actions 🔽</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:if="${taskList == null or #lists.isEmpty(taskList)}">
+            <td colspan="7" class="text-center text-muted">
+                <strong>No tasks available</strong>
+            </td>
+        </tr>
+
+        <tr th:each="task : ${taskList}">
+            <td th:text="${task.taskId}"></td>
+            <td th:text="${task.taskDescription}"></td>
+            <td th:text="${task.whoAssignedTask}"></td>
+            <td th:text="${task.taskAssignedDate}"></td>
+            <td th:text="${task.taskEndDate}"></td>
+
+             <td>
+<span th:if="${task.taskClosed == false and task.taskReopen == false}" class="badge bg-success text-white">
+        &#10003; <!-- Checkmark for Open -->
+    </span>
+    <span th:if="${task.taskClosed == true and task.taskReopen == false}" class="badge bg-danger text-white">
+        &#10007; <!-- Cross for Closed -->
+    </span>
+    <span th:if="${task.taskClosed == false and task.taskReopen == true}" class="badge text-white" style="background-color: #FFB84D;">
+        &#8635; <!-- Counterclockwise Arrow for Re-Open -->
+    </span>
+    <span th:if="${task.taskPending}" class="badge bg-warning text-white">Pending</span>
+    <span th:if="${task.taskOverdue}" class="badge bg-danger text-white">Overdue</span>
+    <span th:if="${task.taskCompleted}" class="badge bg-success text-white">Completed</span>
+    <span th:if="${task.taskInProgress}" class="badge bg-primary text-white">In Progress</span>
+</td>
+
+            <td>
+                <!-- View Button -->
+                <a th:href="@{'/user/ViewTaskInfo/' + ${task.taskId}}" class="btn btn-info btn-sm">
+                    <i class="fas fa-eye"></i> View
+                </a>
+
+                <!-- Edit Button -->
+                <a th:href="@{'/user/editViewTaskList/' + ${task.taskId}}" class="btn btn-warning btn-sm">
+                    <i class="fas fa-edit"></i> Edit
+                </a>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+            </table>
+        </div> <!-- ✅ End of table-responsive -->
+    </div>
+</div>
+  <script>
+  $(document).ready(function () {
+    let selectedIndex = -1;  // Track selected suggestion index
+    let suggestionsList = $("#suggestions");
+
+    // Live search on typing
+    $("#searchInput").on("input", function () {
+        let query = $(this).val().trim();
+        if (query.length > 0) {
+            $.ajax({
+                url: "/user/searchTasks",
+                type: "GET",
+                data: { query: query },
+                success: function (response) {
+                    if (response.length === 0) {
+                      suggestionsList.html('<li class="list-group-item text-danger font-weight-bold text-center">No results found</li>').show();
+                    } else {
+                        let suggestions = response.map((task, index) =>
+                            `<li class="list-group-item suggestion-item" data-taskid="${task.taskId}" data-index="${index}">
+                                <strong>${task.taskId}</strong> - ${task.taskDescription}
+                            </li>`
+                        );
+                        suggestionsList.html(suggestions.join("")).show();
+                    }
+                    selectedIndex = -1;  // Reset selection when list updates
+                },
+                error: function (xhr) {
+                    console.error("AJAX Error:", xhr.responseText);
+                    suggestionsList.html("").hide();
+                }
+            });
+        } else {
+            suggestionsList.html("").hide();
+        }
+    });
+
+    // Handle keyboard navigation in suggestions
+    $("#searchInput").on("keydown", function (e) {
+        let items = $(".suggestion-item");
+        if (items.length === 0) return;
+
+        if (e.key === "ArrowDown") {
+            selectedIndex = (selectedIndex + 1) % items.length;
+            updateSelection(items);
+            e.preventDefault();
+        } else if (e.key === "ArrowUp") {
+            selectedIndex = (selectedIndex - 1 + items.length) % items.length;
+            updateSelection(items);
+            e.preventDefault();
+        } else if (e.key === "Enter" && selectedIndex >= 0) {
+            $(items[selectedIndex]).trigger("click");
+            e.preventDefault();
+        }
+    });
+
+    // Click event to select suggestion
+    $(document).on("click", ".suggestion-item", function () {
+        let taskId = $(this).data("taskid");
+        $("#searchInput").val(taskId);
+        suggestionsList.html("").hide();
+        searchTasks(taskId);
+    });
+
+    // Hide suggestions when clicking outside
+    $(document).on("click", function (e) {
+        if (!$(e.target).closest("#searchInput, #suggestions").length) {
+            suggestionsList.html("").hide();
+        }
+    });
+
+    // Function to highlight selection
+    function updateSelection(items) {
+        items.removeClass("active");
+        $(items[selectedIndex]).addClass("active");
+    }
+
+    // Function to search tasks by Task ID
+    function searchTasks(query) {
+        $.ajax({
+            url: "/user/searchTasks",
+            type: "GET",
+            data: { query: query },
+            success: function (response) {
+                let tableBody = $("#taskTable tbody");
+                tableBody.empty();
+
+                if (response.length > 0) {
+                    response.forEach(task => {
+                        tableBody.append(`
+                            <tr>
+                                <td>${task.taskId}</td>
+                                <td>${task.taskDescription}</td>
+                                <td>${task.whoAssignedTask}</td>
+                                <td>${task.taskAssignedDate}</td>
+                                <td>${task.taskEndDate}</td>
+                                <td>
+                                    ${task.taskPending ? '<span class="badge bg-warning text-white">Pending</span>' : ''}
+                                    ${task.taskOverdue ? '<span class="badge bg-danger text-white">Overdue</span>' : ''}
+                                    ${task.taskCompleted ? '<span class="badge bg-success text-white">Completed</span>' : ''}
+                                    ${task.taskInProgress ? '<span class="badge bg-primary text-white">In Progress</span>' : ''}
+                                </td>
+                                <td>
+                                    <a href="/user/ViewTaskInfo/${task.taskId}" class="btn btn-info btn-sm">
+                                        <i class="fas fa-eye"></i> View
+                                    </a>
+                                    <a href="/user/editViewTaskList/${task.taskId}" class="btn btn-warning btn-sm">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </a>
+                                </td>
+                            </tr>
+                        `);
+                    });
+                } else {
+                    tableBody.append('<tr><td colspan="7" class="text-center text-muted"><strong>No tasks found</strong></td></tr>');
+                }
+            },
+            error: function (xhr) {
+                console.error("Search AJAX Error:", xhr.responseText);
+            }
+        });
+    }
+});
+
+
+</script>
+ </section>
+</body>
+</html>

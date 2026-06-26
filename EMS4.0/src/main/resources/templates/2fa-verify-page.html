@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      lang="en"
+      th:replace="base::layout(~{::section})">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>2FA Verification</title>
+    <link rel="icon" type="image/x-icon"
+          href="https://bootdey.com/img/Content/avatar/avatar7.png">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.0/css/bootstrap.min.css">
+
+    <style>
+        body {
+            background-color: #f4f6f9;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .wrapper {
+            max-width: 500px;
+            margin: 80px auto;
+            padding: 30px;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo img {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+        }
+
+        .brand span {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .btn-space {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .btn {
+            width: 48%;
+        }
+
+        .form-group label {
+            font-weight: 500;
+        }
+
+        .employee-info p {
+            margin-bottom: 8px;
+        }
+
+        .badge-success {
+            background-color: #28a745;
+        }
+
+        .badge-secondary {
+            background-color: #6c757d;
+        }
+
+        .btn-link {
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+<section>
+    <div class="wrapper text-center">
+
+        <!-- 🔹 Logo -->
+        <div class="logo">
+            <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Logo">
+        </div>
+
+        <!-- 🔹 Brand -->
+       <div class="text-center mt-4 name">
+				<div class="text-center mt-4 name">
+					<span style="color: royalblue;">w</span><span style="color: red;">w</span><span
+						style="color: #F7B529;">w</span><span style="color: royalblue;">.</span><span
+						style="color: limegreen;">e</span><span style="color: red;">m</span><span
+						style="color: royalblue;">s</span><span style="color: red;">.</span><span
+						style="color: #F7B529;">c</span><span style="color: royalblue;">o</span><span
+						style="color: limegreen;">m</span>
+				</div>
+			</div>
+
+        <!-- 🔹 Alerts -->
+        <div th:if="${error}" class="alert alert-danger text-center mt-3" th:text="${error}"></div>
+        <div th:if="${success}" class="alert alert-success text-center mt-3" th:text="${success}"></div>
+
+        <!-- 🔹 Title -->
+        <h4 class="text-primary mb-4 mt-3">🔐 2-Step Verification</h4>
+
+        <!-- 🔹 Employee Info -->
+        <div class="text-left employee-info mb-4">
+            <p><strong>Employee ID:</strong> <span th:text="${employee.id}">EMP001</span></p>
+            <p><strong>Name:</strong> <span th:text="${employee.username}">Ayush Gupta</span></p>
+            <p><strong>Phone:</strong> <span th:text="${employee.phone}">9876543210</span></p>
+            <p><strong>Email:</strong> <span th:text="${employee.email}">ayush@example.com</span></p>
+            <p><strong>2FA Status:</strong>
+                <span th:classappend="${employee.twoStepEnabled} ? 'badge badge-success' : 'badge badge-secondary'"
+                      th:text="${employee.twoStepEnabled} ? 'Enabled' : 'Disabled'">Status</span>
+            </p>
+        </div>
+
+        <!-- 🔹 OTP Form -->
+        <form th:if="${showLogin == null or !showLogin}" th:action="@{/2fa/verify}" method="post">
+            <input type="hidden" name="email" th:value="${employee.email}"/>
+
+            <div class="form-group text-left">
+                <label for="otp">Enter OTP</label>
+                <input type="number" id="otp" name="otp" class="form-control"
+                       placeholder="6-digit OTP" required>
+            </div>
+
+            <div class="btn-space mb-3 mt-4">
+                <button type="submit" name="action" value="enable" class="btn btn-success">✅ Enable</button>
+                <button type="submit" name="action" value="disable" class="btn btn-danger">❌ Disable</button>
+            </div>
+        </form>
+
+        <!-- 🔁 Resend OTP -->
+        <div class="text-center mb-3" th:if="${showLogin == null or !showLogin}">
+            <a th:href="@{/2fa/setup-resend-otp(email=${employee.email})}" class="btn btn-link">🔄 Resend OTP</a>
+        </div>
+
+        <!-- 🔐 Go to Login -->
+        <div class="text-center" th:if="${showLogin}">
+            <a th:href="@{/login}" class="btn btn-primary mt-3">🔓 Go to Login</a>
+        </div>
+
+    </div>
+</section>
+</body>
+</html>

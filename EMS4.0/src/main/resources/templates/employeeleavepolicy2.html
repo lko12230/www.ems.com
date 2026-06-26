@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	th:replace="base2::layout(~{::section})">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Employee Leave Policy</title>
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+<link
+	href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap"
+	rel="stylesheet">
+</head>
+
+<body>
+	<section>
+		<style>
+body {
+	background-color: #ecf0f3;
+}
+
+.container {
+	max-width: 900px;
+}
+
+.card {
+	border-radius: 15px;
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+	background: #ffffff;
+	padding: 30px;
+	margin-top: 50px;
+}
+
+.header {
+	background: linear-gradient(to right, #4facfe, #00f2fe);
+	color: white;
+	text-align: center;
+	padding: 15px;
+	font-size: 1.5rem;
+	border-top-left-radius: 15px;
+	border-top-right-radius: 15px;
+	font-weight: 600;
+}
+
+.section-title {
+	color: #007bff;
+	font-weight: bold;
+	font-size: 1.2rem;
+	margin-top: 20px;
+}
+
+ul {
+	padding-left: 20px;
+}
+
+.btn-custom {
+	background-color: #007bff;
+	color: white;
+	border-radius: 20px;
+	padding: 10px 20px;
+	font-weight: bold;
+	border: none;
+	transition: 0.3s;
+}
+
+.btn-custom:hover {
+	background-color: #0056b3;
+}
+</style>
+
+		<div class="container">
+			<div class="card">
+				<div class="header">Employee Leave Policy</div>
+				<div class="content">
+					<p class="section-title">1. Annual Leave:</p>
+					<ul>
+						<li>Employees are entitled to <b>20 days</b> of paid annual
+							leave per year.
+						</li>
+						<li>Leave requests must be submitted at least <b>two
+								weeks</b> in advance.
+						</li>
+						<li>Unused leave can be carried forward up to a maximum of <b>10
+								days</b>.
+						</li>
+					</ul>
+
+					<p class="section-title">2. Sick Leave:</p>
+					<ul>
+						<li>Employees are entitled to <b>10 days</b> of paid sick
+							leave annually.
+						</li>
+						<li>Medical certification is required for absences longer
+							than <b>two consecutive days</b>.
+						</li>
+					</ul>
+
+					<p class="section-title">3. Maternity & Paternity Leave:</p>
+					<ul>
+						<li>Female employees are entitled to <b>16 weeks</b> of paid
+							maternity leave.
+						</li>
+						<li>Male employees are entitled to <b>2 weeks</b> of paid
+							paternity leave.
+						</li>
+					</ul>
+
+					<p class="section-title">4. Unpaid Leave:</p>
+					<ul>
+						<li>Unpaid leave requests are subject to managerial approval.</li>
+						<li>Extended leave beyond entitlement may impact benefits and
+							service duration.</li>
+					</ul>
+
+						<!-- <div class="text-center mt-4">
+						<button type="submit" class="btn btn-custom">Acknowledge
+							& Proceed</button>
+					</div>  -->
+				</div>
+			</div>
+		</div>
+	</section>
+</body>
+
+</html>

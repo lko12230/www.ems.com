@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="base::layout(~{::section})">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>2FA Email</title>
+    <link rel="icon" type="image/x-icon"
+          href="https://bootdey.com/img/Content/avatar/avatar7.png">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.0/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f7f9fc;
+        }
+
+        .wrapper {
+            width: 400px;
+            margin: auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 100px;
+        }
+
+        .logo img {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+        }
+
+        .form-field {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .form-field i {
+            position: absolute;
+            left: 10px;
+            top: 12px;
+            color: #aaa;
+        }
+
+        .form-control {
+            padding-left: 40px;
+        }
+
+        .btn {
+            width: 100%;
+            background-color: royalblue;
+            color: white;
+        }
+
+        .text-center a {
+            color: royalblue;
+        }
+
+        .brand {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .brand span {
+            color: royalblue;
+        }
+
+        .brand span:nth-child(2) {
+            color: red;
+        }
+
+        .brand span:nth-child(3) {
+            color: #F7B529;
+        }
+
+        .brand span:nth-child(4) {
+            color: royalblue;
+        }
+
+        .brand span:nth-child(5) {
+            color: limegreen;
+        }
+
+        .brand span:nth-child(6) {
+            color: red;
+        }
+
+        .brand span:nth-child(7) {
+            color: royalblue;
+        }
+
+        .brand span:nth-child(8) {
+            color: red;
+        }
+
+        .brand span:nth-child(9) {
+            color: #F7B529;
+        }
+
+        .brand span:nth-child(10) {
+            color: royalblue;
+        }
+
+        .brand span:nth-child(11) {
+            color: limegreen;
+        }
+    </style>
+</head>
+
+<body>
+<section>
+    <div class="wrapper">
+        <!-- Logo -->
+        <div class="logo text-center">
+            <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Logo">
+        </div>
+
+        <!-- Brand -->
+
+			<div class="text-center mt-4 name">
+				<div class="text-center mt-4 name">
+					<span style="color: royalblue;">w</span><span style="color: red;">w</span><span
+						style="color: #F7B529;">w</span><span style="color: royalblue;">.</span><span
+						style="color: limegreen;">e</span><span style="color: red;">m</span><span
+						style="color: royalblue;">s</span><span style="color: red;">.</span><span
+						style="color: #F7B529;">c</span><span style="color: royalblue;">o</span><span
+						style="color: limegreen;">m</span>
+				</div>
+			</div>
+
+        <!-- Page Title -->
+        <div class="text-center mt-3">
+            <h4 class="text-primary">🔐 Enter Your Registered Email</h4>
+            <p class="text-muted">We’ll send a one-time password (OTP) to verify your identity.</p>
+        </div>
+
+        <!-- Success/Error Message -->
+        <div th:if="${error}" class="alert alert-danger text-center" th:text="${error}"></div>
+        <div th:if="${success}" class="alert alert-success text-center" th:text="${success}"></div>
+
+        <!-- Form -->
+        <form th:action="@{/2fa/email}" method="post">
+            <div class="form-field d-flex align-items-center">
+                <i class="fa-solid fa-envelope"></i>
+                <input type="email" name="email" id="email" class="form-control"
+                       placeholder="you@example.com" required>
+            </div>
+            <button type="submit" class="btn mt-2">Send OTP</button>
+        </form>
+
+        <!-- Back Link -->
+        <div class="text-center fs-6 mt-3">
+            <a th:href="@{/login}" style="text-decoration: underline;">← Back to Login</a>
+        </div>
+
+        <!-- 2FA Settings -->
+        <div class="text-center fs-6 mt-3">
+            <a th:href="@{/2fa}" id="twoFaLink" style="color: royalblue; text-decoration: underline;">
+                🔐 Manage 2-Step Verification
+            </a>
+        </div>
+    </div>
+</section>
+</body>
+
+</html>

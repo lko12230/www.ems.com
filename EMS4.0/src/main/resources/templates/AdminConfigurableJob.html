@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="base2::layout(~{::section})">
+<head>
+    <meta charset="UTF-8">
+    <title>Configure Job Schedule</title>
+    <section>
+    <style>
+        body {
+            background-color: #f5f7fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        section {
+            max-width: 700px;
+            margin: 60px auto;
+            background-color: #ffffff;
+            padding: 40px 50px;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        h3 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            margin-top: 20px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px 12px;
+            margin-top: 6px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            margin-top: 30px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .readonly-field {
+            background-color: #f1f1f1;
+            cursor: not-allowed;
+        }
+
+        .info-label {
+            font-weight: 500;
+            font-size: 13px;
+            color: #777;
+            margin-bottom: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h3>🛠️ Configure Job Schedule</h3>
+    <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
+<div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+    
+    <form method="POST" action="/admin/configurable_job" th:object="${job}">
+        
+        <label>Company ID</label>
+        <input type="text" class="readonly-field" readonly th:value="${job.company_id}" />
+
+        <label>Job Description</label>
+        <textarea rows="3" readonly class="readonly-field" th:text="${job.job_description}">Daily Absent Marking</textarea>
+
+        <label for="jobEnabled">Enable Job</label>
+        <select id="jobEnabled" name="job_active_or_not" required>
+            <option value="">-- Select Status --</option>
+            <option value="Y" th:selected="${job.job_active_or_not == 'Y'}">Yes</option>
+            <option value="N" th:selected="${job.job_active_or_not == 'N'}">No</option>
+        </select>
+
+<label for="frequency">Job Frequency</label>
+<select id="frequency" name="jobFrequency" required>
+    <option value="">-- Select Frequency --</option>
+    <option value="MINUTE" th:selected="${job.jobFrequency == 'MINUTE'}">Every Minute</option>
+    <option value="HOURLY" th:selected="${job.jobFrequency == 'HOURLY'}">Hourly</option>
+    <option value="DAILY" th:selected="${job.jobFrequency == 'DAILY'}">Daily</option>
+    <option value="WEEKLY" th:selected="${job.jobFrequency == 'WEEKLY'}">Weekly</option>
+    <option value="MONTHLY" th:selected="${job.jobFrequency == 'MONTHLY'}">Monthly</option>
+    <option value="YEARLY" th:selected="${job.jobFrequency == 'YEARLY'}">Yearly</option>
+</select>
+
+      <label for="startDate">Start Date</label>
+<input type="datetime-local"
+       id="startDate"
+       name="startDate"
+       th:value="${#dates.format(job.startDate, 'yyyy-MM-dd''T''HH:mm:ss')}"
+       required />
+
+        <label>Last Run</label>
+        <input type="text" class="readonly-field" readonly th:value="${#dates.format(job.lastRun, 'dd-MM-yyyy HH:mm')}" />
+
+        <label>Next Run</label>
+        <input type="text" class="readonly-field" readonly th:value="${#dates.format(job.nextRun, 'dd-MM-yyyy HH:mm')}" />
+
+        <label>Job Status</label>
+        <input type="text" class="readonly-field" readonly th:value="${job.job_Status}" />
+
+        <button type="submit">💾 Save Configuration</button>
+    </form>
+</section>
+</body>
+</html>

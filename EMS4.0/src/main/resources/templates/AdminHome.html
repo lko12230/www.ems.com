@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	th:replace="base2::layout(~{::section})">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<title>Sign Up Form</title>
+
+</head>
+
+<body>
+	<section style="background-color: #eee;">
+		<style>
+
+/* Calendar Container */
+#calendar {
+	background: white;
+	border-radius: 22px;
+	padding: 25px;
+	box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* Header Buttons */
+.fc-button {
+	border: none !important;
+	border-radius: 8px !important;
+	background: linear-gradient(to right, #ff6ec4, #7873f5) !important;
+	color: white !important;
+	font-weight: bold;
+	font-size: 14px;
+	padding: 6px 14px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.fc-button:hover {
+	filter: brightness(1.1);
+}
+
+/* Title */
+.fc-toolbar-title {
+	font-size: 1.8rem;
+	color: #4e148c;
+	text-shadow: 1px 1px 0px #fce4ec;
+}
+
+/* Weekend Styling */
+.fc-day-sat, .fc-day-sun {
+	background: linear-gradient(180deg, #fffde7, #e1f5fe);
+}
+
+/* Events with text wrapping */
+.fc-event {
+	border-radius: 14px !important;
+	font-size: 13px;
+	font-weight: 600;
+	padding: 5px 8px;
+	box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.15);
+	border: none !important;
+	transition: transform 0.2s, box-shadow 0.2s;
+	/* ✅ Wrapping support */
+	white-space: normal !important;
+	word-break: break-word !important;
+	overflow-wrap: break-word !important;
+	display: block !important;
+	line-height: 1.3;
+}
+
+.fc-event:hover {
+	transform: scale(1.05);
+	box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+}
+
+/* Force block stacking for multiple events */
+.fc-daygrid-event {
+	display: block !important;
+}
+
+/* Modal */
+.modal {
+	backdrop-filter: blur(4px);
+}
+
+.modal-content {
+	border-radius: 16px;
+	background: linear-gradient(to bottom right, #ffffff, #ffeefc);
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+	background: linear-gradient(to right, #ff4081, #7c4dff);
+	color: white;
+	border-top-left-radius: 16px;
+	border-top-right-radius: 16px;
+}
+
+.modal-title {
+	font-family: 'Pacifico', cursive;
+	font-size: 20px;
+}
+
+.modal-footer .btn {
+	border-radius: 20px;
+	padding: 8px 16px;
+	font-weight: bold;
+}
+
+.modal-footer .btn-success {
+	background: linear-gradient(to right, #00e676, #00c853);
+}
+
+.modal-footer .btn-danger {
+	background: linear-gradient(to right, #f44336, #d32f2f);
+}
+
+.modal-footer .btn-primary {
+	background: linear-gradient(to right, #2196f3, #1e88e5);
+}
+
+/* Holiday Cards */
+.event-box {
+	background: linear-gradient(135deg, #fce4ec, #e1f5fe);
+	border-left: 5px solid #7c4dff;
+	border-radius: 15px;
+	padding: 12px 18px;
+	margin-bottom: 12px;
+	box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+	transition: all 0.3s ease;
+}
+
+.event-box:hover {
+	transform: scale(1.02) rotate(-1deg);
+}
+
+/* Funky Badges */
+.badge {
+	font-size: 12px;
+	padding: 6px 10px;
+	border-radius: 50px;
+	font-weight: bold;
+	letter-spacing: 0.5px;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.green-bg {
+	background: linear-gradient(to right, #a8e063, #56ab2f);
+	color: white;
+}
+
+.blue-bg {
+	background: linear-gradient(to right, #43cea2, #185a9d);
+	color: white;
+}
+
+.purple-bg {
+	background: linear-gradient(to right, #bc4e9c, #f80759);
+	color: white;
+}
+
+.green-border {
+	border-left-color: #56ab2f !important;
+}
+
+.blue-border {
+	border-left-color: #185a9d !important;
+}
+
+.purple-border {
+	border-left-color: #f80759 !important;
+}
+</style>
+
+		<form id="login-form" class="form p-3 mt-3"
+			th:action="@{'/admin/processing_profile/'+${user.id}}" action="#"
+			method="post" enctype="multipart/form-data">
+			<div class="container py-5">
+				<div class="row">
+					<div class="col">
+						<nav aria-label="breadcrumb"
+							class="bg-body-tertiary rounded-3 p-3 mb-4">
+							<ol class="breadcrumb mb-0">
+								<li class="breadcrumb-item"><a href="#">Home</a></li>
+								<li class="breadcrumb-item"><a href="#">User</a></li>
+								<li class="breadcrumb-item active" aria-current="page">Admin
+									Dashboard</li>
+							</ol>
+						</nav>
+					</div>
+				</div>
+				<div th:if="${message}" class="alert alert-danger">
+					<p th:text="${message}"></p>
+				</div>
+				<div th:if="${session.message}"
+					th:classappend="${session.message.type}" class="alert"
+					role="alert text-center">
+					<p th:text="${session.message.content}"></p>
+					<th:block th:text="${#session.removeAttribute('message')}"></th:block>
+				</div>
+				<div class="row">
+					<div class="col-lg-4">
+						<div class="card mb-4">
+							<div class="card-body text-center">
+								<h5 class="my-3">
+									<i class="fas fa-cogs text-primary"></i> <span class="ms-2">ADMIN
+										DASHBOARD</span>
+								</h5>
+
+								<div
+									th:if="${user.Image_Name.equals('default.jpg') and user.gender.equals('Male')}">
+									<img src="https://bootdey.com/img/Content/avatar/avatar7.png"
+										alt="avatar" class="rounded-circle img-fluid"
+										style="width: 150px;">
+								</div>
+								<div
+									th:if="${user.Image_Name.equals('default.jpg') and user.gender.equals('Female')}">
+									<img
+										src="https://img.freepik.com/premium-vector/portrait-beautiful-lady-with-sunglasses_684058-1186.jpg?size=626&ext=jpg&ga=GA1.1.1331334970.1715351181&semt=ais_user"
+										alt="avatar" class="rounded-circle img-fluid"
+										style="width: 150px;">
+								</div>
+								<div th:if="${!user.Image_Name.equals('default.jpg')}">
+									 <img th:src="@{'/admin/user-image/' + ${user.id}}"
+										alt="avatar" class="rounded-circle img-fluid" style="width: 150px; height: 150px; object-fit: cover;">
+
+								</div>
+								<h5 class="my-3">
+									<span th:text="${user.username}"></span>
+								</h5>
+								<p class="text-muted mb-1">
+									<span th:text="${user.designation}"></span>
+								</p>
+								<p class="text-muted mb-4">
+									<span th:text="${user.base_location}"></span>
+								</p>
+								<div class="d-flex justify-content-center mb-2">
+									<div th:if="${user.status.equals('ACTIVE')}">
+										<button disabled type="button" data-mdb-button-init
+											data-mdb-ripple-init class="btn btn-success">
+											<span th:text="${user.status}"></span>
+										</button>
+									</div>
+									<div th:if="${user.status.equals('INACTIVE')}">
+										<button disabled type="button" data-mdb-button-init
+											data-mdb-ripple-init class="btn btn-danger">
+											<span th:text="${user.status}"></span>
+										</button>
+									</div>
+									<!--   <button  type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-outline-primary ms-1">Message</button>-->
+								</div>
+							</div>
+						</div>
+						<div class="card mb-4 mb-lg-0">
+							<div class="card-body p-0">
+								<ul class="list-group list-group-flush rounded-3">
+									<li
+										class="list-group-item d-flex justify-content-between align-items-center p-3">
+										<span><i class="fas fa-tasks text-primary"></i> Total
+											Tasks:</span> <span th:text="${taskCounts.totalTasks}"
+										class="fw-bold"></span>
+									</li>
+									<li
+										class="list-group-item d-flex justify-content-between align-items-center p-3">
+										<span><i class="fas fa-check-circle text-success"></i>
+											Completed:</span> <span th:text="${taskCounts.tasksCompleted}"
+										class="fw-bold text-success"></span>
+									</li>
+									<li
+										class="list-group-item d-flex justify-content-between align-items-center p-3">
+										<span><i class="fas fa-hourglass-half text-warning"></i>
+											In Progress:</span> <span th:text="${taskCounts.tasksInProgress}"
+										class="fw-bold text-warning"></span>
+									</li>
+									<li
+										class="list-group-item d-flex justify-content-between align-items-center p-3">
+										<span><i class="fas fa-exclamation-circle text-danger"></i>
+											Overdue:</span> <span th:text="${taskCounts.tasksOverdue}"
+										class="fw-bold text-danger"></span>
+									</li>
+									<li
+										class="list-group-item d-flex justify-content-between align-items-center p-3">
+										<span><i class="fas fa-clock text-secondary"></i>
+											Pending:</span> <span th:text="${taskCounts.tasksPending}"
+										class="fw-bold text-secondary"></span>
+									</li>
+								</ul>
+							</div>
+						</div>
+
+					</div>
+					<div class="col-lg-8">
+						<div class="card mb-4">
+							<div class="card-body">
+								<div class="text-right">
+									<b> <a href=""
+										th:href="@{'/admin/admin_profile_edit_2/'+${user.id}}"
+										class="item"> </a>
+									</b>
+								</div>
+								<div class="row">
+									<div class="col-sm-3">
+										<p class="mb-0">Full Name</p>
+									</div>
+									<div class="col-sm-9">
+										<p class="text-muted mb-0">
+											<span th:text="${user.username}"></span>
+										</p>
+									</div>
+								</div>
+								<hr>
+								<div class="row">
+									<div class="col-sm-3">
+										<p class="mb-0">Employee ID</p>
+									</div>
+									<div class="col-sm-9">
+										<p class="text-muted mb-0">
+											<span th:text="${user.id}"></span>
+										</p>
+									</div>
+								</div>
+								<hr>
+								<div class="row">
+									<div class="col-sm-3">
+										<p class="mb-0">Company ID</p>
+									</div>
+									<div class="col-sm-9">
+										<p class="text-muted mb-0">
+											<span th:text="${user.company_id}"></span>
+										</p>
+									</div>
+								</div>
+								<hr>
+								<div class="row">
+									<div class="col-sm-3">
+										<p class="mb-0">Team Id</p>
+									</div>
+									<div class="col-sm-9">
+										<p class="text-muted mb-0">
+											<span th:text="${user.team}"></span>
+										</p>
+									</div>
+								</div>
+								<hr>
+								<div class="row">
+									<div class="col-sm-3">
+										<p class="mb-0">Email</p>
+									</div>
+									<div class="col-sm-9">
+										<p class="text-muted mb-0">
+											<span th:text="${user.email}"></span>
+										</p>
+									</div>
+								</div>
+								<hr>
+								<div class="row">
+									<div class="col-sm-3">
+										<p class="mb-0">Phone</p>
+									</div>
+									<div class="col-sm-9">
+										<p class="text-muted mb-0">
+											<span th:text="${user.phone}"></span>
+										</p>
+									</div>
+								</div>
+								<hr>
+								<div class="row">
+									<div class="col-sm-3">
+										<p class="mb-0">Country</p>
+									</div>
+									<div class="col-sm-9">
+										<p class="text-muted mb-0">
+											<span th:text="${user.country}"></span>
+										</p>
+									</div>
+								</div>
+								<hr>
+								<div>
+									<div class="chart-container">
+										<canvas id="taskPerformanceChart"></canvas>
+									</div>
+								</div>
+
+								<!-- Chart.js -->
+								<script th:inline="javascript">
+    $(document).ready(function() {
+        var performanceData = /*[[${performanceData}]]*/ [];
+
+        if (!Array.isArray(performanceData) || performanceData.length === 0) {
+            console.error("Performance data is empty or not an array.");
+            return;
+        }
+
+        var months = [], usernames = [];
+        var totalTasks = [], completedTasks = [], pendingTasks = [];
+        var inProgressTasks = [], overdueTasks = [], lateCompletedTasks = [], onTimeCompletedTasks = [];
+
+        var totalTaskIDs = [], completedTaskIDs = [], pendingTaskIDs = [];
+        var inProgressTaskIDs = [], overdueTaskIDs = [], lateCompletedTaskIDs = [], onTimeCompletedTaskIDs = [];
+
+        // **Function to split long text into lines**
+        function wrapText(text, maxLineLength = 40) {
+            if (!text || text.trim().length === 0) return ["Task IDs: No Tasks"];
+            
+            let words = text.split(", ");
+            let lines = [];
+            let currentLine = "";
+
+            words.forEach(word => {
+                if ((currentLine.length + word.length) > maxLineLength) {
+                    lines.push(currentLine + ",");  // Add a comma before breaking line
+                    currentLine = "";
+                }
+                currentLine += (currentLine ? ", " : "") + word;
+            });
+
+            if (currentLine) lines.push(currentLine);
+            return lines;
+        }
+
+        performanceData.forEach(function(data) {
+            months.push(data.month || "Unknown");
+            usernames.push(data.username || "N/A");
+            totalTasks.push(data.totalTasks || 0);
+            completedTasks.push(data.completedTasks || 0);
+            pendingTasks.push(data.pendingTasks || 0);
+            inProgressTasks.push(data.inProgressTasks || 0);
+            overdueTasks.push(data.overdueTasks || 0);
+            lateCompletedTasks.push(data.lateCompletedTasks || 0);
+            onTimeCompletedTasks.push(data.onTimeCompletedTasks || 0);
+
+            totalTaskIDs.push(wrapText((data.totalTasksList || []).join(", ")));
+            completedTaskIDs.push(wrapText((data.completedTaskList || []).join(", ")));
+            pendingTaskIDs.push(wrapText((data.pendingTaskList || []).join(", ")));
+            inProgressTaskIDs.push(wrapText((data.inProgressTaskList || []).join(", ")));
+            overdueTaskIDs.push(wrapText((data.overdueTaskList || []).join(", ")));
+            lateCompletedTaskIDs.push(wrapText((data.lateCompletedTaskList || []).join(", ")));
+            onTimeCompletedTaskIDs.push(wrapText((data.onTimeCompletedTaskList || []).join(", ")));
+        });
+
+        var chartCanvas = document.getElementById('taskPerformanceChart');
+        chartCanvas.width = performanceData.length * 50;
+
+        var ctx = chartCanvas.getContext('2d');
+        if (!ctx) {
+            console.error("Chart element not found.");
+            return;
+        }
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: months,
+                datasets: [
+                    { label: 'Total Tasks', data: totalTasks, borderColor: 'blue', backgroundColor: 'rgba(0, 0, 255, 0.2)', fill: true, tension: 0.4 },
+                    { label: 'Completed Tasks', data: completedTasks, borderColor: 'green', backgroundColor: 'rgba(0, 255, 0, 0.2)', fill: true, tension: 0.4 },
+                    { label: 'Pending Tasks', data: pendingTasks, borderColor: 'yellow', backgroundColor: 'rgba(255, 255, 0, 0.2)', fill: true, tension: 0.4 },
+                    { label: 'In Progress Tasks', data: inProgressTasks, borderColor: 'purple', backgroundColor: 'rgba(128, 0, 128, 0.2)', fill: true, tension: 0.4 },
+                    { label: 'Overdue Tasks', data: overdueTasks, borderColor: 'red', backgroundColor: 'rgba(255, 0, 0, 0.2)', fill: true, tension: 0.4 },
+                    { label: 'Late Completed Tasks', data: lateCompletedTasks, borderColor: 'brown', backgroundColor: 'rgba(139, 69, 19, 0.2)', fill: true, tension: 0.4 },
+                    { label: 'On-Time Completed Tasks', data: onTimeCompletedTasks, borderColor: 'orange', backgroundColor: 'rgba(255, 165, 0, 0.2)', fill: true, tension: 0.4 }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: { duration: 1500, easing: 'easeInOutQuart' },
+               scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Month'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Task Count'
+                        },
+                        beginAtZero: true
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                var index = tooltipItem.dataIndex;
+                                var datasetLabel = tooltipItem.dataset.label || '';
+                                var value = tooltipItem.raw;
+                                var username = usernames[index] || "N/A";
+                                var taskIDs = ["No Tasks"];
+
+                                switch (tooltipItem.datasetIndex) {
+                                    case 0: taskIDs = totalTaskIDs[index]; break;
+                                    case 1: taskIDs = completedTaskIDs[index]; break;
+                                    case 2: taskIDs = pendingTaskIDs[index]; break;
+                                    case 3: taskIDs = inProgressTaskIDs[index]; break;
+                                    case 4: taskIDs = overdueTaskIDs[index]; break;
+                                    case 5: taskIDs = lateCompletedTaskIDs[index]; break;
+                                    case 6: taskIDs = onTimeCompletedTaskIDs[index]; break;
+                                }
+
+                                // **Ensures "No Tasks" is on the same line**
+                                if (taskIDs.length === 1 && taskIDs[0] === "Task IDs: No Tasks") {
+                                    return [`${datasetLabel}: ${value} (User: ${username})`, `Task IDs: No Tasks`];
+                                }
+
+                                return [`${datasetLabel}: ${value} (User: ${username})`, "Task IDs:"].concat(taskIDs);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+
+							</div>
+						</div>
+
+					</div>
+					<!-- Hidden div for safe JSON injection -->
+					<div id="jsonData" th:utext="${eventsJson}" style="display: none;"></div>
+
+					<div class="col-lg-8">
+						<div class="card mb-4">
+							<div class="card-body">
+								<div class="calendar-wrapper mb-3">
+									<div id="calendar"></div>
+
+									<!-- ✅ Put buttons & message INSIDE the same wrapper -->
+									<div class="text-center mt-3" id="attendanceButtons"></div>
+									<div id="attendanceMessage" class="mt-2 text-center fw-bold"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+
+
+					<div class="col-lg-4">
+						<div class="card mb-4">
+							<div class="card-body" style="height: 960px; overflow-y: auto;">
+								<h5 class="mb-3">Upcoming Holidays / Events</h5>
+								<div id="upcomingEvents"></div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+
+		</form>
+		<!-- FullCalendar Setup -->
+		<script th:inline="javascript">
+document.addEventListener('DOMContentLoaded', function () {
+    const rawJson = document.getElementById('jsonData').innerText;
+    const allEvents = JSON.parse(rawJson);
+    const calendarEl = document.getElementById('calendar');
+    const upcomingBox = document.getElementById('upcomingEvents');
+
+    // 🧩 Expanded Emoji Map
+     // 🧩 Emoji Map (All global events and leaves)
+    const emojiMap = {
+        // 🏢 Leaves
+        'present': '✅', 'wfh': '💻', 'work from home': '💻',
+        'leave': '🛫', 'casual leave': '🛋️', 'sick leave': '🤒',
+        'earned leave': '🏖️', 'half day': '🌗', 'comp off': '🧾',
+        'absent': '❌', 'weekend': '🛌', 'holiday': '🌴', 'optional holiday': '🗓️',
+
+        // 🇮🇳 Indian festivals
+        'diwali': '🪔', 'holi': '🎨', 'eid': '🕌', 'eid ul fitr': '🕌',
+        'eid ul adha': '🕋', 'christmas': '🎄', 'janmashtami': '🧚‍♂️',
+        'raksha bandhan': '🎁', 'dussehra': '🏹', 'navratri': '🕉️',
+        'pongal': '🌾', 'onam': '🌸', 'lohri': '🔥', 'baisakhi': '🥁',
+        'bihu': '🎶', 'guru nanak': '🕯️', 'shivratri': '🕉️',
+        'ram navami': '🛕', 'hanuman': '🐒', 'ambedkar': '📜',
+        'mahavir': '🧘‍♂️',
+
+        // 🌍 Global days
+        'independence': '🇮🇳', 'republic': '🎖️', 'labor day': '🛠️',
+        'labour day': '🛠️', 'environment day': '🌱', 'women': '👩',
+        'yoga day': '🧘', 'world health': '🏥', 'earth day': '🌍',
+        'engineer': '🛠️', 'teacher': '🧑‍🏫', 'children': '🧒',
+        'parents': '👨‍👩‍👧', 'valentine': '❤️', 'friendship': '🤝',
+        'halloween': '🎃', 'thanksgiving': '🦃', 'new year': '🎉',
+        'easter': '🐣', 'good friday': '✝️', 'hanukkah': '🕎',
+        'bastille': '🇫🇷', 'boxing day': '📦', 'spring festival': '🌸',
+        'chinese new year': '🐉',
+
+        // 🏢 Work events
+        'exam': '📝', 'result': '📈', 'farewell': '👋',
+        'birthday': '🎂', 'anniversary': '💍', 'training': '📚',
+        'conference': '🎤', 'meeting': '📅', 'webinar': '💻',
+        'workshop': '🛠️', 'deadline': '⏰', 'review': '🔎',
+
+        // 🎊 Categories
+        'public holiday': '🏖️', 'restricted holiday': '📅', 'festival': '🎊'
+    };
+
+    function getEmoji(text) {
+        if (!text) return '';
+        text = text.toLowerCase();
+        for (const key in emojiMap) {
+            if (text.includes(key)) return emojiMap[key];
+        }
+        return '';
+    }
+
+    // 🟦 Get Weekend Names
+    const weekendDayNames = Array.from(new Set(
+        allEvents.filter(e => e.status?.toLowerCase() === "weekend").map(e => e.name)
+    ));
+
+    // 🟩 Weekend Events
+    const currentYear = new Date().getFullYear();
+    const weekendEvents = [];
+    for (let m = 0; m < 12; m++) {
+        const daysInMonth = new Date(currentYear, m + 1, 0).getDate();
+        for (let d = 1; d <= daysInMonth; d++) {
+            const date = new Date(currentYear, m, d);
+            const weekday = date.toLocaleDateString('en-US', { weekday: 'long' });
+            if (weekendDayNames.includes(weekday)) {
+                weekendEvents.push({
+                    title: `${getEmoji('weekend')} ${weekday} - Weekend`,
+                    start: date,
+                    backgroundColor: '#d0e7ff',
+                    borderColor: '#d0e7ff',
+                    textColor: '#000'
+                });
+            }
+        }
+    }
+
+    // 🟨 Attendance Events
+    const uniqueAttendanceEvents = [];
+    const seenDates = new Set();
+    for (const att of allEvents) {
+        const dateOnly = att.date?.split(' ')[0];
+        if (!seenDates.has(dateOnly)) {
+            seenDates.add(dateOnly);
+            const emoji = getEmoji(att.name || att.status);
+            const title = att.name ? `${emoji} ${att.name} (${att.status})` : `${emoji} ${att.status}`;
+ uniqueAttendanceEvents.push({
+    title,
+    start: dateOnly,
+    extendedProps: {
+        status: att.status,
+        wfh_request: att.wfh_request,
+        leave_request: att.leave_request,
+        inTime: att.inTime,
+        outTime: att.outTime,
+        totalBreak: att.totalBreak,
+        hoursWorked: att.hoursWorked,
+        shift: att.shift,
+        date: dateOnly
+    },
+    backgroundColor: getColor({
+        extendedProps: {
+            status: att.status,
+            wfh_request: att.wfh_request,
+            leave_request: att.leave_request,
+            withdrawn_request: att.withdrawn_request
+        }
+    }),
+    borderColor: getColor({
+        extendedProps: {
+            status: att.status,
+            wfh_request: att.wfh_request,
+            leave_request: att.leave_request,
+             withdrawn_request: att.withdrawn_request
+        }
+    }),
+    textColor: 'white'
+});
+
+        }
+    }
+
+    // 🟧 Initialize Calendar
+    const calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        height: 860,
+        aspectRatio: 1.5,
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: ''
+        },
+        eventDisplay: 'block',
+        displayEventTime: false,
+        events: [...uniqueAttendanceEvents, ...weekendEvents],
+        eventClick: function (info) {
+            const props = info.event.extendedProps;
+            if (props && props.status) {
+                const modalHtml = `
+                <div class="modal" style="display:block; position:fixed; z-index:1050; background:#00000080; top:0; left:0; width:100%; height:100%;">
+                    <div class="modal-dialog" style="margin:10% auto; max-width:600px;">
+                        <div class="modal-content" style="border-radius:8px;">
+                            <div class="modal-header bg-info text-white">
+                                <h5 class="modal-title">Attendance Details Of ${props.date.split('-').reverse().join('/')}</h5>
+                                <button type="button" class="close modal-close" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body p-3">
+                                <p><strong>Day's Status :</strong> ${props.status}</p>
+                                <p><strong>In Time :</strong> ${props.inTime || '--'}</p>
+                                <p><strong>Out Time :</strong> ${props.outTime || '--'}</p>
+                                <p><strong>Total Break :</strong> ${props.totalBreak || '--'}</p>
+                                <p><strong>Hours Worked :</strong> ${props.hoursWorked || '--'}</p>
+                                <p><strong>Shift :</strong> ${props.shift || '--'}</p>
+                            </div>
+                            <div class="modal-footer d-flex justify-content-between">
+                                <button class="btn btn-danger modal-close">Close</button>
+                                <div>
+                                    <button class="btn btn-success modal-update" data-date="${props.date}" data-status="${props.status}">Update Attendance</button>
+                                    <button class="btn btn-primary modal-leave" data-date="${props.date}" data-status="${props.status}">Submit Leave</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+                document.body.insertAdjacentHTML('beforeend', modalHtml);
+            }
+        }
+    });
+
+    setTimeout(() => calendar.render(), 100);
+
+    // 🟪 Upcoming Events
+    const future = allEvents.filter(e => {
+        const date = new Date(e.date);
+        return date >= new Date() &&
+            ['Public Holiday', 'Restricted Holiday', 'Festival'].includes(e.status);
+    }).sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    upcomingBox.innerHTML = future.length === 0
+        ? '<p class="text-muted">No upcoming holidays.</p>'
+        : future.map(ev =>
+            `<div class='event-box ${getBorderClass(ev.status)}'>
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <strong>${getEmoji(ev.name || ev.status)} ${ev.name}</strong>
+                    <span class="badge ${getBadgeClass(ev.status)}">${ev.status}</span>
+                </div>
+                <small>${ev.date}</small>
+            </div>`
+        ).join('');
+
+  // 🎨 Color Picker
+function getColor(event) {
+    const props = event.extendedProps || event;
+    console.log('Props for color:', props);
+
+    // Always orange if withdrawn
+    if (props.withdrawn_request === true && props.leave_request === true) {
+        return '#fb8c00'; // Blue
+    }
+    
+     // Always blue if withdrawn
+    if (props.withdrawn_request === true && props.wfh_request === true) {
+        return '#42a5f5'; // Blue
+    }
+
+    // Orange for active WFH or Leave (not withdrawn)
+    if (props.leave_request === true || props.wfh_request === true) {
+        return '#fb8c00'; // Orange
+    }
+
+    // Match status from FullCalendar CSS
+    const status = props.status?.toLowerCase();
+    switch (status) {
+        case 'present': return '#4caf50';
+        case 'wfh': return '#1e88e5';
+        case 'leave': return '#fb8c00';
+        case 'absent': return '#e53935';
+        case 'public holiday': return '#2e7d32';
+        case 'restricted holiday': return '#1976d2';
+        case 'festival': return '#8e24aa';
+        case 'weekend': return '#d0e7ff';
+        default: return '#7e57c2'; // fallback purple
+    }
+}
+
+
+
+
+
+    function getBorderClass(status) {
+        switch (status?.toLowerCase()) {
+            case 'public holiday': return 'green-border';
+            case 'restricted holiday': return 'blue-border';
+            case 'festival': return 'purple-border';
+            default: return '';
+        }
+    }
+
+    function getBadgeClass(status) {
+        switch (status?.toLowerCase()) {
+            case 'public holiday': return 'green-bg';
+            case 'restricted holiday': return 'blue-bg';
+            case 'festival': return 'purple-bg';
+            default: return 'badge-secondary';
+        }
+    }
+});
+</script>
+
+		<script th:inline="javascript">
+document.body.addEventListener('click', function (e) {
+    const modal = e.target.closest('.modal');
+
+    // ❌ Close Modal
+    if (e.target.closest('.modal-close, .close')) {
+        if (modal) modal.remove();
+    }
+
+    // ✅ Update Attendance Click
+    if (e.target.matches('.modal-update')) {
+        const date = e.target.getAttribute('data-date');
+        const status = e.target.getAttribute('data-status');
+        const modalBody = modal.querySelector('.modal-body');
+        modalBody.innerHTML = `
+            <div class="p-3">
+                <h5 class="mb-3 text-success">📝 Update Attendance</h5>
+                <form id="updateAttendanceForm" data-date="${date}" data-status="${status}">
+                    <div class="form-group">
+                        <label for="inTime">In Time</label>
+                        <input type="time" id="inTime" name="inTime" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="outTime">Out Time</label>
+                        <input type="time" id="outTime" name="outTime" class="form-control" required>
+                    </div>
+                    <div class="text-right">
+                        <button type="submit" class="btn btn-success">✅ Save Attendance</button>
+                    </div>
+                </form>
+            </div>`;
+    }
+
+    // ✅ Submit Leave Click
+    if (e.target.matches('.modal-leave')) {
+        const date = e.target.getAttribute('data-date');
+        const status = e.target.getAttribute('data-status');
+        const modalBody = modal.querySelector('.modal-body');
+        modalBody.innerHTML = `
+            <div class="p-3">
+                <h5 class="mb-3 text-primary">📝 Submit Leave</h5>
+                <form id="submitLeaveForm" data-date="${date}" data-status="${status}">
+                    <div class="form-group">
+                        <label for="reason">Reason</label>
+                        <input type="text" id="reason" name="reason" class="form-control" required>
+                    </div>
+                    <div class="text-right">
+                        <button type="submit" class="btn btn-primary">📝 Submit</button>
+                    </div>
+                </form>
+            </div>`;
+    }
+});
+
+document.body.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const modal = e.target.closest('.modal');
+
+    // ✅ Attendance Form Submit
+    if (e.target.id === 'updateAttendanceForm') {
+        const form = e.target;
+        const date = form.getAttribute('data-date');
+        const status = form.getAttribute('data-status');
+        const inTime = form.inTime.value;
+        const outTime = form.outTime.value;
+
+        try {
+            const res = await fetch('/admin/update-attendance', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    date: date,
+                    inTime: inTime,
+                    outTime: outTime,
+                    status: status
+                })
+            });
+
+            const resultText = await res.text();
+
+            if (res.ok) {
+                Swal.fire({
+                    icon: 'success',
+                    title: '✅ Attendance Updated!',
+                    text: `In Time: ${inTime}\nOut Time: ${outTime}\nStatus: ${status}`,
+                    confirmButtonColor: '#28a745'
+                }).then(() => {
+                    if (modal) modal.remove();
+                });
+            } else {
+                Swal.fire({
+    icon: 'error',
+    title: '🚫 Request Failed',
+    html: `
+        <div style="font-size: 16px; line-height: 1.5;">
+            <strong>Reason:</strong><br>
+            ${resultText}
+        </div>
+    `,
+    confirmButtonText: 'OK',
+    confirmButtonColor: '#6c63ff',
+    width: 500
+});
+            }
+        } catch (error) {
+            console.error(error);
+            Swal.fire('❌ Error', error.message || 'Failed to update attendance.', 'error');
+        }
+    }
+
+    // ✅ Leave Form Submit
+    if (e.target.id === 'submitLeaveForm') {
+        const form = e.target;
+        const date = form.getAttribute('data-date');
+        const status = form.getAttribute('data-status');
+        const reason = form.reason.value;
+
+        try {
+            const res = await fetch('/admin/submit-leave', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    reason: reason,
+                    leaveDate: date,
+                    status: status
+                })
+            });
+
+            const resultText = await res.text();
+
+            if (res.ok) {
+                Swal.fire({
+                    icon: 'success',
+                    title: '✅ Leave Submitted!',
+                    text: `Reason: ${reason}\nDate: ${date}\nStatus: ${status}`,
+                    confirmButtonColor: '#007bff'
+                }).then(() => {
+                    if (modal) modal.remove();
+                });
+            } else {
+               Swal.fire({
+    icon: 'error',
+    title: '🚫 Request Failed',
+    html: `
+        <div style="font-size: 16px; line-height: 1.5;">
+            <strong>Reason:</strong><br>
+            ${resultText}
+        </div>
+    `,
+    confirmButtonText: 'OK',
+    confirmButtonColor: '#6c63ff',
+    width: 500
+});
+
+            }
+        } catch (error) {
+            console.error(error);
+            Swal.fire('❌ Error', error.message || 'Failed to submit leave.', 'error');
+        }
+    }
+});
+</script>
+
+
+
+
+		<audio id="checkinSound" src="/MP3/checkin.mp3" preload="auto"></audio>
+		<audio id="checkoutSound" src="/MP3/checkout.mp3" preload="auto"></audio>
+
+
+		<script>
+fetch("/admin/attendance/status")
+    .then(res => res.json())
+    .then(data => {
+        const buttonsDiv = document.getElementById('attendanceButtons');
+        const msgDiv = document.getElementById('attendanceMessage');
+
+        // 📅 Format today's date (e.g., 20 April 2025)
+        const today = new Date().toLocaleDateString('en-IN', {
+            day: '2-digit',
+            month: 'long',
+            year: 'numeric'
+        });
+
+        if (data.isAbsent) {
+            buttonsDiv.innerHTML = `
+                <button class="btn btn-danger" type="button" disabled>
+                    🚫 Attendance Locked for ${today}
+                </button>
+            `;
+            msgDiv.innerText = `❌ You have been marked Absent for ${today}. Attendance cannot be modified.`;
+            msgDiv.style.color = 'red';
+            return;
+        }
+
+        if (data.checkedIn) {
+            buttonsDiv.innerHTML = `
+                <button id="checkOutBtn" class="btn btn-danger" type="button">⛔ Check-Out</button>
+            `;
+        } else {
+            buttonsDiv.innerHTML = `
+                <button id="checkInBtn" class="btn btn-success" type="button">✅ Check-In</button>
+            `;
+        }
+
+        // ✅ Button Listeners
+        document.getElementById('checkInBtn')?.addEventListener('click', () => {
+            playSound('checkin');
+            markAttendance("checkin");
+        });
+
+        document.getElementById('checkOutBtn')?.addEventListener('click', () => {
+            playSound('checkout');
+            markAttendance("checkout");
+        });
+
+        function playSound(type) {
+            const soundId = type === 'checkin' ? 'checkinSound' : 'checkoutSound';
+            const sound = document.getElementById(soundId);
+            if (sound) {
+                sound.currentTime = 0;
+                sound.play().catch(err => console.warn("🔇 Sound playback failed:", err));
+            }
+        }
+
+        function markAttendance(type) {
+            fetch(`/admin/${type}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            })
+            .then(async res => {
+                const message = await res.text();
+                msgDiv.innerText = message;
+                msgDiv.style.color = res.ok ? 'green' : 'red';
+                if (res.ok) setTimeout(() => location.reload(), 1000);
+            })
+            .catch(err => {
+                msgDiv.innerText = "❌ Something went wrong.";
+                msgDiv.style.color = 'red';
+            });
+        }
+    });
+</script>
+	</section>
+</body>
+
+</html>
