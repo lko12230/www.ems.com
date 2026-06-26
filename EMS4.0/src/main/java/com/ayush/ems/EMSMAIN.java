@@ -38,7 +38,7 @@ public class EMSMAIN {
     @PreDestroy
     public void onShutdown() {
         shuttingDown = true;
-        System.out.println("🛑 Application is shutting down...");
+        System.out.println("🛑 Application is shutting down..."); 
     }
 
     // Allowed jobs to run during Server Maintenance
