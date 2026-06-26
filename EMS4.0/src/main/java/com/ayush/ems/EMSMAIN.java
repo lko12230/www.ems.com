@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -32,6 +33,13 @@ public class EMSMAIN {
     @Autowired private DowntimeMaintaince_Dao downtimeRepo;
 
     private final ReentrantLock lock = new ReentrantLock();
+    private volatile boolean shuttingDown = false;
+    
+    @PreDestroy
+    public void onShutdown() {
+        shuttingDown = true;
+        System.out.println("🛑 Application is shutting down...");
+    }
 
     // Allowed jobs to run during Server Maintenance
     private static final Set<String> ALLOWED_DURING_MAINTENANCE = Set.of(
@@ -83,38 +91,60 @@ public class EMSMAIN {
      */
     @Scheduled(fixedRate = 60000)
     public void runAllDynamicJobs() {
+
+        if (shuttingDown) {
+            return;
+        }
+
         if (!lock.tryLock()) {
             System.out.println("⚠️ Scheduler already running. Skipping this tick.");
             return;
         }
 
         try {
+
+            if (shuttingDown) {
+                return;
+            }
+
             Date now = new Date();
             List<Job> jobs = jobDao.findAll();
 
             boolean isServerDown = checkAndUpdateServerDowntime();
 
             for (Job job : jobs) {
-                if (!"Y".equalsIgnoreCase(job.getJob_active_or_not()) || job.getNextRun() == null || job.getNextRun().after(now)) {
+
+                if (shuttingDown) {
+                    break;
+                }
+
+                if (!"Y".equalsIgnoreCase(job.getJob_active_or_not())
+                        || job.getNextRun() == null
+                        || job.getNextRun().after(now)) {
                     continue;
                 }
 
                 if (isServerDown) {
+
                     if (ALLOWED_DURING_MAINTENANCE.contains(job.getJob_description())) {
                         executeJob(job, false);
                     } else {
                         System.out.println("⏭️ Skipping job due to server downtime: " + job.getJob_description());
                     }
+
                 } else {
                     executeJob(job, false);
                 }
             }
 
         } finally {
-            lock.unlock();
+
+            if (lock.isHeldByCurrentThread()) {
+                lock.unlock();
+            }
+
         }
     }
-
     /**
      * Checks downtime window and updates serverDownOrNot flag accordingly.
      */
