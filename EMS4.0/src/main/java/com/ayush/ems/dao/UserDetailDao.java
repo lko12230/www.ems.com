@@ -114,11 +114,24 @@ List<UserDetail> findIdsByBaseLocationAndRoles(@Param("baseLocation") String bas
 
 
 @Query(value = "SELECT email FROM employeedetail " +
-        "WHERE (base_location = :baseLocation AND company_id = :company_id AND role IN ('ROLE_ADMIN','ROLE_IT')) " +
-        "OR id = :user_id  and status='ACTIVE' and ((resignation_request_applied='false' AND seperation_manager_approved='false')  OR (resignation_request_applied='true' AND seperation_manager_approved='false'))", nativeQuery = true)
-List<String> findEmailsByBaseLocationAndRolesPayment(@Param("baseLocation") String baseLocation,
-                                       @Param("company_id") String company_id,
-                                       @Param("user_id") int user_id);
+        "WHERE " +
+        "(" +
+        "(base_location = :baseLocation AND company_id = :company_id AND role IN ('ROLE_ADMIN','ROLE_IT')) " +
+        "OR id = :user_id" +
+        ") " +
+        "AND status = 'ACTIVE' " +
+        "AND enabled = true " +
+        "AND (" +
+        "(resignation_request_applied='false' AND seperation_manager_approved='false') " +
+        "OR " +
+        "(resignation_request_applied='true' AND seperation_manager_approved='false')" +
+        ")",
+        nativeQuery = true)
+List<String> findEmailsByBaseLocationAndRolesPayment(
+        @Param("baseLocation") String baseLocation,
+        @Param("company_id") String company_id,
+        @Param("user_id") int user_id);
+
 
 @Query(value = "SELECT * FROM employeedetail " +
 	       "WHERE (status='ACTIVE' " +

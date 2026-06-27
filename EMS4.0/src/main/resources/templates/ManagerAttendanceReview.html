@@ -211,10 +211,20 @@
 <!-- 📝 Reason -->
 <div class="request-item w-100">
     <strong>📝 Reason:</strong><br/>
-    <span th:text="${#strings.length(req.reason) > 100 ? #strings.abbreviate(req.reason, 100) + '...' : req.reason}"></span>
+	<span
+	th:text="${req.reason != null && #strings.length(req.reason) > 100
+	? #strings.abbreviate(req.reason,100)
+	: (req.reason != null ? req.reason : '--')}">
+	</span>
 
-    <a href="javascript:void(0)" th:if="${#strings.length(req.reason) > 100}"
-       onclick="toggleFullReason(this, 'reason-full-[[${req.request_id}]]')">Show More</a>
+	<a href="javascript:void(0)"
+	   th:if="${req.reason != null && #strings.length(req.reason) > 100}">
+	    Show More
+	</a>
+
+	<span th:if="${req.reason == null}">
+	    --
+	</span>
 
     <span id="reason-full-[[${req.request_id}]]" style="display:none;">
         <br><strong>Full Reason:</strong> <span th:text="${req.reason}"></span>

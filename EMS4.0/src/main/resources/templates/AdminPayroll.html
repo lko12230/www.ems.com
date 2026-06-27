@@ -4,71 +4,102 @@
     <title>Upload Payroll Excel</title>
 </head>
 <body>
-<section>
-    <h2>Upload Payroll Excel File</h2>
+<section style="font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; max-width: 1200px; margin: 30px auto; padding: 0 20px;">
+    
+    <!-- MAIN PROFESSIONAL CARD -->
+    <div style="background: #ffffff; border-radius: 16px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05); border: 1px solid #f0f1f3; padding: 30px; overflow: hidden;">
+        
+        <!-- CARD HEADER -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid #f1f5f9; padding-bottom: 20px; flex-wrap: wrap; gap: 15px;">
+            <div>
+                <h2 style="color: #1e293b; margin: 0 0 5px 0; font-size: 1.6rem; font-weight: 700; letter-spacing: -0.02em;">Payroll Management</h2>
+                <p style="margin: 0; color: #64748b; font-size: 0.9rem;">Upload payroll Excel files and track transaction history</p>
+            </div>
+            
+            <!-- Action Button -->
+            <a href="#" th:href="@{/admin/configurable_job}" 
+               style="display: inline-flex; align-items: center; gap: 8px; background-color: #f1f5f9; color: #334155; padding: 10px 16px; 
+                      border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.875rem; border: 1px solid #e2e8f0; transition: all 0.2s;">
+                ⚙️ Configure Job Schedule
+            </a>
+        </div>
 
-    <!-- Alert Messages -->
-    <div th:if="${status == 'success'}" class="alert alert-success" style="color:green; font-weight:bold;">
-        <p th:text="${message}"></p>
-    </div>
-    <div th:if="${status == 'fail'}" class="alert alert-danger" style="color:red; font-weight:bold;">
-        <p th:text="${message}"></p>
-    </div>
+        <!-- ALERT MESSAGES (Inside Card) -->
+        <div th:if="${status == 'success'}" 
+             style="background-color: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; padding: 14px 16px; border-radius: 8px; margin-bottom: 25px; font-size: 0.95rem; font-weight: 500; display: flex; align-items: center; gap: 10px;">
+            <span>✅</span> <span th:text="${message}">[Success Message]</span>
+        </div>
+        
+        <div th:if="${status == 'fail'}" 
+             style="background-color: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 14px 16px; border-radius: 8px; margin-bottom: 25px; font-size: 0.95rem; font-weight: 500; display: flex; align-items: center; gap: 10px;">
+            <span>❌</span> <span th:text="${message}">[Error Message]</span>
+        </div>
 
-    <!-- Configure Job Schedule Button -->
-    <div style="margin: 15px 0;">
-        <a href="#" th:href="@{/admin/configurable_job}" 
-           style="display: inline-block; background-color: #007bff; color: white; padding: 8px 16px; 
-                  border-radius: 6px; text-decoration: none; font-weight: bold;">
-            ⚙️ Configure Job Schedule
-        </a>
-    </div>
+        <!-- UPLOAD SECTION (Sub-Card Accent) -->
+        <div style="background-color: #f8fafc; border: 1px dashed #cbd5e1; padding: 25px; border-radius: 12px; margin-bottom: 35px;">
+            <h4 style="margin-top: 0; margin-bottom: 12px; color: #334155; font-size: 1rem; font-weight: 600;">Upload New Document</h4>
+            <form method="POST" enctype="multipart/form-data" action="/admin/upload-salary-data" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+                <div style="flex-grow: 1; min-width: 280px;">
+                    <input type="file" name="file" accept=".xls,.xlsx" required 
+                           style="width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; background-color: #ffffff; color: #475569; font-size: 0.9rem;" />
+                </div>
+                <button type="submit" style="background-color: #4f46e5; color: white; border: none; padding: 12px 24px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.9rem; box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2); transition: background 0.2s;">
+                    Upload File
+                </button>
+            </form>
+            <small style="color: #94a3b8; display: block; margin-top: 8px;">Supported formats: .xls, .xlsx (Excel files only)</small>
+        </div>
 
-    <!-- Upload Form -->
-    <form method="POST" enctype="multipart/form-data" action="/admin/upload-salary-data">
-        <input type="file" name="file" accept=".xls,.xlsx" required />
-        <button type="submit">Upload</button>
-    </form>
+        <!-- HISTORY SECTION -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h3 style="color: #1e293b; font-size: 1.2rem; margin: 0; font-weight: 600;">Recent Upload History</h3>
+        </div>
 
-    <hr/>
-
-    <!-- Upload History with Card -->
-    <h3>Upload History</h3>
-
-    <div style="
-        background: #fff; 
-        border-radius: 12px; 
-        box-shadow: 0 6px 12px rgb(0 0 0 / 0.1); 
-        padding: 15px;
-        overflow-x: auto;
-    ">
-        <table border="1" style="border-collapse: collapse; width: 100%;">
-            <thead style="background-color: #f0f0f0;">
-                <tr>
-                    <th>#</th>
-                    <th>Filename</th>
-                    <th>Uploaded By</th>
-                    <th>Upload Time</th>
-                    <th>Status</th>
-                    <th>Remarks</th>
-                </tr>
-            </thead>
-            <tbody style="background: white;">
-                <tr th:each="record, iterStat : ${uploadHistory}">
-                    <td th:text="${iterStat.index + 1}">1</td>
-                    <td th:text="${record.fileName}">salary_june.xlsx</td>
-                    <td th:text="${record.uploadedBy}">admin</td>
-                    <td th:text="${#temporals.format(record.uploadTime, 'yyyy-MM-dd HH:mm:ss')}">2025-06-07 13:45:00</td>
-                    <td th:text="${record.status}" th:classappend="${record.status == 'Success'} ? 'text-success' : 'text-danger'">Success</td>
-                    <td th:text="${record.remarks}">Uploaded 45 records</td>
-                </tr>
-                <tr th:if="${#lists.isEmpty(uploadHistory)}">
-                    <td colspan="6" style="text-align: center; padding: 12px; font-style: italic; color: #555;">
-                        No upload history available.
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <!-- Responsive Table Container -->
+        <div style="overflow-x: auto; border: 1px solid #e2e8f0; border-radius: 10px; background: #ffffff;">
+            <table style="border-collapse: collapse; width: 100%; text-align: left; font-size: 0.9rem;">
+                <thead>
+                    <tr style="background-color: #f8fafc; border-bottom: 1px solid #e2e8f0; color: #475569;">
+                        <th style="padding: 14px 16px; font-weight: 600; width: 50px; text-align: center;">#</th>
+                        <th style="padding: 14px 16px; font-weight: 600;">Filename</th>
+                        <th style="padding: 14px 16px; font-weight: 600;">Uploaded By</th>
+                        <th style="padding: 14px 16px; font-weight: 600;">Upload Time</th>
+                        <th style="padding: 14px 16px; font-weight: 600; width: 110px; text-align: center;">Status</th>
+                        <th style="padding: 14px 16px; font-weight: 600;">Remarks</th>
+                    </tr>
+                </thead>
+                <tbody style="color: #334155;">
+                    <!-- Table Rows -->
+                    <tr th:each="record, iterStat : ${uploadHistory}" style="border-bottom: 1px solid #f1f5f9; transition: background-color 0.2s;">
+                        <td th:text="${iterStat.index + 1}" style="padding: 14px 16px; text-align: center; color: #94a3b8; font-weight: 500;">1</td>
+                        <td th:text="${record.fileName}" style="padding: 14px 16px; font-weight: 500; color: #0f172a;">salary_june.xlsx</td>
+                        <td th:text="${record.uploadedBy}" style="padding: 14px 16px;">admin</td>
+                        <td th:text="${#temporals.format(record.uploadTime, 'yyyy-MM-dd HH:mm:ss')}" style="padding: 14px 16px; color: #64748b;">2025-06-07 13:45:00</td>
+                        
+                        <!-- Status Badges inside table -->
+                        <td style="padding: 14px 16px; text-align: center;">
+                            <span th:text="${record.status}" 
+                                  th:style="${record.status == 'Success' or record.status == 'success'} 
+                                            ? 'background-color: #ecfdf5; color: #065f46; border: 1px solid #bbf7d0; padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; display: inline-block;' 
+                                            : 'background-color: #fef2f2; color: #991b1b; border: 1px solid #fecaca; padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; display: inline-block;'">
+                                Success
+                            </span>
+                        </td>
+                        
+                        <td th:text="${record.remarks}" style="padding: 14px 16px; color: #64748b;">Uploaded 45 records</td>
+                    </tr>
+                    
+                    <!-- Empty State Inside Table -->
+                    <tr th:if="${#lists.isEmpty(uploadHistory)}">
+                        <td colspan="6" style="text-align: center; padding: 40px 16px; color: #94a3b8; font-style: italic; background-color: #fafafa;">
+                            <div style="font-size: 1.8rem; margin-bottom: 8px;">📂</div>
+                            No upload history found.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
     </div>
 </section>
 </body>

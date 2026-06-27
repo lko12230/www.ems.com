@@ -3327,7 +3327,17 @@ public class Servicelayer {
 
 				// Send invoice after successful update
 				try {
-					generateAndSendInvoice(payment_Order_Info, subscriptionPlans, companyInfo, user, licenseNumber);
+					boolean invoiceSent = generateAndSendInvoice(
+					        payment_Order_Info,
+					        subscriptionPlans,
+					        companyInfo,
+					        user,
+					        licenseNumber);
+
+					System.out.println("invoiceSent = " + invoiceSent);
+
+					payment_Order_Info.setInvoice_sent_or_not(invoiceSent);
+					orderDao.save(payment_Order_Info);
 				} catch (Exception e) {
 					e.printStackTrace();
 					System.err.println("Failed to send invoice email. Payment info updated successfully.");
@@ -3577,46 +3587,58 @@ public class Servicelayer {
 			while (orders_iterate.hasNext()) {
 				Payment_Order_Info currentPlan = orders_iterate.next();
 
-				// Check if the payment status is "PAID"
-				if (currentPlan.getStatus().equalsIgnoreCase("PAID")) {
+					// Check if the payment status is "PAID"
+					if (currentPlan.getStatus().equalsIgnoreCase("PAID")) {
 
-					int validityDays = currentPlan.getValidity(); // e.g., 30 days
-					Date expiryDate = currentPlan.getSubscription_expiry_date();
-					String companyId = currentPlan.getCompany_id();
+					    int validityDays = currentPlan.getValidity(); // e.g., 30 days
+					    Date expiryDate = currentPlan.getSubscription_expiry_date();
+					    String companyId = currentPlan.getCompany_id();
 
-					// Get the current date
-					LocalDate currentDate = LocalDate.now();
+					    // Current time
+					    Date currentDate = new Date();
 
-					// Convert expiryDate to LocalDate
-					LocalDate expiryLocalDate = expiryDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+					    System.out.println("==================================================");
+					    System.out.println("CURRENT TIME      : " + currentDate);
+					    System.out.println("EXPIRY TIME       : " + expiryDate);
+					    System.out.println("VALIDITY DAYS     : " + validityDays);
+					    System.out.println("TRANSACTION ID    : " + currentPlan.getPaymentId());
+					    System.out.println("LICENSE STATUS    : " + currentPlan.getLicense_status());
+					    System.out.println("IS EXPIRED        : " + currentDate.after(expiryDate));
+					    System.out.println("==================================================");
 
-					// Calculate the remaining days between the current date and the expiry date
-					long remainingDays = Duration.between(currentDate.atStartOfDay(), expiryLocalDate.atStartOfDay())
-							.toDays();
-					System.out.println("REMAINING DAYS: " + remainingDays + " | VALIDITY DAYS: " + validityDays
-							+ " | TRANSACTION ID: " + currentPlan.getPaymentId());
+					    // Subscription expired
+					    if (currentDate.after(expiryDate)
+					            && "ACTIVE".equalsIgnoreCase(currentPlan.getLicense_status())) {
 
-					// If the subscription has expired and is still active, process the renewal
-					// check
-					if (remainingDays < 0 && currentPlan.getLicense_status().equals("ACTIVE")) {
-						System.out.println("Checking for renewal for company: " + companyId);
+					        System.out.println("Checking for renewal for company : " + companyId);
 
-						// Check if there's an upcoming recharge in "WAIT" status
-						Payment_Order_Info upcomingPlan = orderDao.findUpcomingPlanByCompanyId(companyId);
-//	                    System.out.println("UPCOMING REMAINING DAYS: " + remainingDays + " | UPCOMING VALIDITY DAYS: " + validityDays + " | UPCOMING TRANSACTION ID: "+upcomingPlan.getPaymentId()+" | LICENSE STATUS: "+upcomingPlan.getLicense_status()+" | UPCOMING STATUS: "+upcomingPlan.getStatus()+" EMAIL: "+upcomingPlan.getEmail());
-						if (upcomingPlan != null && "WAITING".equalsIgnoreCase(upcomingPlan.getLicense_status())
-								&& "PAID".equalsIgnoreCase(upcomingPlan.getStatus())) {
-							System.out.println("UPCOMING REMAINING DAYS: " + remainingDays
-									+ " | UPCOMING VALIDITY DAYS: " + validityDays + " | UPCOMING TRANSACTION ID: "
-									+ upcomingPlan.getPaymentId() + " | LICENSE STATUS: "
-									+ upcomingPlan.getLicense_status() + " | UPCOMING STATUS: "
-									+ upcomingPlan.getStatus() + " EMAIL: " + upcomingPlan.getEmail());
-							// Auto-renew the upcoming plan
-//	                        LocalDate newExpiryDate = currentDate.plusDays(upcomingPlan.getValidity());
-//	                        Date newExpiry = Date.from(newExpiryDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-							orderDao.expired_license_status(companyId);
-							orderDao.updatePlanToActive(companyId);
-							System.out.println("New plan activated for company: " + companyId);
+					        // Check if there is a waiting paid plan
+					        Payment_Order_Info upcomingPlan =
+					                orderDao.findUpcomingPlanByCompanyId(companyId);
+
+					        if (upcomingPlan != null
+					                && "WAITING".equalsIgnoreCase(upcomingPlan.getLicense_status())
+					                && "PAID".equalsIgnoreCase(upcomingPlan.getStatus())) {
+
+					            System.out.println("Upcoming plan found.");
+					            System.out.println("Upcoming Transaction ID : " + upcomingPlan.getPaymentId());
+					            System.out.println("Upcoming License Status : " + upcomingPlan.getLicense_status());
+					            System.out.println("Upcoming Status         : " + upcomingPlan.getStatus());
+
+					            // Expire old plan
+					            orderDao.expired_license_status(companyId);
+
+					            // Activate new plan
+					            orderDao.updatePlanToActive(companyId);
+
+					            System.out.println("New plan activated for company : " + companyId);
+
+					            // ***********************
+					            // KEEP YOUR EXISTING EMAIL,
+					            // NOTIFICATION & ACTIVATION
+					            // CODE HERE
+					            // ***********************
+
 
 							// Send renewal confirmation email
 							String to = upcomingPlan.getEmail();
@@ -4180,7 +4202,7 @@ public class Servicelayer {
 //        return "application/octet-stream"; // default
 //    }
 		
-	public void generateAndSendInvoice(Payment_Order_Info payment, SubscriptionPlans subscriptionPlans,
+	public boolean generateAndSendInvoice(Payment_Order_Info payment, SubscriptionPlans subscriptionPlans,
 			CompanyInfo companyInfo, User user, String formattedLicenseNumber)
 			throws Exception {
 		String invoicePath = subscriptionPlans.getInvoicePath() + payment.getPaymentId() + ".pdf";
@@ -4239,7 +4261,7 @@ public class Servicelayer {
 		try {
 			Boolean flag = flagFuture.get(); // Blocking call to get the result
 			if (flag) {
-				payment.setInvoice_sent_or_not(true);
+//				payment.setInvoice_sent_or_not(true);
 				System.out.println(true);
 				List<UserDetail> getInfo = userDetailDao.findIdsByBaseLocationAndRolesPayment(user.getBase_location(),
 						user.getCompany_id(), user.getId());
@@ -4262,13 +4284,16 @@ public class Servicelayer {
 					System.out.println("Sending notification to: " + detail.getEmail());
 
 				}
+				return true;
 			} else {
-				payment.setInvoice_sent_or_not(false);
-				System.out.println(false);
+//				payment.setInvoice_sent_or_not(false);
+//				System.out.println(false);
+				return false;
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
-			user.setDefaultPasswordSent(false);
+		    e.printStackTrace();
+		    user.setDefaultPasswordSent(false);
+		    return false;
 		}
 	}
 
@@ -5446,11 +5471,19 @@ public class Servicelayer {
 							paymentOrderInfo.setQty(subscriptionPlans.getQty());
 
 							try {
-								generateAndSendInvoice(paymentOrderInfo, subscriptionPlans, companyInfo, user,
-										licenseNumber);
+							    boolean invoiceSent = generateAndSendInvoice(
+							            paymentOrderInfo,
+							            subscriptionPlans,
+							            companyInfo,
+							            user,
+							            licenseNumber);
+
+							    paymentOrderInfo.setInvoice_sent_or_not(invoiceSent);
+
 							} catch (Exception e) {
-								e.printStackTrace();
-								System.err.println("Failed to send invoice email. Payment info updated successfully.");
+							    paymentOrderInfo.setInvoice_sent_or_not(false);
+							    e.printStackTrace();
+							    System.err.println("Failed to send invoice email. Payment info updated successfully.");
 							}
 						});
 					});
